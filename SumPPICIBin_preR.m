@@ -95,12 +95,16 @@ if length(MD) < 365
     sumtab365 = meantab365;
 else
 %mean
-meanarray = grpstats(dayTable.HoursProp, dayTable.day, @mean); %takes the mean of each day of the year
-meantable = array2table(meanarray);
-newcol_mean = (1:length(meanarray))';
-meanarray365 = [newcol_mean meanarray];
+[mean, sem, std, var, range] = grpstats(dayTable.HoursProp, dayTable.day, {'mean','sem','std','var','range'}); %takes the mean of each day of the year
+meantable = array2table(mean);
+semtable = array2table(sem);
+stdtable = array2table(std);
+vartable = array2table(var);
+rangetable = array2table(range);
+newcol_mean = (1:length(mean))';
+meanarray365 = [newcol_mean mean sem std var range];
 meantab365 = array2table(meanarray365);
-meantab365.Properties.VariableNames = {'Day' 'HoursProp'};
+meantab365.Properties.VariableNames = {'Day' 'HoursProp' 'SEM' 'Std' 'Var' 'Range'};
 end
 
 writetable(meantab365, [saveDir,'\',siteabrev,'_days365GroupedMean_forGLMR125.csv']); %table with the mean for each day of the year
