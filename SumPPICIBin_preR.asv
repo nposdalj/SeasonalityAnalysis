@@ -62,12 +62,19 @@ dayTable.NormBin = dayTable.Count_Bin ./ dayTable.NormEffort_Bin; %what would th
 dayTable.NormClick = dayTable.Count_Click ./ dayTable.NormEffort_Sec; %what would be the normalized click count given the amount of effort
 dayTable.HoursNorm = (dayTable.NormBin * 5) ./ 60; %convert the number of 5-min bins per day to hours
 
+% dayTable.Season = zeros(p,1);
+% dayTable.month = month(dayTable.tbin);
+% summeridxD = (dayTable.month == 6  | dayTable.month == 7 | dayTable.month == 8);
+% fallidxD = (dayTable.month == 9  | dayTable.month == 10 | dayTable.month == 11);
+% winteridxD = (dayTable.month == 12  | dayTable.month == 1 | dayTable.month == 2);
+% springidxD = (dayTable.month == 3  | dayTable.month == 4 | dayTable.month == 5);
+
 dayTable.Season = zeros(p,1);
 dayTable.month = month(dayTable.tbin);
-summeridxD = (dayTable.month == 6  | dayTable.month == 7 | dayTable.month == 8);
-fallidxD = (dayTable.month == 9  | dayTable.month == 10 | dayTable.month == 11);
-winteridxD = (dayTable.month == 12  | dayTable.month == 1 | dayTable.month == 2);
-springidxD = (dayTable.month == 3  | dayTable.month == 4 | dayTable.month == 5);
+summeridxD = (dayTable.month == 7  | dayTable.month == 8 | dayTable.month == 9);
+fallidxD = (dayTable.month == 10  | dayTable.month == 11 | dayTable.month == 12);
+winteridxD = (dayTable.month == 1  | dayTable.month == 2 | dayTable.month == 3);
+springidxD = (dayTable.month == 4  | dayTable.month == 5 | dayTable.month == 6);
 
 %adds the season according to the month the data was collected
 dayTable.Season(summeridxD) = 1;
@@ -75,8 +82,9 @@ dayTable.Season(fallidxD) = 2;
 dayTable.Season(winteridxD) = 3;
 dayTable.Season(springidxD) = 4;
 
-%add year to data
+%add year and day to data
 dayTable.Year = year(dayTable.tbin); 
+dayTable.day = day(dayTable.tbin,'dayofyear');
 
 NANidx = ismissing(dayTable(:,{'NormBin'}));
 dayTable{:,{'NormBin'}}(NANidx) = 0; %if there was effort, but no detections change the NormBin column to zero
@@ -85,7 +93,6 @@ dayTable{:,{'NormBin'}}(NANidx) = 0; %if there was effort, but no detections cha
 dayBinTAB = timetable2table(dayTable);
 writetable(dayBinTAB,[saveDir,'\',siteabrev,'_dayData_forGLMR125.csv']); %save table to .csv to continue stats in R F:\Seasonality\Kruskal_RankSumSTATS.R
 %% day table with days grouped together (summed and averaged) ** USE THIS **
-dayTable.day = day(dayTable.tbin,'dayofyear');
 [MD,~] = findgroups(dayTable.day);
 dayTable.day = categorical(dayTable.day);
 
@@ -95,13 +102,36 @@ if length(MD) < 365
     sumtab365 = meantab365;
 else
 %mean
-meanarray = grpstats(dayTable.HoursProp, dayTable.day, @mean); %takes the mean of each day of the year
-meantable = array2table(meanarray);
-newcol_mean = (1:length(meanarray))';
-meanarray365 = [newcol_mean meanarray];
+[mean, sem, std, var, range] = grpstats(dayTable.HoursProp, dayTable.day, {'mean','sem','std','var','range'}); %takes the mean of each day of the year
+meantable = array2table(mean);
+semtable = array2table(sem);
+stdtable = array2table(std);
+vartable = array2table(var);
+rangetable = array2table(range);
+newcol_mean = (1:length(mean))';
+meanarray365 = [newcol_mean mean sem std var range];
 meantab365 = array2table(meanarray365);
-meantab365.Properties.VariableNames = {'Day' 'HoursProp'};
+meantab365.Properties.VariableNames = {'Day' 'HoursProp' 'SEM' 'Std' 'Var' 'Range'};
 end
+
+[pp,~]=size(meantab365);
+meantab365.Season = zeros(pp,1);
+meantab365.month = month(meantab365.Day);
+% summeridxD = (meantab365.month == 6  | meantab365.month == 7 | meantab365.month == 8);
+% fallidxD = (meantab365.month == 9  | meantab365.month == 10 | meantab365.month == 11);
+% winteridxD = (meantab365.month == 12  | meantab365.month == 1 | meantab365.month == 2);
+% springidxD = (meantab365.month == 3  | meantab365.month == 4 | meantab365.month == 5);
+
+summeridxD = (meantab365.month == 7  | meantab365.month == 8 | meantab365.month == 9);
+fallidxD = (meantab365.month == 10  | meantab365.month == 11 | meantab365.month == 12);
+winteridxD = (meantab365.month == 1  | meantab365.month == 2 | meantab365.month == 3);
+springidxD = (meantab365.month == 4  | meantab365.month == 5 | meantab365.month == 6);
+
+%adds the season according to the month the data was collected
+meantab365.Season(summeridxD) = 1;
+meantab365.Season(fallidxD) = 2;
+meantab365.Season(winteridxD) = 3;
+meantab365.Season(springidxD) = 4;
 
 writetable(meantab365, [saveDir,'\',siteabrev,'_days365GroupedMean_forGLMR125.csv']); %table with the mean for each day of the year
 %% Integral Time Scale Calculation 
@@ -110,66 +140,3 @@ its_cont = IntegralTimeScaleCalc(ts);
 
 ts = meantab365.HoursProp;
 its_nonCont = IntegralTimeScaleCalc(ts);
-%% Detecting Autocorrelation with time lags as days
-figure
-plot(dayTable.tbin,dayTable.HoursProp)
-
-nanIDX = isnan(dayTable.HoursProp);
-dayTable.Hours(nanIDX) = 0;
-
-figure
-subplot(2,1,1)
-autocorr(dayTable.Count_Bin,25)
-subplot(2,1,2)
-parcorr(dayTable.Count_Bin,25)
-%% Detecting Autocorrelation with time lags as 5min bins
-figure
-plot(binTable.tbin,binTable.PreAbs)
-
-figure
-subplot(2,1,1)
-autocorr(binTable.PreAbs,25)
-subplot(2,1,2)
-parcorr(binTable.PreAbs,25)
-
-disp('Done Processing; Files are Saved');
-
-%%
-weekTable.Percent = weekTable.Effort_Sec./604800
-figure
-yyaxis left
-bar(weekTable.tbin,weekTable.Count_Bin,'k')
-title('Average Weekly Presence of Sperm Whales at Guadalupe Island in Baja California')
-ylabel('Average # of 5-Minute Bins')
-hold on
-yyaxis right
-plot(weekTable.tbin,weekTable.Percent,'.r')
-ylabel('Percent Effort')
-col = [0 0 0];
-set(gcf,'defaultAxesColorOrder',[col;col])
-
-%% Average weekly click count (log scale)
-dayTable.Year = year(dayTable.tbin);
-weekTable.Year = year(weekTable.tbin);
-figure
-subplot(3,1,1) %number of plots, column, row)
-bar1 = bar(dayTable.tbin(dayTable.Year==2010),dayTable.Count_Bin(dayTable.Year==2010),'c')%year 2019
-xlim(['01-Jan-2010','31-Dec-2010'])
-subplot(3,1,2) %number of plots, column, row)
-bar2 = bar(dayTable.tbin(dayTable.Year==2011),dayTable.Count_Bin(dayTable.Year==2011),'b')  %year 2018
-subplot(3,1,3) %number of plots, column, row)
-bar3 = bar(dayTable.tbin(dayTable.Year==2012),dayTable.Count_Bin(dayTable.Year==2012),'m') %year 2017
-legend
-hold on
-xlim([29 37])
-set(gca,'YScale','log')
-title('Average Weekly Click Counts in Pond Inlet 2016-2019')
-ylabel('Average Weekly Click Count (log scale)')
-xlabel('Week #')
-plots = get(gca, 'Children');
-legend(plots([1, 2, 3, 4]), {'2016', '2017', '2018', '2019'});
-% Save plot
-weeklyfn = [filePrefix,'_',p.speName,'_averageWeeklyClick_OverlapPlot_logscale'];
-saveas(gcf,fullfile(SaveDir,weeklyfn),'png')
-saveas(gcf,fullfile(SaveDir,weeklyfn),'fig')
-hold off

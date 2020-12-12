@@ -62,12 +62,19 @@ dayTable.NormBin = dayTable.Count_Bin ./ dayTable.NormEffort_Bin; %what would th
 dayTable.NormClick = dayTable.Count_Click ./ dayTable.NormEffort_Sec; %what would be the normalized click count given the amount of effort
 dayTable.HoursNorm = (dayTable.NormBin * 5) ./ 60; %convert the number of 5-min bins per day to hours
 
+% dayTable.Season = zeros(p,1);
+% dayTable.month = month(dayTable.tbin);
+% summeridxD = (dayTable.month == 6  | dayTable.month == 7 | dayTable.month == 8);
+% fallidxD = (dayTable.month == 9  | dayTable.month == 10 | dayTable.month == 11);
+% winteridxD = (dayTable.month == 12  | dayTable.month == 1 | dayTable.month == 2);
+% springidxD = (dayTable.month == 3  | dayTable.month == 4 | dayTable.month == 5);
+
 dayTable.Season = zeros(p,1);
 dayTable.month = month(dayTable.tbin);
-summeridxD = (dayTable.month == 6  | dayTable.month == 7 | dayTable.month == 8);
-fallidxD = (dayTable.month == 9  | dayTable.month == 10 | dayTable.month == 11);
-winteridxD = (dayTable.month == 12  | dayTable.month == 1 | dayTable.month == 2);
-springidxD = (dayTable.month == 3  | dayTable.month == 4 | dayTable.month == 5);
+summeridxD = (dayTable.month == 7  | dayTable.month == 8 | dayTable.month == 9);
+fallidxD = (dayTable.month == 10  | dayTable.month == 11 | dayTable.month == 12);
+winteridxD = (dayTable.month == 1  | dayTable.month == 2 | dayTable.month == 3);
+springidxD = (dayTable.month == 4  | dayTable.month == 5 | dayTable.month == 6);
 
 %adds the season according to the month the data was collected
 dayTable.Season(summeridxD) = 1;
@@ -75,17 +82,17 @@ dayTable.Season(fallidxD) = 2;
 dayTable.Season(winteridxD) = 3;
 dayTable.Season(springidxD) = 4;
 
-%add year to data
+%add year and day to data
 dayTable.Year = year(dayTable.tbin); 
+dayTable.day = day(dayTable.tbin,'dayofyear');
 
 NANidx = ismissing(dayTable(:,{'NormBin'}));
 dayTable{:,{'NormBin'}}(NANidx) = 0; %if there was effort, but no detections change the NormBin column to zero
 
 %save day table to csv for R
 dayBinTAB = timetable2table(dayTable);
-writetable(dayBinTAB,[saveDir,'\',siteabrev,'_dayData_forGLMR125.csv']); %save table to .csv to continue stats in R F:\Seasonality\Kruskal_RankSumSTATS.R
+writetable(dayBinTAB,[saveDir,'\',siteabrev,'_dayData_forGLMR125_Boreal.csv']); %save table to .csv to continue stats in R F:\Seasonality\Kruskal_RankSumSTATS.R
 %% day table with days grouped together (summed and averaged) ** USE THIS **
-dayTable.day = day(dayTable.tbin,'dayofyear');
 [MD,~] = findgroups(dayTable.day);
 dayTable.day = categorical(dayTable.day);
 
@@ -107,7 +114,26 @@ meantab365 = array2table(meanarray365);
 meantab365.Properties.VariableNames = {'Day' 'HoursProp' 'SEM' 'Std' 'Var' 'Range'};
 end
 
-writetable(meantab365, [saveDir,'\',siteabrev,'_days365GroupedMean_forGLMR125.csv']); %table with the mean for each day of the year
+[pp,~]=size(meantab365);
+meantab365.Season = zeros(pp,1);
+meantab365.month = month(meantab365.Day);
+% summeridxD = (meantab365.month == 6  | meantab365.month == 7 | meantab365.month == 8);
+% fallidxD = (meantab365.month == 9  | meantab365.month == 10 | meantab365.month == 11);
+% winteridxD = (meantab365.month == 12  | meantab365.month == 1 | meantab365.month == 2);
+% springidxD = (meantab365.month == 3  | meantab365.month == 4 | meantab365.month == 5);
+
+summeridxD = (meantab365.month == 7  | meantab365.month == 8 | meantab365.month == 9);
+fallidxD = (meantab365.month == 10  | meantab365.month == 11 | meantab365.month == 12);
+winteridxD = (meantab365.month == 1  | meantab365.month == 2 | meantab365.month == 3);
+springidxD = (meantab365.month == 4  | meantab365.month == 5 | meantab365.month == 6);
+
+%adds the season according to the month the data was collected
+meantab365.Season(summeridxD) = 1;
+meantab365.Season(fallidxD) = 2;
+meantab365.Season(winteridxD) = 3;
+meantab365.Season(springidxD) = 4;
+
+writetable(meantab365, [saveDir,'\',siteabrev,'_days365GroupedMean_forGLMR125_Boreal.csv']); %table with the mean for each day of the year
 %% Integral Time Scale Calculation 
 ts = dayTable.HoursProp;
 its_cont = IntegralTimeScaleCalc(ts);
