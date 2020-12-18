@@ -5,14 +5,12 @@ close all
 filePrefix = 'GofAK_CB'; % File name to match. 
 siteabrev = 'CB'; %abbreviation of site.
 sp = 'Pm'; % your species code
-itnum = '2'; % which iteration you are looking for
 srate = 200; % sample rate
-tpwsPath = 'E:\Project_Sites\CB\TPWS_125'; %directory of TPWS files
 effortXls = 'E:\Project_Sites\CB\Pm_Effort_CB.xlsx'; % specify excel file with effort times
 saveDir = 'E:\Project_Sites\CB\Seasonality'; %specify directory to save files
 %% load workspace
 load([saveDir,'\',siteabrev,'_workspace125.mat']);
-%% group data by 5min bins, days, weeks, and seasons
+%% group data by 5min bins, days, weeks, and seasons 
 %group data by 5 minute bins
 binTable = synchronize(binData,binEffort);
 binTable.Properties.VariableNames{'bin'} = 'Effort_Bin';
@@ -62,13 +60,7 @@ dayTable.NormBin = dayTable.Count_Bin ./ dayTable.NormEffort_Bin; %what would th
 dayTable.NormClick = dayTable.Count_Click ./ dayTable.NormEffort_Sec; %what would be the normalized click count given the amount of effort
 dayTable.HoursNorm = (dayTable.NormBin * 5) ./ 60; %convert the number of 5-min bins per day to hours
 
-% dayTable.Season = zeros(p,1);
-% dayTable.month = month(dayTable.tbin);
-% summeridxD = (dayTable.month == 6  | dayTable.month == 7 | dayTable.month == 8);
-% fallidxD = (dayTable.month == 9  | dayTable.month == 10 | dayTable.month == 11);
-% winteridxD = (dayTable.month == 12  | dayTable.month == 1 | dayTable.month == 2);
-% springidxD = (dayTable.month == 3  | dayTable.month == 4 | dayTable.month == 5);
-
+%Winter starts on January (closest to the real thing, which is Dec. 21st)
 dayTable.Season = zeros(p,1);
 dayTable.month = month(dayTable.tbin);
 summeridxD = (dayTable.month == 7  | dayTable.month == 8 | dayTable.month == 9);
@@ -91,16 +83,18 @@ dayTable{:,{'NormBin'}}(NANidx) = 0; %if there was effort, but no detections cha
 
 %save day table to csv for R
 dayBinTAB = timetable2table(dayTable);
-writetable(dayBinTAB,[saveDir,'\',siteabrev,'_dayData_forGLMR125_Boreal.csv']); %save table to .csv to continue stats in R F:\Seasonality\Kruskal_RankSumSTATS.R
+writetable(dayBinTAB,[saveDir,'\',siteabrev,'_dayData_forGLMR125.csv']); %save table to .csv to continue stats in R F:\Seasonality\Kruskal_RankSumSTATS.R
 %% day table with days grouped together (summed and averaged) ** USE THIS **
 [MD,~] = findgroups(dayTable.day);
-dayTable.day = categorical(dayTable.day);
 
 if length(MD) < 365
     meantab365 = table(dayTable.day(:), dayTable.HoursProp(:));
     meantab365.Properties.VariableNames = {'Day' 'HoursProp'};
     sumtab365 = meantab365;
+    meantab365.HoursProp(isnan(meantab365.HoursProp)) = 0;
+    dayTable.HoursProp(isnan(dayTable.HoursProp)) = 0; 
 else
+dayTable.day = categorical(dayTable.day);
 %mean
 [mean, sem, std, var, range] = grpstats(dayTable.HoursProp, dayTable.day, {'mean','sem','std','var','range'}); %takes the mean of each day of the year
 meantable = array2table(mean);
@@ -117,11 +111,8 @@ end
 [pp,~]=size(meantab365);
 meantab365.Season = zeros(pp,1);
 meantab365.month = month(meantab365.Day);
-% summeridxD = (meantab365.month == 6  | meantab365.month == 7 | meantab365.month == 8);
-% fallidxD = (meantab365.month == 9  | meantab365.month == 10 | meantab365.month == 11);
-% winteridxD = (meantab365.month == 12  | meantab365.month == 1 | meantab365.month == 2);
-% springidxD = (meantab365.month == 3  | meantab365.month == 4 | meantab365.month == 5);
 
+%Winter starts on January 1st
 summeridxD = (meantab365.month == 7  | meantab365.month == 8 | meantab365.month == 9);
 fallidxD = (meantab365.month == 10  | meantab365.month == 11 | meantab365.month == 12);
 winteridxD = (meantab365.month == 1  | meantab365.month == 2 | meantab365.month == 3);
@@ -133,8 +124,9 @@ meantab365.Season(fallidxD) = 2;
 meantab365.Season(winteridxD) = 3;
 meantab365.Season(springidxD) = 4;
 
-writetable(meantab365, [saveDir,'\',siteabrev,'_days365GroupedMean_forGLMR125_Boreal.csv']); %table with the mean for each day of the year
+writetable(meantab365, [saveDir,'\',siteabrev,'_days365GroupedMean_forGLMR125.csv']); %table with the mean for each day of the year
 %% Integral Time Scale Calculation 
+dayTable.HoursProp(isnan(dayTable.HoursProp)) = 0; 
 ts = dayTable.HoursProp;
 its_cont = IntegralTimeScaleCalc(ts);
 
