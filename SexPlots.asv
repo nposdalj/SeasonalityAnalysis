@@ -12,20 +12,7 @@ load([saveDir,'\',siteabrev,'_workspaceStep3.mat']);
 %% Plots
 %Plot proportion of hours per DAY with sperm whale presence
 %Plot proportion of hours per WEEK with sperm whale presence
-
-%Plot proportion of hours per DAY with presence from each group
-%Plot proportion of hours per WEEK with presence from each group
-
-%Average yearly presence of proportion of hours per DAY with sperm whale
-%presence
-%Average yearly presence of proportion of hours per WEEK with sperm whale
-%presence
-
-%Average yearly presence of proportion of hours per DAY with presence from
-%each group
-%Average yearly presence of proportion of hours per WEEK with presence from
-%each group
-
+%Plot daily presence in 5-min bins for each class seperately
 figure
 subplot(3,1,1)
 bar(binPresence.tbin,binPresence.FeHoursProp,'FaceColor','y','BarWidth',3)

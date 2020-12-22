@@ -267,3 +267,5 @@ else
     ts = meantabMA365.HoursPropMA;
     its_cont = IntegralTimeScaleCalc(ts);
 end
+%% Save workspace variable
+save([saveDir,'\',siteabrev,'_workspaceStep3.mat']);
