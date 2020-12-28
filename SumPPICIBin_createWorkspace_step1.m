@@ -2,14 +2,14 @@ clearvars
 close all
 
 %% Parameters defined by user
-filePrefix = 'GofAK_CB'; % File name to match. 
-siteabrev = 'CB'; %abbreviation of site.
+filePrefix = 'ALEUT01KS'; % File name to match. 
+siteabrev = 'KS'; %abbreviation of site.
 sp = 'Pm'; % your species code
 itnum = '2'; % which iteration you are looking for
 srate = 200; % sample rate
-tpwsPath = 'E:\Project_Sites\CB\TPWS_125'; %directory of TPWS files
-effortXls = 'E:\Project_Sites\CB\Pm_Effort_CB.xlsx'; % specify excel file with effort times
-saveDir = 'E:\Project_Sites\CB\Seasonality'; %specify directory to save files
+tpwsPath = 'E:\Project_Sites\KS\TPWS_125'; %directory of TPWS files
+effortXls = 'E:\Project_Sites\KS\Pm_Effort_KS.xlsx'; % specify excel file with effort times
+saveDir = 'E:\Project_Sites\KS\Seasonality'; %specify directory to save files
 %% define subfolder that fit specified iteration
 if itnum > 1
    for id = 2: str2num(itnum) % iterate id times according to itnum

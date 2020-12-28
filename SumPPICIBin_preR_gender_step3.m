@@ -1,14 +1,14 @@
 clearvars
 close all
 %% Parameters defined by user
-filePrefix = 'GofAK_CB'; % File name to match
-siteabrev = 'CB'; %abbreviation of site
+filePrefix = 'GofAK_AB_01_01_HP'; % File name to match
+siteabrev = 'AB'; %abbreviation of site
 sp = 'Pm'; % your species code
 srate = 200; % sample rate
-tpwsPath = 'E:\Project_Sites\CB\TPWS_125\TPWS2\'; %directory of TPWS files
-saveDir = 'E:\Project_Sites\CB\Seasonality'; %specify directory to save files
-effortXls = 'E:\Project_Sites\CB\Pm_Effort_CB.xlsx'; % specify excel file with effort times
-dayBinCSV= 'E:\Project_Sites\CB\Seasonality\CB_dayData_forGLMR125.csv'; % specify csv document with general PM information
+tpwsPath = 'E:\Project_Sites\AB\TPWS_125\TPWS2\TPWS3\'; %directory of TPWS files
+saveDir = 'E:\Project_Sites\AB\Seasonality'; %specify directory to save files
+effortXls = 'E:\Project_Sites\AB\Pm_Effort_AB.xlsx'; % specify excel file with effort times
+dayBinCSV= 'E:\Project_Sites\AB\Seasonality\AB_dayData_forGLMR125.csv'; % specify csv document with general PM information
 %% Get effort times matching prefix file
 %when multiple sites in the effort table
 allEfforts = readtable(effortXls); %read effort table
@@ -192,7 +192,6 @@ else
     meanarrayMA365 = [newcol_mean mean sem std var range];
     meantabMA365 = array2table(meanarrayMA365);
     meantabMA365.Properties.VariableNames = {'Day' 'HoursPropMA' 'SEM' 'Std' 'Var' 'Range'};    
-end
 
 [pp,~]=size(meantabFE365);
 meantabFE365.Season = zeros(pp,1);
@@ -245,6 +244,7 @@ meantabMA365.Season(springidxD) = 4;
 writetable(meantabFE365, [saveDir,'\',siteabrev,'_365GroupedMeanFemale.csv']); %table with the mean for each day of the year
 writetable(meantabJU365, [saveDir,'\',siteabrev,'_365GroupedMeanJuvenile.csv']); %table with the mean for each day of the year
 writetable(meantabMA365, [saveDir,'\',siteabrev,'_365GroupedMeanMale.csv']); %table with the mean for each day of the year
+end
 %% Integral Time Scale Calculation 
 if exist('meantab365','var')
     meantab365.HoursPropFE(isnan(meantab365.HoursPropFE)) = 0; 
