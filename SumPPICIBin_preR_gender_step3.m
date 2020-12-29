@@ -1,14 +1,14 @@
 clearvars
 close all
 %% Parameters defined by user
-filePrefix = 'GofAK_AB_01_01_HP'; % File name to match
-siteabrev = 'AB'; %abbreviation of site
+filePrefix = 'ALEUT'; % File name to match
+siteabrev = 'BD'; %abbreviation of site
 sp = 'Pm'; % your species code
 srate = 200; % sample rate
-tpwsPath = 'E:\Project_Sites\AB\TPWS_125\TPWS2\TPWS3\'; %directory of TPWS files
-saveDir = 'E:\Project_Sites\AB\Seasonality'; %specify directory to save files
-effortXls = 'E:\Project_Sites\AB\Pm_Effort_AB.xlsx'; % specify excel file with effort times
-dayBinCSV= 'E:\Project_Sites\AB\Seasonality\AB_dayData_forGLMR125.csv'; % specify csv document with general PM information
+tpwsPath = 'E:\Project_Sites\BD\TPWS_125\TPWS2\'; %directory of TPWS files
+saveDir = 'E:\Project_Sites\BD\Seasonality'; %specify directory to save files
+effortXls = 'E:\Project_Sites\BD\Pm_Effort_BD.xlsx'; % specify excel file with effort times
+dayBinCSV= 'E:\Project_Sites\BD\Seasonality\BD_dayData_forGLMR125.csv'; % specify csv document with general PM information
 %% Get effort times matching prefix file
 %when multiple sites in the effort table
 allEfforts = readtable(effortXls); %read effort table
@@ -246,6 +246,17 @@ writetable(meantabJU365, [saveDir,'\',siteabrev,'_365GroupedMeanJuvenile.csv']);
 writetable(meantabMA365, [saveDir,'\',siteabrev,'_365GroupedMeanMale.csv']); %table with the mean for each day of the year
 end
 %% Integral Time Scale Calculation 
+%continuous data
+binPresence.FeHoursProp(isnan(binPresence.FeHoursProp)) = 0;
+ts = binPresence.FeHoursProp;
+its_cont = IntegralTimeScaleCalc(ts);
+binPresence.JuHoursProp(isnan(binPresence.JuHoursProp)) = 0;
+ts = binPresence.JuHoursProp;
+its_cont = IntegralTimeScaleCalc(ts);
+binPresence.MaHoursProp(isnan(binPresence.MaHoursProp)) = 0;
+ts = binPresence.MaHoursProp;
+its_cont = IntegralTimeScaleCalc(ts);
+%Grouped Data
 if exist('meantab365','var')
     meantab365.HoursPropFE(isnan(meantab365.HoursPropFE)) = 0; 
     ts = meantab365.HoursPropFE;

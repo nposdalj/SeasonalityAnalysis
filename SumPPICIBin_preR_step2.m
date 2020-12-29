@@ -2,12 +2,12 @@ clearvars
 close all
 
 %% Parameters defined by user
-filePrefix = 'ALEUT01KS'; % File name to match. 
-siteabrev = 'KS'; %abbreviation of site.
+filePrefix = 'ALEUT'; % File name to match. 
+siteabrev = 'BD'; %abbreviation of site.
 sp = 'Pm'; % your species code
 srate = 200; % sample rate
-effortXls = 'E:\Project_Sites\KS\Pm_Effort_KS.xlsx'; % specify excel file with effort times
-saveDir = 'E:\Project_Sites\KS\Seasonality'; %specify directory to save files
+effortXls = 'E:\Project_Sites\BD\Pm_Effort_BD.xlsx'; % specify excel file with effort times
+saveDir = 'E:\Project_Sites\BD\Seasonality'; %specify directory to save files
 %% load workspace
 load([saveDir,'\',siteabrev,'_workspace125.mat']);
 %% group data by 5min bins, days, weeks, and seasons 
