@@ -1,9 +1,9 @@
 clearvars
 close all
 %% Parameters defined by user
-filePrefix = 'ALEUT01KS'; % File name to match. 
-siteabrev = 'KS'; %abbreviation of site.
-titleNAME = 'Aleutian Chain - Kiska Island';
+filePrefix = 'GofAK_KOA'; % File name to match. 
+siteabrev = 'KOA'; %abbreviation of site.
+titleNAME = 'Gulf of Alaska - Kodiak Island';
 sp = 'Pm'; % your species code
 tpwsPath = ['E:\Project_Sites\',siteabrev,'\TPWS_125\TPWS2\']; %directory of TPWS files
 saveDir = ['E:\Project_Sites\',siteabrev,'\Seasonality']; %specify directory to save files
@@ -12,15 +12,14 @@ filename = ['E:\Project_Sites\',siteabrev,'\Seasonality\',siteabrev,'_workspaceS
 load(filename);
 %% pie chart for F/J/M presence at each site (year round) - counting sum of hours NO TEXT
 if strcmp(siteabrev,'KOA') == 1 || strcmp(siteabrev,'KS') == 1
-x = [sum(meantab365.HoursPropJU) sum(meantab365.HoursPropMA)];
+x = [sum(meantab365.HoursPropJU) sum(meantab365.HoursPropMA) sum(meantab365.HoursPropFE)];
 p = pie(x);
-colormap([0 0 2; 
-    1 0 0])
 ax = gca;
 ax.Children(2).EdgeAlpha = 0;
 ax.Children(4).EdgeAlpha = 0;
+ax.Children(6).EdgeAlpha = 0;
 title([{'Proportion of Hours with Presence of Each Class'},{titleNAME}]);
-delete(ax.Children([1,3]));
+delete(ax.Children([1,3,5]));
 saveas(gcf,[saveDir,'\',siteabrev,'YearRoundRatio_BinsNOTEXT.png']);
 elseif strcmp(siteabrev,'AB')
 x = [sum(meantab365.HoursPropFE) sum(meantab365.HoursPropJU) sum(meantab365.HoursPropMA)];
@@ -73,22 +72,7 @@ saveas(gcf,[saveDir,'\',siteabrev,'YearRoundRatio_DaysNOTEXT.png']);
 end
 %% pie chart for F/J/M presence at each site (year round)- counting sum of bins with text
 if strcmp(siteabrev,'KOA') == 1 || strcmp(siteabrev,'KS') == 1
-    x = [sum(meantab365.HoursPropJU) sum(meantab365.HoursPropMA)];
-    p = pie(x);
-    colormap([0 0 2;
-              1 0 0])
-    pText = findobj(p,'Type','text');
-    percentValues = get(pText,'String');
-    labels = {'Mid-Size: '; 'Males: '};
-    combinedtxt = strcat(labels,percentValues);
-    pText(1).String = combinedtxt(1);
-    pText(1).FontSize = 14;
-    pText(2).String = combinedtxt(2);
-    pText(2).FontSize = 14;
-    title([{'Proportion of Hours with Presence of Each Class'},{titleNAME}]);
-    saveas(gcf,[saveDir,'\',siteabrev,'YearRoundRatio_BinsTEXT.png']);
-elseif strcmp(siteabrev,'AB') == 1
-x = [sum(meantab365.HoursPropJU) sum(meantab365.HoursPropMA) sum(meantab365.HoursPropFE) ];
+x = [sum(meantab365.HoursPropJU) sum(meantab365.HoursPropMA) sum(meantab365.HoursPropFE)];
 p = pie(x);
 pText = findobj(p,'Type','text');
 percentValues = get(pText,'String');
@@ -98,6 +82,19 @@ pText(1).String = combinedtxt(1);
 pText(1).FontSize = 14;
 pText(2).String = combinedtxt(2);
 pText(2).FontSize = 14;
+pText(3).String = [];
+title([{'Proportion of Hours with Presence of Each Class'},{titleNAME}]);
+saveas(gcf,[saveDir,'\',siteabrev,'YearRoundRatio_BinsTEXT.png']);
+elseif strcmp(siteabrev,'AB') == 1
+x = [sum(meantab365.HoursPropJU) sum(meantab365.HoursPropMA) sum(meantab365.HoursPropFE)];
+p = pie(x);
+pText = findobj(p,'Type','text');
+percentValues = get(pText,'String');
+labels = {'Mid-Size: '; 'Males: '; 'Social Units: '};
+combinedtxt = strcat(labels,percentValues);
+pText(1).String = combinedtxt(1);
+pText(1).FontSize = 14;
+pText(2).String = combinedtxt(2);
 pText(3).String = combinedtxt(3);
 pText(3).FontSize = 14;
 title([{'Proportion of Hours with Presence of Each Class'},{titleNAME}]);
@@ -120,20 +117,19 @@ saveas(gcf,[saveDir,'\',siteabrev,'YearRoundRatio_BinsTEXT.png']);
 end
 %% pie chart for F/J/M presence at each site (year round) - counting sum of days with text
 if strcmp(siteabrev,'KOA') == 1 || strcmp(siteabrev,'KS') == 1
-    x3 = [sum(meantab365.Juv) sum(meantab365.Mal)];
-    p3 = pie(x3);
-    colormap([0 0 2;
-              1 0 0])
-    pText = findobj(p3,'Type','text');
-    percentValues = get(pText,'String');
-    labels = {'Mid-Size: '; 'Males: '};
-    combinedtxt = strcat(labels,percentValues);
-    pText(1).String = combinedtxt(1);
-    pText(1).FontSize = 14;
-    pText(2).String = combinedtxt(2);
-    pText(2).FontSize = 14;
-    title([{'Proportion of Days with Presence of Each Class'},{titleNAME}]);
-    saveas(gcf,[saveDir,'\',siteabrev,'YearRoundRatio_DaysTEXT.png']);
+x2 = [sum(meantab365.Juv) sum(meantab365.Mal) sum(meantab365.Fem)];
+p2 = pie(x2);
+pText = findobj(p2,'Type','text');
+percentValues = get(pText,'String');
+labels = {'Mid-Size: '; 'Males: '; 'Social Units: '};
+combinedtxt = strcat(labels,percentValues);
+pText(1).String = combinedtxt(1);
+pText(1).FontSize = 14;
+pText(2).String = combinedtxt(2);
+pText(2).FontSize = 14;
+pText(3).String = [];
+title([{'Proportion of Days with Presence of Each Class'},{titleNAME}]);
+saveas(gcf,[saveDir,'\',siteabrev,'YearRoundRatio_DaysTEXT.png']);
 elseif strcmp(siteabrev,'AB') == 1
 x2 = [sum(meantab365.Juv) sum(meantab365.Mal) sum(meantab365.Fem)];
 p2 = pie(x2);
