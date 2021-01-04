@@ -1,9 +1,9 @@
 clearvars
 close all
 %% Parameters defined by user
-filePrefix = 'GofAK_KOA'; % File name to match. 
-siteabrev = 'KOA'; %abbreviation of site.
-titleNAME = 'Gulf of Alaska - Kodiak Island';
+filePrefix = 'GofAK_CB'; % File name to match. 
+siteabrev = 'CB'; %abbreviation of site.
+titleNAME = 'Gulf of Alaska - Continental Slope';
 sp = 'Pm'; % your species code
 tpwsPath = ['E:\Project_Sites\',siteabrev,'\TPWS_125\TPWS2\']; %directory of TPWS files
 saveDir = ['E:\Project_Sites\',siteabrev,'\Seasonality']; %specify directory to save files
@@ -70,7 +70,7 @@ title([{'Proportion of Days with Presence of Each Class'},{titleNAME}]);
 delete(ax.Children([1,3,5]));
 saveas(gcf,[saveDir,'\',siteabrev,'YearRoundRatio_DaysNOTEXT.png']);
 end
-%% pie chart for F/J/M presence at each site (year round)- counting sum of bins with text
+%% pie chart for F/J/M presence at each site (year round)- counting sum of days with text
 if strcmp(siteabrev,'KOA') == 1 || strcmp(siteabrev,'KS') == 1
 x = [sum(meantab365.HoursPropJU) sum(meantab365.HoursPropMA) sum(meantab365.HoursPropFE)];
 p = pie(x);
