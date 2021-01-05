@@ -1,15 +1,16 @@
 clearvars
 close all
 %% Parameters defined by user
-filePrefix = 'GofAK_CB'; % File name to match. 
-siteabrev = 'CB'; %abbreviation of site.
-titleNAME = 'Gulf of Alaska - Continental Slope';
+filePrefix = 'GofAK_KOA'; % File name to match. 
+siteabrev = 'KOA'; %abbreviation of site.
+titleNAME = 'Gulf of Alaska - Kodiak Island';
 sp = 'Pm'; % your species code
-tpwsPath = ['E:\Project_Sites\',siteabrev,'\TPWS_125\TPWS2\']; %directory of TPWS files
-saveDir = ['E:\Project_Sites\',siteabrev,'\Seasonality']; %specify directory to save files
+tpwsPath = ['E:\Project_Sites\',siteabrev,'\TPWS_125\TPWS2\TPWS3\']; %directory of TPWS files
+saveDir = ['G:\My Drive\GofAK_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev]; %specify directory to save files
 %% load data from step 3
 filename = ['E:\Project_Sites\',siteabrev,'\Seasonality\',siteabrev,'_workspaceStep3'];
 load(filename);
+saveDir = ['G:\My Drive\GofAK_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev]; %specify directory to save files
 %% pie chart for F/J/M presence at each site (year round) - counting sum of hours NO TEXT
 if strcmp(siteabrev,'KOA') == 1 || strcmp(siteabrev,'KS') == 1
 x = [sum(meantab365.HoursPropJU) sum(meantab365.HoursPropMA) sum(meantab365.HoursPropFE)];
@@ -22,7 +23,7 @@ title([{'Proportion of Hours with Presence of Each Class'},{titleNAME}]);
 delete(ax.Children([1,3,5]));
 saveas(gcf,[saveDir,'\',siteabrev,'YearRoundRatio_BinsNOTEXT.png']);
 elseif strcmp(siteabrev,'AB')
-x = [sum(meantab365.HoursPropFE) sum(meantab365.HoursPropJU) sum(meantab365.HoursPropMA)];
+x = [sum(meantab365.HoursPropJU) sum(meantab365.HoursPropMA) sum(meantab365.HoursPropFE)];
 p = pie(x);
 ax = gca;
 ax.Children(2).EdgeAlpha = 0;
@@ -32,7 +33,7 @@ title([{'Proportion of Hours with Presence of Each Class'},{titleNAME}]);
 delete(ax.Children([1,3,5]));
 saveas(gcf,[saveDir,'\',siteabrev,'YearRoundRatio_BinsNOTEXT.png']);
 else
-x = [sum(meantabFE365.HoursPropFE) sum(meantabJU365.HoursPropJU) sum(meantabMA365.HoursPropMA)];
+x = [sum(meantabJU365.HoursPropJU) sum(meantabMA365.HoursPropMA) sum(meantabFE365.HoursPropFE)];
 p = pie(x);
 ax = gca;
 ax.Children(2).EdgeAlpha = 0;
