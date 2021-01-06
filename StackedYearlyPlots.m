@@ -10,7 +10,7 @@ itnum = '2'; % which iteration you are looking for
 srate = 200; % sample rate
 tpwsPath = 'E:\Project_Sites\BD\TPWS_125'; %directory of TPWS files
 effortXls = 'E:\Project_Sites\BD\Pm_Effort_BD.xlsx'; % specify excel file with effort times
-saveDir = 'E:\Project_Sites\BD\Seasonality'; %specify directory to save and load files
+saveDir = ['G:\My Drive\GofAK_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev]; %specify directory to save and load files
 %% load workspace
 load([saveDir,'\',siteabrev,'_workspace125.mat']);
 %% group data by 5min bins, days, weeks, and seasons
@@ -37,21 +37,6 @@ dayTable.Properties.VariableNames{'bin'} = 'Effort_Bin';
 dayTable.Properties.VariableNames{'sec'} = 'Effort_Sec';
 dayTableZeros = dayTable;
 dayTable(~dayTable.Effort_Bin,:)=[]; %removes days with no effort, NOT days with no presence
-%% statistical methods from Diogou, et al. 2019 - by 5 min bins (0s = Absence, 1s = Presence)
-% if there was a whale clicking during that 5 minutes, count that bin as a
-% 1, if there was no whale clicking but there was effort, count that bin as
-% 0
-binTable.Season = zeros(y,1);
-binTable.month = month(binTable.tbin);
-summeridxB = (binTable.month == 6  | binTable.month == 7 | binTable.month == 8);
-fallidxB = (binTable.month == 9  | binTable.month == 10 | binTable.month == 11);
-winteridxB = (binTable.month == 12  | binTable.month == 1 | binTable.month == 2);
-springidxB = (binTable.month == 3  | binTable.month == 4 | binTable.month == 5);
-
-binTable.Season(summeridxB) = 1;
-binTable.Season(fallidxB) = 2;
-binTable.Season(winteridxB) = 3;
-binTable.Season(springidxB) = 4;
 %% statistical methods from Diogou, et al. 2019 - by daily 5 min bins ** USE THIS **
 [p,~]=size(dayTable);
 dayTable.MaxEffort_Bin = ones(p,1)*(288); %total number of bins possible in one day
@@ -59,21 +44,33 @@ dayTable.MaxEffort_Sec = ones(p,1)*(86400); %seconds in one day
 
 %dealing with duty cycled data
 if strcmp(siteabrev,'CB');
-dayTable.Effort_Bin(222:507) = 127;%for CB02 ONLY - only .44 of each hour is recorded...
-%so effort of 5 min bins for each day is 127 bins
+    ge = dayTable.Effort_Bin(222:516); %bin effort (excluding ships but not considering duty cycle)
+    ge = ge/288; %proportion of data that was not ships if it were full recording effort
+    dayTable.Effort_Bin(222:516) = ge * 240; %for CB02 10 on 2 off (12 minute cycle) -- meaning you're recording 0.8333 percent of the time
+    dayTable.Effort_Sec(222:516) = dayTable.Effort_Bin(222:516) * 5 * 60; %convert from bins into efforts in seconds per day
     else
 if strcmp(siteabrev,'BD');
-dayTable.Effort_Bin(274:end) = 96; %for ALEUT03BD ONLY - only 0.33 of each hour is recorded...
-%so effort of 5 min bins for each day is 96
+        ge = dayTable.Effort_Bin(222:516); %bin effort (excluding ships but not considering duty cycle)
+    ge = ge/288; %proportion of data that was not ships if it were full recording effort
+    dayTabe.Effort_Bin(222:516) = ge * 144; %for ALEUT03BD ONLY 5 on 5 off (10 minute cycle) -- meaning you're recording 0.5 percent of the time
+    dayTable.Effort_Sec(222:516) = dayTable.Effort_Bin(222:516) * 5 * 60; %convert from bins into efforts in seconds per day
     else
 dayTable.MaxEffort_Bin = ones(p,1)*(288);
 end
 end
 
+%two ways to account for the difference in effort..
+%proportion of hours with clics
+dayTable.Minutes = dayTable.Count_Bin * 5; %convert bins to minutes
+dayTable.Hours = (dayTable.Count_Bin * 5) ./ 60; %convert the number of bins sperm whales were detected in to hours per day
+dayTable.HoursProp = dayTable.Hours./(dayTable.Effort_Sec ./ (60 * 60)); %proportion of hours per day w/clicks
+
+%normalizing bin count with duty cycle
 dayTable.NormEffort_Bin = dayTable.Effort_Bin./dayTable.MaxEffort_Bin; %what proportion of the day was there effort
 dayTable.NormEffort_Sec = dayTable.Effort_Sec./dayTable.MaxEffort_Sec; %what proportion of the day was there effort
 dayTable.NormBin = dayTable.Count_Bin ./ dayTable.NormEffort_Bin; %what would the normalized bin count be given the amount of effort
 dayTable.NormClick = dayTable.Count_Click ./ dayTable.NormEffort_Sec; %what would be the normalized click count given the amount of effort
+dayTable.HoursNorm = (dayTable.NormBin * 5) ./ 60; %convert the number of 5-min bins per day to hours
 
 %group data by week
 weekTable = retime(dayTable,'weekly','mean');
@@ -81,13 +78,13 @@ weekTable = retime(dayTable,'weekly','mean');
 weekTable.year = year(weekTable.tbin);
 weekTable.month = month(weekTable.tbin);
 
-%add season and month to daytable
+%Winter starts on January (closest to the real thing, which is Dec. 21st)
 dayTable.Season = zeros(p,1);
 dayTable.month = month(dayTable.tbin);
-summeridxD = (dayTable.month == 6  | dayTable.month == 7 | dayTable.month == 8);
-fallidxD = (dayTable.month == 9  | dayTable.month == 10 | dayTable.month == 11);
-winteridxD = (dayTable.month == 12  | dayTable.month == 1 | dayTable.month == 2);
-springidxD = (dayTable.month == 3  | dayTable.month == 4 | dayTable.month == 5);
+summeridxD = (dayTable.month == 7  | dayTable.month == 8 | dayTable.month == 9);
+fallidxD = (dayTable.month == 10  | dayTable.month == 11 | dayTable.month == 12);
+winteridxD = (dayTable.month == 1  | dayTable.month == 2 | dayTable.month == 3);
+springidxD = (dayTable.month == 4  | dayTable.month == 5 | dayTable.month == 6);
 
 %adds the season according to the month the data was collected
 dayTable.Season(summeridxD) = 1;
@@ -95,15 +92,18 @@ dayTable.Season(fallidxD) = 2;
 dayTable.Season(winteridxD) = 3;
 dayTable.Season(springidxD) = 4;
 
+%add year and day to data
+dayTable.year = year(dayTable.tbin); 
+dayTable.day = day(dayTable.tbin,'dayofyear');
+
 NANidx = ismissing(dayTable(:,{'NormBin'}));
 dayTable{:,{'NormBin'}}(NANidx) = 0; %if there was effort, but no detections change the NormBin column to zero
-dayTable.year = year(dayTable.tbin);
 %%
-weekTable.Percent = weekTable.Effort_Sec./604800
+weekTable.Percent = weekTable.Effort_Sec./604800;
 figure
 yyaxis left
 bar(weekTable.tbin,weekTable.Count_Bin,'k')
-title('Average Weekly Presence of Sperm Whales at Guadalupe Island in Baja California')
+title({'Average Weekly Presence of Sperm Whales',SiteName_forPlots})
 ylabel('Average # of 5-Minute Bins')
 hold on
 yyaxis right
@@ -111,7 +111,6 @@ plot(weekTable.tbin,weekTable.Percent,'.r')
 ylabel('Percent Effort')
 col = [0 0 0];
 set(gcf,'defaultAxesColorOrder',[col;col])
-
 %% Average weekly click count (log scale)
 figure
 title(['Average Daily Presence of Sperm Whales at ',SiteName_forPlots])
