@@ -26,7 +26,7 @@ library(survival)
 library(gtable)
 
 #load data
-site = 'BD'
+site = 'QN'
 filename = paste("G:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",site,'/',site,"_binPresence.csv",sep="")
 binPresence = read.csv(filename) #no effort days deleted
 head(binPresence)
@@ -407,9 +407,9 @@ ggsave(fig5)
 #GAMs with appropiate ITS binning
 
 #GAM to identify seasonal pattern
-if (exists('GroupedDayF')){
+if (sum(GroupedDayF$Female > 0)){
 #females
-gamTw = gam(FeHoursProp ~ s(day, bs = 'cc', k = 50), data = GroupedDayF, family = tw, method = "REML")
+gamTw = gam(FeHoursProp ~ s(day, bs = 'cc', k = 47), data = GroupedDayF, family = tw, method = "REML")
 plot(gamTw, pages =1)
 summary(gamTw)
 
@@ -425,6 +425,7 @@ print(plot(viz,allTerms=T),pages=1)
 #first way to plot GAM
 vizGG = plot(viz,allTerms = T) +
   l_points() +
+  labs(title = 'Social Units (GAM)')+
   l_fitLine(linetype = 3)  +
   l_fitContour()+
   l_ciLine(mul = 5, colour = "blue", linetype = 2) +
@@ -439,6 +440,7 @@ ggsave(fig6)
 #second way to plot GAM
 vizGG2 = plot(viz, allTerms = T) +
   l_fitLine(colour = "red") + l_rug(mapping = aes(x=x,y=y), alpha=0.8) +
+  labs(title = 'Social Units (GAM)')+
   l_ciLine(mul = 5, colour = "blue", linetype = 2)+
   l_points(shape = 19, size = 1, alpha = 0.1) + theme_classic()
 print(vizGG2,pages =1)
@@ -450,7 +452,7 @@ ggsave(fig7)
 #GAMs with appropiate ITS binning
 
 #GAM to identify seasonal pattern
-gamTw = gam(JuHoursProp ~ s(day, bs = 'cc', k = 50), data = GroupedDayJ, family = tw, method = "REML")
+gamTw = gam(JuHoursProp ~ s(day, bs = 'cc', k = 47), data = GroupedDayJ, family = tw, method = "REML")
 plot(gamTw, pages =1)
 summary(gamTw)
 
@@ -466,6 +468,7 @@ print(plot(viz,allTerms=T),pages=1)
 #first way to plot GAM
 vizGG = plot(viz,allTerms = T) +
   l_points() +
+  labs(title = 'Mid-Size (GAM)')+
   l_fitLine(linetype = 3)  +
   l_fitContour()+
   l_ciLine(mul = 5, colour = "blue", linetype = 2) +
@@ -480,6 +483,7 @@ ggsave(fig6)
 #second way to plot GAM
 vizGG2 = plot(viz, allTerms = T) +
   l_fitLine(colour = "red") + l_rug(mapping = aes(x=x,y=y), alpha=0.8) +
+  labs(title = 'Mid-Size (GAM)')+
   l_ciLine(mul = 5, colour = "blue", linetype = 2)+
   l_points(shape = 19, size = 1, alpha = 0.1) + theme_classic()
 print(vizGG2,pages =1)
@@ -490,7 +494,7 @@ ggsave(fig7)
 #GAMs with appropiate ITS binning
 
 #GAM to identify seasonal pattern
-gamTw = gam(MaHoursProp ~ s(day, bs = 'cc', k = 50), data = GroupedDayM, family = tw, method = "REML")
+gamTw = gam(MaHoursProp ~ s(day, bs = 'cc', k = 35), data = GroupedDayM, family = tw, method = "REML")
 plot(gamTw, pages =1)
 summary(gamTw)
 
@@ -506,6 +510,7 @@ print(plot(viz,allTerms=T),pages=1)
 #first way to plot GAM
 vizGG = plot(viz,allTerms = T) +
   l_points() +
+  labs(title = 'Males (GAM)')+
   l_fitLine(linetype = 3)  +
   l_fitContour()+
   l_ciLine(mul = 5, colour = "blue", linetype = 2) +
@@ -520,59 +525,9 @@ ggsave(fig6)
 #second way to plot GAM
 vizGG2 = plot(viz, allTerms = T) +
   l_fitLine(colour = "red") + l_rug(mapping = aes(x=x,y=y), alpha=0.8) +
+  labs(title = 'Males (GAM)')+
   l_ciLine(mul = 5, colour = "blue", linetype = 2)+
   l_points(shape = 19, size = 1, alpha = 0.1) + theme_classic()
 print(vizGG2,pages =1)
 fig7 =paste("G:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",site,'/',site,"GAM2_Males.png",sep="")
 ggsave(fig7)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#GAM w/ GEE
-
-#GLMs
-
-#GLM in days
-hist(dayBinTAB$HoursProp)
-glm_day = glm(HoursProp ~ day, data = dayBinTAB, family = poisson())
-plot(glm_day)
-summary(glm_day)
-
-#other code
-#fitting a simple GEE to view the output
-gee_simp = GEE(HoursProp ~ day + Season, family = "poisson", data = oneyear)
-summary(gee_simp)
-
-#looks for statistical significane between seasons using a GLM
-GLM_form = formula(dayBinTAB$HoursProp ~ dayBinTAB$Season)
-gee1 = geeglm(GLM_form, data = dayBinTAB, id = Season, family=poisson("identity"))
-gee1
-coef(gee1)
-vcov(gee1)
-summary(gee1)
-
-
-
-
-
-
-

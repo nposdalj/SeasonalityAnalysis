@@ -25,8 +25,8 @@ library(lubridate)
 library(survival)
 
 #load data
-site = 'BD'
-filename = paste("G:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",site,"_dayData_forGLMR125.csv",sep="")
+site = 'KS'
+filename = paste("G:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",site,'/',site,"_dayData_forGLMR125.csv",sep="")
 dayBinTAB = read.csv(filename) #no effort days deleted
 head(dayBinTAB)
 str(dayBinTAB)
@@ -42,7 +42,7 @@ ggplot(dayBinTAB, aes(x=tbin,y=HoursProp))+
   labs(y="Proportion of Hours/Day w/Clicks",x="Time (days)")+
   geom_line()+
   geom_point()
-fig1 =paste("G:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",site,"HoursProp_TimeSeries.png",sep="")
+fig1 =paste("G:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",site,'/',site,"HoursProp_TimeSeries.png",sep="")
 ggsave(fig1)
 
 #plot data as box plot for seasons; have to plot this with no effort days deleted
@@ -52,7 +52,7 @@ ggplot(dayBinTAB, aes(x=Season, y=HoursProp, color = Season))+
   ggtitle(title2)+
   labs(y="Proportion of Hours/Day w/Clicks")
   scale_color_brewer(palette = "Dark2")
-fig2 =paste("G:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",site,"BoxPlot.png",sep="")
+fig2 =paste("G:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",site,'/',site,"BoxPlot.png",sep="")
 ggsave(fig2)
 
 #groupin data according to ITS
@@ -86,7 +86,13 @@ if (site == 'KOA'){
   GroupedDay = aggregate(dayBinTAB,list(rep(1:(nrow(dayBinTAB)%/%n+1),each=n,len=nrow(dayBinTAB))),mean)[-1];
 }
 
+if (site == 'KS'){
+  GroupedDay = dayBinTAB
+}
+
 #round day, year, month, and find season for ITS data
+if (site == 'KS'){
+}else{
 GroupedDay$day = floor(GroupedDay$day)
 GroupedDay$month = floor(GroupedDay$month)
 GroupedDay$Year = floor(GroupedDay$Year)
@@ -96,6 +102,7 @@ GroupedDay$Season[GroupedDay$month == 7 | GroupedDay$month == 8 | GroupedDay$mon
 GroupedDay$Season[GroupedDay$month == 10 | GroupedDay$month == 11 | GroupedDay$month == 12] = 4
 GroupedDay$Season = as.factor(GroupedDay$Season) #change season from an integer to a factor
 GroupedDay$Season = revalue(GroupedDay$Season, c("1"="Winter", "2"="Spring", "3"="Summer", "4"="Fall")) #change the numbers in actual seasons
+}
 
 #plot data grouped with ITS as proportion of hours per day with clicks
 title1 = paste(site,"Proprtion of Hours/Day w/ Clicks - ITS")
@@ -104,11 +111,11 @@ ggplot(GroupedDay, aes(x=tbin,y=HoursProp))+
   labs(y="Proportion of Hours/Day w/Clicks",x="Time (days)")+
   geom_line()+
   geom_point()
-fig1 =paste("G:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",site,"HoursProp_TimeSeriesITS.png",sep="")
+fig1 =paste("G:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",site,'/',site,"HoursProp_TimeSeriesITS.png",sep="")
 ggsave(fig1)
 
 ##### grouped data by day of year - mean
-filename2 = paste("G:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",site,"_days365GroupedMean_forGLMR125.csv",sep="")
+filename2 = paste("G:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",site,'/',site,"_days365GroupedMean_forGLMR125.csv",sep="")
 oneyear = read.csv(filename2) #bin means from days
 
 if (nrow(oneyear) >= 365) {
@@ -157,7 +164,13 @@ if (site == 'KOA'){
   GroupedYear = aggregate(oneyear,list(rep(1:(nrow(oneyear)%/%n+1),each=n,len=nrow(oneyear))),mean)[-1];
 }
 
+if (site == 'KS'){
+  GroupedYear = oneyear
+}
+
 #round day, year, month, and find season for ITS data
+if (site == 'KS'){
+}else{
 GroupedYear$Month = month(as.Date(GroupedYear$Day, origin = "2014-01-01"))
 GroupedYear$Season[GroupedYear$Month == 1 | GroupedYear$Month == 2 | GroupedYear$Month == 3] = 1
 GroupedYear$Season[GroupedYear$Month == 4 | GroupedYear$Month == 5 | GroupedYear$Month == 6] = 2
@@ -165,6 +178,7 @@ GroupedYear$Season[GroupedYear$Month == 7 | GroupedYear$Month == 8 | GroupedYear
 GroupedYear$Season[GroupedYear$Month == 10 | GroupedYear$Month == 11 | GroupedYear$Month == 12] = 4
 GroupedYear$Season = as.factor(GroupedYear$Season) #change season from an integer to a factor
 GroupedYear$Season = revalue(GroupedYear$Season, c("1"="Winter", "2"="Spring", "3"="Summer", "4"="Fall")) #change the numbers in actual seasons
+}
 
 #plot data as time series
 title3 = paste(site,"Yearly Average of Proportion of Hours per Day with Clicks - Time Series")
@@ -173,7 +187,7 @@ ggplot(oneyear, aes(x=Day,y=HoursProp))+
   labs(y="Average Proportion of Hours per Day with Clicks",x="Day of the Year")+
   geom_line()+
   geom_point()
-fig4 =paste("G:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",site,"AveragedHoursProp_TimeSeries.png",sep="")
+fig4 =paste("G:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",site,'/',site,"AveragedHoursProp_TimeSeries.png",sep="")
 ggsave(fig4)
 
 #plot data as time series with ITS
@@ -183,7 +197,7 @@ ggplot(GroupedYear, aes(x=Day,y=HoursProp))+
   labs(y="Average Proportion of Hours per Day with Clicks",x="Day of the Year")+
   geom_line()+
   geom_point()
-fig4 =paste("G:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",site,"AveragedHoursProp_TimeSeriesITS.png",sep="")
+fig4 =paste("G:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",site,'/',site,"AveragedHoursProp_TimeSeriesITS.png",sep="")
 ggsave(fig4)
 
 if (nrow(oneyear) >= 365) {
@@ -195,18 +209,24 @@ ggplot(oneyear, aes(x=Day,y=HoursProp))+
   geom_errorbar(aes(ymin = HoursProp - SEM, ymax = HoursProp + SEM))+
   geom_line()+
   geom_point()
-fig5 =paste("G:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",site,"AveragedHoursProp_TimeSeries_ErrorBars.png",sep="")
+fig5 =paste("G:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",site,'/',site,"AveragedHoursProp_TimeSeries_ErrorBars.png",sep="")
 ggsave(fig5)
-}
+}else{}
 
 ## GAMs ##
 
 #GAMs with appropiate ITS binning
 
 #GAM to identify seasonal pattern
-gamTw = gam(HoursProp ~ s(day, bs = 'cc', k = 50), data = GroupedDay, family = tw, method = "REML")
-plot(gamTw, pages =1)
-summary(gamTw)
+if (site == 'AB'){
+  gamTw = gam(HoursProp ~ s(day, bs = 'cc', k = 19), data = GroupedDay, family = tw, method = "REML")
+  plot(gamTw, pages =1)
+  summary(gamTw)
+}else{
+  gamTw = gam(HoursProp ~ s(day, bs = 'cc', k = 47), data = GroupedDay, family = tw, method = "REML")
+  plot(gamTw, pages =1)
+  summary(gamTw)
+}
 
 #GAM to check for significance between seasons
 gamTwS = gam(HoursProp ~ Season, data = GroupedDay, family = tw, method = "REML")
@@ -220,6 +240,7 @@ print(plot(viz,allTerms=T),pages=1)
 #first way to plot GAM
 vizGG = plot(viz,allTerms = T) +
   l_points() +
+  labs(title = 'Sperm whales (GAM)')+
   l_fitLine(linetype = 3)  +
   l_fitContour()+
   l_ciLine(mul = 5, colour = "blue", linetype = 2) +
@@ -228,62 +249,15 @@ vizGG = plot(viz,allTerms = T) +
   l_rug() +
   theme_get() 
 print(vizGG,pages =1)
-fig6 =paste("G:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",site,"GAM1.png",sep="")
+fig6 =paste("G:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",site,'/',site,"GAM1.png",sep="")
 ggsave(fig6)
 
 #second way to plot GAM
 vizGG2 = plot(viz, allTerms = T) +
   l_fitLine(colour = "red") + l_rug(mapping = aes(x=x,y=y), alpha=0.8) +
+  labs(title = 'Sperm whales (GAM)')+
   l_ciLine(mul = 5, colour = "blue", linetype = 2)+
   l_points(shape = 19, size = 1, alpha = 0.1) + theme_classic()
 print(vizGG2,pages =1)
-fig7 =paste("G:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",site,"GAM2.png",sep="")
+fig7 =paste("G:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",site,'/',site,"GAM2.png",sep="")
 ggsave(fig7)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#GAM w/ GEE
-
-#GLMs
-
-#GLM in days
-hist(dayBinTAB$HoursProp)
-glm_day = glm(HoursProp ~ day, data = dayBinTAB, family = poisson())
-plot(glm_day)
-summary(glm_day)
-
-#other code
-#fitting a simple GEE to view the output
-gee_simp = GEE(HoursProp ~ day + Season, family = "poisson", data = oneyear)
-summary(gee_simp)
-
-#looks for statistical significane between seasons using a GLM
-GLM_form = formula(dayBinTAB$HoursProp ~ dayBinTAB$Season)
-gee1 = geeglm(GLM_form, data = dayBinTAB, id = Season, family=poisson("identity"))
-gee1
-coef(gee1)
-vcov(gee1)
-summary(gee1)
-
-
-
-
-
-
-
