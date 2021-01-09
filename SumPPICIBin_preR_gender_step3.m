@@ -1,5 +1,6 @@
 clearvars
 close all
+
 %% Parameters defined by user
 filePrefix = 'ALEUT'; % File name to match
 siteabrev = 'BD'; %abbreviation of site

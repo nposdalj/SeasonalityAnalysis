@@ -1,9 +1,9 @@
 clearvars
 close all
 %% Parameters defined by user
-filePrefix = 'ALEUT01KS'; % File name to match. 
-siteabrev = 'KS'; %abbreviation of site.
-titleNAME = 'Aleutian Islands - Kiska Island';
+filePrefix = 'GofAK_QN'; % File name to match. 
+siteabrev = 'QN'; %abbreviation of site.
+titleNAME = 'Gulf of Alaska - Quinn Seamount';
 sp = 'Pm'; % your species code
 tpwsPath = ['E:\Project_Sites\',siteabrev,'\TPWS_125\TPWS2\TPWS3\']; %directory of TPWS files
 %% load data from step 3
@@ -59,6 +59,19 @@ ax.Children(4).EdgeAlpha = 0;
 title([{'Proportion of Days with Presence of Each Class'},{titleNAME}]);
 delete(ax.Children([1,3]));
 saveas(gcf,[saveDir,'\',siteabrev,'YearRoundRatio_DaysNOTEXT.png']);
+elseif strcmp(siteabrev,'AB') == 1
+meantab365.Fem = meantab365.HoursPropFE > 0;
+meantab365.Juv = meantab365.HoursPropJU > 0;
+meantab365.Mal = meantab365.HoursPropMA > 0;
+x2 = [sum(meantab365.Juv) sum(meantab365.Mal) sum(meantab365.Fem)];
+pie_modified(x2,tilecolor);
+ax = gca;
+ax.Children(2).EdgeAlpha = 0;
+ax.Children(4).EdgeAlpha = 0;
+ax.Children(6).EdgeAlpha = 0;
+title([{'Proportion of Hours with Presence of Each Class'},{titleNAME}]);
+delete(ax.Children([1,3,5]));
+saveas(gcf,[saveDir,'\',siteabrev,'YearRoundRatio_DaysNOTEXT.png']);
 else
 meantab365.Fem = meantabFE365.HoursPropFE > 0;
 meantab365.Juv = meantabJU365.HoursPropJU > 0;
@@ -79,7 +92,7 @@ x = [sum(meantab365.HoursPropJU) sum(meantab365.HoursPropMA) sum(meantab365.Hour
 pie_modified(x,tilecolor);
 pText = findobj('Type','text');
 percentValues = get(pText,'String');
-labels = {'Mid-Size: '; 'Males: ';};
+labels = {'Males: ';'Mid-Size: ';};
 combinedtxt = strcat(labels,percentValues);
 pText(1).String = combinedtxt(1);
 pText(1).FontSize = 14;
@@ -92,11 +105,12 @@ x = [sum(meantab365.HoursPropJU) sum(meantab365.HoursPropMA) sum(meantab365.Hour
 pie_modified(x,tilecolor);
 pText = findobj('Type','text');
 percentValues = get(pText,'String');
-labels = {'Mid-Size: '; 'Males: '; 'Social Units: '};
+labels = {'Social Units: ';  'Males: ';'Mid-Size: ';};
 combinedtxt = strcat(labels,percentValues);
 pText(1).String = combinedtxt(1);
 pText(1).FontSize = 14;
 pText(2).String = combinedtxt(2);
+pText(2).FontSize = 14;
 pText(3).String = combinedtxt(3);
 pText(3).FontSize = 14;
 title([{'Proportion of Hours with Presence of Each Class'},{titleNAME}]);
@@ -106,7 +120,7 @@ x = [sum(meantabJU365.HoursPropJU) sum(meantabMA365.HoursPropMA) sum(meantabFE36
 p = pie(x);
 pText = findobj('Type','text');
 percentValues = get(pText,'String');
-labels = {'Mid-Size: '; 'Males: '; 'Social Units: '};
+labels = {'Social Units: ';  'Males: ';'Mid-Size: ';};
 combinedtxt = strcat(labels,percentValues);
 pText(1).String = combinedtxt(1);
 pText(1).FontSize = 14;
@@ -123,7 +137,7 @@ x2 = [sum(meantab365.Juv) sum(meantab365.Mal) sum(meantab365.Fem)];
 pie_modified(x2,tilecolor);
 pText = findobj('Type','text');
 percentValues = get(pText,'String');
-labels = {'Mid-Size: '; 'Males: ';};
+labels = {'Males: ';'Mid-Size: ';};
 combinedtxt = strcat(labels,percentValues);
 pText(1).String = combinedtxt(1);
 pText(1).FontSize = 14;
@@ -136,7 +150,7 @@ x2 = [sum(meantab365.Juv) sum(meantab365.Mal) sum(meantab365.Fem)];
 pie_modified(x,tilecolor);
 pText = findobj('Type','text');
 percentValues = get(pText,'String');
-labels = {'Mid-Size: '; 'Males: '; 'Social Units: '};
+labels = {'Social Units: ';  'Males: ';'Mid-Size: ';};
 combinedtxt = strcat(labels,percentValues);
 pText(1).String = combinedtxt(1);
 pText(1).FontSize = 14;
@@ -151,7 +165,7 @@ x2 = [sum(meantab365.Juv) sum(meantab365.Mal) sum(meantab365.Fem)];
 pie_modified(x,tilecolor);
 pText = findobj('Type','text');
 percentValues = get(pText,'String');
-labels = {'Mid-Size: '; 'Males: '; 'Social Units: '};
+labels = {'Social Units: ';  'Males: ';'Mid-Size: ';};
 combinedtxt = strcat(labels,percentValues);
 pText(1).String = combinedtxt(1);
 pText(1).FontSize = 14;
