@@ -3,7 +3,7 @@ close all
 %% Parameters defined by user
 filePath = 'G:\My Drive\GofAK_TPWS_metadataReduced\SeasonalityAnalysis\'; %specify directory to save files
 %% Find all files that fit your specifications
-files = dir([filePath,'**\*_binPresence.csv']);
+files = dir([filePath,'**\*_dayData_forGLMR125.csv']);
 n = length(files);
 x = cell(1, numel(files)); 
 %load all of the tables
