@@ -1,9 +1,9 @@
 clearvars
 close all
 %% Parameters defined by user
-filePrefix = 'GofAK_QN'; % File name to match. 
-siteabrev = 'QN'; %abbreviation of site.
-titleNAME = 'Gulf of Alaska - Quinn Seamount';
+filePrefix = 'ALEUT'; % File name to match. 
+siteabrev = 'BD'; %abbreviation of site.
+titleNAME = 'Aleutian Islands - Buldir Island';
 sp = 'Pm'; % your species code
 tpwsPath = ['E:\Project_Sites\',siteabrev,'\TPWS_125\TPWS2\TPWS3\']; %directory of TPWS files
 %% load data from step 3
@@ -33,6 +33,7 @@ ax.Children(2).EdgeAlpha = 0;
 ax.Children(4).EdgeAlpha = 0;
 ax.Children(6).EdgeAlpha = 0;
 title([{'Proportion of Hours with Presence of Each Class'},{titleNAME}]);
+set(gca, 'Color','None')
 delete(ax.Children([1,3,5]));
 saveas(gcf,[saveDir,'\',siteabrev,'YearRoundRatio_BinsNOTEXT.png']);
 else
@@ -58,7 +59,8 @@ ax.Children(2).EdgeAlpha = 0;
 ax.Children(4).EdgeAlpha = 0;
 title([{'Proportion of Days with Presence of Each Class'},{titleNAME}]);
 delete(ax.Children([1,3]));
-saveas(gcf,[saveDir,'\',siteabrev,'YearRoundRatio_DaysNOTEXT.png']);
+set(gca, 'Color','None')
+export_fig([saveDir,'\',siteabrev,'YearRoundRatio_DaysNOTEXT.png'],'-png','-transparent');
 elseif strcmp(siteabrev,'AB') == 1
 meantab365.Fem = meantab365.HoursPropFE > 0;
 meantab365.Juv = meantab365.HoursPropJU > 0;
@@ -71,7 +73,8 @@ ax.Children(4).EdgeAlpha = 0;
 ax.Children(6).EdgeAlpha = 0;
 title([{'Proportion of Hours with Presence of Each Class'},{titleNAME}]);
 delete(ax.Children([1,3,5]));
-saveas(gcf,[saveDir,'\',siteabrev,'YearRoundRatio_DaysNOTEXT.png']);
+set(gca, 'Color','None')
+export_fig([saveDir,'\',siteabrev,'YearRoundRatio_DaysNOTEXT.png'],'-png','-transparent');
 else
 meantab365.Fem = meantabFE365.HoursPropFE > 0;
 meantab365.Juv = meantabJU365.HoursPropJU > 0;
@@ -84,7 +87,8 @@ ax.Children(4).EdgeAlpha = 0;
 ax.Children(6).EdgeAlpha = 0;
 title([{'Proportion of Days with Presence of Each Class'},{titleNAME}]);
 delete(ax.Children([1,3,5]));
-saveas(gcf,[saveDir,'\',siteabrev,'YearRoundRatio_DaysNOTEXT.png']);
+set(gca, 'Color','None')
+export_fig([saveDir,'\',siteabrev,'YearRoundRatio_DaysNOTEXT.png'],'-png','-transparent');
 end
 %% pie chart for F/J/M presence at each site (year round)- counting sum of days with text
 if strcmp(siteabrev,'KOA') == 1 || strcmp(siteabrev,'KS') == 1
