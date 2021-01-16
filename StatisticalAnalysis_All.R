@@ -205,7 +205,7 @@ if (nrow(oneyear) >= 365) {
 title4 = paste(site,"Yearly Average of Proportion of Hours per Day with Clicks")
 ggplot(oneyear, aes(x=Day,y=HoursProp))+
   ggtitle(title4)+
-  labs(y="Average Proportion of Hours per Day with Clicks",x="Day of the Year")
+  labs(y="Average Proportion of Hours per Day with Clicks",x="Day of the Year")+
   geom_errorbar(aes(ymin = HoursProp - SEM, ymax = HoursProp + SEM))+
   geom_line()+
   geom_point()
@@ -296,7 +296,8 @@ vizGG = plot(viz,allTerms = T) +
   l_ciLine(mul = 5, colour = "blue", linetype = 2) +
   l_ciBar() +
   l_rug() +
-  theme_get() 
+  theme(axis.text=element_text(size=18),
+        axis.title=element_text(size=20,face="bold"))
 print(vizGG,pages =1)
 fig6 =paste("G:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/GAM1.png",sep="")
 ggsave(fig6)

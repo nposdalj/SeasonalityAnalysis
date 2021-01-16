@@ -26,7 +26,7 @@ library(survival)
 library(gtable)
 
 #load data
-site = 'QN'
+site = 'BD'
 filename = paste("G:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",site,'/',site,"_binPresence.csv",sep="")
 binPresence = read.csv(filename) #no effort days deleted
 head(binPresence)
@@ -177,21 +177,24 @@ if (nrow(binPresence) > nrow(GroupedDayM)){
 
 #plot data grouped with ITS as proportion of hours per day with clicks
 title1 = paste(site,"Proprtion of Hours/Day w/ Clicks - ITS")
+theme(axis.text=element_text(size=18),
+      axis.title=element_text(size=20,face="bold"))
+title1 = paste("Proportion of Hours per Day with Clicks at Buldir Island, BSAI")
 plot1 = ggplot(GroupedDayF, aes(x=tbin,y=FeHoursProp))+
   geom_bar(stat = "identity")+
-  theme(axis.title.x = element_blank())+
-  theme(axis.title.y = element_blank())
+  theme(axis.title.x = element_blank(),axis.text=element_text(size=18))+
+  theme(axis.title.y = element_blank(),axis.text=element_text(size=18))
 plot2 = ggplot(GroupedDayJ, aes(x=tbin,y=JuHoursProp))+
   geom_bar(stat = "identity")+
-  theme(axis.title.x = element_blank())+
-  theme(axis.title.y = element_blank())
+  theme(axis.title.x = element_blank(),axis.text=element_text(size=18))+
+  theme(axis.title.y = element_blank(),axis.text=element_text(size=18))
 plot3 = ggplot(GroupedDayM, aes(x=tbin,y=MaHoursProp))+
   geom_bar(stat = "identity")+
-  theme(axis.title.x = element_blank())+
-  theme(axis.title.y = element_blank())
+  theme(axis.title.x = element_blank(),axis.text=element_text(size=18))+
+  theme(axis.title.y = element_blank(),axis.text=element_text(size=18))
 figure = ggarrange(plot1,plot2,plot3, labels = c("Social Units","  Mid-Size  ","    Males   "),align = "v",ncol = 1, nrow = 3)
-annotate_figure(figure, top = text_grob(title1, face = "bold", size = 14), bottom = text_grob("Time (years)"),
-                left = text_grob("Proportion of Hours/Day w/Clicks", rot = 90))
+annotate_figure(figure, top = text_grob(title1, face = "bold", size = 20), bottom = text_grob("Time (years)", size = 20),
+                left = text_grob("Proportion of Hours/Day w/Clicks", rot = 90, size = 24))
 fig1 =paste("G:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",site,'/',site,"HoursProp_TimeSeriesITS_StackedGroups.png",sep="")
 ggsave(fig1)
 
