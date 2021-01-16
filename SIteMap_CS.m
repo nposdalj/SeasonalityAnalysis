@@ -78,20 +78,26 @@ latitude = LatLongTAB.Latitude;
 longitude = LatLongTAB.Longitude;
 sites = LatLongTAB.Site;
 gm = geoscatter(latitude,longitude,A,sites,'.');
-text(latitude(1),longitude(1)-0.5,'AB','HorizontalAlignment','right','FontSize',5);
-text(latitude(2)+0.75,longitude(2),'BD','HorizontalAlignment','right','FontSize',5);
-text(latitude(3),longitude(3)-0.5,'CB','HorizontalAlignment','right','FontSize',5);
-text(latitude(4)+.4,longitude(4)-0.5,'KS','HorizontalAlignment','right','FontSize',5);
-text(latitude(5),longitude(5)+2.5,'PT','HorizontalAlignment','right','FontSize',5);
-text(latitude(6),longitude(6)-0.75,'QN','HorizontalAlignment','right','FontSize',5);
-text(latitude(7),longitude(7)-0.75,'KOA','HorizontalAlignment','right','FontSize',5);
-geolimits([45 65],[-210 -120]);
+text(latitude(1),longitude(1)-0.5,'AB','HorizontalAlignment','right','FontSize',10);
+text(latitude(2)+0.75,longitude(2),'BD','HorizontalAlignment','right','FontSize',10);
+text(latitude(3),longitude(3)-0.5,'CB','HorizontalAlignment','right','FontSize',10);
+text(latitude(4)+.4,longitude(4)-0.5,'KS','HorizontalAlignment','right','FontSize',10);
+text(latitude(5),longitude(5)+2.5,'PT','HorizontalAlignment','right','FontSize',10);
+text(latitude(6),longitude(6)-0.75,'QN','HorizontalAlignment','right','FontSize',10);
+text(latitude(7),longitude(7)-0.75,'KOA','HorizontalAlignment','right','FontSize',10);
 %% grey site map
 figure(2)
 LatLongTAB.Site = categorical(LatLongTAB.Site);
-A = 50;
+A = 220;
 latitude = LatLongTAB.Latitude;
 longitude = LatLongTAB.Longitude;
-
+sites = LatLongTAB.Site;
 gm = geoscatter(latitude,longitude,A,'.','k');  
-geolimits([-3 74],[-180 -110]);
+text(latitude(1),longitude(1)+3.9,'AB','HorizontalAlignment','right','FontSize',8);
+text(latitude(2)+0.75,longitude(2),'BD','HorizontalAlignment','right','FontSize',8);
+text(latitude(3),longitude(3)-0.5,'CB','HorizontalAlignment','right','FontSize',8);
+text(latitude(4)+.4,longitude(4)-0.5,'KS','HorizontalAlignment','right','FontSize',8);
+text(latitude(5),longitude(5)+3.5,'PT','HorizontalAlignment','right','FontSize',8);
+text(latitude(6),longitude(6)-0.75,'QN','HorizontalAlignment','right','FontSize',8);
+text(latitude(7),longitude(7)-0.75,'KOA','HorizontalAlignment','right','FontSize',8);
+geolimits([45 65],[-210 -120]);
