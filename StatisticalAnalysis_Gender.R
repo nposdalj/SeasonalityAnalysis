@@ -427,14 +427,13 @@ print(plot(viz,allTerms=T),pages=1)
 
 #first way to plot GAM
 vizGG = plot(viz,allTerms = T) +
-  l_points() +
   labs(title = 'Social Units (GAM)')+
   l_fitLine(linetype = 3)  +
   l_fitContour()+
   l_ciLine(mul = 5, colour = "blue", linetype = 2) +
   l_ciBar() +
-  l_points(shape = 19, size = 1, alpha = 0.1) +
-  l_rug() +
+  theme(axis.text=element_text(size=18),
+        axis.title=element_text(size=20,face="bold"))
   theme_get() 
 print(vizGG,pages =1)
 fig6 =paste("G:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",site,'/',site,"GAM1_SocialUnits.png",sep="")
@@ -445,7 +444,10 @@ vizGG2 = plot(viz, allTerms = T) +
   l_fitLine(colour = "red") + l_rug(mapping = aes(x=x,y=y), alpha=0.8) +
   labs(title = 'Social Units (GAM)')+
   l_ciLine(mul = 5, colour = "blue", linetype = 2)+
-  l_points(shape = 19, size = 1, alpha = 0.1) + theme_classic()
+  #l_points(shape = 19, size = 1, alpha = 0.1) + 
+  theme(axis.text=element_text(size=18),
+        axis.title=element_text(size=20,face="bold"))+
+  theme_classic()
 print(vizGG2,pages =1)
 fig7 =paste("G:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",site,'/',site,"GAM2_SocialUnits.png",sep="")
 ggsave(fig7)
@@ -478,7 +480,8 @@ vizGG = plot(viz,allTerms = T) +
   l_ciBar() +
   l_points(shape = 19, size = 1, alpha = 0.1) +
   l_rug() +
-  theme_get() 
+  theme(axis.text=element_text(size=18),
+        axis.title=element_text(size=20,face="bold"))
 print(vizGG,pages =1)
 fig6 =paste("G:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",site,'/',site,"GAM1_Juveniles.png",sep="")
 ggsave(fig6)
@@ -488,7 +491,10 @@ vizGG2 = plot(viz, allTerms = T) +
   l_fitLine(colour = "red") + l_rug(mapping = aes(x=x,y=y), alpha=0.8) +
   labs(title = 'Mid-Size (GAM)')+
   l_ciLine(mul = 5, colour = "blue", linetype = 2)+
-  l_points(shape = 19, size = 1, alpha = 0.1) + theme_classic()
+  l_points(shape = 19, size = 1, alpha = 0.1) + 
+  theme(axis.text=element_text(size=18),
+        axis.title=element_text(size=20,face="bold"))+
+  theme_classic()
 print(vizGG2,pages =1)
 fig7 =paste("G:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",site,'/',site,"GAM2_Juveniles.png",sep="")
 ggsave(fig7)
@@ -512,15 +518,13 @@ print(plot(viz,allTerms=T),pages=1)
 
 #first way to plot GAM
 vizGG = plot(viz,allTerms = T) +
-  l_points() +
   labs(title = 'Males (GAM)')+
   l_fitLine(linetype = 3)  +
   l_fitContour()+
   l_ciLine(mul = 5, colour = "blue", linetype = 2) +
   l_ciBar() +
-  l_points(shape = 19, size = 1, alpha = 0.1) +
-  l_rug() +
-  theme_get() 
+  theme(axis.text=element_text(size=18),
+        axis.title=element_text(size=20,face="bold"))
 print(vizGG,pages =1)
 fig6 =paste("G:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",site,'/',site,"GAM1_Males.png",sep="")
 ggsave(fig6)
