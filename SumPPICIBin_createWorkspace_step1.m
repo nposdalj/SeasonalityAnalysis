@@ -2,7 +2,7 @@ clearvars
 close all
 
 %% Parameters defined by user
-filePrefix = 'ALEUT01KS'; % File name to match. 
+filePrefix = 'WAT_GS_03'; % File name to match. 
 siteabrev = 'KS'; %abbreviation of site.
 sp = 'Pm'; % your species code
 itnum = '2'; % which iteration you are looking for
