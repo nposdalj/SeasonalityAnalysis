@@ -26,7 +26,7 @@ library(survival)
 library(gtable)
 
 #load data
-site = 'BD'
+site = 'CB'
 filename = paste("G:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",site,'/',site,"_binPresence.csv",sep="")
 binPresence = read.csv(filename) #no effort days deleted
 head(binPresence)
@@ -427,10 +427,11 @@ print(plot(viz,allTerms=T),pages=1)
 
 #first way to plot GAM
 vizGG = plot(viz,allTerms = T) +
-  labs(title = 'Social Units (GAM)')+
-  l_fitLine(linetype = 3)  +
+  labs(title = 'Social Units (GAM)', x = 'Day of Year')+
+  l_fitLine(linetype = 1, size = 2)  +
   l_fitContour()+
-  l_ciLine(mul = 5, colour = "blue", linetype = 2) +
+  #l_ciLine(mul = 5, colour = "blue", linetype = 2) +
+  l_ciPoly(level = 0.95, alpha = 1/2)+
   l_ciBar() +
   theme(axis.text=element_text(size=18),
         axis.title=element_text(size=20,face="bold"))
@@ -518,14 +519,15 @@ print(plot(viz,allTerms=T),pages=1)
 
 #first way to plot GAM
 vizGG = plot(viz,allTerms = T) +
-  labs(title = 'Males (GAM)')+
-  l_fitLine(linetype = 3)  +
+  labs(title = 'Males (GAM)', x = 'Day of Year')+
+  l_fitLine(linetype = 1, size = 2)  +
   l_fitContour()+
-  l_ciLine(mul = 5, colour = "blue", linetype = 2) +
+  #l_ciLine(mul = 5, colour = "blue", linetype = 2) +
+  l_ciPoly(level = 0.95, alpha = 1/2)+
   l_ciBar() +
   theme(axis.text=element_text(size=18),
         axis.title=element_text(size=20,face="bold"))
-print(vizGG,pages =1)
+theme_get() 
 fig6 =paste("G:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",site,'/',site,"GAM1_Males.png",sep="")
 ggsave(fig6)
 
