@@ -3,13 +3,13 @@ close all
 
 %% Parameters defined by user
 filePrefix = 'WAT_GS_03'; % File name to match. 
-siteabrev = 'KS'; %abbreviation of site.
+siteabrev = 'GS'; %abbreviation of site.
 sp = 'Pm'; % your species code
-itnum = '2'; % which iteration you are looking for
+itnum = '3'; % which iteration you are looking for
 srate = 200; % sample rate
-tpwsPath = 'E:\Project_Sites\KS\TPWS_125'; %directory of TPWS files
-effortXls = 'E:\Project_Sites\KS\Pm_Effort_KS.xlsx'; % specify excel file with effort times
-saveDir = 'E:\Project_Sites\KS\Seasonality'; %specify directory to save files
+tpwsPath = 'E:\Project Sites\GS\TPWS_125'; %directory of TPWS files
+effortXls = 'E:\Project Sites\GS\Pm_Effort_GS.xls'; % specify excel file with effort times
+saveDir = 'E:\Project Sites\GS\Seasonality'; %specify directory to save files
 %% define subfolder that fit specified iteration
 if itnum > 1
    for id = 2: str2num(itnum) % iterate id times according to itnum

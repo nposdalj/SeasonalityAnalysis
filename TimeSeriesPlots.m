@@ -1,11 +1,11 @@
 clearvars
 close all
 %% Parameters defined by user
-filePrefix = 'GofAK_CB'; % File name to match
-siteabrev = 'CB'; %abbreviation of site
+filePrefix = 'WAT_GS_03'; % File name to match. 
+siteabrev = 'GS'; %abbreviation of site.
 sp = 'Pm'; % your species code
-saveDir = 'E:\Project_Sites\CB\Seasonality'; %specify directory to save files
-titleNAME = 'Gulf of Alaska - Continental Slope';
+saveDir = 'E:\Project Sites\GS\Seasonality'; %specify directory to save files
+titleNAME = 'Western Atlantic - Gulf Stream';
 %% load workspace
 load([saveDir,'\',siteabrev,'_workspaceStep2.mat']);
 load([saveDir,'\',siteabrev,'_workspaceStep3.mat']);
@@ -118,6 +118,7 @@ plot(weekPresence.tbin, weekPresence.NormEffort_Bin*100,'.r')
 ylim([-1 101])
 saveas(gcf,[saveDir,'\',siteabrev,'WeeklyPresence_AllClasses_Subplots.png']);
 
+%% Average yearly plots
 %Average yearly presence of proportion of hours per DAY with sperm whale
 %presence
 figure

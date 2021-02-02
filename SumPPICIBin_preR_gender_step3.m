@@ -2,14 +2,14 @@ clearvars
 close all
 
 %% Parameters defined by user
-filePrefix = 'ALEUT'; % File name to match
-siteabrev = 'BD'; %abbreviation of site
+filePrefix = 'WAT_GS_03'; % File name to match. 
+siteabrev = 'GS'; %abbreviation of site
 sp = 'Pm'; % your species code
 srate = 200; % sample rate
-tpwsPath = 'E:\Project_Sites\BD\TPWS_125\TPWS2\'; %directory of TPWS files
-saveDir = 'E:\Project_Sites\BD\Seasonality'; %specify directory to save files
-effortXls = 'E:\Project_Sites\BD\Pm_Effort_BD.xlsx'; % specify excel file with effort times
-dayBinCSV= 'E:\Project_Sites\BD\Seasonality\BD_dayData_forGLMR125.csv'; % specify csv document with general PM information
+tpwsPath = 'E:\Project Sites\GS\TPWS_125\TPWS2\TPWS3\'; %directory of TPWS files
+saveDir = 'E:\Project Sites\GS\Seasonality'; %specify directory to save files
+effortXls = 'E:\Project Sites\GS\Pm_Effort_GS.xls'; % specify excel file with effort times
+dayBinCSV= 'E:\Project Sites\GS\Seasonality\GS_dayData_forGLMR125.csv'; % specify csv document with general PM information
 %% Get effort times matching prefix file
 %when multiple sites in the effort table
 allEfforts = readtable(effortXls); %read effort table
@@ -85,7 +85,7 @@ if strcmp(siteabrev,'BD');
     binPresence.Effort_Bin(274:end) = ge * 144; %for ALEUT03BD ONLY 5 on 5 off (10 minute cycle) -- meaning you're recording 0.5 percent of the time
     binPresence.Effort_Sec(274:end) = binPresence.Effort_Bin(274:end) * 5 * 60;
     else
-dayTable.MaxEffort_Bin = ones(p,1)*(288);
+binPresence.MaxEffort_Bin = ones(p,1)*(288);
 end
 end
 
