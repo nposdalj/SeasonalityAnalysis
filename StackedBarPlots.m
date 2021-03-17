@@ -106,7 +106,7 @@ table_short.Juv = table_short.HoursPropJU > 0;
 table_short.Mal = table_short.HoursPropMA > 0;
 table_short.NA = table_short.HoursPropFE == 0 & table_short.HoursPropJU == 0 & table_short.HoursPropMA == 0;
 table_short.Site = string(table_short.Site);
-table_short.Males = sum(table_short.Juv > 0 & table_short.Mal > 0);
+%table_short.Males = sum(table_short.Juv > 0 & table_short.Mal > 0);
 xKOA = [sum(table_short.Juv(table_short.Site=='KOA'))  sum(table_short.Mal(table_short.Site=='KOA')) sum(table_short.Fem(table_short.Site=='KOA')) sum(table_short.NA(table_short.Site=='KOA'))];
 xKS = [sum(table_short.Juv(table_short.Site=='KS'))  sum(table_short.Mal(table_short.Site=='KS')) sum(table_short.Fem(table_short.Site=='KS')) sum(table_short.NA(table_short.Site=='KS'))];
 xAB = [sum(table_short.Juv(table_short.Site=='AB'))  sum(table_short.Mal(table_short.Site=='AB')) sum(table_short.Fem(table_short.Site=='AB')) sum(table_short.NA(table_short.Site=='AB'))];
@@ -142,4 +142,18 @@ legend('Mid-Size','Males','Social Units','No Animals')
 ax = gca;
 ax.FontSize = 16;
 
-%writetable(table,[filePath,'All_SexData.csv']); %save table to .csv to continue stats in R F:\Seasonality\Kruskal_RankSumSTATS.R
+%% Stacked bar plot for all sites - edited for Ally for Navy presentation
+xMASTER2 = [xCB; xQN; xPT; xKOA; xAB];
+
+b = bar(xMASTER2, 'stacked','FaceColor','flat');
+b(1).CData = cyan;
+b(2).CData = blue;
+b(3).CData = yellow;
+b(4).CData = grey;
+xlabel('Site')
+ylabel('Number of Recording Days')
+title({'Proprtion of Days with Presence of', 'Sex Class in The Gulf of Alaska'})
+legend('Mid-Size','Males','Social Units','No Animals')
+ax = gca;
+ax.FontSize = 16;
+set(gca, 'XTickLabel',{'CB','QN','PT','KOA','AB'});
