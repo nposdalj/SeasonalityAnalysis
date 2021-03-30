@@ -1,16 +1,16 @@
 clearvars
 close all
 %% Parameters defined by user
-filePrefix = 'GofAK_KOA'; % File name to match. 
-siteabrev = 'KOA'; %abbreviation of site.
-key = 'GofAK_KOA'; %after what identifying marker is the deployment number
-PlotSiteName = 'Gulf of Alaska - Kodiak Island';
+filePrefix = 'Baja_GI'; % File name to match. 
+siteabrev = 'GI'; %abbreviation of site.
+key = 'Baja_GI_'; %after what identifying marker is the deployment number
+PlotSiteName = 'Baja Guadualpe Island';
 sp = 'Pm'; % your species code
 itnum = '3'; % which iteration you are looking for
 srate = 200; % sample rate
-tpwsPath = 'E:\Project_Sites\KOA\TPWS_125'; %directory of TPWS files
-effortXls = 'E:\Project_Sites\KOA\Pm_Effort_KOA.xlsx'; % specify excel file with effort times
-saveDir = 'E:\Project_Sites\KOA\Plots'; %specify directory to save files
+tpwsPath = 'G:\Baja\TPWS_130'; %directory of TPWS files
+effortXls = 'G:\Baja\Pm_Effort.xls'; % specify excel file with effort times
+saveDir = 'G:\Baja\Seasonality'; %specify directory to save files
 %RC_data = 1; %If you're using RCs data, make this equal to 1, otherwise make it equal to 0.
 %% define subfolder that fit specified iteration
 if itnum > 1

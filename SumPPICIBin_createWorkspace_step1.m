@@ -2,14 +2,14 @@ clearvars
 close all
 
 %% Parameters defined by user
-filePrefix = 'WAT_GS_03'; % File name to match. 
-siteabrev = 'GS'; %abbreviation of site.
+filePrefix = 'Baja_GI'; % File name to match. 
+siteabrev = 'GI'; %abbreviation of site.
 sp = 'Pm'; % your species code
 itnum = '3'; % which iteration you are looking for
 srate = 200; % sample rate
-tpwsPath = 'E:\Project Sites\GS\TPWS_125'; %directory of TPWS files
-effortXls = 'E:\Project Sites\GS\Pm_Effort_GS.xls'; % specify excel file with effort times
-saveDir = 'E:\Project Sites\GS\Seasonality'; %specify directory to save files
+tpwsPath = 'G:\Baja\TPWS_130'; %directory of TPWS files
+effortXls = 'G:\Baja\Pm_Effort.xls'; % specify excel file with effort times
+saveDir = 'G:\Baja\Seasonality'; %specify directory to save files
 %% define subfolder that fit specified iteration
 if itnum > 1
    for id = 2: str2num(itnum) % iterate id times according to itnum
@@ -64,7 +64,7 @@ concatFiles = fileList(fileMatchIdx);
 p = sp_setting_defaults('sp',sp,'analysis','SumPPICIBin');
 %% Concatenate variables
 PPall = []; TTall = []; ICIall = []; % initialize matrices
-parfor idsk = 1 : length(concatFiles)
+for idsk = 1 : length(concatFiles)
     % Load file
     fprintf('Loading %d/%d file %s\n',idsk,length(concatFiles),fullfile(tpwsPath,concatFiles{idsk}))
     D = load(fullfile(tpwsPath,concatFiles{idsk}));
