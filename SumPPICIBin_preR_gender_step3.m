@@ -2,14 +2,14 @@ clearvars
 close all
 
 %% Parameters defined by user
-filePrefix = 'WAT_GS_03'; % File name to match. 
-siteabrev = 'GS'; %abbreviation of site
+filePrefix = 'Baja_GI'; % File name to match. 
+siteabrev = 'GI'; %abbreviation of site
 sp = 'Pm'; % your species code
 srate = 200; % sample rate
-tpwsPath = 'E:\Project Sites\GS\TPWS_125\TPWS2\TPWS3\'; %directory of TPWS files
-saveDir = 'E:\Project Sites\GS\Seasonality'; %specify directory to save files
-effortXls = 'E:\Project Sites\GS\Pm_Effort_GS.xls'; % specify excel file with effort times
-dayBinCSV= 'E:\Project Sites\GS\Seasonality\GS_dayData_forGLMR125.csv'; % specify csv document with general PM information
+tpwsPath = 'G:\Baja\TPWS_130\TPWS2\TPWS3\'; %directory of TPWS files
+saveDir = 'G:\Baja\Seasonality'; %specify directory to save files
+effortXls = 'G:\Baja\Pm_Effort.xls'; % specify excel file with effort times
+dayBinCSV= 'G:\Baja\Seasonality\GI_dayData_forGLMR125.csv'; % specify csv document with general PM information
 %% Get effort times matching prefix file
 %when multiple sites in the effort table
 allEfforts = readtable(effortXls); %read effort table

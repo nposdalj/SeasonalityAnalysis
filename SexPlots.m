@@ -1,11 +1,11 @@
 clearvars
 close all
 %% Parameters defined by user
-filePrefix = 'GofAK_CB'; % File name to match
-siteabrev = 'CB'; %abbreviation of site
+filePrefix = 'Baja_GI'; % File name to match
+siteabrev = 'GI'; %abbreviation of site
 sp = 'Pm'; % your species code
-saveDir = 'E:\Project_Sites\CB\Seasonality'; %specify directory to save files
-titleNAME = 'Gulf of Alaska - Continental SLope';
+saveDir = 'G:\Baja\Seasonality'; %specify directory to save files
+titleNAME = 'Baja California - Guadalupe Island';
 %% load workspace
 load([saveDir,'\',siteabrev,'_workspaceStep2.mat']);
 load([saveDir,'\',siteabrev,'_workspaceStep3.mat']);
@@ -33,7 +33,6 @@ title(['Daily Presence of Social Units in the ',titleNAME])
 subplot(3,1,2)
 bar(binPresence.tbin,binPresence.JuHoursProp,'FaceColor','b','BarWidth',3)
 ylabel('Daily Presence (5-min bins)')
-ylim([0 50])
 title(['Daily Presence of Mid-Size Animals in the ',titleNAME])
 subplot(3,1,3)
 bar(binPresence.tbin,binPresence.MaHoursProp,'FaceColor','c','BarWidth',3)

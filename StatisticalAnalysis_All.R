@@ -26,7 +26,8 @@ library(survival)
 
 #load data
 site = 'GI'
-filename = paste("G:/Baja/Seasonality/",site,"_dayData_forGLMR125.csv",sep="")
+saveDir = paste("G:/Baja/Seasonality/")
+filename = paste(saveDir,site,"_dayData_forGLMR125.csv",sep="")
 dayBinTAB = read.csv(filename) #no effort days deleted
 head(dayBinTAB)
 str(dayBinTAB)
@@ -42,7 +43,7 @@ ggplot(dayBinTAB, aes(x=tbin,y=HoursProp))+
   labs(y="Proportion of Hours per Day with Clicks",x="Time (days)")+
   geom_line()+
   geom_point()
-fig1 =paste("G:/Baja/Seasonality/",site,"HoursProp_TimeSeries.png",sep="")
+fig1 =paste(saveDir,site,"HoursProp_TimeSeries.png",sep="")
 ggsave(fig1)
 
 #plot data as box plot for seasons; have to plot this with no effort days deleted
@@ -52,7 +53,7 @@ ggplot(dayBinTAB, aes(x=Season, y=HoursProp, color = Season))+
   ggtitle(title2)+
   labs(y="Proportion of Hours per Day with Clicks")
   scale_color_brewer(palette = "Dark2")
-fig2 =paste("G:/Baja/Seasonality/",site,'/',site,"BoxPlot.png",sep="")
+fig2 =paste(saveDir,site,"BoxPlot.png",sep="")
 ggsave(fig2)
 
 #groupin data according to ITS
@@ -95,7 +96,7 @@ if (site == 'GI'){
 }
 
 #round day, year, month, and find season for ITS data
-if (site == 'KS'){
+if (site == 'KS' || site == "GI"){
 }else{
 GroupedDay$day = floor(GroupedDay$day)
 GroupedDay$month = floor(GroupedDay$month)
@@ -115,11 +116,11 @@ ggplot(GroupedDay, aes(x=tbin,y=HoursProp))+
   labs(y="Proportion of Hours per Day with Clicks",x="Time (days)")+
   geom_line()+
   geom_point()
-fig1 =paste("G:/Baja/Seasonality/",site,"HoursProp_TimeSeriesITS.png",sep="")
+fig1 =paste(saveDir,site,"HoursProp_TimeSeriesITS.png",sep="")
 ggsave(fig1)
 
 ##### grouped data by day of year - mean
-filename2 = paste("G:/Baja/Seasonality/",site,"_days365GroupedMean_forGLMR125.csv",sep="")
+filename2 = paste(saveDir,site,"_days365GroupedMean_forGLMR125.csv",sep="")
 oneyear = read.csv(filename2) #bin means from days
 
 if (nrow(oneyear) >= 365) {
@@ -177,7 +178,7 @@ if (site == 'GI'){
 }
 
 #round day, year, month, and find season for ITS data
-if (site == 'KS'){
+if (site == 'KS' || site == 'GI'){
 }else{
 GroupedYear$Month = month(as.Date(GroupedYear$Day, origin = "2014-01-01"))
 GroupedYear$Season[GroupedYear$Month == 1 | GroupedYear$Month == 2 | GroupedYear$Month == 3] = 1
@@ -195,7 +196,7 @@ ggplot(oneyear, aes(x=Day,y=HoursProp))+
   labs(y="Average Proportion of Hours per Day with Clicks",x="Day of the Year")+
   geom_line()+
   geom_point()
-fig4 =paste("G:/Baja/Seasonality/",site,'/',site,"AveragedHoursProp_TimeSeries.png",sep="")
+fig4 =paste(saveDir,site,"AveragedHoursProp_TimeSeries.png",sep="")
 ggsave(fig4)
 
 #plot data as time series with ITS
@@ -205,7 +206,7 @@ ggplot(GroupedYear, aes(x=Day,y=HoursProp))+
   labs(y="Average Proportion of Hours per Day with Clicks",x="Day of the Year")+
   geom_line()+
   geom_point()
-fig4 =paste("G:/Baja/Seasonality/",site,"AveragedHoursProp_TimeSeriesITS.png",sep="")
+fig4 =paste(saveDir,site,"AveragedHoursProp_TimeSeriesITS.png",sep="")
 ggsave(fig4)
 
 if (nrow(oneyear) >= 365) {
@@ -217,7 +218,7 @@ ggplot(oneyear, aes(x=Day,y=HoursProp))+
   geom_errorbar(aes(ymin = HoursProp - SEM, ymax = HoursProp + SEM))+
   geom_line()+
   geom_point()
-fig5 =paste("G:/Baja/Seasonality/",site,"AveragedHoursProp_TimeSeries_ErrorBars.png",sep="")
+fig5 =paste(saveDir,site,"AveragedHoursProp_TimeSeries_ErrorBars.png",sep="")
 ggsave(fig5)
 }else{}
 
@@ -257,7 +258,7 @@ vizGG = plot(viz,allTerms = T) +
   l_rug() +
   theme_get() 
 print(vizGG,pages =1)
-fig6 =paste("G:/Baja/Seasonality/",site,"GAM1.png",sep="")
+fig6 =paste(saveDir,site,"GAM1.png",sep="")
 ggsave(fig6)
 
 #second way to plot GAM
@@ -267,7 +268,7 @@ vizGG2 = plot(viz, allTerms = T) +
   l_ciLine(mul = 5, colour = "blue", linetype = 2)+
   l_points(shape = 19, size = 1, alpha = 0.1) + theme_classic()
 print(vizGG2,pages =1)
-fig7 =paste("G:/Baja/Seasonality/",site,"GAM2.png",sep="")
+fig7 =paste(saveDir,site,"GAM2.png",sep="")
 ggsave(fig7)
 
 ###load all data and run GAM
@@ -299,11 +300,11 @@ print(plot(viz,allTerms=T),pages=1)
 #first way to plot GAM
 vizGG = plot(viz,allTerms = T) +
   labs(title = 'Sperm whales (GAM)')+
-  l_fitLine(linetype = 3)  +
+  l_fitLine(linetype = 1, size = 2)  +
   l_fitContour()+
-  l_ciLine(mul = 5, colour = "blue", linetype = 2) +
+  #l_ciLine(mul = 5, colour = "blue", linetype = 2) +
+  l_ciPoly(level = 0.95, alpha = 1/2)+
   l_ciBar() +
-  l_rug() +
   theme(axis.text=element_text(size=18),
         axis.title=element_text(size=20,face="bold"))
 print(vizGG,pages =1)

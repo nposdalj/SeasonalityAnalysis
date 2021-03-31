@@ -1,21 +1,22 @@
 clearvars
 close all
 %% Parameters defined by user
-filePrefix = 'ALEUT'; % File name to match. 
-siteabrev = 'BD'; %abbreviation of site.
-titleNAME = 'Aleutian Islands - Buldir Island';
+filePrefix = 'Baja_GI'; % File name to match. 
+siteabrev = 'GI'; %abbreviation of site.
+titleNAME = 'Baja California - Guadalupe Island';
 sp = 'Pm'; % your species code
-tpwsPath = ['E:\Project_Sites\',siteabrev,'\TPWS_125\TPWS2\TPWS3\']; %directory of TPWS files
+tpwsPath = ['G:\',siteabrev,'\TPWS_125\TPWS2\TPWS3\']; %directory of TPWS files
 %% load data from step 3
-filename = ['G:\My Drive\GofAK_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev,'\',siteabrev,'_workspaceStep3'];
+filename = ['G:\Baja\Seasonality\',siteabrev,'_workspaceStep3'];
 load(filename);
-saveDir = ['G:\My Drive\GofAK_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev]; %specify directory to save files
+saveDir = 'G:\Baja\Seasonality'; %specify directory to save files
 %% define pie chart colors
 blue = [0.2081    0.1663    0.5292];
 cyan = [0.0383, 0.6742, 0.7435];
 yellow = [0.9763    0.9831    0.0538];
 tilecolor = [blue; cyan; yellow];
 %% pie chart for F/J/M presence at each site (year round) - counting sum of hours NO TEXT
+figure
 if strcmp(siteabrev,'KOA') == 1 || strcmp(siteabrev,'KS') == 1
 x = [sum(meantab365.HoursPropJU) sum(meantab365.HoursPropMA) sum(meantab365.HoursPropFE)];
 pie_modified(x,tilecolor);
@@ -48,6 +49,7 @@ delete(ax.Children([1,3,5]));
 saveas(gcf,[saveDir,'\',siteabrev,'YearRoundRatio_BinsNOTEXT.png']);
 end
 %% pie chart for F/J/M presence at each site (year round) - counting sum of days NO TEXT
+figure
 if strcmp(siteabrev,'KOA') == 1 || strcmp(siteabrev,'KS') == 1 || strcmp(siteabrev,'AB')
 meantab365.Fem = meantab365.HoursPropFE > 0;
 meantab365.Juv = meantab365.HoursPropJU > 0;
@@ -91,6 +93,7 @@ set(gca, 'Color','None')
 export_fig([saveDir,'\',siteabrev,'YearRoundRatio_DaysNOTEXT.png'],'-png','-transparent');
 end
 %% pie chart for F/J/M presence at each site (year round)- counting sum of days with text
+figure
 if strcmp(siteabrev,'KOA') == 1 || strcmp(siteabrev,'KS') == 1
 x = [sum(meantab365.HoursPropJU) sum(meantab365.HoursPropMA) sum(meantab365.HoursPropFE)];
 pie_modified(x,tilecolor);
@@ -136,6 +139,8 @@ title([{'Proportion of Hours with Presence of Each Class'},{titleNAME}]);
 saveas(gcf,[saveDir,'\',siteabrev,'YearRoundRatio_BinsTEXT.png']);
 end
 %% pie chart for F/J/M presence at each site (year round) - counting sum of days with text
+close all
+figure
 if strcmp(siteabrev,'KOA') == 1 || strcmp(siteabrev,'KS') == 1
 x2 = [sum(meantab365.Juv) sum(meantab365.Mal) sum(meantab365.Fem)];
 pie_modified(x2,tilecolor);
@@ -166,7 +171,7 @@ title([{'Proportion of Days with Presence of Each Class'},{titleNAME}]);
 saveas(gcf,[saveDir,'\',siteabrev,'YearRoundRatio_DaysTEXT.png']);
 else
 x2 = [sum(meantab365.Juv) sum(meantab365.Mal) sum(meantab365.Fem)];
-pie_modified(x,tilecolor);
+pie_modified(x2,tilecolor);
 pText = findobj('Type','text');
 percentValues = get(pText,'String');
 labels = {'Social Units: ';  'Males: ';'Mid-Size: ';};

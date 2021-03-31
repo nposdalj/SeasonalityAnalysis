@@ -26,8 +26,9 @@ library(survival)
 library(gtable)
 
 #load data
-site = 'CB'
-filename = paste("G:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",site,'/',site,"_binPresence.csv",sep="")
+site = 'GI'
+saveDir = paste('G:/Baja/Seasonality/')
+filename = paste(saveDir,site,"_binPresence.csv",sep="")
 binPresence = read.csv(filename) #no effort days deleted
 head(binPresence)
 str(binPresence)
@@ -53,7 +54,7 @@ plot3 = ggplot(binPresence, aes(x=tbin,y=MaHoursProp))+
 figure = ggarrange(plot1,plot2,plot3, labels = c("Social Units","  Mid-Size  ","    Males   "),align = "v",ncol = 1, nrow = 3)
 annotate_figure(figure, top = text_grob(title1, face = "bold", size = 14), bottom = text_grob("Time (years)"),
                 left = text_grob("Proportion of Hours/Day w/Clicks", rot = 90))
-fig1 =paste("G:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",site,'/',site,site,"HoursProp_TimeSeries_StackedGroups.png",sep="")
+fig1 =paste(saveDir,site,site,"HoursProp_TimeSeries_StackedGroups.png",sep="")
 ggsave(fig1)
 
 #plot data as box plot for seasons; have to plot this with no effort days deleted
@@ -76,7 +77,7 @@ plot3 = ggplot(binPresence, aes(x=Season, y=MaHoursProp, color = Season))+
 figure = ggarrange(plot1,plot2,plot3, labels = c("Social Units","  Mid-Size  ","    Males   "), align = "hv", ncol = 1, nrow = 3, legend = "right",common.legend = TRUE)
 annotate_figure(figure, top = text_grob(title1, face = "bold", size = 14), bottom = text_grob("Seasons"),
                 left = text_grob("Proportion of Hours/Day w/Clicks", rot = 90))
-fig2 =paste("G:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",site,'/',site,"BoxPlot_StackedGroups.png",sep="")
+fig2 =paste(saveDir,site,"BoxPlot_StackedGroups.png",sep="")
 ggsave(fig2)
 
 #grouping data according to ITS
@@ -130,7 +131,7 @@ if (site == 'KOA'){
   GroupedDayM = aggregate(binPresence,list(rep(1:(nrow(binPresence)%/%n+1),each=n,len=nrow(binPresence))),mean)[-1];
 }
 
-if (site == 'KS'){
+if (site == 'KS' || site == 'GI'){
   GroupedDayF = binPresence;
   GroupedDayJ = binPresence;
   GroupedDayM = binPresence;
@@ -195,19 +196,19 @@ plot3 = ggplot(GroupedDayM, aes(x=tbin,y=MaHoursProp))+
 figure = ggarrange(plot1,plot2,plot3, labels = c("Social Units","  Mid-Size  ","    Males   "),align = "v",ncol = 1, nrow = 3)
 annotate_figure(figure, top = text_grob(title1, face = "bold", size = 20), bottom = text_grob("Time (years)", size = 20),
                 left = text_grob("Proportion of Hours/Day w/Clicks", rot = 90, size = 24))
-fig1 =paste("G:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",site,'/',site,"HoursProp_TimeSeriesITS_StackedGroups.png",sep="")
+fig1 =paste(saveDir,site,"HoursProp_TimeSeriesITS_StackedGroups.png",sep="")
 ggsave(fig1)
 
 ##### grouped data by day of year - mean
 if (nrow(binPresence) >= 365){
-filename2 = paste("G:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",site,'/',site,"_365GroupedMeanFemale.csv",sep="")
-filename3 = paste("G:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",site,'/',site,"_365GroupedMeanJuvenile.csv",sep="")
-filename4 = paste("G:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",site,'/',site,"_365GroupedMeanMale.csv",sep="")
+filename2 = paste(saveDir,site,"_365GroupedMeanFemale.csv",sep="")
+filename3 = paste(saveDir,site,"_365GroupedMeanJuvenile.csv",sep="")
+filename4 = paste(saveDir,site,"_365GroupedMeanMale.csv",sep="")
 oneyearF = read.csv(filename2) #bin means from days
 oneyearJ = read.csv(filename3) #bin means from days
 oneyearM = read.csv(filename4) #bin means from days
 } else {
-  filename2 = paste("G:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",site,'/',site,"_365GroupedMean.csv",sep="")
+  filename2 = paste(saveDir,site,"_365GroupedMean.csv",sep="")
   oneyear = read.csv(filename2)
 }
 
@@ -284,10 +285,10 @@ if (site == 'KOA'){
   GroupedYearM = aggregate(oneyear,list(rep(1:(nrow(oneyear)%/%n+1),each=n,len=nrow(oneyear))),mean)[-1];
 }
 
-if (site == 'KS'){
-  GroupedYearF = oneyear;
-  GroupedYearJ = oneyear;
-  GroupedYearM = oneyear;
+if (site == 'KS' || site == 'GI'){
+  GroupedYearF = oneyearF;
+  GroupedYearJ = oneyearJ;
+  GroupedYearM = oneyearM;
 }
 
 if (exists('oneyearF')){
@@ -324,7 +325,7 @@ if (nrow(oneyear) == nrow(GroupedYearJ)){
 if (nrow(oneyear) == nrow(GroupedYearM)){
   GroupedYearM$Day = floor(GroupedYearM$Day)
   GroupedYearM$Month = floor(GroupedYearM$Month)
-  GroupedYearJ$Season = as.integer(GroupedYearJ$Season)
+  GroupedYearM$Season = as.integer(GroupedYearJ$Season)
   GroupedYearM$Season[GroupedYearM$Month == 1 | GroupedYearM$Month == 2 | GroupedYearM$Month == 3] = 1
   GroupedYearM$Season[GroupedYearM$Month == 4 | GroupedYearM$Month == 5 | GroupedYearM$Month == 6] = 2
   GroupedYearM$Season[GroupedYearM$Month == 7 | GroupedYearM$Month == 8 | GroupedYearM$Month == 9] = 3
@@ -352,7 +353,7 @@ plot3 = ggplot(oneyearM, aes(x=Day,y=HoursPropMA))+
 figure = ggarrange(plot1,plot2,plot3, labels = c("Social Units","  Mid-Size  ","    Males   "),align = "v",ncol = 1, nrow = 3)
 annotate_figure(figure, top = text_grob(title1, face = "bold", size = 14), bottom = text_grob("Time (years)"),
                 left = text_grob("Proportion of Hours/Day w/Clicks", rot = 90))
-fig1 = paste("G:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",site,'/',site,"AveragedHoursProp_TimeSeries_StackedGroups.png",sep="")
+fig1 = paste(saveDir,site,"AveragedHoursProp_TimeSeries_StackedGroups.png",sep="")
 ggsave(fig1)
 }
 
@@ -373,7 +374,7 @@ plot3 = ggplot(GroupedYearM, aes(x=Day,y=HoursPropMA))+
 figure = ggarrange(plot1,plot2,plot3, labels = c("Social Units","  Mid-Size  ","    Males   "),align = "v",ncol = 1, nrow = 3)
 annotate_figure(figure, top = text_grob(title1, face = "bold", size = 14), bottom = text_grob("Time (years)"),
                 left = text_grob("Proportion of Hours/Day w/Clicks", rot = 90))
-fig1 =paste("G:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",site,'/',site,"AveragedHoursProp_TimeSeriesITS_StackedGroups.png",sep="")
+fig1 =paste(saveDir,site,"AveragedHoursProp_TimeSeriesITS_StackedGroups.png",sep="")
 ggsave(fig1)
 
 if (nrow(oneyear) >= 365) {
@@ -400,7 +401,7 @@ plot3 = ggplot(oneyearM, aes(x=Day,y=HoursPropMA))+
 figure = ggarrange(plot1,plot2,plot3, labels = c("Social Units","  Mid-Size  ","    Males   "),align = "v",ncol = 1, nrow = 3)
 annotate_figure(figure, top = text_grob(title1, face = "bold", size = 14), bottom = text_grob("Time (years)"),
                 left = text_grob("Proportion of Hours/Day w/Clicks", rot = 90))
-fig5 =paste("G:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",site,'/',site,"AveragedHoursProp_TimeSeries_ErrorBars_StackedGroups.png",sep="")
+fig5 =paste(saveDir,site,"AveragedHoursProp_TimeSeries_ErrorBars_StackedGroups.png",sep="")
 ggsave(fig5)
 }
 
@@ -437,7 +438,7 @@ vizGG = plot(viz,allTerms = T) +
         axis.title=element_text(size=20,face="bold"))
   theme_get() 
 print(vizGG,pages =1)
-fig6 =paste("G:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",site,'/',site,"GAM1_SocialUnits.png",sep="")
+fig6 =paste(saveDir,site,"GAM1_SocialUnits.png",sep="")
 ggsave(fig6)
 
 #second way to plot GAM
@@ -450,7 +451,7 @@ vizGG2 = plot(viz, allTerms = T) +
         axis.title=element_text(size=20,face="bold"))+
   theme_classic()
 print(vizGG2,pages =1)
-fig7 =paste("G:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",site,'/',site,"GAM2_SocialUnits.png",sep="")
+fig7 =paste(saveDir,site,"GAM2_SocialUnits.png",sep="")
 ggsave(fig7)
 }
 
@@ -473,18 +474,16 @@ print(plot(viz,allTerms=T),pages=1)
 
 #first way to plot GAM
 vizGG = plot(viz,allTerms = T) +
-  l_points() +
   labs(title = 'Mid-Size (GAM)')+
-  l_fitLine(linetype = 3)  +
+  l_fitLine(linetype = 1, size = 2)  +
   l_fitContour()+
-  l_ciLine(mul = 5, colour = "blue", linetype = 2) +
+  #l_ciLine(mul = 5, colour = "blue", linetype = 2) +
+  l_ciPoly(level = 0.95, alpha = 1/2)+
   l_ciBar() +
-  l_points(shape = 19, size = 1, alpha = 0.1) +
-  l_rug() +
   theme(axis.text=element_text(size=18),
         axis.title=element_text(size=20,face="bold"))
 print(vizGG,pages =1)
-fig6 =paste("G:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",site,'/',site,"GAM1_Juveniles.png",sep="")
+fig6 =paste(saveDir,site,"GAM1_Juveniles.png",sep="")
 ggsave(fig6)
 
 #second way to plot GAM
@@ -497,7 +496,7 @@ vizGG2 = plot(viz, allTerms = T) +
         axis.title=element_text(size=20,face="bold"))+
   theme_classic()
 print(vizGG2,pages =1)
-fig7 =paste("G:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",site,'/',site,"GAM2_Juveniles.png",sep="")
+fig7 =paste(saveDir,site,"GAM2_Juveniles.png",sep="")
 ggsave(fig7)
 
 #Males#
@@ -528,7 +527,7 @@ vizGG = plot(viz,allTerms = T) +
   theme(axis.text=element_text(size=18),
         axis.title=element_text(size=20,face="bold"))
 theme_get() 
-fig6 =paste("G:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",site,'/',site,"GAM1_Males.png",sep="")
+fig6 =paste(saveDir,site,"GAM1_Males.png",sep="")
 ggsave(fig6)
 
 #second way to plot GAM
@@ -538,5 +537,5 @@ vizGG2 = plot(viz, allTerms = T) +
   l_ciLine(mul = 5, colour = "blue", linetype = 2)+
   l_points(shape = 19, size = 1, alpha = 0.1) + theme_classic()
 print(vizGG2,pages =1)
-fig7 =paste("G:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",site,'/',site,"GAM2_Males.png",sep="")
+fig7 =paste(saveDir,site,"GAM2_Males.png",sep="")
 ggsave(fig7)

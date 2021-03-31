@@ -3,9 +3,9 @@ close all
 
 %this code should be run in MATLAB 2019b or later
 %% Parameters defined by user
-filePath = 'G:\My Drive\GofAK_TPWS_metadataReduced\SeasonalityAnalysis\'; %specify directory to save files
+filePath = 'G:\Baja\Seasonality\'; %specify directory to save files
 %% Find all files that fit your specifications for sites with less than a year
-files = dir([filePath,'**\*_365GroupedMean.csv']);
+files = dir([filePath,'**\*days365GroupedMean_forGLMR125.csv']);
 n = length(files);
 x = cell(1, numel(files)); 
 %load all of the tables
@@ -99,7 +99,6 @@ yellow = [0.9763    0.9831    0.0538];
 grey = [0.6 0.6 0.6 ];
 tilecolor = [blue; cyan; yellow; grey];
 %% Stacked bar plot for all sites
-
 %find proportion for sites with less than a year of data 
 table_short.Fem = table_short.HoursPropFE > 0;
 table_short.Juv = table_short.HoursPropJU > 0;

@@ -71,7 +71,8 @@ for idsk = 1 : length(concatFiles)
     
     % find times outside effort (sometimes there are detections
     % which are from the audio test at the beggining of the wav file)
-    within = cell2mat(arrayfun(@(x)sum(isbetween(x,datenum(effort.Start),datenum(effort.End))),D.MTT,'uni',false)); %#ok<PFBNS>
+%     within = cell2mat(arrayfun(@(x)sum(isbetween(x,datenum(effort.Start),datenum(effort.End))),D.MTT,'uni',false));
+    within = cell2mat(arrayfun(@(x)sum(isbetween(x,datetime(effort.Start),datetime(effort.End))),datetime(D.MTT,'ConvertFrom','datenum'),'uni',false));
     goodIdx = find(within ~= 0);
     MTT = D.MTT(goodIdx); % only keep the good detections
     MPP = D.MPP(goodIdx);
