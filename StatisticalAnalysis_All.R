@@ -248,26 +248,28 @@ print(plot(viz,allTerms=T),pages=1)
 
 #first way to plot GAM
 vizGG = plot(viz,allTerms = T) +
-  l_points() +
   labs(title = 'Sperm whales (GAM)')+
-  l_fitLine(linetype = 3)  +
+  l_fitLine(linetype = 1, size = 2)  +
   l_fitContour()+
-  l_ciLine(mul = 5, colour = "blue", linetype = 2) +
+  #l_ciLine(mul = 5, colour = "blue", linetype = 2) +
+  l_ciPoly(level = 0.95, alpha = 1/2)+
   l_ciBar() +
-  l_points(shape = 19, size = 1, alpha = 0.1) +
-  l_rug() +
-  theme_get() 
+  theme(axis.text=element_text(size=18),
+        axis.title=element_text(size=20,face="bold"))
 print(vizGG,pages =1)
 fig6 =paste(saveDir,site,"GAM1.png",sep="")
 ggsave(fig6)
 
 #second way to plot GAM
 vizGG2 = plot(viz, allTerms = T) +
-  l_fitLine(colour = "red") + l_rug(mapping = aes(x=x,y=y), alpha=0.8) +
   labs(title = 'Sperm whales (GAM)')+
-  l_ciLine(mul = 5, colour = "blue", linetype = 2)+
-  l_points(shape = 19, size = 1, alpha = 0.1) + theme_classic()
-print(vizGG2,pages =1)
+  l_fitLine(linetype = 1, size = 2)  +
+  l_fitContour()+
+  #l_ciLine(mul = 5, colour = "blue", linetype = 2) +
+  l_ciPoly(level = 0.95, alpha = 1/2)+
+  l_ciBar() +
+  theme(axis.text=element_text(size=18),
+        axis.title=element_text(size=20,face="bold"))
 fig7 =paste(saveDir,site,"GAM2.png",sep="")
 ggsave(fig7)
 
