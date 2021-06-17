@@ -324,3 +324,4 @@ fig7 =paste("G:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/GAM2.png
 ggsave(fig7)
 
 #I'm making this change to practice GitHub
+#let's try this again
