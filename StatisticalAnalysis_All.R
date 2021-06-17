@@ -323,7 +323,3 @@ print(vizGG2,pages =1)
 fig7 =paste("G:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/GAM2.png",sep="")
 ggsave(fig7)
 
-#I'm making this change to practice GitHub
-#let's try this again
-#Trying github again
-#this is like very slow emailing...
