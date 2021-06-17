@@ -2,12 +2,12 @@ clearvars
 close all
 
 %% Parameters defined by user
-filePrefix = 'Cross'; % File name to match. 
-siteabrev = 'CSM'; %abbreviation of site.
+filePrefix = 'Pagan'; % File name to match. 
+siteabrev = 'PG'; %abbreviation of site.
 sp = 'Pm'; % your species code
 srate = 200; % sample rate
-effortXls = 'I:\My Drive\CentralPac_TPWS_metadataReduced\CSM\Pm_Effort.xlsx'; % specify excel file with effort times
-saveDir = 'I:\My Drive\CentralPac_TPWS_metadataReduced\CSM\Seasonality'; %specify directory to save files
+effortXls = 'G:\My Drive\CentralPac_TPWS_metadataReduced\Pagan\Pm_Effort.xlsx'; % specify excel file with effort times
+saveDir = 'G:\My Drive\CentralPac_TPWS_metadataReduced\Pagan\Seasonality'; %specify directory to save files
 %% load workspace
 load([saveDir,'\',siteabrev,'_workspace125.mat']);
 %% group data by 5min bins, days, weeks, and seasons 
@@ -54,9 +54,14 @@ else
     if strcmp(siteabrev,'CSM');
     dayTable.Effort_Bin = floor(dayTable.Effort_Bin * .2); %for Cross_01 and 02 only, 5 on 20 off (25 minute cycle)-- meaning you're recording 20% (0.2) of the time
     dayTable.Effort_Sec = dayTable.Effort_Bin * 5 * 60; %convert from bins into efforts in seconds per day
-else
+    else
+      if strcmp(siteabrev,'PG');
+    dayTable.Effort_Bin = floor(dayTable.Effort_Bin * .333); %for Pagan_01 only, 5 on 10 off (15 minute cycle)-- meaning you're recording 20% (0.2) of the time
+    dayTable.Effort_Sec = dayTable.Effort_Bin * 5 * 60; %convert from bins into efforts in seconds per day
+      else
 dayTable.MaxEffort_Bin = ones(p,1)*(288);
-end
+      end
+    end
 end
 end
 
