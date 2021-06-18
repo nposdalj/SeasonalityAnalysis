@@ -2,14 +2,15 @@ clearvars
 close all
 
 %% Parameters defined by user
-filePrefix = 'Cross'; % File name to match. 
-siteabrev = 'CSM'; %abbreviation of site
+filePrefix = 'Pagan'; % File name to match. 
+genderFileName = 'Pagan_A_01'; %File name to match gender file
+siteabrev = 'PG'; %abbreviation of site
 sp = 'Pm'; % your species code
 srate = 200; % sample rate
-tpwsPath = 'I:\My Drive\CentralPac_TPWS_metadataReduced\CSM\TPWS_125\TPWS2\'; %directory of TPWS files
-saveDir = 'I:\My Drive\CentralPac_TPWS_metadataReduced\CSM\Seasonality'; %specify directory to save files
-effortXls = 'I:\My Drive\CentralPac_TPWS_metadataReduced\CSM\Pm_Effort.xlsx'; % specify excel file with effort times
-dayBinCSV= 'I:\My Drive\CentralPac_TPWS_metadataReduced\CSM\Seasonality\KR_dayData_forGLMR125.csv'; % specify csv document with general PM information
+tpwsPath ='G:\My Drive\CentralPac_TPWS_metadataReduced\Pagan\TPWS_125\TPWS2\TPWS3\'; %directory of TPWS files
+effortXls = 'G:\My Drive\CentralPac_TPWS_metadataReduced\Pagan\Pm_Effort.xlsx'; % specify excel file with effort times
+saveDir = 'G:\My Drive\CentralPac_TPWS_metadataReduced\Pagan\Seasonality'; %specify directory to save filess
+dayBinCSV= 'G:\My Drive\CentralPac_TPWS_metadataReduced\Pagan\Seasonality\KR_dayData_forGLMR125.csv'; % specify csv document with general PM information
 %% Get effort times matching prefix file
 %when multiple sites in the effort table
 allEfforts = readtable(effortXls); %read effort table
@@ -54,7 +55,7 @@ else
     binEffort.sec = binEffort.bin*(p.binDur*60);
 end
 %% load data
-filename = [tpwsPath,filePrefix,'_',sp,'_gender.mat'];
+filename = [tpwsPath,genderFileName,'_',sp,'_gender.mat'];
 load(filename);
 %% group data by days and add effort
 binPresence = synchronize (binData, binEffort);
@@ -84,8 +85,13 @@ if strcmp(siteabrev,'BD');
     ge = ge/288; %%proportion of data that was not 'ships' considering full recording effort
     binPresence.Effort_Bin(274:end) = ge * 144; %for ALEUT03BD ONLY 5 on 5 off (10 minute cycle) -- meaning you're recording 0.5 percent of the time
     binPresence.Effort_Sec(274:end) = binPresence.Effort_Bin(274:end) * 5 * 60;
-    else
+else
+          if strcmp(siteabrev,'PG');
+    binPresence.Effort_Bin = floor(binPresence.Effort_Bin * .333); %for Pagan_01 only, 5 on 10 off (15 minute cycle)-- meaning you're recording 20% (0.2) of the time
+    binPresence.Effort_Sec = binPresence.Effort_Bin * 5 * 60; %convert from bins into efforts in seconds per day
+      else
 binPresence.MaxEffort_Bin = ones(p,1)*(288);
+end
 end
 end
 
