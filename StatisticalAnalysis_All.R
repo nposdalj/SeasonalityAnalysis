@@ -25,8 +25,8 @@ library(lubridate)
 library(survival)
 
 #load data
-site = 'PG'
-saveDir = paste("G:/My Drive/CentralPac_TPWS_metadataReduced/Pagan/Seasonality/")
+site = 'GI'
+saveDir = paste("G:/My Drive/CCE_TPWS_metadataReduced/Baja_GI/Seasonality/")
 filename = paste(saveDir,site,"_dayData_forGLMR125.csv",sep="")
 dayBinTAB = read.csv(filename) #no effort days deleted
 head(dayBinTAB)
@@ -92,7 +92,8 @@ if (site == 'KS'){
 }
 
 if (site == 'GI'){
-  GroupedDay = dayBinTAB
+  n = 2
+  GroupedDay = aggregate(dayBinTAB,list(rep(1:(nrow(dayBinTAB)%/%n+1),each=n,len=nrow(dayBinTAB))),mean)[-1];
 }
 if (site == 'PG'){
   n = 2
@@ -178,7 +179,8 @@ if (site == 'KS'){
 }
 
 if (site == 'GI'){
-  GroupedYear = oneyear
+  n = 2
+  GroupedYear = aggregate(oneyear,list(rep(1:(nrow(oneyear)%/%n+1),each=n,len=nrow(oneyear))),mean)[-1];
 }
 
 #round day, year, month, and find season for ITS data

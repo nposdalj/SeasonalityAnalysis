@@ -2,12 +2,12 @@ clearvars
 close all
 
 %% Parameters defined by user
-filePrefix = 'Pagan'; % File name to match. 
-siteabrev = 'PG'; %abbreviation of site.
+filePrefix = 'Baja_GI'; % File name to match. 
+siteabrev = 'GI'; %abbreviation of site.
 sp = 'Pm'; % your species code
 srate = 200; % sample rate
-effortXls = 'G:\My Drive\CentralPac_TPWS_metadataReduced\Pagan\Pm_Effort.xlsx'; % specify excel file with effort times
-saveDir = 'G:\My Drive\CentralPac_TPWS_metadataReduced\Pagan\Seasonality'; %specify directory to save files
+effortXls = 'G:\My Drive\CCE_TPWS_metadataReduced\Baja_GI\Pm_Effort.xls'; % specify excel file with effort times
+saveDir = 'G:\My Drive\CCE_TPWS_metadataReduced\Baja_GI\Seasonality'; %specify directory to save files
 %% load workspace
 load([saveDir,'\',siteabrev,'_workspace125.mat']);
 %% group data by 5min bins, days, weeks, and seasons 
