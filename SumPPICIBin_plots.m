@@ -8,9 +8,9 @@ PlotSiteName = 'Baja Guadualpe Island';
 sp = 'Pm'; % your species code
 itnum = '3'; % which iteration you are looking for
 srate = 200; % sample rate
-tpwsPath = 'G:\Baja\TPWS_130'; %directory of TPWS files
-effortXls = 'G:\Baja\Pm_Effort.xls'; % specify excel file with effort times
-saveDir = 'G:\Baja\Seasonality'; %specify directory to save files
+tpwsPath = 'G:\My Drive\CCE_TPWS_metadataReduced\Baja_GI\TPWS_130'; %directory of TPWS files
+effortXls = 'G:\My Drive\CCE_TPWS_metadataReduced\Baja_GI\Pm_Effort.xls'; % specify excel file with effort times
+saveDir = 'G:\My Drive\CCE_TPWS_metadataReduced\Baja_GI\Seasonality'; %specify directory to save files
 %RC_data = 1; %If you're using RCs data, make this equal to 1, otherwise make it equal to 0.
 %% define subfolder that fit specified iteration
 if itnum > 1

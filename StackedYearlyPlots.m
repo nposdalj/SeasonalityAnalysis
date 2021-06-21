@@ -2,13 +2,13 @@ clearvars
 close all
 
 %% Parameters defined by user
-filePrefix = 'GofAK_QN'; % File name to match. 
-siteabrev = 'QN'; %abbreviation of site.
-SiteName_forPlots = 'Gulf of Alaska - Quinn Seamount';
-saveDir = ['G:\My Drive\GofAK_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev]; %specify directory to save and load files
+filePrefix = 'Baja_GI'; % File name to match. 
+siteabrev = 'GI'; %abbreviation of site.
+SiteName_forPlots = 'Baja California - Guadalupe Island';
+saveDir = ['G:\My Drive\CCE_TPWS_metadataReduced\Baja_GI\Seasonality']; %specify directory to save and load files
 %% load workspace
 load([saveDir,'\',siteabrev,'_workspace125.mat']);
-saveDir = ['G:\My Drive\GofAK_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev]; %specify directory to save and load files
+saveDir = ['G:\My Drive\CCE_TPWS_metadataReduced\Baja_GI\Seasonality']; %specify directory to save and load files
 %% group data by 5min bins, days, weeks, and seasons
 %group data by 5 minute bins
 binTable = synchronize(binData,binEffort);
@@ -230,6 +230,37 @@ subplot(4,1,4) %number of plots, column, row)
 bar3 = bar(dayTable.tbin(dayTable.year==2017),dayTable.HoursProp(dayTable.year==2017),'k')
 tstart = datetime(2017,01,01);
 tend = datetime(2017,12,31);
+xlim([tstart tend]);
+ylim([ylim1 ylim2]);
+xlabel('Time (months)')
+% Save plot
+dailyfn = [siteabrev,'_','_subplots_daily_average_presence'];
+saveas(gcf,fullfile(saveDir,dailyfn),'png')
+end
+
+
+if strcmp(siteabrev,'GI')
+figure
+subplot(3,1,1) %number of plots, column, row)
+bar1 = bar(dayTable.tbin(dayTable.year==2018),dayTable.HoursProp(dayTable.year==2018),'k')
+title({'Average Daily Presence of Sperm Whales at ',SiteName_forPlots})
+tstart = datetime(2018,01,01);
+tend = datetime(2018,12,31);
+xlim([tstart tend]);
+ylim1 = min(dayTable.HoursProp);
+ylim2 = max(dayTable.HoursProp);
+ylim([ylim1 ylim2]);
+subplot(3,1,2) %number of plots, column, row)
+bar2 = bar(dayTable.tbin(dayTable.year==2019),dayTable.HoursProp(dayTable.year==2019),'k')
+tstart = datetime(2019,01,01);
+tend = datetime(2019,12,31);
+xlim([tstart tend]);
+ylim([ylim1 ylim2]);
+ylabel('Proportion of Hours/Day with Sperm Whales')
+subplot(3,1,3) %number of plots, column, row)
+bar3 = bar(dayTable.tbin(dayTable.year==2020),dayTable.HoursProp(dayTable.year==2020),'k')
+tstart = datetime(2020,01,01);
+tend = datetime(2020,12,31);
 xlim([tstart tend]);
 ylim([ylim1 ylim2]);
 xlabel('Time (months)')
