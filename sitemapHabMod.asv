@@ -110,14 +110,21 @@ OCNMSQC_mean = [QClat, QClong];
 OCNMStext = repmat({'OCNMS'},size(OCNMSQC_mean,1),1);
 OCNMS = [OCNMStext num2cell(OCNMSQC_mean)];
 
+[PIlat,PIlong] = meanm(PI_latLongs(:,1),PI_latLongs(:,2));
+PI_mean = [PIlat, PIlong];
+PItext = repmat({'PI'},size(PI_mean,1),1);
+PI = [PItext num2cell(PI_mean)];
 %% create one table with all lat and longs
-LL = [BD; CB; CORC; OCNMS; PT; QN; SAIPAN; TIN; Wake; GI];
+LL = [AB; BC; BD; BP; BS; CB; CCE; CORC; CSM; DCPP01C; DT; EQ; GC; GCABLA; GCAP; GCAT; GS; HATa; HATb; HAWAIIK;...
+    HOKE; HZ; JAXA; JAXB; JAXC; JAXD; KAU; KOA; KS; LSM; MC; NC; NFC; OC; OCNMS; PALNS; PALWT; PHR; PT; QN; SAIPAN; TIN; Wake; WC; KR; PI; GI];
 LatLong = cell2mat(LL(:,2:3));
 
 LatLongTAB = array2table(LatLong);
 LatLongTAB.Properties.VariableNames = {'Latitude' 'Longitude'};
 
-LatLongTAB{:,'Site'} = {'BD'; 'CB'; 'CORC'; 'OCNMS'; 'PT'; 'QN'; 'SAIPAN'; 'TIN'; 'Wake'; 'GI'};
+LatLongTAB{:,'Site'} = {'AB'; 'BC'; 'BD'; 'BP'; 'BS'; 'CB'; 'CCE'; 'CORC'; 'CSM'; 'DCPP01C'; 'DT'; 'EQ'; 'GC';...
+    'GCABLA';'GCAP'; 'GCAT'; 'GS'; 'HATa'; 'HATb'; 'HAWAIIK'; 'HOKE'; 'HZ'; 'JAXA'; 'JAXB'; 'JAXC'; 'JAXD'; 'KAU';...
+    'KOA'; 'KS'; 'LSM'; 'MC'; 'NC'; 'NFC'; 'OC'; 'OCNMS'; 'PALNS'; 'PALWT'; 'PHR'; 'PT'; 'QN'; 'SAIPAN'; 'TIN'; 'Wake'; 'WC'; 'KR'; 'PI'; 'GI'};
 
 LatLongTAB.Longitude(41) = -2.154600000000000e+02; %Saipan
 LatLongTAB.Longitude(42) = -2.157500000000000e+02; %Tinian
