@@ -5,11 +5,11 @@ filePrefix = 'Baja_GI'; % File name to match.
 siteabrev = 'GI'; %abbreviation of site.
 titleNAME = 'Baja California - Guadalupe Island';
 sp = 'Pm'; % your species code
-tpwsPath = ['G:\',siteabrev,'\TPWS_125\TPWS2\TPWS3\']; %directory of TPWS files
+tpwsPath = ['G:\My Drive\CCE_TPWS_metadataReduced\Baja_GI\TPWS_130\TPWS2\TPWS3\']; %directory of TPWS files
 %% load data from step 3
-filename = ['G:\Baja\Seasonality\',siteabrev,'_workspaceStep3'];
+filename = ['G:\My Drive\CCE_TPWS_metadataReduced\Baja_GI\Seasonality\',siteabrev,'_workspaceStep3'];
 load(filename);
-saveDir = 'G:\Baja\Seasonality'; %specify directory to save files
+saveDir = 'G:\My Drive\CCE_TPWS_metadataReduced\Baja_GI\Seasonality'; %specify directory to save files
 %% define pie chart colors
 blue = [0.2081    0.1663    0.5292];
 cyan = [0.0383, 0.6742, 0.7435];

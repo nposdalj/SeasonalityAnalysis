@@ -3,7 +3,7 @@ close all
 
 %this code should be run in MATLAB 2019b or later
 %% Parameters defined by user
-filePath = 'G:\Baja\Seasonality\'; %specify directory to save files
+filePath = 'G:\My Drive\CCE_TPWS_metadataReduced\Baja_GI\Seasonality\'; %specify directory to save files
 %% Find all files that fit your specifications for sites with less than a year
 files = dir([filePath,'**\*days365GroupedMean_forGLMR125.csv']);
 n = length(files);

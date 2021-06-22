@@ -27,7 +27,7 @@ library(gtable)
 
 #load data
 site = 'GI'
-saveDir = paste('G:/Baja/Seasonality/')
+saveDir = paste('G:/My Drive/CCE_TPWS_metadataReduced/Baja_GI/Seasonality/')
 filename = paste(saveDir,site,"_binPresence.csv",sep="")
 binPresence = read.csv(filename) #no effort days deleted
 head(binPresence)
@@ -131,12 +131,17 @@ if (site == 'KOA'){
   GroupedDayM = aggregate(binPresence,list(rep(1:(nrow(binPresence)%/%n+1),each=n,len=nrow(binPresence))),mean)[-1];
 }
 
-if (site == 'KS' || site == 'GI'){
+if (site == 'KS' || site == 'GI'|| site=='PG'){
   GroupedDayF = binPresence;
   GroupedDayJ = binPresence;
   GroupedDayM = binPresence;
 }
-
+if (site == 'GI'){
+  n = 2
+  GroupedDayF = aggregate(binPresence,list(rep(1:(nrow(binPresence)%/%n+1),each=n,len=nrow(binPresence))),mean)[-1];
+  GroupedDayJ = binPresence;
+  GroupedDayM = binPresence;
+}
 #round day, year, month, and find season for ITS data
 if (nrow(binPresence) > nrow(GroupedDayF)){
 if (exists('GroupedDayF')){
@@ -287,6 +292,12 @@ if (site == 'KOA'){
 
 if (site == 'KS' || site == 'GI'){
   GroupedYearF = oneyearF;
+  GroupedYearJ = oneyearJ;
+  GroupedYearM = oneyearM;
+}
+if (site == 'GI'){
+  n = 2
+  GroupedYearF = aggregate(oneyear,list(rep(1:(nrow(oneyear)%/%n+1),each=n,len=nrow(oneyear))),mean)[-1];
   GroupedYearJ = oneyearJ;
   GroupedYearM = oneyearM;
 }
