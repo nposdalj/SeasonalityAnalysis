@@ -26,8 +26,8 @@ library(survival)
 library(gtable)
 
 #load data
-site = 'GI'
-saveDir = paste('G:/My Drive/CCE_TPWS_metadataReduced/Baja_GI/Seasonality/')
+site = 'CORC'
+saveDir = paste('G:/My Drive/CCE_TPWS_metadataReduced/CORC/Seasonality/')
 filename = paste(saveDir,site,"_binPresence.csv",sep="")
 binPresence = read.csv(filename) #no effort days deleted
 head(binPresence)
@@ -139,6 +139,11 @@ if (site == 'KS' || site == 'GI'|| site=='PG'){
 if (site == 'GI'){
   n = 2
   GroupedDayF = aggregate(binPresence,list(rep(1:(nrow(binPresence)%/%n+1),each=n,len=nrow(binPresence))),mean)[-1];
+  GroupedDayJ = binPresence;
+  GroupedDayM = binPresence;
+}
+if (site == 'CORC'){
+  GroupedDayF = binPresence;
   GroupedDayJ = binPresence;
   GroupedDayM = binPresence;
 }
@@ -301,7 +306,11 @@ if (site == 'GI'){
   GroupedYearJ = oneyearJ;
   GroupedYearM = oneyearM;
 }
-
+if (site == 'CORC'){
+  GroupedYearF = oneyearF;
+  GroupedYearJ = oneyearJ;
+  GroupedYearM = oneyearM;
+}
 if (exists('oneyearF')){
   oneyear = oneyearF
 }

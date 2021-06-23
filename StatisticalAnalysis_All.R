@@ -25,8 +25,8 @@ library(lubridate)
 library(survival)
 
 #load data
-site = 'GI'
-saveDir = paste("G:/My Drive/CCE_TPWS_metadataReduced/Baja_GI/Seasonality/")
+site = 'CORC'
+saveDir = paste("G:/My Drive/CCE_TPWS_metadataReduced/CORC/Seasonality/")
 filename = paste(saveDir,site,"_dayData_forGLMR125.csv",sep="")
 dayBinTAB = read.csv(filename) #no effort days deleted
 head(dayBinTAB)
@@ -96,6 +96,10 @@ if (site == 'GI'){
   GroupedDay = aggregate(dayBinTAB,list(rep(1:(nrow(dayBinTAB)%/%n+1),each=n,len=nrow(dayBinTAB))),mean)[-1];
 }
 if (site == 'PG'){
+  n = 2
+  GroupedDay = aggregate(dayBinTAB,list(rep(1:(nrow(dayBinTAB)%/%n+1),each=n,len=nrow(dayBinTAB))),mean)[-1];
+}
+if (site == 'CORC'){
   n = 2
   GroupedDay = aggregate(dayBinTAB,list(rep(1:(nrow(dayBinTAB)%/%n+1),each=n,len=nrow(dayBinTAB))),mean)[-1];
 }
@@ -181,6 +185,9 @@ if (site == 'KS'){
 if (site == 'GI'){
   n = 2
   GroupedYear = aggregate(oneyear,list(rep(1:(nrow(oneyear)%/%n+1),each=n,len=nrow(oneyear))),mean)[-1];
+}
+if (site == 'CORC'){
+  GroupedYear = oneyear
 }
 
 #round day, year, month, and find season for ITS data
