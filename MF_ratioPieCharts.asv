@@ -3,13 +3,13 @@ close all
 %% Parameters defined by user
 filePrefix = 'CORC'; % File name to match. 
 siteabrev = 'CORC'; %abbreviation of site.
-titleNAME = 'CORC- Offshore Mooring';
+titleNAME = 'Baja California - Guadalupe Island';
 sp = 'Pm'; % your species code
-tpwsPath = ['G:\My Drive\CCE_TPWS_metadataReduced\CORC\TPWS_125\TPWS2\']; %directory of TPWS files
+tpwsPath = ['G:\My Drive\CCE_TPWS_metadataReduced\Baja_GI\TPWS_130\TPWS2\TPWS3\']; %directory of TPWS files
 %% load data from step 3
-filename = ['G:\My Drive\CCE_TPWS_metadataReduced\CORC\Seasonality\',siteabrev,'_workspaceStep3'];
+filename = ['G:\My Drive\CCE_TPWS_metadataReduced\Baja_GI\Seasonality\',siteabrev,'_workspaceStep3'];
 load(filename);
-saveDir = 'G:\My Drive\CCE_TPWS_metadataReduced\CORC\Seasonality'; %specify directory to save files
+saveDir = 'G:\My Drive\CCE_TPWS_metadataReduced\Baja_GI\Seasonality'; %specify directory to save files
 %% define pie chart colors
 blue = [0.2081    0.1663    0.5292];
 cyan = [0.0383, 0.6742, 0.7435];

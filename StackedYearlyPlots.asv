@@ -2,7 +2,7 @@ clearvars
 close all
 
 %% Parameters defined by user
-filePrefix = 'CORC'; % File name to match. 
+filePrefix = 'Baja_'; % File name to match. 
 siteabrev = 'CORC'; %abbreviation of site.
 SiteName_forPlots = 'CORC- Offshore Mooring';
 saveDir = ['G:\My Drive\CCE_TPWS_metadataReduced\CORC\Seasonality']; %specify directory to save and load files
@@ -263,30 +263,6 @@ tstart = datetime(2020,01,01);
 tend = datetime(2020,12,31);
 xlim([tstart tend]);
 ylim([ylim1 ylim2]);
-xlabel('Time (months)')
-% Save plot
-dailyfn = [siteabrev,'_','_subplots_daily_average_presence'];
-saveas(gcf,fullfile(saveDir,dailyfn),'png')
-end
-
-if strcmp(siteabrev,'CORC')
-figure
-subplot(2,1,1) %number of plots, column, row)
-bar1 = bar(dayTable.tbin(dayTable.year==2014),dayTable.HoursProp(dayTable.year==2014),'k')
-title({'Average Daily Presence of Sperm Whales at ',SiteName_forPlots})
-tstart = datetime(2014,01,01);
-tend = datetime(2014,12,31);
-xlim([tstart tend]);
-ylim1 = min(dayTable.HoursProp);
-ylim2 = max(dayTable.HoursProp);
-ylim([ylim1 ylim2]);
-subplot(2,1,2) %number of plots, column, row)
-bar2 = bar(dayTable.tbin(dayTable.year==2015),dayTable.HoursProp(dayTable.year==2015),'k')
-tstart = datetime(2015,01,01);
-tend = datetime(2015,12,31);
-xlim([tstart tend]);
-ylim([ylim1 ylim2]);
-ylabel('Proportion of Hours/Day with Sperm Whales')
 xlabel('Time (months)')
 % Save plot
 dailyfn = [siteabrev,'_','_subplots_daily_average_presence'];
