@@ -10,7 +10,7 @@ srate = 200; % sample rate
 tpwsPath = 'G:\My Drive\CCE_TPWS_metadataReduced\CORC\TPWS_125\TPWS2\'; %directory of TPWS files
 effortXls = 'G:\My Drive\CCE_TPWS_metadataReduced\CORC\Pm_Effort.xlsx'; % specify excel file with effort times
 saveDir = 'G:\My Drive\CCE_TPWS_metadataReduced\CORC\Seasonality'; %specify directory to save files
-dayBinCSV= 'G:\My Drive\CCE_TPWS_metadataReduced\CORC\Seasonality\KR_dayData_forGLMR125.csv'; % specify csv document with general PM information
+dayBinCSV= 'G:\My Drive\CCE_TPWS_metadataReduced\Baja_GI\Seasonality\KR_dayData_forGLMR125.csv'; % specify csv document with general PM information
 %% Get effort times matching prefix file
 %when multiple sites in the effort table
 allEfforts = readtable(effortXls); %read effort table
