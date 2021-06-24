@@ -142,3 +142,48 @@ geolimits([-3 62],[-220 -115]);
 set(gcf,'Color','w');
 save('Site_map.png');
 export_fig Site_mapHQ.png
+
+%grey map site for Central Pacific
+figure(4)
+LatLongTAB.Site = categorical(LatLongTAB.Site);
+A = 200;
+latitude = LatLongTAB.Latitude;
+longitude = LatLongTAB.Longitude;
+gm = geoscatter(latitude,longitude,A,'.','k');  
+text(latitude(7)+3,longitude(7)+7,'SAIPAN','HorizontalAlignment','right','FontSize',16);
+text(latitude(8)-2,longitude(8)+2,'TIN','HorizontalAlignment','right','FontSize',16);
+text(latitude(9)+0.5,longitude(9)-1.5,'Wake','HorizontalAlignment','right','FontSize',16);
+geolimits([10 25],[-220 -165]);
+set(gcf,'Color','w');
+save('Site_map.png');
+export_fig Site_mapCentralPac.png
+
+%grey map site for CCE
+figure(5)
+LatLongTAB.Site = categorical(LatLongTAB.Site);
+A = 200;
+latitude = LatLongTAB.Latitude;
+longitude = LatLongTAB.Longitude;
+gm = geoscatter(latitude,longitude,A,'.','k');  
+text(latitude(3)+1,longitude(3)-1,'CORC','HorizontalAlignment','right','FontSize',16);
+text(latitude(4),longitude(4)-1,'OCNMS','HorizontalAlignment','right','FontSize',16);
+text(latitude(10)-0.5,longitude(10)-1,'GI','HorizontalAlignment','right','FontSize',16);
+geolimits([25 50],[-130 -115]);
+set(gcf,'Color','w');
+save('Site_map.png');
+export_fig Site_mapCCE.png
+
+figure(6)
+LatLongTAB.Site = categorical(LatLongTAB.Site);
+A = 200;
+latitude = LatLongTAB.Latitude;
+longitude = LatLongTAB.Longitude;
+gm = geoscatter(latitude,longitude,A,'.','k');  
+text(latitude(1),longitude(1)-1,'BD','HorizontalAlignment','right','FontSize',16);
+text(latitude(2)+0.5,longitude(2)-1,'CB','HorizontalAlignment','right','FontSize',16);
+text(latitude(5),longitude(5)+4.5,'PT','HorizontalAlignment','right','FontSize',16);
+text(latitude(6),longitude(6)-1.5,'QN','HorizontalAlignment','right','FontSize',16);
+geolimits([55 60],[-185 -130]);
+set(gcf,'Color','w');
+save('Site_map.png');
+export_fig Site_mapGOA.png
