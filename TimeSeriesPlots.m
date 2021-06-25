@@ -1,11 +1,11 @@
 clearvars
 close all
 %% Parameters defined by user
-filePrefix = 'GofAK_CB'; % File name to match
-siteabrev = 'CB'; %abbreviation of site
+filePrefix = 'Baja_GI'; % File name to match. 
+siteabrev = 'GI'; %abbreviation of site.
 sp = 'Pm'; % your species code
-saveDir = 'E:\Project_Sites\CB\Seasonality'; %specify directory to save files
-titleNAME = 'Gulf of Alaska - Continental Slope';
+saveDir = 'G:\Baja\Seasonality'; %specify directory to save files
+titleNAME = 'Baja California - Guadalupe Island';
 %% load workspace
 load([saveDir,'\',siteabrev,'_workspaceStep2.mat']);
 load([saveDir,'\',siteabrev,'_workspaceStep3.mat']);
@@ -36,10 +36,10 @@ weekPresence.MaHoursProp = weekPresence.MaHours ./(weekPresence.Effort_Sec ./ (6
 figure
 yyaxis left
 bar(dayTable.tbin, dayTable.HoursProp)
-ylim([0 1]);
+ylim([0 max(dayTable.HoursProp)]);
 ylabel('Proportion of hours per day with sperm whale presence')
 yyaxis right
-plot(dayTable.tbin, dayTable.NormEffort_Bin*100,'.r')
+plot(dayTable.tbin, (dayTable.Effort_Sec./dayTable.MaxEffort_Sec)*100,'.r')
 ylim([-1 101])
 ylabel('Percent effort')
 title(['Daily Presence of Sperm whales in the ',titleNAME])
@@ -49,13 +49,13 @@ saveas(gcf,[saveDir,'\',siteabrev,'DailyPresence.png']);
 figure
 yyaxis left
 bar(weekTable.tbin, weekTable.HoursProp)
-ylim([0 1]);
+ylim([0 max(weekTable.HoursProp)]);
 ylabel('Proportion of hours per week with sperm whale presence')
 yyaxis right
-plot(weekTable.tbin, weekTable.NormEffort_Bin*100,'.r')
+plot(weekTable.tbin, weekPresence.NormEffort_Bin*100,'.r')
 ylim([-1 101])
 ylabel('Percent effort')
-title(['Weekly Presence of Sperm whales in the ',titleNAME])
+title([{'Weekly Presence of Sperm whales in the ',titleNAME}])
 saveas(gcf,[saveDir,'\',siteabrev,'WeeklyPresence.png']);
 
 %Plot proportion of hours per DAY with presence from each group
@@ -92,7 +92,7 @@ saveas(gcf,[saveDir,'\',siteabrev,'DailyPresence_AllClasses_Subplots.png']);
 figure
 subplot(3,1,1)
 yyaxis left
-bar(weekPresence.tbin,weekPresence.FeHoursProp,'FaceColor','y','BarWidth',3)
+bar(weekPresence.tbin,weekPresence.FeHoursProp,'FaceColor','y','BarWidth',1)
 ylim([0 max(weekPresence.FeHoursProp)])
 yyaxis right
 plot(weekPresence.tbin, weekPresence.NormEffort_Bin*100,'.r')
@@ -100,7 +100,7 @@ ylim([-1 101])
 title(['Weekly Presence of Social Units in the ',titleNAME])
 subplot(3,1,2)
 yyaxis left
-bar(weekPresence.tbin,weekPresence.JuHoursProp,'FaceColor','b','BarWidth',3)
+bar(weekPresence.tbin,weekPresence.JuHoursProp,'FaceColor','b','BarWidth',1)
 ylim([0 max(weekPresence.JuHoursProp)])
 ylabel('Proportion of hours per week with group presence')
 yyaxis right
@@ -110,7 +110,7 @@ ylabel('Percent Effort')
 title(['Weekly Presence of Mid-Size Animals in the ',titleNAME])
 subplot(3,1,3)
 yyaxis left
-bar(weekPresence.tbin,weekPresence.MaHoursProp,'FaceColor','c','BarWidth',3)
+bar(weekPresence.tbin,weekPresence.MaHoursProp,'FaceColor','c','BarWidth',1)
 ylim([0 max(weekPresence.MaHoursProp)])
 title(['Weekly Presence of Males in the ',titleNAME])
 yyaxis right
@@ -118,6 +118,7 @@ plot(weekPresence.tbin, weekPresence.NormEffort_Bin*100,'.r')
 ylim([-1 101])
 saveas(gcf,[saveDir,'\',siteabrev,'WeeklyPresence_AllClasses_Subplots.png']);
 
+%% Average yearly plots
 %Average yearly presence of proportion of hours per DAY with sperm whale
 %presence
 figure
@@ -125,8 +126,8 @@ bar(meantab365.Day, meantab365.HoursProp)
 xlim([0 366])
 xlabel('Day')
 ylim([0 max(meantab365.HoursProp)]);
-ylabel('Average proportion of hours per day with sperm whales present')
-title(['Average Daily Presence of Sperm Whales in the ',titleNAME]);
+ylabel('Average proportion of hours/day')
+title([{'Average Daily Presence of Sperm Whales in the ',titleNAME}]);
 saveas(gcf,[saveDir,'\',siteabrev,'AverageDailyPresence.png']);
 
 %Average yearly presence of proportion of hours per WEEK with sperm whale
@@ -151,8 +152,8 @@ figure
 bar(WEEKmeantab365.Week, WEEKmeantab365.HoursProp)
 xlim([0 52])
 xlabel('Week')
-ylabel('Average proportion of hours per week with sperm whales present')
-title(['Average Weekly Presence of Sperm Whales in the ',titleNAME]);
+ylabel('Average proportion of hours/week')
+title({'Average Weekly Presence of Sperm Whales in the ',titleNAME});
 hold on
 errorbar(WEEKmeantab365.Week,WEEKmeantab365.HoursProp, -(WEEKmeantab365.SEM),WEEKmeantab365.SEM)
 saveas(gcf,[saveDir,'\',siteabrev,'AverageWeeklyPresence.png']);
@@ -172,7 +173,6 @@ title(['Daily Presence of Social Units in the ',titleNAME])
 subplot(3,1,2)
 bar(binPresence.tbin,binPresence.JuHoursProp,'FaceColor','b','BarWidth',3)
 ylabel('Daily Presence (5-min bins)')
-ylim([0 50])
 title(['Daily Presence of Mid-Size Animals in the ',titleNAME])
 subplot(3,1,3)
 bar(binPresence.tbin,binPresence.MaHoursProp,'FaceColor','c','BarWidth',3)

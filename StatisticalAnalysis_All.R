@@ -25,8 +25,9 @@ library(lubridate)
 library(survival)
 
 #load data
-site = 'BD'
-filename = paste("G:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",site,'/',site,"_dayData_forGLMR125.csv",sep="")
+site = 'SAP'
+saveDir = paste("G:/My Drive/CentralPac_TPWS_metadataReduced/Saipan/Seasonality/")
+filename = paste(saveDir,site,"_dayData_forGLMR125.csv",sep="")
 dayBinTAB = read.csv(filename) #no effort days deleted
 head(dayBinTAB)
 str(dayBinTAB)
@@ -42,7 +43,7 @@ ggplot(dayBinTAB, aes(x=tbin,y=HoursProp))+
   labs(y="Proportion of Hours per Day with Clicks",x="Time (days)")+
   geom_line()+
   geom_point()
-fig1 =paste("G:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",site,'/',site,"HoursProp_TimeSeries.png",sep="")
+fig1 =paste(saveDir,site,"HoursProp_TimeSeries.png",sep="")
 ggsave(fig1)
 
 #plot data as box plot for seasons; have to plot this with no effort days deleted
@@ -52,7 +53,7 @@ ggplot(dayBinTAB, aes(x=Season, y=HoursProp, color = Season))+
   ggtitle(title2)+
   labs(y="Proportion of Hours per Day with Clicks")
   scale_color_brewer(palette = "Dark2")
-fig2 =paste("G:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",site,'/',site,"BoxPlot.png",sep="")
+fig2 =paste(saveDir,site,"BoxPlot.png",sep="")
 ggsave(fig2)
 
 #groupin data according to ITS
@@ -90,8 +91,29 @@ if (site == 'KS'){
   GroupedDay = dayBinTAB
 }
 
+if (site == 'GI'){
+  n = 2
+  GroupedDay = aggregate(dayBinTAB,list(rep(1:(nrow(dayBinTAB)%/%n+1),each=n,len=nrow(dayBinTAB))),mean)[-1];
+}
+if (site == 'PG'){
+  n = 2
+  GroupedDay = aggregate(dayBinTAB,list(rep(1:(nrow(dayBinTAB)%/%n+1),each=n,len=nrow(dayBinTAB))),mean)[-1];
+}
+if (site == 'CORC'){
+  n = 2
+  GroupedDay = aggregate(dayBinTAB,list(rep(1:(nrow(dayBinTAB)%/%n+1),each=n,len=nrow(dayBinTAB))),mean)[-1];
+}
+if (site == 'TIN'){
+  n = 2
+  GroupedDay = aggregate(dayBinTAB,list(rep(1:(nrow(dayBinTAB)%/%n+1),each=n,len=nrow(dayBinTAB))),mean)[-1];
+}
+if (site == 'SAP'){
+  n = 4
+  GroupedDay = aggregate(dayBinTAB,list(rep(1:(nrow(dayBinTAB)%/%n+1),each=n,len=nrow(dayBinTAB))),mean)[-1];
+}
+
 #round day, year, month, and find season for ITS data
-if (site == 'KS'){
+if (site == 'KS' || site == "GI"){
 }else{
 GroupedDay$day = floor(GroupedDay$day)
 GroupedDay$month = floor(GroupedDay$month)
@@ -111,11 +133,11 @@ ggplot(GroupedDay, aes(x=tbin,y=HoursProp))+
   labs(y="Proportion of Hours per Day with Clicks",x="Time (days)")+
   geom_line()+
   geom_point()
-fig1 =paste("G:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",site,'/',site,"HoursProp_TimeSeriesITS.png",sep="")
+fig1 =paste(saveDir,site,"HoursProp_TimeSeriesITS.png",sep="")
 ggsave(fig1)
 
 ##### grouped data by day of year - mean
-filename2 = paste("G:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",site,'/',site,"_days365GroupedMean_forGLMR125.csv",sep="")
+filename2 = paste(saveDir,site,"_days365GroupedMean_forGLMR125.csv",sep="")
 oneyear = read.csv(filename2) #bin means from days
 
 if (nrow(oneyear) >= 365) {
@@ -168,8 +190,23 @@ if (site == 'KS'){
   GroupedYear = oneyear
 }
 
+if (site == 'GI'){
+  n = 2
+  GroupedYear = aggregate(oneyear,list(rep(1:(nrow(oneyear)%/%n+1),each=n,len=nrow(oneyear))),mean)[-1];
+}
+if (site == 'CORC'){
+  GroupedYear = oneyear
+}
+if (site == 'TIN'){
+  GroupedYear = oneyear
+}
+if (site == 'SAP'){
+  n = 4
+  GroupedYear = aggregate(oneyear,list(rep(1:(nrow(oneyear)%/%n+1),each=n,len=nrow(oneyear))),mean)[-1];
+}
+
 #round day, year, month, and find season for ITS data
-if (site == 'KS'){
+if (site == 'KS' || site == 'GI'){
 }else{
 GroupedYear$Month = month(as.Date(GroupedYear$Day, origin = "2014-01-01"))
 GroupedYear$Season[GroupedYear$Month == 1 | GroupedYear$Month == 2 | GroupedYear$Month == 3] = 1
@@ -187,7 +224,7 @@ ggplot(oneyear, aes(x=Day,y=HoursProp))+
   labs(y="Average Proportion of Hours per Day with Clicks",x="Day of the Year")+
   geom_line()+
   geom_point()
-fig4 =paste("G:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",site,'/',site,"AveragedHoursProp_TimeSeries.png",sep="")
+fig4 =paste(saveDir,site,"AveragedHoursProp_TimeSeries.png",sep="")
 ggsave(fig4)
 
 #plot data as time series with ITS
@@ -197,7 +234,7 @@ ggplot(GroupedYear, aes(x=Day,y=HoursProp))+
   labs(y="Average Proportion of Hours per Day with Clicks",x="Day of the Year")+
   geom_line()+
   geom_point()
-fig4 =paste("G:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",site,'/',site,"AveragedHoursProp_TimeSeriesITS.png",sep="")
+fig4 =paste(saveDir,site,"AveragedHoursProp_TimeSeriesITS.png",sep="")
 ggsave(fig4)
 
 if (nrow(oneyear) >= 365) {
@@ -205,11 +242,11 @@ if (nrow(oneyear) >= 365) {
 title4 = paste(site,"Yearly Average of Proportion of Hours per Day with Clicks")
 ggplot(oneyear, aes(x=Day,y=HoursProp))+
   ggtitle(title4)+
-  labs(y="Average Proportion of Hours per Day with Clicks",x="Day of the Year")
+  labs(y="Average Proportion of Hours per Day with Clicks",x="Day of the Year")+
   geom_errorbar(aes(ymin = HoursProp - SEM, ymax = HoursProp + SEM))+
   geom_line()+
   geom_point()
-fig5 =paste("G:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",site,'/',site,"AveragedHoursProp_TimeSeries_ErrorBars.png",sep="")
+fig5 =paste(saveDir,site,"AveragedHoursProp_TimeSeries_ErrorBars.png",sep="")
 ggsave(fig5)
 }else{}
 
@@ -223,7 +260,7 @@ if (site == 'AB'){
   plot(gamTw, pages =1)
   summary(gamTw)
 }else{
-  gamTw = gam(HoursProp ~ s(day, bs = 'cc', k = 47), data = GroupedDay, family = tw, method = "REML")
+  gamTw = gam(HoursProp ~ s(day, bs = 'cc', k = 10), data = GroupedDay, family = tw, method = "REML")
   plot(gamTw, pages =1)
   summary(gamTw)
 }
@@ -239,27 +276,29 @@ print(plot(viz,allTerms=T),pages=1)
 
 #first way to plot GAM
 vizGG = plot(viz,allTerms = T) +
-  l_points() +
   labs(title = 'Sperm whales (GAM)')+
-  l_fitLine(linetype = 3)  +
+  l_fitLine(linetype = 1, size = 2)  +
   l_fitContour()+
-  l_ciLine(mul = 5, colour = "blue", linetype = 2) +
+  #l_ciLine(mul = 5, colour = "blue", linetype = 2) +
+  l_ciPoly(level = 0.95, alpha = 1/2)+
   l_ciBar() +
-  l_points(shape = 19, size = 1, alpha = 0.1) +
-  l_rug() +
-  theme_get() 
+  theme(axis.text=element_text(size=18),
+        axis.title=element_text(size=20,face="bold"))
 print(vizGG,pages =1)
-fig6 =paste("G:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",site,'/',site,"GAM1.png",sep="")
+fig6 =paste(saveDir,site,"GAM1.png",sep="")
 ggsave(fig6)
 
 #second way to plot GAM
 vizGG2 = plot(viz, allTerms = T) +
-  l_fitLine(colour = "red") + l_rug(mapping = aes(x=x,y=y), alpha=0.8) +
   labs(title = 'Sperm whales (GAM)')+
-  l_ciLine(mul = 5, colour = "blue", linetype = 2)+
-  l_points(shape = 19, size = 1, alpha = 0.1) + theme_classic()
-print(vizGG2,pages =1)
-fig7 =paste("G:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",site,'/',site,"GAM2.png",sep="")
+  l_fitLine(linetype = 1, size = 2)  +
+  l_fitContour()+
+  #l_ciLine(mul = 5, colour = "blue", linetype = 2) +
+  l_ciPoly(level = 0.95, alpha = 1/2)+
+  l_ciBar() +
+  theme(axis.text=element_text(size=18),
+        axis.title=element_text(size=20,face="bold"))
+fig7 =paste(saveDir,site,"GAM2.png",sep="")
 ggsave(fig7)
 
 ###load all data and run GAM
@@ -291,12 +330,13 @@ print(plot(viz,allTerms=T),pages=1)
 #first way to plot GAM
 vizGG = plot(viz,allTerms = T) +
   labs(title = 'Sperm whales (GAM)')+
-  l_fitLine(linetype = 3)  +
+  l_fitLine(linetype = 1, size = 2)  +
   l_fitContour()+
-  l_ciLine(mul = 5, colour = "blue", linetype = 2) +
+  #l_ciLine(mul = 5, colour = "blue", linetype = 2) +
+  l_ciPoly(level = 0.95, alpha = 1/2)+
   l_ciBar() +
-  l_rug() +
-  theme_get() 
+  theme(axis.text=element_text(size=18),
+        axis.title=element_text(size=20,face="bold"))
 print(vizGG,pages =1)
 fig6 =paste("G:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/GAM1.png",sep="")
 ggsave(fig6)
@@ -310,3 +350,4 @@ vizGG2 = plot(viz, allTerms = T) +
 print(vizGG2,pages =1)
 fig7 =paste("G:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/GAM2.png",sep="")
 ggsave(fig7)
+

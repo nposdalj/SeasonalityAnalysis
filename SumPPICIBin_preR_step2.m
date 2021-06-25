@@ -2,12 +2,12 @@ clearvars
 close all
 
 %% Parameters defined by user
-filePrefix = 'ALEUT'; % File name to match. 
-siteabrev = 'BD'; %abbreviation of site.
+filePrefix = 'Saipan'; % File name to match. 
+siteabrev = 'SAP'; %abbreviation of site.
 sp = 'Pm'; % your species code
 srate = 200; % sample rate
-effortXls = 'E:\Project_Sites\BD\Pm_Effort_BD.xlsx'; % specify excel file with effort times
-saveDir = 'E:\Project_Sites\BD\Seasonality'; %specify directory to save files
+effortXls = 'G:\My Drive\CentralPac_TPWS_metadataReduced\Saipan\Pm_Effort.xlsx'; % specify excel file with effort times
+saveDir = 'G:\My Drive\CentralPac_TPWS_metadataReduced\Saipan\Seasonality'; %specify directory to save files
 %% load workspace
 load([saveDir,'\',siteabrev,'_workspace125.mat']);
 %% group data by 5min bins, days, weeks, and seasons 
@@ -48,11 +48,60 @@ if strcmp(siteabrev,'CB');
 if strcmp(siteabrev,'BD');
         ge = dayTable.Effort_Bin(222:516); %bin effort (excluding ships but not considering duty cycle)
     ge = ge/288; %proportion of data that was not ships if it were full recording effort
-    dayTabe.Effort_Bin(222:516) = ge * 144; %for ALEUT03BD ONLY 5 on 5 off (10 minute cycle) -- meaning you're recording 0.5 percent of the time
+    dayTable.Effort_Bin(222:516) = ge * 144; %for ALEUT03BD ONLY 5 on 5 off (10 minute cycle) -- meaning you're recording 0.5 percent of the time
     dayTable.Effort_Sec(222:516) = dayTable.Effort_Bin(222:516) * 5 * 60; %convert from bins into efforts in seconds per day
+else
+    if strcmp(siteabrev,'CSM');
+    dayTable.Effort_Bin = floor(dayTable.Effort_Bin * .2); %for Cross_01 and 02 only, 5 on 20 off (25 minute cycle)-- meaning you're recording 20% (0.2) of the time
+    dayTable.Effort_Sec = dayTable.Effort_Bin * 5 * 60; %convert from bins into efforts in seconds per day
+else
+    if strcmp(siteabrev,'PG');
+    dayTable.Effort_Bin = floor(dayTable.Effort_Bin * .333); %for Pagan_01 only, 5 on 10 off (15 minute cycle)-- meaning you're recording 20% (0.2) of the time
+    dayTable.Effort_Sec = dayTable.Effort_Bin * 5 * 60; %convert from bins into efforts in seconds per day
+else
+    if strcmp(siteabrev,'CORC');
+    dayTable.Effort_Bin = floor(dayTable.Effort_Bin * .5); %for CORC_01 and 02 only, 15 on 15 off (30 minute cycle)-- meaning you're recording 20% (0.2) of the time
+    dayTable.Effort_Sec = dayTable.Effort_Bin * 5 * 60; %convert from bins into efforts in seconds per day
+else
+    if strcmp(siteabrev,'TIN');
+    ge = dayTable.Effort_Bin(1:224); %bin effort (excluding ships but not considering duty cycle)
+    ge = ge/288; %proportion of data that was not ships if it were full recording effort
+    dayTable.Effort_Bin(1:224) = ge * 72; %for TIN02 5 on 15 off (20 minute cycle) -- meaning you're recording 0.25 percent of the time
+    dayTable.Effort_Sec(1:224) = dayTable.Effort_Bin(1:224) * 5 * 60; %convert from bins into efforts in seconds per day
+    ge = dayTable.Effort_Bin(224:550); %bin effort (excluding ships but not considering duty cycle)
+    ge = ge/288; %proportion of data that was not ships if it were full recording effort
+    dayTable.Effort_Bin(224:550) = ge * 240; %for TIN03 5 on 1 off (6 minute cycle) -- meaning you're recording 0.8333 percent of the time
+    dayTable.Effort_Sec(224:550) = dayTable.Effort_Bin(224:550) * 5 * 60; %convert from bins into efforts in seconds per day
+    ge = dayTable.Effort_Bin(551:1858); %bin effort (excluding ships but not considering duty cycle)
+    ge = ge/288; %proportion of data that was not ships if it were full recording effort
+    dayTable.Effort_Bin(551:1858) = ge * 206; %for TIN04, 05, 06, 07, 08, and 09 5 on 2 off (7 minute cycle) -- meaning you're recording 0.714 percent of the time
+    dayTable.Effort_Sec(551:1858) = dayTable.Effort_Bin(551:1858) * 5 * 60; %convert from bins into efforts in seconds per day
     else
+if strcmp(siteabrev,'SAP');
+    ge = dayTable.Effort_Bin(1:174); %bin effort (excluding ships but not considering duty cycle)
+    ge = ge/288; %proportion of data that was not ships if it were full recording effort
+    dayTable.Effort_Bin(1:174) = ge * 36; %for TIN01 5 on 35 off (40 minute cycle) -- meaning you're recording 0.125 percent of the time
+    dayTable.Effort_Sec(1:174) = dayTable.Effort_Bin(1:174) * 5 * 60; %convert from bins into efforts in seconds per day
+    ge = dayTable.Effort_Bin(175:351); %bin effort (excluding ships but not considering duty cycle)
+    ge = ge/288; %proportion of data that was not ships if it were full recording effort
+    dayTable.Effort_Bin(175:351) = ge * 72; %for TIN02 5 on 15 off (20 minute cycle) -- meaning you're recording 0.25 percent of the time
+    dayTable.Effort_Sec(175:351) = dayTable.Effort_Bin(175:351) * 5 * 60; %convert from bins into efforts in seconds per day
+    ge = dayTable.Effort_Bin(352:613); %bin effort (excluding ships but not considering duty cycle)
+    ge = ge/288; %proportion of data that was not ships if it were full recording effort
+    dayTable.Effort_Bin(352:613) = ge * 240; %for TIN03 5 on 1 off (6 minute cycle) -- meaning you're recording 0.8333 percent of the time
+    dayTable.Effort_Sec(352:613) = dayTable.Effort_Bin(352:613) * 5 * 60; %convert from bins into efforts in seconds per day
+    ge = dayTable.Effort_Bin(614:2380); %bin effort (excluding ships but not considering duty cycle)
+    ge = ge/288; %proportion of data that was not ships if it were full recording effort
+    dayTable.Effort_Bin(614:2380) = ge * 206; %for TIN04, 05, 06, 07, 08, and 09 5 on 2 off (7 minute cycle) -- meaning you're recording 0.714 percent of the time
+    dayTable.Effort_Sec(614:2380) = dayTable.Effort_Bin(614:2380) * 5 * 60; %convert from bins into efforts in seconds per day
+        else 
 dayTable.MaxEffort_Bin = ones(p,1)*(288);
+      end
+    end
 end
+end
+    end
+end 
 end
 
 %two ways to account for the difference in effort..
