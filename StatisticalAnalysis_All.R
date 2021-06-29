@@ -26,7 +26,7 @@ library(survival)
 
 #load data
 site = 'SAP'
-saveDir = paste("I:/My Drive/CentralPac_TPWS_metadataReduced/Saipan/Seasonality/")
+saveDir = paste("D:/My Drive/CentralPac_TPWS_metadataReduced/Saipan/Seasonality/")
 filename = paste(saveDir,site,"_dayData_forGLMR125.csv",sep="")
 dayBinTAB = read.csv(filename) #no effort days deleted
 head(dayBinTAB)
@@ -205,7 +205,7 @@ if (site == 'AB'){
   plot(gamTw, pages =1)
   summary(gamTw)
 }else{
-  gamTw = gam(HoursProp ~ s(day, bs = 'cc', k = 10) + Year, data = GroupedDay, family = tw, method = "REML")
+  gamTw = gam(HoursProp ~ s(day, bs = 'cc', k = 10), data = GroupedDay, family = tw, method = "REML")
   plot(gamTw, pages =1)
   summary(gamTw)
 }
