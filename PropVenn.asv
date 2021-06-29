@@ -1,9 +1,9 @@
 clearvars
 close all
 %% Parameters defined by user
-filePrefix = 'ALEUT01KS'; % File name to match. 
-siteabrev = 'KS'; %abbreviation of site.
-titleNAME = 'Aleutians - Kiska Island';
+filePrefix = 'GofAK_CB'; % File name to match. 
+siteabrev = 'CB'; %abbreviation of site.
+titleNAME = 'Gulf of Alaska - Continental Slope';
 sp = 'Pm'; % your species code
 tpwsPath = ['D:\My Drive\GofAK_TPWS_metadataReduced\TPWS_125',siteabrev,'\TPWS_125\TPWS2\TPWS3\']; %directory of TPWS files
 %% load data from step 3
@@ -11,7 +11,7 @@ filename = ['D:\My Drive\GofAK_TPWS_metadataReduced\SeasonalityAnalysis\',siteab
 load(filename);
 saveDir = ['D:\My Drive\GofAK_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev]; %specify directory to save files
 %% combine tables into one
-if strcmp(siteabrev,'KOA') == 1 || strcmp(siteabrev,'KS')
+if strcmp(siteabrev,'KOA') == 1
     meanTAB = array2table([meantab365.Day meantab365.HoursPropJU meantab365.HoursPropMA]);
 meanTAB.Properties.VariableNames = {'Day' 'HoursPropJ' 'HoursPropM'};
 meanTAB.JuvMal = meanTAB.HoursPropJ >0 & meanTAB.HoursPropM > 0;
@@ -28,7 +28,7 @@ meanTAB.Fem = meanTAB.HoursPropF > 0 & meanTAB.FemJuv == 0 & meanTAB.FemMal == 0
 meanTAB.Juv = meanTAB.HoursPropJ > 0 & meanTAB.FemJuv == 0 & meanTAB.JuvMal == 0 & meanTAB.FemJuvMal == 0;
 meanTAB.Mal = meanTAB.HoursPropM > 0 & meanTAB.FemMal == 0 & meanTAB.JuvMal == 0 & meanTAB.FemJuvMal == 0;
 else
-    meanTAB = array2table([meantabFE365.Day meantabFE365.HoursPropFE meantabJU365.HoursPropJU meantabMA365.HoursPropMA]);
+    meanTAB = array2table([meanarrayFE36.Day meanarray365FE.HoursPropFE meanarray365JU.HoursPropJU meanarray365MA.HoursPropMA]);
 meanTAB.Properties.VariableNames = {'Day' 'HoursPropF' 'HoursPropJ' 'HoursPropM'};
 meanTAB.FemJuv = meanTAB.HoursPropF > 0 & meanTAB.HoursPropJ > 0; 
 meanTAB.FemMal = meanTAB.HoursPropF > 0 & meanTAB.HoursPropM > 0;
@@ -39,7 +39,7 @@ meanTAB.Juv = meanTAB.HoursPropJ > 0 & meanTAB.FemJuv == 0 & meanTAB.JuvMal == 0
 meanTAB.Mal = meanTAB.HoursPropM > 0 & meanTAB.FemMal == 0 & meanTAB.JuvMal == 0 & meanTAB.FemJuvMal == 0;
 end
 %% Calculate A, AB, B, BC, C, CA, ABC
-if strcmp(siteabrev,'KOA') == 1 || strcmp(siteabrev,'KS')
+if strcmp(siteabrev,'KOA') == 1
 J = sum(meanTAB.Juv); %B
 M = sum(meanTAB.Mal); %C
 JM = sum(meanTAB.JuvMal); %BC
