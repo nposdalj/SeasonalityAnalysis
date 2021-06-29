@@ -205,7 +205,7 @@ if (site == 'AB'){
   plot(gamTw, pages =1)
   summary(gamTw)
 }else{
-  gamTw = gam(HoursProp ~ s(day, bs = 'cc', k = 10), data = GroupedDay, family = tw, method = "REML")
+  gamTw = gam(HoursProp ~ s(day, bs = 'cc', k = 10) + Year, data = GroupedDay, family = tw, method = "REML")
   plot(gamTw, pages =1)
   summary(gamTw)
 }
