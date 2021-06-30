@@ -2,12 +2,12 @@ clearvars
 close all
 
 %% Parameters defined by user
-filePrefix = 'Saipan'; % File name to match. 
-siteabrev = 'SAP'; %abbreviation of site.
+filePrefix = 'OCNMS06QC'; % File name to match. 
+siteabrev = 'QC'; %abbreviation of site.
 sp = 'Pm'; % your species code
 srate = 200; % sample rate
-effortXls = 'G:\My Drive\CentralPac_TPWS_metadataReduced\Saipan\Pm_Effort.xlsx'; % specify excel file with effort times
-saveDir = 'G:\My Drive\CentralPac_TPWS_metadataReduced\Saipan\Seasonality'; %specify directory to save files
+effortXls = 'G:\My Drive\CCE_TPWS_metadataReduced\QC\Pm_Effort.xlsx'; % specify excel file with effort times
+saveDir = 'G:\My Drive\CCE_TPWS_metadataReduced\QC\Seasonality'; %specify directory to save files
 %% load workspace
 load([saveDir,'\',siteabrev,'_workspace125.mat']);
 %% group data by 5min bins, days, weeks, and seasons 
@@ -94,7 +94,13 @@ if strcmp(siteabrev,'SAP');
     ge = ge/288; %proportion of data that was not ships if it were full recording effort
     dayTable.Effort_Bin(614:2380) = ge * 206; %for TIN04, 05, 06, 07, 08, and 09 5 on 2 off (7 minute cycle) -- meaning you're recording 0.714 percent of the time
     dayTable.Effort_Sec(614:2380) = dayTable.Effort_Bin(614:2380) * 5 * 60; %convert from bins into efforts in seconds per day
-        else 
+    else 
+if strcmp(siteabrev,'QC');
+    ge = dayTable.Effort_Bin(3:349); %bin effort (excluding ships but not considering duty cycle)
+    ge = ge/288; %proportion of data that was not ships if it were full recording effort
+    dayTable.Effort_Bin(3:349) = ge * 41; %for QC06 5 on 30 off (35 minute cycle) -- meaning you're recording 0.143 percent of the time
+    dayTable.Effort_Sec(3:349) = dayTable.Effort_Bin(3:349) * 5 * 60; %convert from bins into efforts in seconds per day
+    else
 dayTable.MaxEffort_Bin = ones(p,1)*(288);
       end
     end
@@ -102,6 +108,7 @@ end
 end
     end
 end 
+end
 end
 
 %two ways to account for the difference in effort..
