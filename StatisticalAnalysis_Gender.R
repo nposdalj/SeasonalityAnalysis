@@ -37,48 +37,6 @@ levels(binPresence$Season)
 binPresence$Season = revalue(binPresence$Season, c("1"="Summer", "2"="Fall", "3"="Winter", "4"="Spring")) #change the numbers in actual seasons
 binPresence$tbin = anytime(as.factor(binPresence$tbin))
 
-#plot data as proportion of hours per day with clicks
-title1 = paste(site,"Proprtion of Hours/Day w/ Clicks")
-plot1 = ggplot(binPresence, aes(x=tbin,y=FeHoursProp))+
-  geom_bar(stat = "identity")+
-  theme(axis.title.x = element_blank())+
-  theme(axis.title.y = element_blank())
-plot2 = ggplot(binPresence, aes(x=tbin,y=JuHoursProp))+
-  geom_bar(stat = "identity")+
-  theme(axis.title.x = element_blank())+
-  theme(axis.title.y = element_blank())
-plot3 = ggplot(binPresence, aes(x=tbin,y=MaHoursProp))+
-  geom_bar(stat = "identity")+
-  theme(axis.title.x = element_blank())+
-  theme(axis.title.y = element_blank())
-figure = ggarrange(plot1,plot2,plot3, labels = c("Social Units","  Mid-Size  ","    Males   "),align = "v",ncol = 1, nrow = 3)
-annotate_figure(figure, top = text_grob(title1, face = "bold", size = 14), bottom = text_grob("Time (years)"),
-                left = text_grob("Proportion of Hours/Day w/Clicks", rot = 90))
-fig1 =paste(saveDir,site,site,"HoursProp_TimeSeries_StackedGroups.png",sep="")
-ggsave(fig1)
-
-#plot data as box plot for seasons; have to plot this with no effort days deleted
-title2 = paste("Seasonal Presence at",site)
-plot1 = ggplot(binPresence, aes(x=Season, y=FeHoursProp, color = Season))+
-  geom_boxplot()+
-  theme(axis.title.x = element_blank())+
-  theme(axis.title.y = element_blank())+
-  scale_color_brewer(palette = "Dark2")
-plot2 = ggplot(binPresence, aes(x=Season, y=JuHoursProp, color = Season))+
-  geom_boxplot()+
-  theme(axis.title.x = element_blank())+
-  theme(axis.title.y = element_blank())+
-  scale_color_brewer(palette = "Dark2")
-plot3 = ggplot(binPresence, aes(x=Season, y=MaHoursProp, color = Season))+
-  geom_boxplot()+
-  theme(axis.title.x = element_blank())+
-  theme(axis.title.y = element_blank())+
-  scale_color_brewer(palette = "Dark2")
-figure = ggarrange(plot1,plot2,plot3, labels = c("Social Units","  Mid-Size  ","    Males   "), align = "hv", ncol = 1, nrow = 3, legend = "right",common.legend = TRUE)
-annotate_figure(figure, top = text_grob(title1, face = "bold", size = 14), bottom = text_grob("Seasons"),
-                left = text_grob("Proportion of Hours/Day w/Clicks", rot = 90))
-fig2 =paste(saveDir,site,"BoxPlot_StackedGroups.png",sep="")
-ggsave(fig2)
 
 #grouping data according to ITS
 if (site == 'PT'){
@@ -158,6 +116,19 @@ if (site == 'SAP'){
   GroupedDayJ = binPresence;
   GroupedDayM = binPresence;
 }
+
+#export GroupedDayF as .csv
+fileName_GDF = paste(saveDir,site,"_GroupedDayF.csv",sep="")
+write.csv(GroupedDayF,fileName_GDF, row.names = FALSE)
+
+#export GroupedDayJ as .csv
+fileName_GDJ = paste(saveDir,site,"_GroupedDayJ.csv",sep="")
+write.csv(GroupedDayJ,fileName_GDJ, row.names = FALSE)
+
+#export GroupedDayM as .csv
+fileName_GDM = paste(saveDir,site,"_GroupedDayM.csv",sep="")
+write.csv(GroupedDayM,fileName_GDM, row.names = FALSE)
+
 #round day, year, month, and find season for ITS data
 if (nrow(binPresence) > nrow(GroupedDayF)){
 if (exists('GroupedDayF')){
@@ -197,28 +168,6 @@ if (nrow(binPresence) > nrow(GroupedDayM)){
   GroupedDayM$Season = revalue(GroupedDayM$Season, c("1"="Winter", "2"="Spring", "3"="Summer", "4"="Fall"))
 }
 
-#plot data grouped with ITS as proportion of hours per day with clicks
-title1 = paste(site,"Proprtion of Hours/Day w/ Clicks - ITS")
-theme(axis.text=element_text(size=18),
-      axis.title=element_text(size=20,face="bold"))
-title1 = paste("Proportion of Hours per Day with Clicks at Buldir Island, BSAI")
-plot1 = ggplot(GroupedDayF, aes(x=tbin,y=FeHoursProp))+
-  geom_bar(stat = "identity")+
-  theme(axis.title.x = element_blank(),axis.text=element_text(size=18))+
-  theme(axis.title.y = element_blank(),axis.text=element_text(size=18))
-plot2 = ggplot(GroupedDayJ, aes(x=tbin,y=JuHoursProp))+
-  geom_bar(stat = "identity")+
-  theme(axis.title.x = element_blank(),axis.text=element_text(size=18))+
-  theme(axis.title.y = element_blank(),axis.text=element_text(size=18))
-plot3 = ggplot(GroupedDayM, aes(x=tbin,y=MaHoursProp))+
-  geom_bar(stat = "identity")+
-  theme(axis.title.x = element_blank(),axis.text=element_text(size=18))+
-  theme(axis.title.y = element_blank(),axis.text=element_text(size=18))
-figure = ggarrange(plot1,plot2,plot3, labels = c("Social Units","  Mid-Size  ","    Males   "),align = "v",ncol = 1, nrow = 3)
-annotate_figure(figure, top = text_grob(title1, face = "bold", size = 20), bottom = text_grob("Time (years)", size = 20),
-                left = text_grob("Proportion of Hours/Day w/Clicks", rot = 90, size = 24))
-fig1 =paste(saveDir,site,"HoursProp_TimeSeriesITS_StackedGroups.png",sep="")
-ggsave(fig1)
 
 ##### grouped data by day of year - mean
 if (nrow(binPresence) >= 365){
@@ -377,76 +326,17 @@ if (nrow(oneyear) == nrow(GroupedYearM)){
   GroupedYearM$Season = revalue(GroupedYearM$Season, c("1"="Winter", "2"="Spring", "3"="Summer", "4"="Fall"))
 }
 
-#plot data as time series
-#plot data as proportion of hours per day with clicks
-if (exists('oneyearF')){
-title3 = paste(site,"Yearly Average of Proportion of Hours per Day with Clicks - Time Series")
-plot1 = ggplot(oneyearF, aes(x=Day,y=HoursPropFE))+
-  geom_bar(stat = "identity")+
-  theme(axis.title.x = element_blank())+
-  theme(axis.title.y = element_blank())
-plot2 = ggplot(oneyearJ, aes(x=Day,y=HoursPropJU))+
-  geom_bar(stat = "identity")+
-  theme(axis.title.x = element_blank())+
-  theme(axis.title.y = element_blank())
-plot3 = ggplot(oneyearM, aes(x=Day,y=HoursPropMA))+
-  geom_bar(stat = "identity")+
-  theme(axis.title.x = element_blank())+
-  theme(axis.title.y = element_blank())
-figure = ggarrange(plot1,plot2,plot3, labels = c("Social Units","  Mid-Size  ","    Males   "),align = "v",ncol = 1, nrow = 3)
-annotate_figure(figure, top = text_grob(title1, face = "bold", size = 14), bottom = text_grob("Time (years)"),
-                left = text_grob("Proportion of Hours/Day w/Clicks", rot = 90))
-fig1 = paste(saveDir,site,"AveragedHoursProp_TimeSeries_StackedGroups.png",sep="")
-ggsave(fig1)
-}
+#export GroupedYearF as .csv
+fileName_GYF = paste(saveDir,site,"_GroupedYearF.csv",sep="")
+write.csv(GroupedYearF,fileName_GYF, row.names = FALSE)
 
-#plot data grouped with ITS as proportion of hours per day with clicks
-title1 = paste(site,"Yearly Average of Proportion of Hours per Day with Clicks - Time Series (ITS)")
-plot1 = ggplot(GroupedYearF, aes(x=Day,y=HoursPropFE))+
-  geom_bar(stat = "identity")+
-  theme(axis.title.x = element_blank())+
-  theme(axis.title.y = element_blank())
-plot2 = ggplot(GroupedYearJ, aes(x=Day,y=HoursPropJU))+
-  geom_bar(stat = "identity")+
-  theme(axis.title.x = element_blank())+
-  theme(axis.title.y = element_blank())
-plot3 = ggplot(GroupedYearM, aes(x=Day,y=HoursPropMA))+
-  geom_bar(stat = "identity")+
-  theme(axis.title.x = element_blank())+
-  theme(axis.title.y = element_blank())
-figure = ggarrange(plot1,plot2,plot3, labels = c("Social Units","  Mid-Size  ","    Males   "),align = "v",ncol = 1, nrow = 3)
-annotate_figure(figure, top = text_grob(title1, face = "bold", size = 14), bottom = text_grob("Time (years)"),
-                left = text_grob("Proportion of Hours/Day w/Clicks", rot = 90))
-fig1 =paste(saveDir,site,"AveragedHoursProp_TimeSeriesITS_StackedGroups.png",sep="")
-ggsave(fig1)
+#export GroupedYearJ as .csv
+fileName_GYJ = paste(saveDir,site,"_GroupedYearJ.csv",sep="")
+write.csv(GroupedYearJ,fileName_GYJ, row.names = FALSE)
 
-if (nrow(oneyear) >= 365) {
-#plot data as time series with error bars
-title4 = paste(site,"Yearly Average of Proportion of Hours per Day with Clicks - Time Series")
-plot1 = ggplot(oneyearF, aes(x=Day,y=HoursPropFE))+
-  geom_errorbar(aes(ymin = HoursPropFE - SEM, ymax = HoursPropFE + SEM))+
-  geom_line()+
-  geom_point()+
-  theme(axis.title.x = element_blank())+
-  theme(axis.title.y = element_blank())
-plot2 = ggplot(oneyearJ, aes(x=Day,y=HoursPropJU))+
-  geom_errorbar(aes(ymin = HoursPropJU - SEM, ymax = HoursPropJU + SEM))+
-  geom_line()+
-  geom_point()+
-  theme(axis.title.x = element_blank())+
-  theme(axis.title.y = element_blank())
-plot3 = ggplot(oneyearM, aes(x=Day,y=HoursPropMA))+
-  geom_errorbar(aes(ymin = HoursPropMA - SEM, ymax = HoursPropMA + SEM))+
-  geom_line()+
-  geom_point()+
-  theme(axis.title.x = element_blank())+
-  theme(axis.title.y = element_blank())
-figure = ggarrange(plot1,plot2,plot3, labels = c("Social Units","  Mid-Size  ","    Males   "),align = "v",ncol = 1, nrow = 3)
-annotate_figure(figure, top = text_grob(title1, face = "bold", size = 14), bottom = text_grob("Time (years)"),
-                left = text_grob("Proportion of Hours/Day w/Clicks", rot = 90))
-fig5 =paste(saveDir,site,"AveragedHoursProp_TimeSeries_ErrorBars_StackedGroups.png",sep="")
-ggsave(fig5)
-}
+#export GroupedYearM as .csv
+fileName_GYM = paste(saveDir,site,"_GroupedYearM.csv",sep="")
+write.csv(GroupedYearM,fileName_GYM, row.names = FALSE)
 
 ## GAMs ##
 
