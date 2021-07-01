@@ -2,8 +2,8 @@ clearvars
 close all
 
 %% Parameters defined by user
-filePrefix = 'Wake'; % File name to match. 
-siteabrev = 'Wake'; %abbreviation of site.
+filePrefix = ''; % File name to match. 
+siteabrev = 'QC'; %abbreviation of site.
 sp = 'Pm'; % your species code
 srate = 200; % sample rate
 effortXls = 'G:\My Drive\CentralPac_TPWS_metadataReduced\Wake\Pm_Effort.xlsx'; % specify excel file with effort times
@@ -100,25 +100,10 @@ if strcmp(siteabrev,'QC');
     ge = ge/288; %proportion of data that was not ships if it were full recording effort
     dayTable.Effort_Bin(3:349) = ge * 41; %for QC06 5 on 30 off (35 minute cycle) -- meaning you're recording 0.143 percent of the time
     dayTable.Effort_Sec(3:349) = dayTable.Effort_Bin(3:349) * 5 * 60; %convert from bins into efforts in seconds per day
-else
-    if strcmp(siteabrev,'Wake');
-    ge = dayTable.Effort_Bin(1:94); %bin effort (excluding ships but not considering duty cycle)
-    ge = ge/288; %proportion of data that was not ships if it were full recording effort
-    dayTable.Effort_Bin(1:94) = ge * 144; %for Wake01 5 on 5 off (0 minute cycle) -- meaning you're recording 0.5 percent of the time
-    dayTable.Effort_Sec(1:94) = dayTable.Effort_Bin(1:94) * 5 * 60; %convert from bins into efforts in seconds per day
-    ge = dayTable.Effort_Bin(94:97); %bin effort (excluding ships but not considering duty cycle)
-    ge = ge/288; %proportion of data that was not ships if it were full recording effort
-    dayTable.Effort_Bin(94:97) = ge * 240; %for Wake03 5 on 1 off (6 minute cycle) -- meaning you're recording 0.8333 percent of the time
-    dayTable.Effort_Sec(94:97) = dayTable.Effort_Bin(94:97) * 5 * 60; %convert from bins into efforts in seconds per day
-    ge = dayTable.Effort_Bin(97:1638); %bin effort (excluding ships but not considering duty cycle)
-    ge = ge/288; %proportion of data that was not ships if it were full recording effort
-    dayTable.Effort_Bin(97:1638) = ge * 48; %for TIN04, 05, 06, 07, and 08 5 on 25 off (30 minute cycle) -- meaning you're recording 0.167 percent of the time
-    dayTable.Effort_Sec(97:1638) = dayTable.Effort_Bin(97:1638) * 5 * 60; %convert from bins into efforts in seconds per day
     else
 dayTable.MaxEffort_Bin = ones(p,1)*(288);
       end
-end
-end 
+    end
 end
 end
     end

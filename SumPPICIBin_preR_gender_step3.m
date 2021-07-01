@@ -2,15 +2,15 @@ clearvars
 close all
 
 %% Parameters defined by user
-filePrefix = 'OCNMS'; % File name to match. 
-genderFileName = 'OCNMS'; %File name to match gender file
-siteabrev = 'QC'; %abbreviation of site
+filePrefix = 'Wake'; % File name to match. 
+genderFileName = 'Wake'; %File name to match gender file
+siteabrev = 'Wake'; %abbreviation of site
 sp = 'Pm'; % your species code
 srate = 200; % sample rate
-tpwsPath = 'G:\My Drive\CCE_TPWS_metadataReduced\QC\TPWS_125\TPWS2\'; %directory of TPWS files
-effortXls = 'G:\My Drive\CCE_TPWS_metadataReduced\QC\Pm_Effort.xlsx'; % specify excel file with effort times
-saveDir = 'G:\My Drive\CCE_TPWS_metadataReduced\QC\Seasonality'; %specify directory to save files
-dayBinCSV= 'G:\My Drive\CCE_TPWS_metadataReduced\QC\Seasonality\KR_dayData_forGLMR125.csv'; % specify csv document with general PM information
+tpwsPath = 'G:\My Drive\CentralPac_TPWS_metadataReduced\Wake\TPWS_125\TPWS2\TPWS3\'; %directory of TPWS files
+effortXls = 'G:\My Drive\CentralPac_TPWS_metadataReduced\Wake\Pm_Effort.xlsx'; % specify excel file with effort times
+saveDir = 'G:\My Drive\CentralPac_TPWS_metadataReduced\Wake\Seasonality'; %specify directory to save files
+dayBinCSV= 'G:\My Drive\CentralPac_TPWS_metadataReduced\Wake\Seasonality\KR_dayData_forGLMR125.csv'; % specify csv document with general PM information
 %% Get effort times matching prefix file
 %when multiple sites in the effort table
 allEfforts = readtable(effortXls); %read effort table
