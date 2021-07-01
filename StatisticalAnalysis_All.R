@@ -25,8 +25,8 @@ library(lubridate)
 library(survival)
 
 #load data
-site = 'SAP'
-saveDir = paste("D:/My Drive/CentralPac_TPWS_metadataReduced/Saipan/Seasonality/")
+site = 'QC'
+saveDir = paste("D:/My Drive/CentralPac_TPWS_metadataReduced/QC/Seasonality/")
 filename = paste(saveDir,site,"_dayData_forGLMR125.csv",sep="")
 dayBinTAB = read.csv(filename) #no effort days deleted
 head(dayBinTAB)
@@ -89,6 +89,10 @@ if (site == 'TIN'){
 }
 if (site == 'SAP'){
   n = 4
+  GroupedDay = aggregate(dayBinTAB,list(rep(1:(nrow(dayBinTAB)%/%n+1),each=n,len=nrow(dayBinTAB))),mean)[-1];
+}
+if (site == 'QC'){
+  n = 5
   GroupedDay = aggregate(dayBinTAB,list(rep(1:(nrow(dayBinTAB)%/%n+1),each=n,len=nrow(dayBinTAB))),mean)[-1];
 }
 
@@ -176,6 +180,10 @@ if (site == 'TIN'){
 }
 if (site == 'SAP'){
   n = 4
+  GroupedYear = aggregate(oneyear,list(rep(1:(nrow(oneyear)%/%n+1),each=n,len=nrow(oneyear))),mean)[-1];
+}
+if (site == 'QC'){
+  n = 3
   GroupedYear = aggregate(oneyear,list(rep(1:(nrow(oneyear)%/%n+1),each=n,len=nrow(oneyear))),mean)[-1];
 }
 

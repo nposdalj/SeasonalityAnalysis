@@ -2,7 +2,7 @@ clearvars
 close all
 
 %% Parameters defined by user
-filePrefix = 'OCNMS06QC'; % File name to match. 
+filePrefix = 'OCNMS'; % File name to match. 
 siteabrev = 'QC'; %abbreviation of site.
 sp = 'Pm'; % your species code
 srate = 200; % sample rate

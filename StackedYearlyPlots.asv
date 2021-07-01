@@ -2,13 +2,13 @@ clearvars
 close all
 
 %% Parameters defined by user
-filePrefix = 'Quinault Canyon'; % File name to match. 
+filePrefix = 'OCNMS'; % File name to match. 
 siteabrev = 'QC'; %abbreviation of site.
-SiteName_forPlots = 'Saipan';
-saveDir = ['G:\My Drive\CentralPac_TPWS_metadataReduced\Saipan\Seasonality']; %specify directory to save and load files
+SiteName_forPlots = 'Quinault Canyon';
+saveDir = ['G:\My Drive\CCE_TPWS_metadataReduced\QC\Seasonality']; %specify directory to save and load files
 %% load workspace
 load([saveDir,'\',siteabrev,'_workspace125.mat']);
-saveDir = ['G:\My Drive\CentralPac_TPWS_metadataReduced\Saipan\Seasonality']; %specify directory to save and load files
+saveDir = ['G:\My Drive\CCE_TPWS_metadataReduced\QC\Seasonality']; %specify directory to save and load files
 %% group data by 5min bins, days, weeks, and seasons
 %group data by 5 minute bins
 binTable = synchronize(binData,binEffort);

@@ -26,8 +26,8 @@ library(survival)
 library(gtable)
 
 #load data
-site = 'SAP'
-saveDir = paste('G:/My Drive/CentralPac_TPWS_metadataReduced/Saipan/Seasonality/')
+site = 'QC'
+saveDir = paste('G:/My Drive/CentralPac_TPWS_metadataReduced/QC/Seasonality/')
 filename = paste(saveDir,site,"_binPresence.csv",sep="")
 binPresence = read.csv(filename) #no effort days deleted
 head(binPresence)
@@ -115,6 +115,12 @@ if (site == 'SAP'){
   GroupedDayF = aggregate(binPresence,list(rep(1:(nrow(binPresence)%/%n+1),each=n,len=nrow(binPresence))),mean)[-1];
   GroupedDayJ = binPresence;
   GroupedDayM = binPresence;
+}
+if (site == 'QC'){
+  GroupedDayF = binPresence;
+  GroupedDayJ = binPresence;
+  n = 2
+  GroupedDayM = aggregate(binPresence,list(rep(1:(nrow(binPresence)%/%n+1),each=n,len=nrow(binPresence))),mean)[-1];
 }
 
 #export GroupedDayF as .csv
@@ -281,6 +287,12 @@ if (site == 'SAP'){
   GroupedYearF = oneyearF;
   n = 8
   GroupedYearJ = aggregate(oneyearJ,list(rep(1:(nrow(oneyearJ)%/%n+1),each=n,len=nrow(oneyearJ))),mean)[-1];
+  GroupedYearM = oneyearM;
+}
+if (site == 'QC'){
+  n = 2
+  GroupedYearF = aggregate(oneyear,list(rep(1:(nrow(oneyear)%/%n+1),each=n,len=nrow(oneyear))),mean)[-1];
+  GroupedYearJ = oneyearJ;
   GroupedYearM = oneyearM;
 }
 if (exists('oneyearF')){
