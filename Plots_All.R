@@ -26,7 +26,7 @@ library(survival)
 
 #load data from MATLAB
 site = 'QC'
-saveDir = paste("I:/My Drive/CentralPac_TPWS_metadataReduced/QC/Seasonality/")
+saveDir = paste("G:/My Drive/CCE_TPWS_metadataReduced/QC/Seasonality/")
 filename = paste(saveDir,site,"_dayData_forGLMR125.csv",sep="")
 dayBinTAB = read.csv(filename) #no effort days deleted
 head(dayBinTAB)
