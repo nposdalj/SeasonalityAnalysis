@@ -1,15 +1,15 @@
 clearvars
 close all
 %% Parameters defined by user
-filePrefix = 'OCNMS'; % File name to match. 
-siteabrev = 'QC'; %abbreviation of site.
-titleNAME = 'Quinault Canyon';
+filePrefix = 'Wake'; % File name to match. 
+siteabrev = 'Wake'; %abbreviation of site.
+titleNAME = 'Wake Atoll';
 sp = 'Pm'; % your species code
-tpwsPath = ['G:\My Drive\CCE_TPWS_metadataReduced\QC\TPWS_125\TPWS2\']; %directory of TPWS files
+tpwsPath = ['G:\My Drive\CentralPac_TPWS_metadataReduced\Wake\TPWS_125\TPWS2\TPWS3\']; %directory of TPWS files
 %% load data from step 3
-filename = ['G:\My Drive\CCE_TPWS_metadataReduced\QC\Seasonality\',siteabrev,'_workspaceStep3'];
+filename = ['G:\My Drive\CentralPac_TPWS_metadataReduced\Wake\Seasonality\',siteabrev,'_workspaceStep3'];
 load(filename);
-saveDir = 'G:\My Drive\CCE_TPWS_metadataReduced\QC\Seasonality'; %specify directory to save files
+saveDir = 'G:\My Drive\CentralPac_TPWS_metadataReduced\Wake\Seasonality'; %specify directory to save files
 %% define pie chart colors
 blue = [0.2081    0.1663    0.5292];
 cyan = [0.0383, 0.6742, 0.7435];
