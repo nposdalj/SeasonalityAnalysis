@@ -26,8 +26,8 @@ library(survival)
 library(gtable)
 
 #load data from MATLAB
-site = 'QC'
-saveDir = paste('G:/My Drive/CCE_TPWS_metadataReduced/QC/Seasonality/')
+site = 'Wake'
+saveDir = paste('G:/My Drive/CentralPac_TPWS_metadataReduced/Wake/Seasonality/')
 filename = paste(saveDir,site,"_binPresence.csv",sep="")
 binPresence = read.csv(filename) #no effort days deleted
 head(binPresence)
