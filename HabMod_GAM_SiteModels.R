@@ -11,6 +11,15 @@ filenameStatAll = paste(saveDir,site,"_GroupedDay.csv",sep="")
 GroupedDay = read.csv(filenameStatAll) #load files as data frame
 
 #load sex specific data
+  #Females
+  filename_GDF = paste(saveDir,site,"_GroupedDayF.csv",sep="")
+  GroupedDayF = read.csv(filename_GDF) #load files as data frame
+  #Juveniles
+  filename_GDJ = paste(saveDir,site,"_GroupedDayJ.csv",sep="")
+  GroupedDayJ = read.csv(filename_GDJ) #load files as data frame
+  #Males
+  filename_GDM = paste(saveDir,site,"_GroupedDayM.csv",sep="")
+  GroupedDayM = read.csv(filename_GDM) #load files as data frame
 
 #loading the environmental data
 envDir = paste("D:/My Drive/Gaia_EnvironmentalData/CentralPac/")#setting the directory
