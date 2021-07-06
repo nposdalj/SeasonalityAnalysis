@@ -4,7 +4,9 @@ library(sp)
 library(rgdal)
 
 #define the lat and long of interest
-df1 = data.frame("lat" = c(19.29, 19.2, 19.2467, 19.2467), "long" = c(-166.69, -166.69, -166.74, -166.64))
+#df1 = data.frame("lat" = c(19.29, 19.2, 19.2467, 19.2467), "long" = c(-166.69, -166.69, -166.74, -166.64)) #Wake
+df1 = data.frame("lat" = c(15.36, 15.27, 15.3186, 15.3186), "long" = c(145.46, 145.46, 145.51, 145.41)) #Saipan
+#Tinian
 ch <- chull(df1$long, df1$lat)
 coords <- df1[c(ch, ch[1]), ]
 sp_poly <- SpatialPolygons(list(Polygons(list(Polygon(coords)), ID = 1)))
@@ -12,7 +14,7 @@ sp_poly <- SpatialPolygons(list(Polygons(list(Polygon(coords)), ID = 1)))
 
 #loading sperm whale data
 site = 'Wake'
-saveDir = paste("G:/My Drive/CentralPac_TPWS_metadataReduced/Wake/Seasonality/")#setting the directory
+saveDir = paste("O:/My Drive/CentralPac_TPWS_metadataReduced/Wake/Seasonality/")#setting the directory
 #load data from StatisicalAnalysis_All
 filenameStatAll = paste(saveDir,site,"_GroupedDay.csv",sep="")
 GroupedDay = read.csv(filenameStatAll) #load files as data frame
@@ -32,7 +34,7 @@ GroupedDay = read.csv(filenameStatAll) #load files as data frame
   gc()
 
 #loading the environmental data
-envDir = paste("G:/My Drive/Gaia_EnvironmentalData/CentralPac/")#setting the directory
+envDir = paste("O:/My Drive/Gaia_EnvironmentalData/CentralPac/")#setting the directory
 #chlorophyll data
 filenameStatAll = paste(envDir,"Chlorophyll.csv",sep="")#load files as data frame
 chl = read.csv(filenameStatAll)
@@ -42,15 +44,23 @@ coords <- over(chl, sp_poly)
 chl[coords == 1 & !is.na(coords),]
 #average the environmental variable based on the ITS over the area of interest
   #save standard deviation
+
 #SST data
 filenameStatAll = paste(envDir,"SST_WAKE.csv",sep="")#load files as data frame
 SST = read.csv(filenameStatAll)
-SST = SST[-1,]
+SST = SST[-1,] #delete first row
+SST$latitude = as.numeric(SST$latitude)
+SST$longitude = as.numeric(SST$longitude)
+SST = SST[complete.cases(SST[ , 2:3]),]#remove any rows with lat or long as na
+
+#data exploration
+#plot time series
+#find min and max
 
 #subset the dataframe based on the area of interest
 coordinates(SST) <- c("latitude","longitude")
 coords <- over(SST, sp_poly)
-SST[coords == 1 & !is.na(coords),]
+SST = SST[coords == 1 & !is.na(coords),]
 
 #SSH anomaly data
 filenameStatAll = paste(envDir,"AVISOglobalvars.nc",sep="")#load files as data frame
