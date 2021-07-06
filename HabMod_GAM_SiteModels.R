@@ -5,6 +5,8 @@ library(rgdal)
 
 #define the lat and long of interest
 df1 = data.frame("lat" = c(19.29, 19.2, 19.2467, 19.2467), "long" = c(-166.69, -166.69, -166.74, -166.64))
+ch <- chull(df1$long, df1$lat)
+coords <- df1[c(ch, ch[1]), ]
 sp_poly <- SpatialPolygons(list(Polygons(list(Polygon(coords)), ID = 1)))
 
 
