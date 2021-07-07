@@ -1,4 +1,5 @@
 %% clear workspace
+%Trying something
 clear all;close all;clc;
 
 %% load data
