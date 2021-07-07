@@ -1,6 +1,7 @@
 close all;clear all;clc;
 
-%%specify file path
+%%specify file path 
+%adding comment
 %% Parameters defined by user
 filePath = 'G:\My Drive\GofAK_TPWS_metadataReduced\SeasonalityAnalysis\'; %specify directory to save files
 %% load lat and longs for each site
