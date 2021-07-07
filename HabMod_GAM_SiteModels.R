@@ -2,6 +2,14 @@
 library(ncdf4)
 library(sp)
 library(rgdal)
+library(httr)
+library(sf)
+library(dplyr)
+library(raster)
+library(rgeos)
+library(ggplot2)
+library("rnaturalearth")
+library("rnaturalearthdata")
 
 #define the lat and long of interest
 #df1 = data.frame("lat" = c(19.29, 19.2, 19.2467, 19.2467), "long" = c(-166.69, -166.69, -166.74, -166.64)) #Wake
@@ -53,8 +61,11 @@ chl[coords == 1 & !is.na(coords),]
 #average the environmental variable based on the ITS over the area of interest
   #save standard deviation
 
+#clear memory 
+gc()
+
 #SST data
-filenameStatAll = paste(envDir,"SST_WAKE.csv",sep="")#load files as data frame
+filenameStatAll = paste(envDir,"SST_SAPTIN2.csv",sep="")#load files as data frame
 SST = read.csv(filenameStatAll)
 SST = SST[-1,] #delete first row
 SST$latitude = as.numeric(SST$latitude)
@@ -63,6 +74,74 @@ SST = SST[complete.cases(SST[ , 2:3]),]#remove any rows with lat or long as na
 
 #data exploration
 #plot time series
+  #SST 
+#load files
+SST = nc_open("SST_SAPTIN.nc")
+names(SST$var)
+v1=SST$var[[1]]
+SSTvar=ncvar_get(SST,v1)
+SST_lon=v1$dim[[1]]$vals
+SST_lat=v1$dim[[2]]$vals
+dates=as.POSIXlt(v1$dim[[3]]$vals,origin='2010-01-01',tz='GMT')
+
+#loading the world
+world <- ne_countries(scale = "medium", returnclass = "sf")
+class(world)
+
+#setting color breaks
+h=hist(SSTvar[,,1],100,plot=FALSE)
+breaks=h$breaks
+n=length(breaks)-1
+jet.colors <-colorRampPalette(c("blue", "#007FFF", "cyan","#7FFF7F", "yellow", "#FF7F00", "red", "#7F0000"))
+c=jet.colors(n)
+
+#plotting in base R
+layout(matrix(c(1,2,3,0,4,0), nrow=1, ncol=2), widths=c(5,1), heights=4) 
+layout.show(2) 
+par(mar=c(3,3,3,1))
+r = raster(t(SSTvar[,,1]),xmn = min(SST_lon),xmx = max(SST_lon),ymn=min(SST_lat),ymx=max(SST_lat))
+image(r,col=c,breaks=breaks,xlab='',ylab='',axes=TRUE,xlim = c(min(SST_lon),max(SST_lon)),xaxs='i',asp=0, main=paste("Monthly SST", dates[1]))
+#points(-66.35, rep(41.06165),pch=20,cex=2) #do we need these points
+#points(-76, rep(33.6699),pch=20,cex=2)
+
+#adding color scale
+par(mar=c(3,1,3,3))
+source('scale.R') 
+image.scale(sst[,,1], col=c, breaks=breaks, horiz=FALSE, yaxt="n",xlab='',ylab='',main='SST') 
+axis(4, las=1) 
+box()
+
+#plotting time series SAPTIN 
+I=which(SST_lon>=-144.45 & SST_lon<=-146,76) #change lon to SST_lon values to match ours, use max and min function
+J=which(SST_lat>=14.03 & SST_lat<=16.3) #change ""
+sst2=SSTvar[I,J,]
+
+n=dim(sst2)[3] 
+
+res=rep(NA,n) 
+for (i in 1:n) 
+  res[i]=mean(sst2[,,i],na.rm=TRUE) 
+
+plot(1:n,res,axes=FALSE,type='o',pch=20,xlab='',ylab='SST (ºC)') 
+axis(2) 
+axis(1,1:n,format(dates,'%m')) 
+box()
+
+#plotting time series WAKE #add code to load SST_WAKE 
+I=which(SST_lon>=-76.25 & SST_lon<=-75.75) #change lon to SST_lon values to match ours, use max and min function
+J=which(SST_lat>=33.41991667 & SST_lat<=33.91991667) #change ""
+sst2=SSTvar[I,J,] 
+
+n=dim(sst2)[3] 
+
+res=rep(NA,n) 
+for (i in 1:n) 
+  res[i]=mean(sst2[,,i],na.rm=TRUE) 
+
+plot(1:n,res,axes=FALSE,type='o',pch=20,xlab='',ylab='SST (ºC)') 
+axis(2) 
+axis(1,1:n,format(dates,'%m')) 
+box()
 #find min and max
 
 #subset the dataframe based on the area of interest
@@ -130,3 +209,4 @@ NORV_lat=v5$dim[[2]]$vals
 
 
 #plot GAMs
+
