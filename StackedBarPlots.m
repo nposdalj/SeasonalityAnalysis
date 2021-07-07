@@ -2,6 +2,7 @@ clearvars
 close all
 
 %this code should be run in MATLAB 2019b or later
+%making a change here
 %% Parameters defined by user
 filePath = 'G:\My Drive\CCE_TPWS_metadataReduced\Baja_GI\Seasonality\'; %specify directory to save files
 %% Find all files that fit your specifications for sites with less than a year
