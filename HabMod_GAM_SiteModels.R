@@ -73,11 +73,36 @@ SSHvar=ncvar_get(SSH,v6)
 SSH_lon=v6$dim[[1]]$vals
 SSH_lat=v6$dim[[2]]$vals
 
-#mlotst - density ocean mixed layer thickeness
+#mlotst - density ocean mixed layer thickness
+v1=DEN$var[[1]]
+DENvar=ncvar_get(DEN,v1)
+DEN_lon=v1$dim[[1]]$vals
+DEN_lat=v1$dim[[2]]$vals
+
 #so - salinity
-#uo - eastward velocity
-#vo - northward velocity
+v2=SAL$var[[2]]
+SALvar=ncvar_get(SAL,v2)
+SAL_lon=v2$dim[[1]]$vals
+SAL_lat=v2$dim[[2]]$vals
+
 #thetao - temperature
+v3=TEMP$var[[3]]
+TEMPvar=ncvar_get(TEMP,v3)
+TEMP_lon=v3$dim[[1]]$vals
+TEMP_lat=v3$dim[[2]]$vals
+
+#uo - eastward velocity
+v4=EASTV$var[[4]]
+EASTVvar=ncvar_get(EASTV,v4)
+EASTV_lon=v4$dim[[1]]$vals
+EASTV_lat=v4$dim[[2]]$vals
+
+#vo - northward velocity
+v5=NORV$var[[5]]
+NORVvar=ncvar_get(NORV,v5)
+NORV_lon=v5$dim[[1]]$vals
+NORV_lat=v5$dim[[2]]$vals
+
 
 
 #subset the dataframe based on the area of interest
