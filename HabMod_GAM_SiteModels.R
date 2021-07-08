@@ -36,18 +36,18 @@ filenameStatAll = paste(saveDir,site,"_GroupedDay.csv",sep="")
 GroupedDay = read.csv(filenameStatAll) #load files as data frame
 
 #load sex specific data
-  #Females
-  filename_GDF = paste(saveDir,site,"_GroupedDayF.csv",sep="")
-  GroupedDayF = read.csv(filename_GDF) #load files as data frame
-  #Juveniles
-  filename_GDJ = paste(saveDir,site,"_GroupedDayJ.csv",sep="")
-  GroupedDayJ = read.csv(filename_GDJ) #load files as data frame
-  #Males
-  filename_GDM = paste(saveDir,site,"_GroupedDayM.csv",sep="")
-  GroupedDayM = read.csv(filename_GDM) #load files as data frame
-  
+#Females
+filename_GDF = paste(saveDir,site,"_GroupedDayF.csv",sep="")
+GroupedDayF = read.csv(filename_GDF) #load files as data frame
+#Juveniles
+filename_GDJ = paste(saveDir,site,"_GroupedDayJ.csv",sep="")
+GroupedDayJ = read.csv(filename_GDJ) #load files as data frame
+#Males
+filename_GDM = paste(saveDir,site,"_GroupedDayM.csv",sep="")
+GroupedDayM = read.csv(filename_GDM) #load files as data frame
+
 #clear memory 
-  gc()
+gc()
 
 #loading the environmental data
 envDir = paste("O:/My Drive/Gaia_EnvironmentalData/CentralPac/")#setting the directory
@@ -59,7 +59,7 @@ coordinates(chl) <- ~lat + long
 coords <- over(chl, sp_poly)
 chl[coords == 1 & !is.na(coords),]
 #average the environmental variable based on the ITS over the area of interest
-  #save standard deviation
+#save standard deviation
 
 #clear memory 
 gc()
@@ -74,7 +74,7 @@ SST = SST[complete.cases(SST[ , 2:3]),]#remove any rows with lat or long as na
 
 #data exploration
 #plot time series
-  #SST 
+#SST 
 #load files
 SST = nc_open("SST_SAPTIN.nc")
 names(SST$var)
