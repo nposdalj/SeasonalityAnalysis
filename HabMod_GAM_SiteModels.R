@@ -29,8 +29,8 @@ sp_poly <- SpatialPolygons(list(Polygons(list(Polygon(coords)), ID = 1)))
 
 
 #loading sperm whale data
-site = 'Wake'
-saveDir = paste("O:/My Drive/CentralPac_TPWS_metadataReduced/Wake/Seasonality/")#setting the directory
+site = 'Saipan'
+saveDir = paste("G:/My Drive/CentralPac_TPWS_metadataReduced/Saipan/Seasonality/")#setting the directory
 #load data from StatisicalAnalysis_All
 filenameStatAll = paste(saveDir,site,"_GroupedDay.csv",sep="")
 GroupedDay = read.csv(filenameStatAll) #load files as data frame
@@ -50,10 +50,12 @@ GroupedDayM = read.csv(filename_GDM) #load files as data frame
 gc()
 
 #loading the environmental data
-envDir = paste("O:/My Drive/Gaia_EnvironmentalData/CentralPac/")#setting the directory
+envDir = paste("G:/My Drive/Gaia_EnvironmentalData/CentralPac/")#setting the directory
+
 #chlorophyll data
 filenameStatAll = paste(envDir,"Chlorophyll.csv",sep="")#load files as data frame
 chl = read.csv(filenameStatAll)
+
 #subset the dataframe based on the area of interest
 coordinates(chl) <- ~lat + long
 coords <- over(chl, sp_poly)
@@ -71,6 +73,16 @@ SST = SST[-1,] #delete first row
 SST$latitude = as.numeric(SST$latitude)
 SST$longitude = as.numeric(SST$longitude)
 SST = SST[complete.cases(SST[ , 2:3]),]#remove any rows with lat or long as na
+
+#subset the dataframe based on the area of interest
+coordinates(SST) <- c("latitude", "longitude")
+coords <- over(SST, sp_poly)
+SST2 <- SST[coords == 1 & !is.na(coords),]
+SST2$sea_surface_temperature = as.numeric(SST2$sea_surface_temperature)
+#average the environmental variable based on the ITS over the area of interest
+mean(SST2$sea_surface_temperature, na.rm = TRUE)
+#save standard deviation
+sd(SST2$sea_surface_temperature, na.rm = TRUE)
 
 #data exploration
 #plot time series
