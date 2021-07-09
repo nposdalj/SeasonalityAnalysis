@@ -5,6 +5,7 @@ library(rgdal)
 library(httr)
 library(sf)
 library(dplyr)
+library(lubridate)
 library(raster)
 library(rgeos)
 library(ggplot2)
@@ -23,14 +24,16 @@ df1 = data.frame("lat" = c(15.36, 15.27, 15.3186, 15.3186), "long" = c(145.46, 1
 #df1 = data.frame("lat" = c(56.29, 56.2, 56.2434, 56.2434), "long" = C(-142.75, -142.75, -142.83, -142.67))#PT
 #df1 = data.frame("lat" = c(58.71, 58.62, 58.6668, 58.6668), "long" = C(-148.0034, -148.0034, -148.12, -147.94))#CB
 
+#spatial polygon for area of interest
 ch <- chull(df1$long, df1$lat)
-coords <- df1[c(ch, ch[1]), ]
-sp_poly <- SpatialPolygons(list(Polygons(list(Polygon(coords)), ID = 1)))
+coords <- df1[c(ch, ch[1]), ]#creating convex hull
+sp_poly <- SpatialPolygons(list(Polygons(list(Polygon(coords)), ID = 1)))#converting convex hull to spatial polygon
 
 
 #loading sperm whale data
 site = 'Saipan'
 saveDir = paste("G:/My Drive/CentralPac_TPWS_metadataReduced/Saipan/Seasonality/")#setting the directory
+
 #load data from StatisicalAnalysis_All
 filenameStatAll = paste(saveDir,site,"_GroupedDay.csv",sep="")
 GroupedDay = read.csv(filenameStatAll) #load files as data frame
@@ -78,14 +81,26 @@ SST = SST[complete.cases(SST[ , 2:3]),]#remove any rows with lat or long as na
 coordinates(SST) <- c("latitude", "longitude")
 coords <- over(SST, sp_poly)
 SST2 <- SST[coords == 1 & !is.na(coords),]
-SST2$sea_surface_temperature = as.numeric(SST2$sea_surface_temperature)
+SST2$sea_surface_temperature = as.numeric(SST2$sea_surface_temperature)#converting SST from character to numeric
+SST2$time = as.Date(SST2$time)#converting time from character to date
+SST3 = as.data.frame(SST2)#converting SPDF back to DF
+SST3$sea_surface_temperature[SST3$sea_surface_temperature < 0] <- NA #making anything<0 NA
+
 #average the environmental variable based on the ITS over the area of interest
-mean(SST2$sea_surface_temperature, na.rm = TRUE)
-#save standard deviation
-sd(SST2$sea_surface_temperature, na.rm = TRUE)
+SST3 %>%
+  mutate(time = floor_date(time)) %>%
+  group_by(time) %>%
+  summarize(mean_SST = mean(sea_surface_temperature))#finding daily mean
 
 #data exploration
+mean(SST2$sea_surface_temperature, na.rm = TRUE)#finding overall mean
+#save standard deviation
+sd(SST2$sea_surface_temperature, na.rm = TRUE)
+#SST histogram
+hist(SST$sea_surface_temperature)
+
 #plot time series
+plot(SST$time, SST$sea_surface_temperature)#exploratory plot
 #SST 
 #load files
 SST = nc_open("SST_SAPTIN.nc")
@@ -154,12 +169,18 @@ plot(1:n,res,axes=FALSE,type='o',pch=20,xlab='',ylab='SST (ºC)')
 axis(2) 
 axis(1,1:n,format(dates,'%m')) 
 box()
+
 #find min and max
 
 #subset the dataframe based on the area of interest
 coordinates(SST) <- c("latitude","longitude")
 coords <- over(SST, sp_poly)
 SST = SST[coords == 1 & !is.na(coords),]
+
+#Chlorophyll data
+filenameStatAll = paste(envDir,"Chlorophyll.nc",sep="")#load files as data frame
+CHL = nc_open(filenameStatAll)
+names(CHL$var)
 
 #SSH anomaly data
 filenameStatAll = paste(envDir,"AVISOglobalvars.nc",sep="")#load files as data frame
