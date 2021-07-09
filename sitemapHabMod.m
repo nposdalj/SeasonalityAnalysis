@@ -173,6 +173,7 @@ set(gcf,'Color','w');
 save('Site_map.png');
 export_fig Site_mapCCE.png
 
+%grey map site for GOA
 figure(6)
 LatLongTAB.Site = categorical(LatLongTAB.Site);
 A = 200;
