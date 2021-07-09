@@ -24,6 +24,10 @@ df1 = data.frame("lat" = c(15.36, 15.27, 15.3186, 15.3186), "long" = c(145.46, 1
 #df1 = data.frame("lat" = c(56.29, 56.2, 56.2434, 56.2434), "long" = C(-142.75, -142.75, -142.83, -142.67))#PT
 #df1 = data.frame("lat" = c(58.71, 58.62, 58.6668, 58.6668), "long" = C(-148.0034, -148.0034, -148.12, -147.94))#CB
 
+#define the start and end of the datame 
+startTime = "2010-03-05" #this should be formatted like this: 2010-03-05 00:05:00 PDT
+endTime = "2019-02-02" 
+
 #spatial polygon for area of interest
 ch <- chull(df1$long, df1$lat)
 coords <- df1[c(ch, ch[1]), ]#creating convex hull
@@ -31,7 +35,7 @@ sp_poly <- SpatialPolygons(list(Polygons(list(Polygon(coords)), ID = 1)))#conver
 
 #loading sperm whale data
 site = 'SAP'
-saveDir = paste("O:/My Drive/CentralPac_TPWS_metadataReduced/Saipan/Seasonality/")#setting the directory
+saveDir = paste("I:/My Drive/CentralPac_TPWS_metadataReduced/Saipan/Seasonality/")#setting the directory
 
 #load data from StatisicalAnalysis_All
 filenameStatAll = paste(saveDir,site,"_GroupedDay.csv",sep="")
@@ -52,7 +56,7 @@ GroupedDayM = read.csv(filename_GDM) #load files as data frame
 gc()
 
 #loading the environmental data
-envDir = paste("O:/My Drive/Gaia_EnvironmentalData/CentralPac/")#setting the directory
+envDir = paste("I:/My Drive/Gaia_EnvironmentalData/CentralPac/")#setting the directory
 
 #chlorophyll data
 filenameStatAll = paste(envDir,"Chl2.csv",sep="")#load files as data frame
@@ -129,7 +133,8 @@ v6=SSH$var[[6]]
 SSHvar=ncvar_get(SSH,v6)
 SSH_lon=v6$dim[[1]]$vals
 SSH_lat=v6$dim[[2]]$vals
-dates=as.POSIXlt(v6$dim[[3]]$vals,origin='1970-01-01',tz='GMT')
+dates=as.POSIXlt(v6$dim[[3]]$vals*60*60,origin='1950-01-01') #extract the date/time
+dates = as.Date(dates, format = "%m/%d/%y") #get rid of the time
 
 #mlotst - density ocean mixed layer thickness
 v1=SSH$var[[1]]
@@ -178,39 +183,26 @@ ggplot(data=world) +  geom_sf()+coord_sf(xlim= c(min(df1$long),max(df1$long)),yl
   scale_fill_gradient2(midpoint = mid, low="yellow", mid = "orange",high="red")
 
 #plotting time series SAPTIN 
-I=which(SSH_lon>=min(df1$long) & SSH_lon<= max(df1$long)) #change lon to SST_lon values to match ours, use max and min function
-J=which(SSH_lat>=min(df1$lat) & SSH_lat<=max(df1$lat)) #change ""
-SSH2=SSHvar[I,J,]
+I=which(SSH_lon>=min(df1$long) & SSH_lon<= max(df1$long)) #only extract the region we care about
+J=which(SSH_lat>=min(df1$lat) & SSH_lat<=max(df1$lat)) #only extract the region we care about
+if (length(J) == 1){ #if the latitude only has 1 value, add a second
+JJ = J:(J+1)
+}
+K=which(dates>= startTime & dates<= endTime) #extract only the dates we care about
+SSH2=SSHvar[I,JJ,K] #index the original data frame to extract the lat, long, dates we care about
 
-n=dim(SSH2)[3] 
+n=dim(SSH2)[3] #find the length of time
 
+#take the mean
 res=rep(NA,n) 
 for (i in 1:n) 
   res[i]=mean(SSH2[,,i],na.rm=TRUE) 
 
-plot(1:n,res,axes=FALSE,type='o',pch=20,xlab='',ylab='SST (ºC)') 
+#plot the time series
+plot(1:n,res,axes=FALSE,type='o',pch=20,xlab='',ylab='SSH',las = 3) 
 axis(2) 
-axis(1,1:n,format(dates,'%m')) 
+axis(1,1:n,format(dates[K]),las = 3) 
 box()
-
-#plotting time series WAKE #add code to load SST_WAKE 
-I=which(SST_lon>=-76.25 & SST_lon<=-75.75) #change lon to SST_lon values to match ours, use max and min function
-J=which(SST_lat>=33.41991667 & SST_lat<=33.91991667) #change ""
-sst2=SSTvar[I,J,] 
-
-n=dim(sst2)[3] 
-
-res=rep(NA,n) 
-for (i in 1:n) 
-  res[i]=mean(sst2[,,i],na.rm=TRUE) 
-
-plot(1:n,res,axes=FALSE,type='o',pch=20,xlab='',ylab='SST (ºC)') 
-axis(2) 
-axis(1,1:n,format(dates,'%m')) 
-box()
-
-
-
 
 #subset the dataframe based on the area of interest
 #average the environmental variable based on the ITS over the area of interest
