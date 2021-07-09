@@ -29,10 +29,9 @@ ch <- chull(df1$long, df1$lat)
 coords <- df1[c(ch, ch[1]), ]#creating convex hull
 sp_poly <- SpatialPolygons(list(Polygons(list(Polygon(coords)), ID = 1)))#converting convex hull to spatial polygon
 
-
 #loading sperm whale data
-site = 'Saipan'
-saveDir = paste("G:/My Drive/CentralPac_TPWS_metadataReduced/Saipan/Seasonality/")#setting the directory
+site = 'SAP'
+saveDir = paste("O:/My Drive/CentralPac_TPWS_metadataReduced/Saipan/Seasonality/")#setting the directory
 
 #load data from StatisicalAnalysis_All
 filenameStatAll = paste(saveDir,site,"_GroupedDay.csv",sep="")
@@ -53,18 +52,32 @@ GroupedDayM = read.csv(filename_GDM) #load files as data frame
 gc()
 
 #loading the environmental data
-envDir = paste("G:/My Drive/Gaia_EnvironmentalData/CentralPac/")#setting the directory
+envDir = paste("O:/My Drive/Gaia_EnvironmentalData/CentralPac/")#setting the directory
 
 #chlorophyll data
 filenameStatAll = paste(envDir,"Chl2.csv",sep="")#load files as data frame
 chl = read.csv(filenameStatAll)
+chl = chl[-1,] #delete first row
+chl$latitude = as.numeric(chl$latitude)
+chl$longitude = as.numeric(chl$longitude)
+chl = chl[complete.cases(chl[ , 2:3]),]#remove any rows with lat or long as na
+
 
 #subset the dataframe based on the area of interest
-coordinates(chl) <- ~lat + long
+coordinates(chl) <- c("latitude", "longitude")
 coords <- over(chl, sp_poly)
-chl[coords == 1 & !is.na(coords),]
+chl2 <- chl[coords == 1 & !is.na(coords),]
+chl2$chlorophyll = as.numeric(chl2$chlorophyll)#converting SST from character to numeric
+chl2$time = as.Date(chl2$time)#converting time from character to date
+chl3 = as.data.frame(chl2)#converting SPDF back to DF
+chl3$chlorophyll[chl3$chlorophyll < 0] <- NA #making anything<0 NA
+
 #average the environmental variable based on the ITS over the area of interest
 #save standard deviation
+
+rm(chl)
+rm(chl2)
+rm(chl3)
 
 #clear memory 
 gc()
@@ -87,14 +100,10 @@ SST3 = as.data.frame(SST2)#converting SPDF back to DF
 SST3$sea_surface_temperature[SST3$sea_surface_temperature < 0] <- NA #making anything<0 NA
 
 #average the environmental variable based on the ITS over the area of interest
-SST3 %>%
+SST4 = SST3 %>%
   mutate(time = floor_date(time)) %>%
   group_by(time) %>%
-  summarize(mean_SST = mean(sea_surface_temperature))#finding daily mean
-coordinates(SST) <- c("latitude","longitude")
-coords <- over(SST, sp_poly)
-SST = SST[coords == 1 & !is.na(coords),]
-
+  summarize(mean_SST = mean(sea_surface_temperature), SD_SST = sd(sea_surface_temperature)) #finding daily mean
 
 #data exploration
 mean(SST2$sea_surface_temperature, na.rm = TRUE)#finding overall mean
@@ -104,54 +113,80 @@ sd(SST2$sea_surface_temperature, na.rm = TRUE)
 hist(SST$sea_surface_temperature)
 
 #plot time series
-plot(SST$time, SST$sea_surface_temperature)#exploratory plot
-#SST 
-#load files
-SST = nc_open("SST_SAPTIN.nc")
-names(SST$var)
-v1=SST$var[[1]]
-SSTvar=ncvar_get(SST,v1)
-SST_lon=v1$dim[[1]]$vals
-SST_lat=v1$dim[[2]]$vals
-dates=as.POSIXlt(v1$dim[[3]]$vals,origin='2010-01-01',tz='GMT')
+plot(SST4$time, SST4$mean_SST)#exploratory plot
+
+rm(SST)
+rm(SST2)
+rm(SST3)
+###############################
+#SSH anomaly data
+filenameStatAll = paste(envDir,"AVISOglobalvars.nc",sep="")#load files as data frame
+SSH = nc_open(filenameStatAll)
+names(SSH$var)
+
+#zos - SSH
+v6=SSH$var[[6]]
+SSHvar=ncvar_get(SSH,v6)
+SSH_lon=v6$dim[[1]]$vals
+SSH_lat=v6$dim[[2]]$vals
+dates=as.POSIXlt(v6$dim[[3]]$vals,origin='1970-01-01',tz='GMT')
+
+#mlotst - density ocean mixed layer thickness
+v1=SSH$var[[1]]
+DENvar=ncvar_get(SSH,v1)
+DEN_lon=v1$dim[[1]]$vals
+DEN_lat=v1$dim[[2]]$vals
+
+#so - salinity
+v2=SSH$var[[2]]
+SALvar=ncvar_get(SSH,v2)
+SAL_lon=v2$dim[[1]]$vals
+SAL_lat=v2$dim[[2]]$vals
+
+#thetao - temperature
+v3=SSH$var[[3]]
+TEMPvar=ncvar_get(TEMP,v3)
+TEMP_lon=v3$dim[[1]]$vals
+TEMP_lat=v3$dim[[2]]$vals
+
+#uo - eastward velocity
+v4=SSH$var[[4]]
+EASTVvar=ncvar_get(EASTV,v4)
+EASTV_lon=v4$dim[[1]]$vals
+EASTV_lat=v4$dim[[2]]$vals
+
+#vo - northward velocity
+v5=SSH$var[[5]]
+NORVvar=ncvar_get(NORV,v5)
+NORV_lon=v5$dim[[1]]$vals
+NORV_lat=v5$dim[[2]]$vals
 
 #loading the world
 world <- ne_countries(scale = "medium", returnclass = "sf")
 class(world)
 
-#setting color breaks
-h=hist(SSTvar[,,1],100,plot=FALSE)
-breaks=h$breaks
-n=length(breaks)-1
-jet.colors <-colorRampPalette(c("blue", "#007FFF", "cyan","#7FFF7F", "yellow", "#FF7F00", "red", "#7F0000"))
-c=jet.colors(n)
-
-#plotting in base R
-layout(matrix(c(1,2,3,0,4,0), nrow=1, ncol=2), widths=c(5,1), heights=4) 
-layout.show(2) 
-par(mar=c(3,3,3,1))
-r = raster(t(SSTvar[,,1]),xmn = min(SST_lon),xmx = max(SST_lon),ymn=min(SST_lat),ymx=max(SST_lat))
-image(r,col=c,breaks=breaks,xlab='',ylab='',axes=TRUE,xlim = c(min(SST_lon),max(SST_lon)),xaxs='i',asp=0, main=paste("Monthly SST", dates[1]))
-#points(-66.35, rep(41.06165),pch=20,cex=2) #do we need these points
-#points(-76, rep(33.6699),pch=20,cex=2)
-
-#adding color scale
-par(mar=c(3,1,3,3))
-source('scale.R') 
-image.scale(sst[,,1], col=c, breaks=breaks, horiz=FALSE, yaxt="n",xlab='',ylab='',main='SST') 
-axis(4, las=1) 
-box()
+#plotting in ggplot
+r = raster(t(SSHvar[,,1]),xmn = min(SSH_lon),xmx = max(SSH_lon),ymn=min(SSH_lat),ymx=max(SSH_lat))
+points = rasterToPoints(r, spatial = TRUE)
+df = data.frame(points)
+names(df)[names(df)=="layer"]="SSH"
+mid = mean(df$SSH)
+ggplot(data=world) +  geom_sf()+coord_sf(xlim= c(min(df1$long),max(df1$long)),ylim= c(min(df1$lat),max(df1$lat)),expand=FALSE)+
+  geom_raster(data = df , aes(x = x, y = y, fill = SSH)) + 
+  ggtitle(paste("Daily SSH on", dates[1]))+geom_point(x = 145.46, y = 15.3186, color = "black",size=3)+
+  xlab("Latitude")+ylab("Longitude")+
+  scale_fill_gradient2(midpoint = mid, low="yellow", mid = "orange",high="red")
 
 #plotting time series SAPTIN 
-I=which(SST_lon>=-144.45 & SST_lon<=-146,76) #change lon to SST_lon values to match ours, use max and min function
-J=which(SST_lat>=14.03 & SST_lat<=16.3) #change ""
-sst2=SSTvar[I,J,]
+I=which(SSH_lon>=min(df1$long) & SSH_lon<= max(df1$long)) #change lon to SST_lon values to match ours, use max and min function
+J=which(SSH_lat>=min(df1$lat) & SSH_lat<=max(df1$lat)) #change ""
+SSH2=SSHvar[I,J,]
 
-n=dim(sst2)[3] 
+n=dim(SSH2)[3] 
 
 res=rep(NA,n) 
 for (i in 1:n) 
-  res[i]=mean(sst2[,,i],na.rm=TRUE) 
+  res[i]=mean(SSH2[,,i],na.rm=TRUE) 
 
 plot(1:n,res,axes=FALSE,type='o',pch=20,xlab='',ylab='SST (ºC)') 
 axis(2) 
@@ -174,58 +209,6 @@ axis(2)
 axis(1,1:n,format(dates,'%m')) 
 box()
 
-#find min and max
-
-#subset the dataframe based on the area of interest
-coordinates(SST) <- c("latitude","longitude")
-coords <- over(SST, sp_poly)
-SST = SST[coords == 1 & !is.na(coords),]
-
-#Chlorophyll data
-filenameStatAll = paste(envDir,"Chl2.nc",sep="")#load files as data frame
-CHL = nc_open(filenameStatAll)
-names(CHL$var)
-
-#SSH anomaly data
-filenameStatAll = paste(envDir,"AVISOglobalvars.nc",sep="")#load files as data frame
-SSH = nc_open(filenameStatAll)
-names(SSH$var)
-
-#zos - SSH
-v6=SSH$var[[6]]
-SSHvar=ncvar_get(SSH,v6)
-SSH_lon=v6$dim[[1]]$vals
-SSH_lat=v6$dim[[2]]$vals
-
-#mlotst - density ocean mixed layer thickness
-v1=DEN$var[[1]]
-DENvar=ncvar_get(DEN,v1)
-DEN_lon=v1$dim[[1]]$vals
-DEN_lat=v1$dim[[2]]$vals
-
-#so - salinity
-v2=SAL$var[[2]]
-SALvar=ncvar_get(SAL,v2)
-SAL_lon=v2$dim[[1]]$vals
-SAL_lat=v2$dim[[2]]$vals
-
-#thetao - temperature
-v3=TEMP$var[[3]]
-TEMPvar=ncvar_get(TEMP,v3)
-TEMP_lon=v3$dim[[1]]$vals
-TEMP_lat=v3$dim[[2]]$vals
-
-#uo - eastward velocity
-v4=EASTV$var[[4]]
-EASTVvar=ncvar_get(EASTV,v4)
-EASTV_lon=v4$dim[[1]]$vals
-EASTV_lat=v4$dim[[2]]$vals
-
-#vo - northward velocity
-v5=NORV$var[[5]]
-NORVvar=ncvar_get(NORV,v5)
-NORV_lon=v5$dim[[1]]$vals
-NORV_lat=v5$dim[[2]]$vals
 
 
 
