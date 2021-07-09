@@ -56,7 +56,7 @@ gc()
 envDir = paste("G:/My Drive/Gaia_EnvironmentalData/CentralPac/")#setting the directory
 
 #chlorophyll data
-filenameStatAll = paste(envDir,"Chlorophyll.csv",sep="")#load files as data frame
+filenameStatAll = paste(envDir,"Chl2.csv",sep="")#load files as data frame
 chl = read.csv(filenameStatAll)
 
 #subset the dataframe based on the area of interest
@@ -91,6 +91,10 @@ SST3 %>%
   mutate(time = floor_date(time)) %>%
   group_by(time) %>%
   summarize(mean_SST = mean(sea_surface_temperature))#finding daily mean
+coordinates(SST) <- c("latitude","longitude")
+coords <- over(SST, sp_poly)
+SST = SST[coords == 1 & !is.na(coords),]
+
 
 #data exploration
 mean(SST2$sea_surface_temperature, na.rm = TRUE)#finding overall mean
@@ -178,7 +182,7 @@ coords <- over(SST, sp_poly)
 SST = SST[coords == 1 & !is.na(coords),]
 
 #Chlorophyll data
-filenameStatAll = paste(envDir,"Chlorophyll.nc",sep="")#load files as data frame
+filenameStatAll = paste(envDir,"Chl2.nc",sep="")#load files as data frame
 CHL = nc_open(filenameStatAll)
 names(CHL$var)
 
