@@ -56,7 +56,7 @@ GroupedDayM = read.csv(filename_GDM) #load files as data frame
 gc()
 
 #loading the environmental data
-envDir = paste("I:/My Drive/Gaia_EnvironmentalData/CentralPac/")#setting the directory
+envDir = paste("O:/My Drive/Gaia_EnvironmentalData/CentralPac/")#setting the directory
 
 #chlorophyll data
 filenameStatAll = paste(envDir,"Chl2.csv",sep="")#load files as data frame
@@ -77,7 +77,20 @@ chl3 = as.data.frame(chl2)#converting SPDF back to DF
 chl3$chlorophyll[chl3$chlorophyll < 0] <- NA #making anything<0 NA
 
 #average the environmental variable based on the ITS over the area of interest
+chl4 = chl3 %>%
+  mutate(time = floor_date(time)) %>%
+  group_by(time) %>%
+  summarize(mean_chl = mean(chlorophyll), SD_chl = sd(chlorophyll)) #finding daily mean
+
+#data exploration
+mean(chl2$chlorophyll, na.rm = TRUE)#finding overall mean
 #save standard deviation
+sd(chl2$chlorophyll, na.rm = TRUE)
+#SST histogram
+hist(chl2$chlorophyll)
+
+#plot time series
+plot(chl4$time, chl4$mean_chl)#exploratory plot
 
 rm(chl)
 rm(chl2)
