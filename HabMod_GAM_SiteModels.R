@@ -150,44 +150,44 @@ rm(SST3)
 ###############################
 #SSH anomaly data
 filenameStatAll = paste(envDir,"AVISOglobalvars.nc",sep="")#load files as data frame
-SSH = nc_open(filenameStatAll)
-names(SSH$var)
+AVISO = nc_open(filenameStatAll)
+names(AVISO$var)
 
 #zos - SSH
-v6=SSH$var[[6]]
-SSHvar=ncvar_get(SSH,v6)
+v6=AVISO$var[[6]]
+SSHvar=ncvar_get(AVISO,v6)
 SSH_lon=v6$dim[[1]]$vals
 SSH_lat=v6$dim[[2]]$vals
 dates=as.POSIXlt(v6$dim[[3]]$vals*60*60,origin='1950-01-01') #extract the date/time
 dates = as.Date(dates, format = "%m/%d/%y") #get rid of the time
 
 #mlotst - density ocean mixed layer thickness
-v1=SSH$var[[1]]
-DENvar=ncvar_get(SSH,v1)
+v1=AVISO$var[[1]]
+DENvar=ncvar_get(AVISO,v1)
 DEN_lon=v1$dim[[1]]$vals
 DEN_lat=v1$dim[[2]]$vals
 
 #so - salinity
-v2=SSH$var[[2]]
-SALvar=ncvar_get(SSH,v2)
+v2=AVISO$var[[2]]
+SALvar=ncvar_get(AVISO,v2)
 SAL_lon=v2$dim[[1]]$vals
 SAL_lat=v2$dim[[2]]$vals
 
 #thetao - temperature
-v3=SSH$var[[3]]
-TEMPvar=ncvar_get(TEMP,v3)
+v3=AVISO$var[[3]]
+TEMPvar=ncvar_get(AVISO,v3)
 TEMP_lon=v3$dim[[1]]$vals
 TEMP_lat=v3$dim[[2]]$vals
 
 #uo - eastward velocity
-v4=SSH$var[[4]]
-EASTVvar=ncvar_get(EASTV,v4)
+v4=AVISO$var[[4]]
+EASTVvar=ncvar_get(AVISO,v4)
 EASTV_lon=v4$dim[[1]]$vals
 EASTV_lat=v4$dim[[2]]$vals
 
 #vo - northward velocity
-v5=SSH$var[[5]]
-NORVvar=ncvar_get(NORV,v5)
+v5=AVISO$var[[5]]
+NORVvar=ncvar_get(AVISO,v5)
 NORV_lon=v5$dim[[1]]$vals
 NORV_lat=v5$dim[[2]]$vals
 
