@@ -166,35 +166,46 @@ v1=AVISO$var[[1]]
 DENvar=ncvar_get(AVISO,v1)
 DEN_lon=v1$dim[[1]]$vals
 DEN_lat=v1$dim[[2]]$vals
+dates=as.POSIXlt(v1$dim[[3]]$vals*60*60,origin='1950-01-01') #extract the date/time
+dates = as.Date(dates, format = "%m/%d/%y") #get rid of the time
 
 #so - salinity
 v2=AVISO$var[[2]]
 SALvar=ncvar_get(AVISO,v2)
 SAL_lon=v2$dim[[1]]$vals
 SAL_lat=v2$dim[[2]]$vals
+dates=as.POSIXlt(v2$dim[[3]]$vals*60*60,origin='1950-01-01') #extract the date/time
+dates = as.Date(dates, format = "%m/%d/%y") #get rid of the time
 
 #thetao - temperature
 v3=AVISO$var[[3]]
 TEMPvar=ncvar_get(AVISO,v3)
 TEMP_lon=v3$dim[[1]]$vals
 TEMP_lat=v3$dim[[2]]$vals
+dates=as.POSIXlt(v3$dim[[3]]$vals*60*60,origin='1950-01-01') #extract the date/time
+dates = as.Date(dates, format = "%m/%d/%y") #get rid of the time
 
 #uo - eastward velocity
 v4=AVISO$var[[4]]
 EASTVvar=ncvar_get(AVISO,v4)
 EASTV_lon=v4$dim[[1]]$vals
 EASTV_lat=v4$dim[[2]]$vals
+dates=as.POSIXlt(v4$dim[[3]]$vals*60*60,origin='1950-01-01') #extract the date/time
+dates = as.Date(dates, format = "%m/%d/%y") #get rid of the time
 
 #vo - northward velocity
 v5=AVISO$var[[5]]
 NORVvar=ncvar_get(AVISO,v5)
 NORV_lon=v5$dim[[1]]$vals
 NORV_lat=v5$dim[[2]]$vals
+dates=as.POSIXlt(v5$dim[[3]]$vals*60*60,origin='1950-01-01') #extract the date/time
+dates = as.Date(dates, format = "%m/%d/%y") #get rid of the time
 
 #loading the world
 world <- ne_countries(scale = "medium", returnclass = "sf")
 class(world)
 
+#SSH
 #plotting in ggplot
 r = raster(t(SSHvar[,,1]),xmn = min(SSH_lon),xmx = max(SSH_lon),ymn=min(SSH_lat),ymx=max(SSH_lat))
 points = rasterToPoints(r, spatial = TRUE)
@@ -228,6 +239,71 @@ plot(1:n,res,axes=FALSE,type='o',pch=20,xlab='',ylab='SSH',las = 3)
 axis(2) 
 axis(1,1:n,format(dates[K]),las = 3) 
 box()
+
+#Density ocean mixed layer thickness
+#Plotting in ggplot
+r = raster(t(DENvar[,,1]),xmn = min(DEN_lon),xmx = max(DEN_lon),ymn=min(DEN_lat),ymx=max(DEN_lat))
+points = rasterToPoints(r, spatial = TRUE)
+df = data.frame(points)
+names(df)[names(df)=="layer"]="DEN"
+mid = mean(df$DEN)
+ggplot(data=world) +  geom_sf()+coord_sf(xlim= c(min(df1$long),max(df1$long)),ylim= c(min(df1$lat),max(df1$lat)),expand=FALSE)+
+  geom_raster(data = df , aes(x = x, y = y, fill = DEN)) + 
+  ggtitle(paste("Daily Density Ocean Mized Layer Thickness on", dates[1]))+geom_point(x = 145.46, y = 15.3186, color = "black",size=3)+
+  xlab("Latitude")+ylab("Longitude")+
+  scale_fill_gradient2(midpoint = mid, low="yellow", mid = "orange",high="red")
+
+#Salinity
+#Plotting in ggplot
+r = raster(t(SALvar[,,1]),xmn = min(SAL_lon),xmx = max(SAL_lon),ymn=min(SAL_lat),ymx=max(SAL_lat))
+points = rasterToPoints(r, spatial = TRUE)
+df = data.frame(points)
+names(df)[names(df)=="layer"]="SAL"
+mid = mean(df$SAL)
+ggplot(data=world) +  geom_sf()+coord_sf(xlim= c(min(df1$long),max(df1$long)),ylim= c(min(df1$lat),max(df1$lat)),expand=FALSE)+
+  geom_raster(data = df , aes(x = x, y = y, fill = SAL)) + 
+  ggtitle(paste("Daily Salinity on", dates[1]))+geom_point(x = 145.46, y = 15.3186, color = "black",size=3)+
+  xlab("Latitude")+ylab("Longitude")+
+  scale_fill_gradient2(midpoint = mid, low="yellow", mid = "orange",high="red")
+
+#Temperature
+#Plotting in ggplot
+r = raster(t(TEMPvar[,,1]),xmn = min(TEMP_lon),xmx = max(TEMP_lon),ymn=min(TEMP_lat),ymx=max(TEMP_lat))
+points = rasterToPoints(r, spatial = TRUE)
+df = data.frame(points)
+names(df)[names(df)=="layer"]="TEMP"
+mid = mean(df$TEMP)
+ggplot(data=world) +  geom_sf()+coord_sf(xlim= c(min(df1$long),max(df1$long)),ylim= c(min(df1$lat),max(df1$lat)),expand=FALSE)+
+  geom_raster(data = df , aes(x = x, y = y, fill = TEMP)) + 
+  ggtitle(paste("Daily Temperature on", dates[1]))+geom_point(x = 145.46, y = 15.3186, color = "black",size=3)+
+  xlab("Latitude")+ylab("Longitude")+
+  scale_fill_gradient2(midpoint = mid, low="yellow", mid = "orange",high="red")
+
+#Eastward Velocity
+#Plotting in ggplot
+r = raster(t(EASTVvar[,,1]),xmn = min(EASTV_lon),xmx = max(EASTV_lon),ymn=min(EASTV_lat),ymx=max(EASTV_lat))
+points = rasterToPoints(r, spatial = TRUE)
+df = data.frame(points)
+names(df)[names(df)=="layer"]="EASTV"
+mid = mean(df$EASTV)
+ggplot(data=world) +  geom_sf()+coord_sf(xlim= c(min(df1$long),max(df1$long)),ylim= c(min(df1$lat),max(df1$lat)),expand=FALSE)+
+  geom_raster(data = df , aes(x = x, y = y, fill = EASTV)) + 
+  ggtitle(paste("Daily Eastward Velocity on", dates[1]))+geom_point(x = 145.46, y = 15.3186, color = "black",size=3)+
+  xlab("Latitude")+ylab("Longitude")+
+  scale_fill_gradient2(midpoint = mid, low="yellow", mid = "orange",high="red")
+
+#Northward Velocity
+#Plotting in ggplot
+r = raster(t(NORVvar[,,1]),xmn = min(NORV_lon),xmx = max(NORV_lon),ymn=min(NORV_lat),ymx=max(NORV_lat))
+points = rasterToPoints(r, spatial = TRUE)
+df = data.frame(points)
+names(df)[names(df)=="layer"]="NORV"
+mid = mean(df$NORV)
+ggplot(data=world) +  geom_sf()+coord_sf(xlim= c(min(df1$long),max(df1$long)),ylim= c(min(df1$lat),max(df1$lat)),expand=FALSE)+
+  geom_raster(data = df , aes(x = x, y = y, fill = NORV)) + 
+  ggtitle(paste("Daily Northward Velocity on", dates[1]))+geom_point(x = 145.46, y = 15.3186, color = "black",size=3)+
+  xlab("Latitude")+ylab("Longitude")+
+  scale_fill_gradient2(midpoint = mid, low="yellow", mid = "orange",high="red")
 
 #subset the dataframe based on the area of interest
 #average the environmental variable based on the ITS over the area of interest
