@@ -91,6 +91,12 @@ hist(chl2$chlorophyll)
 
 #plot time series
 plot(chl4$time, chl4$mean_chl)#exploratory plot
+title1 = paste(site,"Chlorophyll Plot")
+ggplot(chl4, aes(x=time,y=mean_chl))+
+  ggtitle(title1)+
+  labs(y="Mean Chlorophyll (mg m-3)",x="Time (days)")+
+  geom_line()+
+  geom_point()
 
 rm(chl)
 rm(chl2)
@@ -131,6 +137,12 @@ hist(SST$sea_surface_temperature)
 
 #plot time series
 plot(SST4$time, SST4$mean_SST)#exploratory plot
+title1 = paste(site,"Sea Surface Temperature Plot")
+ggplot(SST4, aes(x=time,y=mean_SST))+
+  ggtitle(title1)+
+  labs(y="Mean SST (C)",x="Time (days)")+
+  geom_line()+
+  geom_point()
 
 rm(SST)
 rm(SST2)

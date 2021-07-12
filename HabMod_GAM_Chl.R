@@ -91,6 +91,12 @@ hist(chl2$chlorophyll)
 
 #plot time series
 plot(chl4$time, chl4$mean_chl)#exploratory plot
+title1 = paste(site,"Chlorophyll Plot")
+ggplot(chl4, aes(x=time,y=mean_chl))+
+  ggtitle(title1)+
+  labs(y="Mean Chlorophyll (mg m-3)",x="Time (days)")+
+  geom_line()+
+  geom_point()
 
 rm(chl)
 rm(chl2)

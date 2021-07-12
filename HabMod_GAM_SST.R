@@ -90,6 +90,12 @@ hist(SST$sea_surface_temperature)
 
 #plot time series
 plot(SST4$time, SST4$mean_SST)#exploratory plot
+title1 = paste(site,"Sea Surface Temperature Plot")
+ggplot(SST4, aes(x=time,y=mean_SST))+
+  ggtitle(title1)+
+  labs(y="Mean SST (C)",x="Time (days)")+
+  geom_line()+
+  geom_point()
 
 rm(SST)
 rm(SST2)
