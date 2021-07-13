@@ -35,7 +35,7 @@ sp_poly <- SpatialPolygons(list(Polygons(list(Polygon(coords)), ID = 1)))#conver
 
 #loading sperm whale data
 site = 'SAP'
-saveDir = paste("I:/My Drive/CentralPac_TPWS_metadataReduced/Saipan/Seasonality/")#setting the directory
+saveDir = paste("O:/My Drive/CentralPac_TPWS_metadataReduced/Saipan/Seasonality/")#setting the directory
 
 #load data from StatisicalAnalysis_All
 filenameStatAll = paste(saveDir,site,"_GroupedDay.csv",sep="")
@@ -106,7 +106,7 @@ rm(chl3)
 gc()
 
 #SST data
-filenameStatAll = paste(envDir,"SST_SAPTIN2.csv",sep="")#load files as data frame
+filenameStatAll = paste(envDir,"AQUASST_SAPTIN.csv",sep="")#load files as data frame
 SST = read.csv(filenameStatAll)
 SST = SST[-1,] #delete first row
 SST$latitude = as.numeric(SST$latitude)
