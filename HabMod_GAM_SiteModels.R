@@ -11,6 +11,7 @@ library(rgeos)
 library(ggplot2)
 library("rnaturalearth")
 library("rnaturalearthdata")
+library(tidyverse)
 
 #define the lat and long of interest
 #df1 = data.frame("lat" = c(19.29, 19.2, 19.2467, 19.2467), "long" = c(-166.69, -166.69, -166.74, -166.64)) #Wake
@@ -28,6 +29,9 @@ df1 = data.frame("lat" = c(15.36, 15.27, 15.3186, 15.3186), "long" = c(145.46, 1
 startTime = "2010-03-05" #this should be formatted like this: 2010-03-05 00:05:00 PDT
 endTime = "2019-02-02" 
 
+#loading the environmental data
+envDir = paste("I:/My Drive/Gaia_EnvironmentalData/CentralPac/")#setting the directory)
+
 #spatial polygon for area of interest
 ch <- chull(df1$long, df1$lat)
 coords <- df1[c(ch, ch[1]), ]#creating convex hull
@@ -38,8 +42,15 @@ site = 'SAP'
 saveDir = paste("I:/My Drive/CentralPac_TPWS_metadataReduced/Saipan/Seasonality/")#setting the directory
 
 #load data from StatisicalAnalysis_All
-filenameStatAll = paste(saveDir,site,"_GroupedDay.csv",sep="")
-GroupedDay = read.csv(filenameStatAll) #load files as data frame
+filenameStatAll = paste(saveDir,site,"_Day.csv",sep="")
+DayData = read.csv(filenameStatAll) #load files as data frame
+DayTable = DayData %>%
+  select(tbin, Count_Click, Count_Bin, HoursProp, HoursNorm)
+DayTable = DayTable %>% 
+  rename(
+    time = tbin,
+  )
+DayTable$time = as.Date(DayTable$time)#converting time from character to date
 
 #load sex specific data
 #Females
@@ -55,8 +66,6 @@ GroupedDayM = read.csv(filename_GDM) #load files as data frame
 #clear memory 
 gc()
 
-#loading the environmental data
-envDir = paste("I:/My Drive/Gaia_EnvironmentalData/CentralPac/")#setting the directory
 
 #chlorophyll data
 filenameStatAll = paste(envDir,"Chl2.csv",sep="")#load files as data frame
@@ -252,6 +261,28 @@ ggplot(data=world) +  geom_sf()+coord_sf(xlim= c(min(df1$long),max(df1$long)),yl
   xlab("Latitude")+ylab("Longitude")+
   scale_fill_gradient2(midpoint = mid, low="yellow", mid = "orange",high="red")
 
+#plotting time series SAPTIN 
+I=which(DEN_lon>=min(df1$long) & DEN_lon<= max(df1$long)) #only extract the region we care about
+J=which(DEN_lat>=min(df1$lat) & DEN_lat<=max(df1$lat)) #only extract the region we care about
+if (length(J) == 1){ #if the latitude only has 1 value, add a second
+  JJ = J:(J+1)
+}
+K=which(dates>= startTime & dates<= endTime) #extract only the dates we care about
+DEN2=DENvar[I,JJ,K] #index the original data frame to extract the lat, long, dates we care about
+
+n=dim(DEN2)[3] #find the length of time
+
+#take the mean
+res=rep(NA,n) 
+for (i in 1:n) 
+  res[i]=mean(DEN2[,,i],na.rm=TRUE) 
+
+#plot the time series
+plot(1:n,res,axes=FALSE,type='o',pch=20,xlab='',ylab='DEN',las = 3) 
+axis(2) 
+axis(1,1:n,format(dates[K]),las = 3) 
+box()
+
 #Salinity
 #Plotting in ggplot
 r = raster(t(SALvar[,,1]),xmn = min(SAL_lon),xmx = max(SAL_lon),ymn=min(SAL_lat),ymx=max(SAL_lat))
@@ -311,8 +342,9 @@ ggplot(data=world) +  geom_sf()+coord_sf(xlim= c(min(df1$long),max(df1$long)),yl
 
 
 #merge the data sets
-
-
+tab <- left_join(DayTable, SST4, by = "time") 
+  n = 4
+  GroupedDay = aggregate(tab,list(rep(1:(nrow(tab)%/%n+1),each=n,len=nrow(tab))),mean)[-1];
 
 
 #run GAM

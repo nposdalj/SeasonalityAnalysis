@@ -25,8 +25,8 @@ library(lubridate)
 library(survival)
 
 #load data
-site = 'Wake'
-saveDir = paste("G:/My Drive/CentralPac_TPWS_metadataReduced/Wake/Seasonality/")
+site = 'SAP'
+saveDir = paste("I:/My Drive/CentralPac_TPWS_metadataReduced/Saipan/Seasonality/")
 filename = paste(saveDir,site,"_dayData_forGLMR125.csv",sep="")
 dayBinTAB = read.csv(filename) #no effort days deleted
 head(dayBinTAB)
@@ -35,6 +35,11 @@ dayBinTAB$Season = as.factor(dayBinTAB$Season) #change season from an integer to
 levels(dayBinTAB$Season)
 dayBinTAB$Season = revalue(dayBinTAB$Season, c("1"="Summer", "2"="Fall", "3"="Winter", "4"="Spring")) #change the numbers in actual seasons
 dayBinTAB$tbin = anytime(as.factor(dayBinTAB$tbin))
+
+#export GroupedDay as .csv
+fileName_DD = paste(saveDir,site,"_Day.csv",sep="")
+write.csv(dayBinTAB,fileName_DD, row.names = FALSE)
+
 
 #groupin data according to ITS
 if (site == 'PT'){
