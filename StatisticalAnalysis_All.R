@@ -216,15 +216,9 @@ write.csv(GroupedYear,fileName_GY, row.names = FALSE)
 #GAMs with appropiate ITS binning using HoursProp
 
 #GAM to identify seasonal pattern
-if (site == 'AB'){
-  gamTw = gam(HoursProp ~ s(day, bs = 'cc', k = 19), data = GroupedDay, family = tw, method = "REML")
-  plot(gamTw, pages =1)
-  summary(gamTw)
-}else{
-  gamTw = gam(HoursProp ~ s(day, bs = 'cc', k = 10), data = GroupedDay, family = tw, method = "REML")
-  plot(gamTw, pages =1)
-  summary(gamTw)
-}
+gamTw = gam(HoursProp ~ s(day, bs = 'cc', k = -1), data = GroupedDay, family = tw, method = "REML")
+plot(gamTw, pages =1)
+summary(gamTw)
 
 #GAM to check for significance between seasons
 gamTwS = gam(HoursProp ~ Season, data = GroupedDay, family = tw, method = "REML")
@@ -280,7 +274,7 @@ AllTable$Site = as.character(AllTable$Site)
 #table with only CB, QN, PT
 Central_GOA = subset(AllTable, Site!="BD" & Site!="KS" & Site!="KOA" & Site!="AB")
 
-gamALL = gam(HoursProp ~ s(day, bs = 'cc', k = 47), data = AllTable, family = tw, method = "REML")
+gamALL = gam(HoursProp ~ s(day, bs = 'cc', k = -1), data = AllTable, family = tw, method = "REML")
 plot(gamALL, pages =1)
 summary(gamALL)
 

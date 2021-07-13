@@ -369,7 +369,7 @@ write.csv(GroupedYearM,fileName_GYM, row.names = FALSE)
 #GAM to identify seasonal pattern
 if (sum(GroupedDayF$Female > 0)){
 #females
-gamTw = gam(FeHoursProp ~ s(day, bs = 'cc', k = 47), data = GroupedDayF, family = tw, method = "REML")
+gamTw = gam(FeHoursProp ~ s(day, bs = 'cc', k = -1), data = GroupedDayF, family = tw, method = "REML")
 plot(gamTw, pages =1)
 summary(gamTw)
 
@@ -415,7 +415,7 @@ ggsave(fig7)
 #GAMs with appropiate ITS binning
 
 #GAM to identify seasonal pattern
-gamTw = gam(JuHoursProp ~ s(day, bs = 'cc', k = 47), data = GroupedDayJ, family = tw, method = "REML")
+gamTw = gam(JuHoursProp ~ s(day, bs = 'cc', k = -1), data = GroupedDayJ, family = tw, method = "REML")
 plot(gamTw, pages =1)
 summary(gamTw)
 
@@ -459,7 +459,7 @@ ggsave(fig7)
 #GAMs with appropiate ITS binning
 
 #GAM to identify seasonal pattern
-gamTw = gam(MaHoursProp ~ s(day, bs = 'cc', k = 35), data = GroupedDayM, family = tw, method = "REML")
+gamTw = gam(MaHoursProp ~ s(day, bs = 'cc', k = -1), data = GroupedDayM, family = tw, method = "REML")
 plot(gamTw, pages =1)
 summary(gamTw)
 
