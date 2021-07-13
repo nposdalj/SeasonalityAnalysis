@@ -35,7 +35,7 @@ sp_poly <- SpatialPolygons(list(Polygons(list(Polygon(coords)), ID = 1)))#conver
 
 #loading sperm whale data
 site = 'SAP'
-saveDir = paste("O:/My Drive/CentralPac_TPWS_metadataReduced/Saipan/Seasonality/")#setting the directory
+saveDir = paste("I:/My Drive/CentralPac_TPWS_metadataReduced/Saipan/Seasonality/")#setting the directory
 
 #load data from StatisicalAnalysis_All
 filenameStatAll = paste(saveDir,site,"_GroupedDay.csv",sep="")
@@ -56,7 +56,7 @@ GroupedDayM = read.csv(filename_GDM) #load files as data frame
 gc()
 
 #loading the environmental data
-envDir = paste("O:/My Drive/Gaia_EnvironmentalData/CentralPac/")#setting the directory
+envDir = paste("I:/My Drive/Gaia_EnvironmentalData/CentralPac/")#setting the directory
 
 #chlorophyll data
 filenameStatAll = paste(envDir,"Chl2.csv",sep="")#load files as data frame
@@ -117,23 +117,22 @@ SST = SST[complete.cases(SST[ , 2:3]),]#remove any rows with lat or long as na
 coordinates(SST) <- c("latitude", "longitude")
 coords <- over(SST, sp_poly)
 SST2 <- SST[coords == 1 & !is.na(coords),]
-SST2$sea_surface_temperature = as.numeric(SST2$sea_surface_temperature)#converting SST from character to numeric
+SST2$sstMasked = as.numeric(SST2$sstMasked)#converting SST from character to numeric
 SST2$time = as.Date(SST2$time)#converting time from character to date
 SST3 = as.data.frame(SST2)#converting SPDF back to DF
-SST3$sea_surface_temperature[SST3$sea_surface_temperature < 0] <- NA #making anything<0 NA
 
 #average the environmental variable based on the ITS over the area of interest
 SST4 = SST3 %>%
   mutate(time = floor_date(time)) %>%
   group_by(time) %>%
-  summarize(mean_SST = mean(sea_surface_temperature), SD_SST = sd(sea_surface_temperature)) #finding daily mean
+  summarize(mean_SST = mean(sstMasked), SD_SST = sd(sstMasked)) #finding daily mean
 
 #data exploration
-mean(SST2$sea_surface_temperature, na.rm = TRUE)#finding overall mean
+mean(SST2$sstMasked, na.rm = TRUE)#finding overall mean
 #save standard deviation
-sd(SST2$sea_surface_temperature, na.rm = TRUE)
+sd(SST2$sstMasked, na.rm = TRUE)
 #SST histogram
-hist(SST$sea_surface_temperature)
+hist(SST2$sstMasked)
 
 #plot time series
 plot(SST4$time, SST4$mean_SST)#exploratory plot
