@@ -5,15 +5,16 @@
 ## STEP 1: the data ##
 # Open the R workspace provided
 M7 = read.csv('C:/Users/nposd/Documents/GitHub/SeasonalityAnalysis/Panigada/M7.csv')
+M7 = zap_labels(M7)
 head(M7); dim(M7) # to visualise the structure of the data
 attach(M7) # to attach the dataset
 
 # Each record in the dataset corresponds to a single minute, which constitutes the unit of analysis. Each minute has been associated to the value of each environmental
 # covariate at that time. The column "Panel" specifies the block to which each point belongs. The column "DPM" represents the binary response variable (0: no animal in acoustic contact; 1: acoustic contact).
 
-## STEP 2: require the libraries needed ##
 # All the libraries have to be installed prior to their utilization (see R help on library installation)
 library(geepack) # for the GEEs (Wald's hypothesis tests allowed)
+devtools::install_github("vjcitn/yags")
 library(yags) # for the GEEs (QIC provided)
 library(splines) # to construct the B-splines within a GEE-GLM
 library(ROCR) # to build the ROC curve
@@ -22,6 +23,7 @@ library(ggplot2) # to build the partial residual plots
 library(mvtnorm) # to build the partial residual plot
 library(car)
 library(mgcv)
+library(geepack)
 
 ## STEP 3: Data exploration and initial analysis ##
 # Investigate autocorrelation to work out block sizes: 
@@ -60,88 +62,123 @@ AvgHrBasisMat<-as.matrix(AvgHrBasis)
 # Selection of the correct form (linear or smooth) for the covariates available at a single scale.
 # A series of models is fitted where each of these covariate is tested as a linear term vs. a smoother and compared against an empty model.
 # Extract the QIC scores from the yags object to compare the empty model with the others and select how to treat the covariate.
-
-POD0<-yags(DPM ~ 1, family = binomial, corstruct="independence", id=Panel, data=M7)
+POD0_formula = formula(DPM ~ 1, data = M7)
+POD0<-geeglm(formula = POD0_formula, id=Panel, family = "binomial", corstr ="independence", data=zap_labels(M7))
+POD0_QIC = QIC(POD0)
 
 #DATENO
-POD0a<-yags(DPM ~ bs(DATENO , knots=mean(DATENO)), family = binomial, corstruct="independence", id=Panel, data=M7)
-POD0b<-yags(DPM ~ as.factor(DATENO), family = binomial, corstruct="independence", id=Panel, data=M7)
-POD0c<-yags(DPM ~ DATENO, family = binomial, corstruct="independence", id=Panel, data=M7)
+POD0a<-geeglm(DPM ~ bs(DATENO , knots=mean(DATENO)), id=Panel, family = "binomial", corstr ="independence", data=M7)
+POD0a_QIC = QIC(POD0a)
+POD0b<-geeglm(DPM ~ as.factor(DATENO), family = binomial, corstr ="independence", id=Panel, data=M7)
+POD0b_QIC = QIC(POD0b)
+POD0c<-geeglm(DPM ~ DATENO, family = binomial, corstr ="independence", id=Panel, data=M7)
+POD0c_QIC = QIC(POD0c)
 
 model0A<-c("POD0", "POD0a", "POD0b", "POD0c")
-QIC0A<-c(POD0@pan.aic, POD0a@pan.aic, POD0b@pan.aic, POD0c@pan.aic)
+QIC0A<-c(POD0_QIC[1], POD0a_QIC[1], POD0b_QIC[1], POD0c_QIC[1])
 QICmod0A<-data.frame(rbind(model0A,QIC0A))
 QICmod0A
-X1               X2               X3               X4
-model0A             POD0            POD0a            POD0b            POD0c
-QIC0A   15401.3578427153 14173.6778372064 202025.047204914 14494.8958234142
+
+#Their results
+#X1               X2               X3               X4
+#model0A             POD0            POD0a            POD0b            POD0c
+#QIC0A   15401.3578427153 14173.6778372064 202025.047204914 14494.8958234142
 #So DATENO should be treated as a smoother
 
+#My results
+#QIC            QIC.1            QIC.2            QIC.3
+#model0A             POD0            POD0a            POD0b            POD0c
+#QIC0A   16571.4330008006 15294.5703934917 15215.3693503718 15643.6294444462
+#So DATENO should be treated as a smoother -- I got the same result as them
+
 #PODAngle:
-POD0f<-yags(DPM ~ bs(PODAngle, knots=mean(PODAngle)) , family = binomial, corstruct="independence", id=Panel, data=M7)
-POD0g<-yags(DPM ~ PODAngle, family = binomial, corstruct="independence", id=Panel, data=M7)
+POD0f<-geeglm(DPM ~ bs(PODAngle, knots=mean(PODAngle)) , family = binomial, corstr="independence", id=Panel, data=M7)
+POD0f_QIC = QIC(POD0f)
+POD0g<-geeglm(DPM ~ PODAngle, family = binomial, corstr="independence", id=Panel, data=M7)
+POD0g_QIC = QIC(POD0g)
 
 model0C<-c("POD0", "POD0f", "POD0g")
-QIC0C<-c(POD0@pan.aic, POD0f@pan.aic, POD0g@pan.aic)
+QIC0C<-c(POD0_QIC[1], POD0f_QIC[1], POD0g_QIC[1])
 QICmod0C<-data.frame(rbind(model0C,QIC0C))
 QICmod0C
-X1               X2               X3
-model0C             POD0            POD0f            POD0g
-QIC0C   15401.3578427153 15080.8965136641 15109.7867620991
+
+#Their results
+#X1               X2               X3
+#model0C             POD0            POD0f            POD0g
+#QIC0C   15401.3578427153 15080.8965136641 15109.7867620991
 #Angle should be treated as a smoother.
 
+#My results
+#QIC            QIC.1            QIC.2
+#model0C             POD0            POD0f            POD0g
+#QIC0C   16571.4330008006 16253.0015388477 16278.1383011792
+#Angle should be treated as a smoother- same result as them 
+
 #X.TimeLost:
-POD0h<-yags(DPM ~ bs(X.TimeLost , knots=mean(X.TimeLost)), family = binomial, corstruct="independence", id=Panel, data=M7)
-POD0i<-yags(DPM ~ X.TimeLost, family = binomial, corstruct="independence", id=Panel, data=M7)
+POD0h<-geeglm(DPM ~ bs(X.TimeLost , knots=mean(X.TimeLost)), family = binomial, corstr="independence", id=Panel, data=M7)
+POD0h_QIC = QIC(POD0h)
+POD0i<-geeglm(DPM ~ X.TimeLost, family = binomial, corstr="independence", id=Panel, data=M7)
+POD0i_QIC = QIC(POD0i)
 
 model0D<-c("POD0", "POD0h", "POD0i")
-QIC0D<-c(POD0@pan.aic, POD0h@pan.aic, POD0i@pan.aic)
+QIC0D<-c(POD0_QIC[1], POD0h_QIC[1], POD0i_QIC[1])
 QICmod0D<-data.frame(rbind(model0D,QIC0D))
 QICmod0D
-X1               X2               X3
-model0D             POD0            POD0h            POD0i
-QIC0D   15401.3578427153 30736.3848027354 15402.0479608358
 
+#Their results
+#X1               X2               X3
+#model0D             POD0            POD0h            POD0i
+#QIC0D   15401.3578427153 30736.3848027354 15402.0479608358
 #X.TimeLost should be treated as linear.
+
+#My results
+#QIC            QIC.1            QIC.2
+#model0D             POD0            POD0h            POD0i
+#QIC0D   16571.4330008006 16566.7411633541 16571.5718183528
+#X.TimeLost should be treated as a smoother - different result from them
 
 ## STEP 4: Determine which covariates are most relevant, and which can be removed (on the basis of previous collinearity work).         
 # The empty model is:
-POD0<-yags(DPM ~ 1, family = binomial, corstruct="independence", id=Panel, data=M7)
+POD0<-geeglm(DPM ~ 1, family = binomial, corstr="independence", id=Panel, data=M7)
 # The initial full model is:
-POD1<-yags(DPM ~bs(DATENO , knots=mean(DATENO)) + AvgHrBasisMat + bs(PODAngle, knots=mean(PODAngle)) + X.TimeLost + TideBasisMat , family = binomial, corstruct="independence", id=Panel, data=M7)
+POD1<-geeglm(DPM ~bs(DATENO , knots=mean(DATENO)) + AvgHrBasisMat + bs(PODAngle, knots=mean(PODAngle)) + bs(X.TimeLost, knots=mean(X.TimeLost)) + 
+               TideBasisMat , family = binomial, corstr="independence", id=Panel, data=M7)
 
 #A series of reduced models is fitted. Each contains all the covariates but one. The reduced model with the lowest QIC is the one to use in the following step.
-POD1a<-yags(DPM ~ AvgHrBasisMat + bs(PODAngle, knots=mean(PODAngle)) + X.TimeLost + TideBasisMat, family = binomial, corstruct="independence", id=Panel, data=M7)
-
-POD1b<-yags(DPM ~bs(DATENO , knots=mean(DATENO))  + bs(PODAngle, knots=mean(PODAngle)) + X.TimeLost + TideBasisMat, family = binomial, corstruct="independence", id=Panel, data=M7)
-
-POD1c<-yags(DPM ~bs(DATENO , knots=mean(DATENO)) + AvgHrBasisMat + X.TimeLost + TideBasisMat , family = binomial, corstruct="independence", id=Panel, data=M7)
-
-POD1d<-yags(DPM ~bs(DATENO , knots=mean(DATENO)) + AvgHrBasisMat + bs(PODAngle, knots=mean(PODAngle))  + TideBasisMat, family = binomial, corstruct="independence", id=Panel, data=M7)
-
-POD1e<-yags(DPM ~bs(DATENO , knots=mean(DATENO)) + AvgHrBasisMat + bs(PODAngle, knots=mean(PODAngle)) + X.TimeLost, family = binomial, corstruct="independence", id=Panel, data=M7)
+#remove DATENO
+POD1a<-geeglm(DPM ~ AvgHrBasisMat + bs(PODAngle, knots=mean(PODAngle)) + bs(X.TimeLost, knots=mean(X.TimeLost)) + TideBasisMat, family = binomial, corstr="independence", id=Panel, data=M7)
+#remove AvgHrBasisMat
+POD1b<-geeglm(DPM ~bs(DATENO , knots=mean(DATENO))  + bs(PODAngle, knots=mean(PODAngle)) + bs(X.TimeLost, knots=mean(X.TimeLost)) + TideBasisMat, family = binomial, corstr="independence", id=Panel, data=M7)
+#remove PODAngle
+POD1c<-geeglm(DPM ~bs(DATENO , knots=mean(DATENO)) + AvgHrBasisMat + bs(X.TimeLost, knots=mean(X.TimeLost)) + TideBasisMat , family = binomial, corstr="independence", id=Panel, data=M7)
+#remove X.TimeLost
+POD1d<-geeglm(DPM ~bs(DATENO , knots=mean(DATENO)) + AvgHrBasisMat + bs(PODAngle, knots=mean(PODAngle))  + TideBasisMat, family = binomial, corstr="independence", id=Panel, data=M7)
+#remove TideBasisMat
+POD1e<-geeglm(DPM ~bs(DATENO , knots=mean(DATENO)) + AvgHrBasisMat + bs(PODAngle, knots=mean(PODAngle)) + bs(X.TimeLost, knots=mean(X.TimeLost)), family = binomial, corstr="independence", id=Panel, data=M7)
 
 model1<-c("POD0", "POD1", "POD1a", "POD1b", "POD1c", "POD1d", "POD1e")
-QIC1<-c(POD0@pan.aic, POD1@pan.aic, POD1a@pan.aic, POD1b@pan.aic, POD1c@pan.aic, POD1d@pan.aic, POD1e@pan.aic)
+QIC1<-c(QIC(POD0)[1], QIC(POD1)[1], QIC(POD1a)[1], QIC(POD1b)[1], QIC(POD1c)[1], QIC(POD1d)[1], QIC(POD1e)[1])
 QICmod1<-data.frame(rbind(model1,QIC1))
 QICmod1
-X1               X2               X3               X4
-model1             POD0             POD1            POD1a            POD1b
-QIC1   15401.3578427153 13357.7779995713 14548.9472235935 13363.3777457815
-X5               X6               X7
-model1            POD1c            POD1d            POD1e
-QIC1   13349.9646158432 13358.5697983154 13687.7385781282
+
+#Their results
+#X1               X2               X3               X4
+#model1             POD0             POD1            POD1a            POD1b
+#QIC1   15401.3578427153 13357.7779995713 14548.9472235935 13363.3777457815
+#X5               X6               X7
+#model1            POD1c            POD1d            POD1e
+#QIC1   13349.9646158432 13358.5697983154 13687.7385781282
 
 #Remove PODANGLE:
-POD2<-yags(DPM ~bs(DATENO , knots=mean(DATENO)) + AvgHrBasisMat + X.TimeLost + TideBasisMat , family = binomial, corstruct="independence", id=Panel, data=M7)
+POD2<-geeglm(DPM ~bs(DATENO , knots=mean(DATENO)) + AvgHrBasisMat + X.TimeLost + TideBasisMat , family = binomial, corstr="independence", id=Panel, data=M7)
 
-POD2a<-yags(DPM ~AvgHrBasisMat + X.TimeLost + TideBasisMat , family = binomial, corstruct="independence", id=Panel, data=M7)
+POD2a<-geeglm(DPM ~AvgHrBasisMat + X.TimeLost + TideBasisMat , family = binomial, corstr="independence", id=Panel, data=M7)
 
-POD2b<-yags(DPM ~bs(DATENO , knots=mean(DATENO))  + X.TimeLost + TideBasisMat , family = binomial, corstruct="independence", id=Panel, data=M7)
+POD2b<-geeglm(DPM ~bs(DATENO , knots=mean(DATENO))  + X.TimeLost + TideBasisMat , family = binomial, corstr="independence", id=Panel, data=M7)
 
-POD2c<-yags(DPM ~bs(DATENO , knots=mean(DATENO)) + AvgHrBasisMat  + TideBasisMat , family = binomial, corstruct="independence", id=Panel, data=M7)
+POD2c<-geeglm(DPM ~bs(DATENO , knots=mean(DATENO)) + AvgHrBasisMat  + TideBasisMat , family = binomial, corstr="independence", id=Panel, data=M7)
 
-POD2d<-yags(DPM ~bs(DATENO , knots=mean(DATENO)) + AvgHrBasisMat + X.TimeLost  , family = binomial, corstruct="independence", id=Panel, data=M7)
+POD2d<-geeglm(DPM ~bs(DATENO , knots=mean(DATENO)) + AvgHrBasisMat + X.TimeLost  , family = binomial, corstr="independence", id=Panel, data=M7)
 
 model2<-c("POD0", "POD2", "POD2a", "POD2b", "POD2c", "POD2d")
 QIC2<-c(POD0@pan.aic, POD2@pan.aic, POD2a@pan.aic, POD2b@pan.aic, POD2c@pan.aic, POD2d@pan.aic)

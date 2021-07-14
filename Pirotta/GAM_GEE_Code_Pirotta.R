@@ -36,8 +36,8 @@ library(gridExtra)       # to build the partial residual plots
 
 # An empty model is fitted: the binary response "Pres" is modelled as a function of Latitude and Longitude only. These are expressed as B-splines with 
 # one knot positioned at the average value. The independence working correlation model is used and the block is defined on the basis of the "Line_Id" values.
-
-empty<-yags(dat$Pres ~ bs(dat$Lat,knots=mean(dat$Lat))+bs(dat$Long,knots=mean(dat$Long)),family=binomial, corstruct="independence",id=dat$Line_Id) 
+empty_form = formula(Pres ~ bs(Lat,knots=mean(Lat))+bs(Long,knots=mean(Long)), data = dat)
+empty<-yags(empty_form,family="binomial", corstruct="independence",id=Line_Id)#, data = dat) 
 
 # A series of models is fitted, each containing Latitude, Longitude and chlorophyll-a at one of the scales under examination. Because the package splines 
 # does not allow the 'shrinkage', the inclusion of each covariate as a linear term is also tested.  
