@@ -462,10 +462,10 @@ EKEform <- formula("EKE ~ 0.5 * (I(u^2) + I(v^2))")
 EKE <- model.frame(EKEform, data = velocity )
 
 #merge the data sets
-tab <- left_join(DayTable, SST4, by = "time") 
+tab <- left_join(DayTable, SST4, by = "time") %>%
+  left_join(., chl4, by = "time")
   n = 4
   GroupedDay = aggregate(tab,list(rep(1:(nrow(tab)%/%n+1),each=n,len=nrow(tab))),mean)[-1];
-
 
 #run GAM
 
