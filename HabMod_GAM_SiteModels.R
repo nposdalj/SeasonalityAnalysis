@@ -280,7 +280,7 @@ for (i in 1:n)
   res[i]=mean(DEN2[,,i],na.rm=TRUE) 
 
 #plot the time series
-plot(1:n,res,axes=FALSE,type='o',pch=20,xlab='',ylab='DEN',las = 3) 
+plot(1:n,res,axes=FALSE,type='o',pch=20,xlab='',ylab='Density',las = 3) 
 axis(2) 
 axis(1,1:n,format(dates[K]),las = 3) 
 box()
@@ -298,6 +298,28 @@ ggplot(data=world) +  geom_sf()+coord_sf(xlim= c(min(df1$long),max(df1$long)),yl
   xlab("Latitude")+ylab("Longitude")+
   scale_fill_gradient2(midpoint = mid, low="yellow", mid = "orange",high="red")
 
+#plotting time series SAPTIN 
+I=which(SAL_lon>=min(df1$long) & SAL_lon<= max(df1$long)) #only extract the region we care about
+J=which(SAL_lat>=min(df1$lat) & SAL_lat<=max(df1$lat)) #only extract the region we care about
+if (length(J) == 1){ #if the latitude only has 1 value, add a second
+  JJ = J:(J+1)
+}
+K=which(dates>= startTime & dates<= endTime) #extract only the dates we care about
+SAL2=SALvar[I,JJ,K] #index the original data frame to extract the lat, long, dates we care about
+
+n=dim(SAL2)[3] #find the length of time
+
+#take the mean
+res=rep(NA,n) 
+for (i in 1:n) 
+  res[i]=mean(SAL2[,,i],na.rm=TRUE) 
+
+#plot the time series
+plot(1:n,res,axes=FALSE,type='o',pch=20,xlab='',ylab='Salinity',las = 3) 
+axis(2) 
+axis(1,1:n,format(dates[K]),las = 3) 
+box()
+
 #Temperature
 #Plotting in ggplot
 r = raster(t(TEMPvar[,,1]),xmn = min(TEMP_lon),xmx = max(TEMP_lon),ymn=min(TEMP_lat),ymx=max(TEMP_lat))
@@ -310,6 +332,28 @@ ggplot(data=world) +  geom_sf()+coord_sf(xlim= c(min(df1$long),max(df1$long)),yl
   ggtitle(paste("Daily Temperature on", dates[1]))+geom_point(x = 145.46, y = 15.3186, color = "black",size=3)+
   xlab("Latitude")+ylab("Longitude")+
   scale_fill_gradient2(midpoint = mid, low="yellow", mid = "orange",high="red")
+
+#plotting time series SAPTIN 
+I=which(TEMP_lon>=min(df1$long) & TEMP_lon<= max(df1$long)) #only extract the region we care about
+J=which(TEMP_lat>=min(df1$lat) & TEMP_lat<=max(df1$lat)) #only extract the region we care about
+if (length(J) == 1){ #if the latitude only has 1 value, add a second
+  JJ = J:(J+1)
+}
+K=which(dates>= startTime & dates<= endTime) #extract only the dates we care about
+TEMP2=TEMPvar[I,JJ,K] #index the original data frame to extract the lat, long, dates we care about
+
+n=dim(DEN2)[3] #find the length of time
+
+#take the mean
+res=rep(NA,n) 
+for (i in 1:n) 
+  res[i]=mean(TEMP2[,,i],na.rm=TRUE) 
+
+#plot the time series
+plot(1:n,res,axes=FALSE,type='o',pch=20,xlab='',ylab='Temperature',las = 3) 
+axis(2) 
+axis(1,1:n,format(dates[K]),las = 3) 
+box()
 
 #Eastward Velocity
 #Plotting in ggplot
@@ -324,6 +368,28 @@ ggplot(data=world) +  geom_sf()+coord_sf(xlim= c(min(df1$long),max(df1$long)),yl
   xlab("Latitude")+ylab("Longitude")+
   scale_fill_gradient2(midpoint = mid, low="yellow", mid = "orange",high="red")
 
+#plotting time series SAPTIN 
+I=which(EASTV_lon>=min(df1$long) & EASTV_lon<= max(df1$long)) #only extract the region we care about
+J=which(EASTV_lat>=min(df1$lat) & EASTV_lat<=max(df1$lat)) #only extract the region we care about
+if (length(J) == 1){ #if the latitude only has 1 value, add a second
+  JJ = J:(J+1)
+}
+K=which(dates>= startTime & dates<= endTime) #extract only the dates we care about
+EASTV2=EASTVvar[I,JJ,K] #index the original data frame to extract the lat, long, dates we care about
+
+n=dim(EASTV2)[3] #find the length of time
+
+#take the mean
+res=rep(NA,n) 
+for (i in 1:n) 
+  res[i]=mean(EASTV2[,,i],na.rm=TRUE) 
+
+#plot the time series
+plot(1:n,res,axes=FALSE,type='o',pch=20,xlab='',ylab='Eastward Velocity',las = 3) 
+axis(2) 
+axis(1,1:n,format(dates[K]),las = 3) 
+box()
+
 #Northward Velocity
 #Plotting in ggplot
 r = raster(t(NORVvar[,,1]),xmn = min(NORV_lon),xmx = max(NORV_lon),ymn=min(NORV_lat),ymx=max(NORV_lat))
@@ -336,6 +402,28 @@ ggplot(data=world) +  geom_sf()+coord_sf(xlim= c(min(df1$long),max(df1$long)),yl
   ggtitle(paste("Daily Northward Velocity on", dates[1]))+geom_point(x = 145.46, y = 15.3186, color = "black",size=3)+
   xlab("Latitude")+ylab("Longitude")+
   scale_fill_gradient2(midpoint = mid, low="yellow", mid = "orange",high="red")
+
+#plotting time series SAPTIN 
+I=which(NORV_lon>=min(df1$long) & NORV_lon<= max(df1$long)) #only extract the region we care about
+J=which(NORV_lat>=min(df1$lat) & NORV_lat<=max(df1$lat)) #only extract the region we care about
+if (length(J) == 1){ #if the latitude only has 1 value, add a second
+  JJ = J:(J+1)
+}
+K=which(dates>= startTime & dates<= endTime) #extract only the dates we care about
+NORV2=NORVvar[I,JJ,K] #index the original data frame to extract the lat, long, dates we care about
+
+n=dim(NORV2)[3] #find the length of time
+
+#take the mean
+res=rep(NA,n) 
+for (i in 1:n) 
+  res[i]=mean(DEN2[,,i],na.rm=TRUE) 
+
+#plot the time series
+plot(1:n,res,axes=FALSE,type='o',pch=20,xlab='',ylab='Northward Velocity',las = 3) 
+axis(2) 
+axis(1,1:n,format(dates[K]),las = 3) 
+box()
 
 #subset the dataframe based on the area of interest
 #average the environmental variable based on the ITS over the area of interest
