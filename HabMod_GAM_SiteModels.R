@@ -30,7 +30,7 @@ startTime = "2010-03-05" #this should be formatted like this: 2010-03-05 00:05:0
 endTime = "2019-02-02" 
 
 #loading the environmental data
-envDir = paste("I:/My Drive/Gaia_EnvironmentalData/CentralPac/")#setting the directory)
+envDir = paste("O:/My Drive/Gaia_EnvironmentalData/CentralPac/")#setting the directory)
 
 #spatial polygon for area of interest
 ch <- chull(df1$long, df1$lat)
@@ -39,7 +39,7 @@ sp_poly <- SpatialPolygons(list(Polygons(list(Polygon(coords)), ID = 1)))#conver
 
 #loading sperm whale data
 site = 'SAP'
-saveDir = paste("I:/My Drive/CentralPac_TPWS_metadataReduced/Saipan/Seasonality/")#setting the directory
+saveDir = paste("O:/My Drive/CentralPac_TPWS_metadataReduced/Saipan/Seasonality/")#setting the directory
 
 #load data from StatisicalAnalysis_All
 filenameStatAll = paste(saveDir,site,"_Day.csv",sep="")
@@ -200,6 +200,7 @@ EASTV_lon=v4$dim[[1]]$vals
 EASTV_lat=v4$dim[[2]]$vals
 dates=as.POSIXlt(v4$dim[[3]]$vals*60*60,origin='1950-01-01') #extract the date/time
 dates = as.Date(dates, format = "%m/%d/%y") #get rid of the time
+EASTdf <- as.data.frame(EASTVvar)
 
 #vo - northward velocity
 v5=AVISO$var[[5]]
@@ -208,6 +209,7 @@ NORV_lon=v5$dim[[1]]$vals
 NORV_lat=v5$dim[[2]]$vals
 dates=as.POSIXlt(v5$dim[[3]]$vals*60*60,origin='1950-01-01') #extract the date/time
 dates = as.Date(dates, format = "%m/%d/%y") #get rid of the time
+NORdf <- as.data.frame(NORVvar)
 
 #loading the world
 world <- ne_countries(scale = "medium", returnclass = "sf")
@@ -339,7 +341,13 @@ ggplot(data=world) +  geom_sf()+coord_sf(xlim= c(min(df1$long),max(df1$long)),yl
 #average the environmental variable based on the ITS over the area of interest
 #save standard deviation 
 
-
+#EKE equation
+  #create data frame with EASTV and NORV, with columns u and v 
+u <- c(EASTdf)
+v <- c(NORdf)
+velocity <- c(u, v)
+EKEform <- formula("EKE ~ 0.5 * (I(u^2) + I(v^2))")
+EKE <- model.frame(EKEform, data = velocity )
 
 #merge the data sets
 tab <- left_join(DayTable, SST4, by = "time") 
