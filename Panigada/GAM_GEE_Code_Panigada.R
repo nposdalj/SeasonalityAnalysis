@@ -7,7 +7,6 @@
 M7 = read.csv('C:/Users/nposd/Documents/GitHub/SeasonalityAnalysis/Panigada/M7.csv')
 M7 = zap_labels(M7)
 head(M7); dim(M7) # to visualise the structure of the data
-attach(M7) # to attach the dataset
 
 # Each record in the dataset corresponds to a single minute, which constitutes the unit of analysis. Each minute has been associated to the value of each environmental
 # covariate at that time. The column "Panel" specifies the block to which each point belongs. The column "DPM" represents the binary response variable (0: no animal in acoustic contact; 1: acoustic contact).
@@ -23,7 +22,6 @@ library(ggplot2) # to build the partial residual plots
 library(mvtnorm) # to build the partial residual plot
 library(car)
 library(mgcv)
-library(geepack)
 
 ## STEP 3: Data exploration and initial analysis ##
 # Investigate autocorrelation to work out block sizes: 
@@ -34,7 +32,7 @@ acf(M7$DPM, lag.max=310, ylim=c(0,0.1), xlim =c(300,310))
 # Follow data exploration protocols suggested by Zuur et al. (2010), Zuur (2012), to generate pair plots, box plots, and assess collinearity between covariates in the dataset using Varinace Inflation Factors (vif).
 
 # Basic model for VIF analysis:
-GLM1<-glm(DPM ~ DATENO + HOUR + PODAngle + X.TimeLost + Nall.m + TIDEDEGREES, family = binomial, data=M7) #TIDEMINUTE doesn't exist so I replaced it with TIDEDEGREES
+GLM1<-glm(DPM ~ DATENO + HOUR + PODAngle + X.TimeLost + Nall.m+ TIDEDEGREES, family = binomial, data=M7) #TIDEMINUTE doesn't exist so I replaced it with TIDEDEGREES
 #VIF scores in GLM to work out collinearity:
 vif(GLM1)
 
@@ -53,7 +51,7 @@ vif(GLM1)
 
 ## STEP 4: Model selection - covariate preparation ##
 # Construct variance-covariance matrices for cyclic covariates:
-TideBasis<-gam(DPM~s(TIDEDEGREES, bs="cc", k=6), fit=F, data=M7, family=binomial, knots=list(TIDEDEGREES=seq(0,1,length=6)))$X[,2:5]
+TideBasis<-gam(DPM~s(DEGPERMIN, bs="cc", k=6), fit=F, data=M7, family=binomial, knots=list(TIDEDEGREES=seq(0,360,length=6)))$X[,2:5]
 AvgHrBasis<-gam(DPM~s(HOUR, bs="cc", k=6), fit=F, data=M7, family=binomial, knots=list(HOUR=seq(0,23,length=6)))$X[,2:5]
 
 TideBasisMat<-as.matrix(TideBasis)
@@ -141,20 +139,20 @@ QICmod0D
 # The empty model is:
 POD0<-geeglm(DPM ~ 1, family = binomial, corstr="independence", id=Panel, data=M7)
 # The initial full model is:
-POD1<-geeglm(DPM ~bs(DATENO , knots=mean(DATENO)) + AvgHrBasisMat + bs(PODAngle, knots=mean(PODAngle)) + bs(X.TimeLost, knots=mean(X.TimeLost)) + 
+POD1<-geeglm(DPM ~bs(DATENO , knots=mean(DATENO)) + AvgHrBasisMat + bs(PODAngle, knots=mean(PODAngle)) + X.TimeLost + 
                TideBasisMat , family = binomial, corstr="independence", id=Panel, data=M7)
 
 #A series of reduced models is fitted. Each contains all the covariates but one. The reduced model with the lowest QIC is the one to use in the following step.
 #remove DATENO
-POD1a<-geeglm(DPM ~ AvgHrBasisMat + bs(PODAngle, knots=mean(PODAngle)) + bs(X.TimeLost, knots=mean(X.TimeLost)) + TideBasisMat, family = binomial, corstr="independence", id=Panel, data=M7)
+POD1a<-geeglm(DPM ~ AvgHrBasisMat + bs(PODAngle, knots=mean(PODAngle)) + X.TimeLost + TideBasisMat, family = binomial, corstr="independence", id=Panel, data=M7)
 #remove AvgHrBasisMat
-POD1b<-geeglm(DPM ~bs(DATENO , knots=mean(DATENO))  + bs(PODAngle, knots=mean(PODAngle)) + bs(X.TimeLost, knots=mean(X.TimeLost)) + TideBasisMat, family = binomial, corstr="independence", id=Panel, data=M7)
+POD1b<-geeglm(DPM ~bs(DATENO , knots=mean(DATENO))  + bs(PODAngle, knots=mean(PODAngle)) + X.TimeLost + TideBasisMat, family = binomial, corstr="independence", id=Panel, data=M7)
 #remove PODAngle
-POD1c<-geeglm(DPM ~bs(DATENO , knots=mean(DATENO)) + AvgHrBasisMat + bs(X.TimeLost, knots=mean(X.TimeLost)) + TideBasisMat , family = binomial, corstr="independence", id=Panel, data=M7)
+POD1c<-geeglm(DPM ~bs(DATENO , knots=mean(DATENO)) + AvgHrBasisMat + X.TimeLost + TideBasisMat , family = binomial, corstr="independence", id=Panel, data=M7)
 #remove X.TimeLost
 POD1d<-geeglm(DPM ~bs(DATENO , knots=mean(DATENO)) + AvgHrBasisMat + bs(PODAngle, knots=mean(PODAngle))  + TideBasisMat, family = binomial, corstr="independence", id=Panel, data=M7)
 #remove TideBasisMat
-POD1e<-geeglm(DPM ~bs(DATENO , knots=mean(DATENO)) + AvgHrBasisMat + bs(PODAngle, knots=mean(PODAngle)) + bs(X.TimeLost, knots=mean(X.TimeLost)), family = binomial, corstr="independence", id=Panel, data=M7)
+POD1e<-geeglm(DPM ~bs(DATENO , knots=mean(DATENO)) + AvgHrBasisMat + bs(PODAngle, knots=mean(PODAngle)) + X.TimeLost, family = binomial, corstr="independence", id=Panel, data=M7)
 
 model1<-c("POD0", "POD1", "POD1a", "POD1b", "POD1c", "POD1d", "POD1e")
 QIC1<-c(QIC(POD0)[1], QIC(POD1)[1], QIC(POD1a)[1], QIC(POD1b)[1], QIC(POD1c)[1], QIC(POD1d)[1], QIC(POD1e)[1])
@@ -168,6 +166,13 @@ QICmod1
 #X5               X6               X7
 #model1            POD1c            POD1d            POD1e
 #QIC1   13349.9646158432 13358.5697983154 13687.7385781282
+#remove lowest - POD1c (remove PODAngle)
+
+#My results
+#QIC            QIC.1            QIC.2            QIC.3            QIC.4            QIC.5            QIC.6
+#model1             POD0             POD1            POD1a            POD1b            POD1c            POD1d            POD1e
+#QIC1   16571.4330008006 14818.1760470527 16285.4111404854 14813.3242012944 15325.7718391176 14823.1042679196 14810.9736994057
+#remove lowest - POD1e (remove TideBasisMat)
 
 #Remove PODANGLE:
 POD2<-geeglm(DPM ~bs(DATENO , knots=mean(DATENO)) + AvgHrBasisMat + X.TimeLost + TideBasisMat , family = binomial, corstr="independence", id=Panel, data=M7)
@@ -184,12 +189,14 @@ model2<-c("POD0", "POD2", "POD2a", "POD2b", "POD2c", "POD2d")
 QIC2<-c(POD0@pan.aic, POD2@pan.aic, POD2a@pan.aic, POD2b@pan.aic, POD2c@pan.aic, POD2d@pan.aic)
 QICmod2<-data.frame(rbind(model2,QIC2))
 QICmod2
-X1               X2               X3               X4
-model2             POD0             POD2            POD2a            POD2b
-QIC2   15401.3578427153 13349.9646158432 14607.0850138747 13353.3619129114
-X5               X6
-model2            POD2c            POD2d
-QIC2   13350.6788475452 14220.9059321465
+
+#Their results
+#X1               X2               X3               X4
+#model2             POD0             POD2            POD2a            POD2b
+#QIC2   15401.3578427153 13349.9646158432 14607.0850138747 13353.3619129114
+#X5               X6
+#model2            POD2c            POD2d
+#QIC2   13350.6788475452 14220.9059321465
 
 # Retain all other covariates.
 
