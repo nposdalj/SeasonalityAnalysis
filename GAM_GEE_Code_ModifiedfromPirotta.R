@@ -3,8 +3,9 @@
 ### Example from the GofAK (sites CB, AB, PT, QN, KOA) ###
 
 ## STEP 1: the data ##
-fileName = paste("I:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/AllSitesGrouped_GAMGEE.csv")#setting the directory
-DayTable = read.csv(fileDir) #no effort days deleted
+fileName = paste("I:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites/AllSitesGrouped_GAMGEE_ROW.csv")#setting the directory
+DayTable = read.csv(fileName) #no effort days deleted
+DayTable = na.omit(DayTable)
 
 # Each record in the dataset corresponds to a GPS fix, which constitutes the unit of analysis. Each fix has been associated to the value of each environmental 
 # covariate in that spatial position, including multiple spatial or temporal scales for some of the variables. The column "Line_Id" specifies the block to 
@@ -17,8 +18,6 @@ DayTable = read.csv(fileDir) #no effort days deleted
 # All the libraries have to be installed prior to their utilization (see R help on library installation)
 
 library(geepack)         # for the GEEs (Wald's hypothesis tests allowed)
-devtools::install_github("vjcitn/yags")
-library(yags)            # for the GEEs (QIC provided)
 library(rjags)           # replacement for geeglm which is out of date
 library(splines)         # to construct the B-splines within a GEE-GLM
 library(ROCR)            # to build the ROC curve
@@ -35,6 +34,8 @@ library(SimDesign)
 # An empty model is fitted: the binary response "Pres" is modelled as a function of Latitude and Longitude only. These are expressed as B-splines with 
 # one knot positioned at the average value. The independence working correlation model is used and the block is defined on the basis of the "Line_Id" values.
 empty<-geeglm(Pres ~ bs(Lat,knots=mean(Lat))+bs(Long,knots=mean(Long)),family="binomial", corstr ="independence",id=dat$Line_Id, data = dat) 
+empty = geeglm(HoursNorm ~ tbin, family="poisson", corstr="ar1", data = DayTable, id=DayTable$ID)
+summary(empty)
 
 # A series of models is fitted, each containing Latitude, Longitude and chlorophyll-a at one of the scales under examination. Because the package splines 
 # does not allow the 'shrinkage', the inclusion of each covariate as a linear term is also tested.  

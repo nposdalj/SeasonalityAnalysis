@@ -44,6 +44,7 @@ for (i in 1:length(Sites)){
     dplyr::select(tbin, HoursNorm)
   name = Sites[i]
   modDayBinTAB$Site = name
+  modDayBinTAB$ID = i
   DayTab = merge(DayTab, modDayBinTAB, all = TRUE)
 }
 

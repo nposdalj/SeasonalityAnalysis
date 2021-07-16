@@ -2,12 +2,12 @@ clearvars
 close all
 
 %% Parameters defined by user
-filePrefix = 'Wake'; % File name to match. 
-siteabrev = 'Wake'; %abbreviation of site.
+filePrefix = 'GofAK_CB'; % File name to match. 
+siteabrev = 'CB'; %abbreviation of site.
 sp = 'Pm'; % your species code
 srate = 200; % sample rate
-effortXls = 'G:\My Drive\CentralPac_TPWS_metadataReduced\Wake\Pm_Effort.xlsx'; % specify excel file with effort times
-saveDir = 'G:\My Drive\CentralPac_TPWS_metadataReduced\Wake\Seasonality'; %specify directory to save files
+effortXls = 'I:\My Drive\GofAK_TPWS_metadataReduced\SeasonalityAnalysis\\CB\Pm_Effort.xlsx'; % specify excel file with effort times
+saveDir = 'I:\My Drive\GofAK_TPWS_metadataReduced\SeasonalityAnalysis\CB'; %specify directory to save files
 %% load workspace
 load([saveDir,'\',siteabrev,'_workspace125.mat']);
 %% group data by 5min bins, days, weeks, and seasons 
