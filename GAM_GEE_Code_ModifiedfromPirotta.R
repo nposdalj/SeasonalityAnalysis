@@ -4,10 +4,19 @@
 
 ## STEP 1: the data ##
 
-# Open the R workspace provided
-load("~/GitHub/SeasonalityAnalysis/Pirotta/m436p257_supp2-dataset.RData") #load dataset
-head(dat); dim(dat)  # to visualise the structure of the data
-attach(dat)          # to attach the dataset
+site = 'CB'
+saveDir = paste("I:/My Drive/CentralPac_TPWS_metadataReduced/Saipan/Seasonality/")#setting the directory
+
+#load data from StatisicalAnalysis_All
+filenameStatAll = paste(saveDir,site,"_Day.csv",sep="")
+DayData = read.csv(filenameStatAll) #load files as data frame
+DayTable = DayData %>%
+  dplyr::select(tbin, Count_Click, Count_Bin, HoursProp, HoursNorm)
+DayTable = DayTable %>% 
+  rename(
+    time = tbin,
+  )
+DayTable$time = as.Date(DayTable$time)#converting time from character to date
 
 # Each record in the dataset corresponds to a GPS fix, which constitutes the unit of analysis. Each fix has been associated to the value of each environmental 
 # covariate in that spatial position, including multiple spatial or temporal scales for some of the variables. The column "Line_Id" specifies the block to 

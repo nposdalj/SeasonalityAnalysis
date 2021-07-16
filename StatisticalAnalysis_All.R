@@ -26,7 +26,7 @@ library(survival)
 
 #load data
 site = 'SAP'
-saveDir = paste("I:/My Drive/CentralPac_TPWS_metadataReduced/Saipan/Seasonality/")
+saveDir = paste("I:\My Drive\GofAK_TPWS_metadataReduced\SeasonalityAnalysis")
 filename = paste(saveDir,site,"_dayData_forGLMR125.csv",sep="")
 dayBinTAB = read.csv(filename) #no effort days deleted
 head(dayBinTAB)
