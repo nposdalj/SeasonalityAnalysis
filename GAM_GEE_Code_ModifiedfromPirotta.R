@@ -3,20 +3,8 @@
 ### Example from the GofAK (sites CB, AB, PT, QN, KOA) ###
 
 ## STEP 1: the data ##
-
-site = 'CB'
-saveDir = paste("I:/My Drive/CentralPac_TPWS_metadataReduced/Saipan/Seasonality/")#setting the directory
-
-#load data from StatisicalAnalysis_All
-filenameStatAll = paste(saveDir,site,"_Day.csv",sep="")
-DayData = read.csv(filenameStatAll) #load files as data frame
-DayTable = DayData %>%
-  dplyr::select(tbin, Count_Click, Count_Bin, HoursProp, HoursNorm)
-DayTable = DayTable %>% 
-  rename(
-    time = tbin,
-  )
-DayTable$time = as.Date(DayTable$time)#converting time from character to date
+fileName = paste("I:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/AllSitesGrouped_GAMGEE.csv")#setting the directory
+DayTable = read.csv(fileDir) #no effort days deleted
 
 # Each record in the dataset corresponds to a GPS fix, which constitutes the unit of analysis. Each fix has been associated to the value of each environmental 
 # covariate in that spatial position, including multiple spatial or temporal scales for some of the variables. The column "Line_Id" specifies the block to 
