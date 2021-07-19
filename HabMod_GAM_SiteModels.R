@@ -30,7 +30,7 @@ startTime = "2010-03-05" #this should be formatted like this: 2010-03-05 00:05:0
 endTime = "2019-02-02" 
 
 #loading the environmental data
-envDir = paste("O:/My Drive/Gaia_EnvironmentalData/CentralPac/")#setting the directory)
+envDir = paste("I:/My Drive/Gaia_EnvironmentalData/CentralPac/")#setting the directory)
 
 #spatial polygon for area of interest
 ch <- chull(df1$long, df1$lat)
@@ -39,7 +39,7 @@ sp_poly <- SpatialPolygons(list(Polygons(list(Polygon(coords)), ID = 1)))#conver
 
 #loading sperm whale data
 site = 'SAP'
-saveDir = paste("O:/My Drive/CentralPac_TPWS_metadataReduced/Saipan/Seasonality/")#setting the directory
+saveDir = paste("I:/My Drive/CentralPac_TPWS_metadataReduced/Saipan/Seasonality/")#setting the directory
 
 #load data from StatisicalAnalysis_All
 filenameStatAll = paste(saveDir,site,"_Day.csv",sep="")

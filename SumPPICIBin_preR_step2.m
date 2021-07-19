@@ -2,15 +2,17 @@ clearvars
 close all
 
 %% Parameters defined by user
-filePrefix = 'GofAK_CB'; % File name to match. 
-siteabrev = 'CB'; %abbreviation of site.
+filePrefix = 'ALEUT'; % File name to match. 
+siteabrev = 'KS'; %abbreviation of site.
 sp = 'Pm'; % your species code
 srate = 200; % sample rate
-effortXls = 'I:\My Drive\GofAK_TPWS_metadataReduced\SeasonalityAnalysis\\CB\Pm_Effort.xlsx'; % specify excel file with effort times
-saveDir = 'I:\My Drive\GofAK_TPWS_metadataReduced\SeasonalityAnalysis\CB'; %specify directory to save files
+effortXls = 'I:\My Drive\GofAK_TPWS_metadataReduced\SeasonalityAnalysis\KS\Pm_Effort.xlsx'; % specify excel file with effort times
+saveDir = 'I:\My Drive\GofAK_TPWS_metadataReduced\SeasonalityAnalysis\KS'; %specify directory to save files
 %% load workspace
 load([saveDir,'\',siteabrev,'_workspace125.mat']);
-%% group data by 5min bins, days, weeks, and seasons 
+effortXls = 'I:\My Drive\GofAK_TPWS_metadataReduced\SeasonalityAnalysis\KS\Pm_Effort.xlsx'; % specify excel file with effort times
+saveDir = 'I:\My Drive\GofAK_TPWS_metadataReduced\SeasonalityAnalysis\KS'; %specify directory to save files
+%% group data by 5min bins, hourly, days, weeks, and seasons 
 %group data by 5 minute bins
 binTable = synchronize(binData,binEffort);
 binTable.Properties.VariableNames{'bin'} = 'Effort_Bin';
@@ -22,6 +24,24 @@ binTable.PreAbs = zeros(y,1);
 binTable.PreAbs(binidx1) = 1; %table with 0 for no presence in 5min bin and 1 with presence in 5min bin
 %no effort bins are excluded 
 
+%hourly
+Click = retime(binData(:,1),'hourly','sum'); % #click per day
+Bin = retime(binData(:,1),'hourly','count'); % #bin per day
+
+hourData = synchronize(Click,Bin);
+hourlyEffort = retime(binEffort,'hourly','sum');
+hourlyTab = synchronize(hourData,hourlyEffort);
+hourlyTab.Properties.VariableNames{'bin'} = 'Effort_Bin';
+hourlyTab.Properties.VariableNames{'sec'} = 'Effort_Sec';
+hourlyTab(~hourlyTab.Effort_Bin,:)=[]; %removes days with no effort, NOT days with no presence
+binidx_hourly = (hourlyTab.Count_Bin >= 1);
+[y,~]=size(hourlyTab);
+hourlyTab.PreAbs = zeros(y,1);
+hourlyTab.PreAbs(binidx_hourly) = 1; %table with 0 for no presence in 5min bin and 1 with presence in 1 hour bin
+
+writetable(timetable2table(hourlyTab),[saveDir,'\',siteabrev,'_binData_forGAMGEE.csv']); %save table to .csv to continue stats in R F:\Seasonality\Kruskal_RankSumSTATS.R
+
+%daily
 Click = retime(binData(:,1),'daily','sum'); % #click per day
 Bin = retime(binData(:,1),'daily','count'); % #bin per day
 
