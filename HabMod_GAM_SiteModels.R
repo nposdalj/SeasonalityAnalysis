@@ -57,7 +57,7 @@ DayTable$time = as.Date(DayTable$time)#converting time from character to date
 filename_DDF = paste(saveDir,site,"_DayF.csv",sep="")
 DayDataF = read.csv(filename_DDF) #load files as data frame
 DayTableF = DayDataF %>%
-  dplyr::select(tbin, Count_Click, Count_Bin, HoursProp, HoursNorm)
+  dplyr::select(tbin, Female, FeHoursProp, FemaleHoursNorm)
 DayTableF = DayTableF %>% 
   rename(
     time = tbin,
@@ -68,7 +68,7 @@ DayTableF$time = as.Date(DayTableF$time)#converting time from character to date
 filename_DDJ = paste(saveDir,site,"_DayJ.csv",sep="")
 DayDataJ = read.csv(filename_DDJ) #load files as data frame
 DayTableJ = DayDataJ %>%
-  dplyr::select(tbin, Count_Click, Count_Bin, HoursProp, HoursNorm)
+  dplyr::select(tbin, Juvenile, JuHoursProp, JuvenileHoursNorm)
 DayTableJ = DayTableJ %>% 
   rename(
     time = tbin,
@@ -79,7 +79,7 @@ DayTableJ$time = as.Date(DayTableJ$time)#converting time from character to date
 filename_DDM = paste(saveDir,site,"_DayM.csv",sep="")
 DayDataM = read.csv(filename_DDM) #load files as data frame
 DayTableM = DayDataM %>%
-  dplyr::select(tbin, Count_Click, Count_Bin, HoursProp, HoursNorm)
+  dplyr::select(tbin, Male, MaHoursProp, MaleHoursNorm)
 DayTableM = DayTableM %>% 
   rename(
     time = tbin,
