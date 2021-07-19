@@ -13,6 +13,10 @@ library("rnaturalearth")
 library("rnaturalearthdata")
 library(tidyverse)
 
+#increasing memory limit
+memory.limit(size=300000)
+
+# User Defined sections
 #define the lat and long of interest
 #df1 = data.frame("lat" = c(19.29, 19.2, 19.2467, 19.2467), "long" = c(-166.69, -166.69, -166.74, -166.64)) #Wake
 df1 = data.frame("lat" = c(15.36, 15.27, 15.3186, 15.3186), "long" = c(145.46, 145.46, 145.51, 145.41)) #Saipan
