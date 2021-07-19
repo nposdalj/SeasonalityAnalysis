@@ -26,7 +26,7 @@ df1 = data.frame("lat" = c(15.36, 15.27, 15.3186, 15.3186), "long" = c(145.46, 1
 #df1 = data.frame("lat" = c(58.71, 58.62, 58.6668, 58.6668), "long" = C(-148.0034, -148.0034, -148.12, -147.94))#CB
 
 #define the start and end of the datame 
-startTime = "2010-03-05" #this should be formatted like this: 2010-03-05 00:05:00 PDT
+startTime = "2010-03-05" #this should be formatted like this: 2010-03-05
 endTime = "2019-02-02" 
 
 #loading the environmental data
@@ -92,7 +92,6 @@ rm("DayData", "DayDataF", "DayDataJ", "DayDataM")
 #clear memory 
 gc()
 
-
 #chlorophyll data
 filenameStatAll = paste(envDir,"Chl2.csv",sep="")#load files as data frame
 chl = read.csv(filenameStatAll)
@@ -100,7 +99,6 @@ chl = chl[-1,] #delete first row
 chl$latitude = as.numeric(chl$latitude)
 chl$longitude = as.numeric(chl$longitude)
 chl = chl[complete.cases(chl[ , 2:3]),]#remove any rows with lat or long as na
-
 
 #subset the dataframe based on the area of interest
 coordinates(chl) <- c("latitude", "longitude")
@@ -534,7 +532,6 @@ NVdf<- merge(NV_ddf,as.data.frame(resNV))
 gc()
 rm("SSH_ddf","DEN_ddf","SAL_ddf","TEMP_ddf","EV_ddf","NV_ddf")
 rm("points","sp_poly")
-memory.limit(size=300000)
 
 #merge the data sets in chunks because of memory issues
 tab <- left_join(DayTable, SST4, by = "time") %>%
