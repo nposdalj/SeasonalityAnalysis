@@ -86,6 +86,8 @@ DayTableM = DayTableM %>%
   )
 DayTableM$time = as.Date(DayTableM$time)#converting time from character to date
 
+#removing unnecessary variables
+rm("DayData", "DayDataF", "DayDataJ", "DayDataM")
 
 #clear memory 
 gc()
