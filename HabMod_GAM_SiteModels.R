@@ -235,6 +235,9 @@ NOR_dates=as.POSIXlt(v5$dim[[4]]$vals*60*60,origin='1950-01-01') #extract the da
 NOR_dates = as.Date(NOR_dates, format = "%m/%d/%y") #get rid of the time
 NORdf <- as.data.frame(NORVvar)
 
+#removing unnecessary variables
+rm("v1","v2","v3","v4","v5","v6")
+
 #Plotting maps and time series
 #loading the world
 world <- ne_countries(scale = "medium", returnclass = "sf")
@@ -313,6 +316,9 @@ axis(2)
 axis(1,1:n,format(DEN_dates[K]),las = 3) 
 box()
 
+#remove unnecessary variables
+rm("DENvar","DEN2", "DEN_lon","DEN_lat")
+
 #Salinity
 #Plotting in ggplot
 r = raster(t(SALvar[,,1]),xmn = min(SAL_lon),xmx = max(SAL_lon),ymn=min(SAL_lat),ymx=max(SAL_lat))
@@ -347,6 +353,9 @@ plot(1:n,resSAL,axes=FALSE,type='o',pch=20,xlab='',ylab='Salinity',las = 3)
 axis(2) 
 axis(1,1:n,format(SAL_dates[K]),las = 3) 
 box()
+
+#remove unnecessary variables
+rm("SALvar","SAL2", "SAL_lon","SAL_lat")
 
 #Temperature
 #Plotting in ggplot
@@ -383,6 +392,9 @@ axis(2)
 axis(1,1:n,format(TEMP_dates[K]),las = 3) 
 box()
 
+#remove unnecessary variables
+rm("TEMPvar","TEMP2", "TEMP_lon","TEMP_lat")
+
 #Eastward Velocity
 #Plotting in ggplot
 r = raster(t(EASTVvar[,,1]),xmn = min(EASTV_lon),xmx = max(EASTV_lon),ymn=min(EASTV_lat),ymx=max(EASTV_lat))
@@ -417,6 +429,9 @@ plot(1:n,resEV,axes=FALSE,type='o',pch=20,xlab='',ylab='Eastward Velocity',las =
 axis(2) 
 axis(1,1:n,format(EAST_dates[K]),las = 3) 
 box()
+
+#remove unnecessary variables
+rm("EASTVvar","EASTV2", "EASTV_lon","EASTV_lat")
 
 #Northward Velocity
 #Plotting in ggplot
@@ -453,6 +468,8 @@ axis(2)
 axis(1,1:n,format(NOR_dates[K]),las = 3) 
 box()
 
+#remove unnecessary variables
+rm("NORVvar","NORV2", "NORV_lon","NORV_lat")
 
 #remove universal variables
 rm("I","JJ","J")
@@ -513,7 +530,7 @@ NVdf<- merge(NV_ddf,as.data.frame(resNV))
 
 #clear memory and increase memory limit size
 gc()
-rm("SSH_ddf","DEN_ddf","SAL_ddf","TEMP_ddf","EV_ddf","NV_ddf","v1","v2","v3","v4","v4","v5","v5")
+rm("SSH_ddf","DEN_ddf","SAL_ddf","TEMP_ddf","EV_ddf","NV_ddf")
 rm("points","sp_poly")
 memory.limit(size=300000)
 
