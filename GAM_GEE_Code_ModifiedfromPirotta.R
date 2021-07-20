@@ -103,7 +103,7 @@ HourTableBinned = HourTableBinned[ order(HourTableBinned$tbin , decreasing = FAL
 # An empty model is fitted: the binary response "Pres" is modelled as a function of Latitude and Longitude only. These are expressed as B-splines with 
 # one knot positioned at the average value. The independence working correlation model is used and the block is defined on the basis of the "Line_Id" values.
 empty<-geeglm(Pres ~ bs(Lat,knots=mean(Lat))+bs(Long,knots=mean(Long)),family="binomial", corstr ="independence",id=dat$Line_Id, data = dat) 
-empty = geeglm(PreAbs ~ Julian, family="binomial", corstr="ar1", data = HourTable, id=HourTable$tbin)
+empty = geeglm(PreAbs ~ Site, family="binomial", corstr="ar1", data = HourTable, id=HourTableBinned$twelve)
 summary(empty)
 
 # A series of models is fitted, each containing Latitude, Longitude and chlorophyll-a at one of the scales under examination. Because the package splines 
