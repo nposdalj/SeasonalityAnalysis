@@ -12,6 +12,9 @@ library(ggplot2)
 library("rnaturalearth")
 library("rnaturalearthdata")
 library(tidyverse)
+library(mgcv)
+library(tweedie)
+library(mgcViz)
 
 #increasing memory limit
 memory.limit(size=300000)
@@ -32,6 +35,9 @@ df1 = data.frame("lat" = c(15.36, 15.27, 15.3186, 15.3186), "long" = c(145.46, 1
 #define the start and end of the datame 
 startTime = "2010-03-05" #this should be formatted like this: 2010-03-05
 endTime = "2019-02-02" 
+
+#ITS
+ITS = 4
 
 #loading the environmental data
 envDir = paste("I:/My Drive/Gaia_EnvironmentalData/CentralPac/")#setting the directory)
@@ -531,6 +537,7 @@ SALdf<- bind_cols(SAL_ddf,as.data.frame(resSAL))
 TEMPdf<- bind_cols(TEMP_ddf,as.data.frame(resTEMP))
 EVdf<- bind_cols(EV_ddf,as.data.frame(resEV))
 NVdf<- bind_cols(NV_ddf,as.data.frame(resNV))
+EKE <- bind_cols(SSH_ddf,as.data.frame(EKE_cm))
 
 #clear memory and increase memory limit size
 gc()
@@ -545,15 +552,34 @@ tab <- left_join(DayTable, SST4, by = "time") %>%
   left_join(., SALdf, by = "time") %>%
   left_join(., TEMPdf, by = "time") %>%
   left_join(., EVdf, by = "time") %>%
-  left_join(., NVdf, by = "time")
-
-  n = 4
-  GroupedDay = aggregate(tab,list(rep(1:(nrow(tab)%/%n+1),each=n,len=nrow(tab))),mean)[-1];
+  left_join(., NVdf, by = "time") %>%
+  left_join(., EKE, by = "time")
 
 #replacing SST Nan values from satellite with resTEMP (model data)
-  tab$mean_SST <- ifelse(is.na(tab$mean_SST), tab$resTEMP, tab$mean_SST)
+tab$mean_SST <- ifelse(is.na(tab$mean_SST), tab$resTEMP, tab$mean_SST)
+tab = tab[complete.cases(tab[ , 2:4]),]#remove any rows with lat or long as na
+  
+#Group by ITS
+startDate = tab$time[1]
+endDate = tab$time[nrow(DayTable)]
+timeseries = data.frame(date=seq(startDate, endDate, by="days"))
+timeseries$groups = rep(1:(nrow(timeseries)/ITS), times=1, each=ITS)
+#ITSgroups = rep(1:(floor(nrow(timeseries)/ITS)), times=1, each=ITS)
+#timeseries$groups = c(ITSgroups,ITSgroups[3255]+1)
+TabBinned = left_join(tab,timeseries,by = c("time" = "date"))
+TabBinned_Grouped = aggregate(TabBinned[, c(1:length(TabBinned))], list(TabBinned$groups), mean, na.rm = TRUE)
+TabBinned_Grouped$Julian = as.numeric(format(TabBinned_Grouped$time,"%j"))
+TabBinned_Grouped$Year = as.numeric(format(TabBinned_Grouped$time,"%Y"))
+
    
 #run GAM
+GAM_trial = gam(HoursNorm ~ mean_SST + SD_SST + mean_chl +
+            resSSH + resDEN + resSAL + EKE_cm + Julian + Year, data = TabBinned_Grouped, family = tw, method = "REML")
+
+summary(GAM_trial)
+plot(GAM_trial, pages = 1)
+viz = getViz(GAM_trial)
+print(plot(viz,allTerms=T),pages=1)
 
 
 
