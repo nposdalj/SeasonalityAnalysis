@@ -525,12 +525,12 @@ NV_ddf = NV_ddf %>%
   )
 
 #merge res dataframes with dates
-SSHdf<- merge(SSH_ddf,as.data.frame(resSSH))
-DENdf<- merge(DEN_ddf,as.data.frame(resDEN))
-SALdf<- merge(SAL_ddf,as.data.frame(resSAL))
-TEMPdf<- merge(TEMP_ddf,as.data.frame(resTEMP))
-EVdf<- merge(EV_ddf,as.data.frame(resEV))
-NVdf<- merge(NV_ddf,as.data.frame(resNV))
+SSHdf<- bind_cols(SSH_ddf,as.data.frame(resSSH))
+DENdf<- bind_cols(DEN_ddf,as.data.frame(resDEN))
+SALdf<- bind_cols(SAL_ddf,as.data.frame(resSAL))
+TEMPdf<- bind_cols(TEMP_ddf,as.data.frame(resTEMP))
+EVdf<- bind_cols(EV_ddf,as.data.frame(resEV))
+NVdf<- bind_cols(NV_ddf,as.data.frame(resNV))
 
 #clear memory and increase memory limit size
 gc()
@@ -540,9 +540,8 @@ rm("points","sp_poly")
 #merge the data sets in chunks because of memory issues
 tab <- left_join(DayTable, SST4, by = "time") %>%
   left_join(., chl4, by = "time") %>%
-  left_join(., SSHdf, by = "time")
-
-tab2 <- left_join(tab, DENdf, by = "time") %>%
+  left_join(., SSHdf, by = "time") %>%
+  left_join(., DENdf, by = "time") %>%
   left_join(., SALdf, by = "time") %>%
   left_join(., TEMPdf, by = "time") %>%
   left_join(., EVdf, by = "time") %>%
@@ -551,10 +550,11 @@ tab2 <- left_join(tab, DENdf, by = "time") %>%
   n = 4
   GroupedDay = aggregate(tab,list(rep(1:(nrow(tab)%/%n+1),each=n,len=nrow(tab))),mean)[-1];
 
+#replacing SST Nan values from satellite with resTEMP (model data)
+  tab$mean_SST <- ifelse(is.na(tab$mean_SST), tab$resTEMP, tab$mean_SST)
+   
 #run GAM
 
-#example for replacing SST values from satellite with model data (resTEMP) when satellite data is NA
-  tab$mean_chl <- ifelse(is.na(tab$mean_chl), tab$Count_Click, tab$mean_chl)
 
 
 #plot GAMs
