@@ -1,11 +1,20 @@
 ### Modelling habitat preference of sperm whales using Generalized Additive Models with Generalized Estimating Equations ###
 ### Script adapted from Pirotta et al. (2011) ###  
-### Example from the GofAK (sites CB, AB, PT, QN, KOA) ###
+### Example from the GofAK (sites CB, AB, PT, QN, KOA, BD, KS) ###
 
 ## STEP 1: the data ##
-fileName = paste("I:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites/AllSitesGrouped_GAMGEE_ROW.csv")#setting the directory
-DayTable = read.csv(fileName) #no effort days deleted
+#Hourly data
+fileName = paste("I:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites/AllSitesGrouped_Binary_GAMGEE_ROW.csv")#setting the directory
+HourTable = read.csv(fileName)
+HourTable = na.omit(HourTable)
+HourTable$date = as.Date(HourTable$tbin)
+HourTable$tbin = as.POSIXct(HourTable$tbin)
+
+#Daily data - for block calculations
+fileName2 = paste("I:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites/AllSitesGrouped_GAMGEE_ROW.csv")#setting the directory
+DayTable = read.csv(fileName2) #no effort days deleted
 DayTable = na.omit(DayTable)
+DayTable$tbin = as.Date(DayTable$tbin)
 
 # Each record in the dataset corresponds to a GPS fix, which constitutes the unit of analysis. Each fix has been associated to the value of each environmental 
 # covariate in that spatial position, including multiple spatial or temporal scales for some of the variables. The column "Line_Id" specifies the block to 
@@ -13,19 +22,79 @@ DayTable = na.omit(DayTable)
 # column "Group", the encounters with single animals are classified as 0s, while the encounters with groups as 1s; 2 identifies the absences (this is 
 # just to be able to easily exclude the encounters with single animals or the encounters with groups when carrying out the analysis by grouping behaviour).  
 
+# Each record in the dataset corresponds to an hour of recording, which constitutes the unit of analysis. 
+# The column "PreAbs" represents the binary response variable (0: no animal in acoustic contact; 1: acoustic contact).
+# The column "Site" corresponds to the recording site.
+# The column "Region" corresponds to the recording region (GOA or BSAI).
+# The column Julian represents the day of the year and the column year represents the year of recording.
+
 ## STEP 2: require the libraries needed ##
 
 # All the libraries have to be installed prior to their utilization (see R help on library installation)
 
 library(geepack)         # for the GEEs (Wald's hypothesis tests allowed)
-library(rjags)           # replacement for geeglm which is out of date
 library(splines)         # to construct the B-splines within a GEE-GLM
+library(tidyverse)
+library(lub)
+
+library(rjags)           # replacement for geeglm which is out of date
+
 library(ROCR)            # to build the ROC curve
 library(PresenceAbsence) # to build the confusion matrix
 library(ggplot2)         # to build the partial residual plots
 library(mvtnorm)         # to build the partial residual plots
 library(gridExtra)       # to build the partial residual plots
 library(SimDesign)
+
+## Step 3A: identify the best blocking structure
+#create the blocks based on the full timesereies
+startDate = DayTable$tbin[1]
+endDate = DayTable$tbin[nrow(DayTable)]
+timeseries = data.frame(date=seq(startDate, endDate, by="days"))
+timeseries$one = 1:nrow(timeseries)
+timeseries$two = rep(1:(nrow(timeseries)/2), times=1, each=2)
+
+three = rep(1:(floor(nrow(timeseries)/3)), times=1, each=3)
+timeseries$three = c(three,three[3402]+1,three[3402]+1)
+
+timeseries$four = rep(1:(floor(nrow(timeseries)/4)), times=1, each=4)
+
+five = rep(1:(floor(nrow(timeseries)/5)), times=1, each=5)
+timeseries$five = c(five,five[3400]+1,five[3400]+1,five[3400]+1,five[3400]+1)
+
+six = rep(1:(floor(nrow(timeseries)/6)), times=1, each=6)
+timeseries$six = c(six,six[3402]+1,six[3402]+1)
+
+seven = rep(1:(floor(nrow(timeseries)/7)), times=1, each=7)
+timeseries$seven = c(seven,seven[3402]+1,seven[3402]+1)
+
+eight = rep(1:(floor(nrow(timeseries)/8)), times=1, each=8)
+timeseries$eight = c(eight,eight[3400]+1,eight[3400]+1,eight[3400]+1,eight[3400]+1)
+
+nine = rep(1:(floor(nrow(timeseries)/9)), times=1, each=9)
+timeseries$nine = c(nine,nine[3402]+1,nine[3402]+1)
+
+ten = rep(1:(floor(nrow(timeseries)/10)), times=1, each=10)
+timeseries$ten = c(ten,ten[3400]+1,ten[3400]+1,ten[3400]+1,ten[3400]+1)
+
+eleven = rep(1:(floor(nrow(timeseries)/11)), times=1, each=11)
+timeseries$eleven = c(eleven,eleven[3399]+1,eleven[3399]+1,eleven[3399]+1,eleven[3399]+1,eleven[3399]+1)
+
+twelve = rep(1:(floor(nrow(timeseries)/12)), times=1, each=12)
+timeseries$twelve = c(twelve,twelve[3396]+1,twelve[3396]+1,twelve[3396]+1,twelve[3396]+1,twelve[3396]+1,twelve[3396]+1,twelve[3396]+1,twelve[3396]+1)
+
+thirteen = rep(1:(floor(nrow(timeseries)/13)), times=1, each=13)
+timeseries$thirteen = c(thirteen,thirteen[3393]+1,thirteen[3393]+1,thirteen[3393]+1,thirteen[3393]+1,thirteen[3393]+1,thirteen[3393]+1,thirteen[3393]+1,thirteen[3393]+1,thirteen[3393]+1,thirteen[3393]+1,thirteen[3393]+1)
+
+fourteen = rep(1:(floor(nrow(timeseries)/14)), times=1, each=14)
+timeseries$fourteen = c(fourteen, fourteen[3402]+1, fourteen[3402]+1)
+
+fifteen = rep(1:(floor(nrow(timeseries)/15)), times=1, each=15)
+timeseries$fifteen = c(fifteen, fifteen[3390]+1,fifteen[3390]+1,fifteen[3390]+1,fifteen[3390]+1,fifteen[3390]+1,fifteen[3390]+1,fifteen[3390]+1,fifteen[3390]+1,fifteen[3390]+1,fifteen[3390]+1,fifteen[3390]+1,fifteen[3390]+1,fifteen[3390]+1,fifteen[3390]+1)
+
+# Group everything in blocks from 1d to 15d (15 different data sets)
+HourTableBinned = left_join(HourTable,timeseries,by = "date")
+HourTableBinned = HourTableBinned[ order(HourTableBinned$tbin , decreasing = FALSE ),]
 
 ## STEP 3: identify the best temporal or spatial scale for the covariates available at multiple scales ##
 
@@ -34,7 +103,7 @@ library(SimDesign)
 # An empty model is fitted: the binary response "Pres" is modelled as a function of Latitude and Longitude only. These are expressed as B-splines with 
 # one knot positioned at the average value. The independence working correlation model is used and the block is defined on the basis of the "Line_Id" values.
 empty<-geeglm(Pres ~ bs(Lat,knots=mean(Lat))+bs(Long,knots=mean(Long)),family="binomial", corstr ="independence",id=dat$Line_Id, data = dat) 
-empty = geeglm(HoursNorm ~ tbin, family="poisson", corstr="ar1", data = DayTable, id=DayTable$ID)
+empty = geeglm(PreAbs ~ Site, family="binomial", corstr="ar1", data = HourTable, id=HourTableBinned$twelve)
 summary(empty)
 
 # A series of models is fitted, each containing Latitude, Longitude and chlorophyll-a at one of the scales under examination. Because the package splines 
