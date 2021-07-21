@@ -682,6 +682,62 @@ data.frame(rbind(model04,AIC04))
 #AIC04   2143.75884213975 2144.18447053367 2143.55635615522
 #salinity as a smooth
 
+#Salinity
+GAM_04a = gam(HoursNorm ~ resSAL, data = TabBinned_Grouped, family = tw, method = "REML")
+GAM_04b = gam(HoursNorm ~ s(resSAL, bs = "cc", k =-1), data = TabBinned_Grouped, family = tw, method = "REML")
+
+model04 = c('empty','04a','04b')
+AIC04 = c(AIC(GAM_empty),AIC(GAM_04a),AIC(GAM_04b))
+data.frame(rbind(model04,AIC04))
+
+#Mean SST
+GAM_05a = gam(HoursNorm ~ mean_SST, data = TabBinned_Grouped, family = tw, method = "REML")
+GAM_05b = gam(HoursNorm ~ s(mean_SST, bs = "cc", k =-1), data = TabBinned_Grouped, family = tw, method = "REML")
+
+model05 = c('empty','05a','05b')
+AIC05 = c(AIC(GAM_empty),AIC(GAM_05a),AIC(GAM_05b))
+data.frame(rbind(model05,AIC05))
+#X1               X2               X3
+#model05            empty              05a              05b
+#AIC05   2143.75884213975 2137.89747496607 2138.79817539631
+#mean SST as linear
+
+#SSH
+GAM_06a = gam(HoursNorm ~ resSSH, data = TabBinned_Grouped, family = tw, method = "REML")
+GAM_06b = gam(HoursNorm ~ s(resSSH, bs = "cc", k =-1), data = TabBinned_Grouped, family = tw, method = "REML")
+
+model06 = c('empty','06a','06b')
+AIC06 = c(AIC(GAM_empty),AIC(GAM_06a),AIC(GAM_06b))
+data.frame(rbind(model06,AIC06))
+#X1               X2              X3
+#model06            empty              06a             06b
+#AIC06   2143.75884213975 2139.08068098461 2132.5023262054
+#SSH as a smooth
+
+#Density
+GAM_07a = gam(HoursNorm ~ resDEN, data = TabBinned_Grouped, family = tw, method = "REML")
+GAM_07b = gam(HoursNorm ~ s(resDEN, bs = "cc", k =-1), data = TabBinned_Grouped, family = tw, method = "REML")
+
+model07 = c('empty','07a','07b')
+AIC07 = c(AIC(GAM_empty),AIC(GAM_07a),AIC(GAM_07b))
+data.frame(rbind(model07,AIC07))
+#X1               X2               X3
+#model07            empty              07a              07b
+#AIC07   2143.75884213975 2142.00922461761 2143.75905922045
+#density as linear
+
+#Standard deviation of SST
+GAM_08a = gam(HoursNorm ~ SD_SST, data = TabBinned_Grouped, family = tw, method = "REML")
+GAM_08b = gam(HoursNorm ~ s(SD_SST, bs = "cc", k =-1), data = TabBinned_Grouped, family = tw, method = "REML")
+
+model08 = c('empty','08a','08b')
+AIC08 = c(AIC(GAM_empty),AIC(GAM_08a),AIC(GAM_08b))
+data.frame(rbind(model08,AIC08))
+#X1               X2               X3
+#model08            empty              08a              08b
+#AIC08   2143.75884213975 1457.77690764797 1456.05186214008
+#std dev of SST as a smooth
+
 #Test which covariates we should keep
 
 #Round 1
