@@ -73,6 +73,8 @@ DayTableF = DayTableF %>%
     time = tbin,
   )
 DayTableF$time = as.Date(DayTableF$time)#converting time from character to date
+DayTableF$FeHoursProp <- NULL
+DayTableF$FemaleHoursNorm = NULL
 
 #Juveniles
 filename_DDJ = paste(saveDir,site,"_DayJ.csv",sep="")
@@ -610,6 +612,9 @@ tab <- left_join(DayTable, SST4, by = "time") %>%
 #replacing SST Nan values from satellite with resTEMP (model data)
 tab$mean_SST <- ifelse(is.na(tab$mean_SST), tab$resTEMP, tab$mean_SST)
 tab = tab[complete.cases(tab[ , 2:4]),]#remove any rows with lat or long as na
+
+#Join sex specific presence in daily hours information
+tab <- left_join(tab, DayTableF, by = 'time')
   
 #Group by ITS
 startDate = tab$time[1]
@@ -625,6 +630,119 @@ TabBinned_Grouped$Year = as.numeric(format(TabBinned_Grouped$time,"%Y"))
 
    
 #run GAM
+#Test how each covariate should be used (linear, smooth, as.factor())
+#empty model for comparison
+GAM_empty = gam(HoursNorm ~ 1, data = TabBinned_Grouped, family = tw, method = "REML")
+
+#Julian day
+GAM_01a = gam(HoursNorm ~ Julian, data = TabBinned_Grouped, family = tw, method = "REML")
+GAM_01b = gam(HoursNorm ~ s(Julian, bs = "cc", k =-1), data = TabBinned_Grouped, family = tw, method = "REML")
+
+model01 = c('empty','01a','01b')
+AIC01 = c(AIC(GAM_empty),AIC(GAM_01a),AIC(GAM_01b))
+data.frame(rbind(model01,AIC01))
+#X1               X2               X3
+#model01            empty              01a              01b
+#AIC01   2143.75884213975 2130.74080097241 2103.62871708431
+#Julian day as a smooth
+
+#Chlorophyll
+GAM_02a = gam(HoursNorm ~ resChlA, data = TabBinned_Grouped, family = tw, method = "REML")
+GAM_02b = gam(HoursNorm ~ s(resChlA, bs = "cc", k =-1), data = TabBinned_Grouped, family = tw, method = "REML")
+
+model02 = c('empty','02a','02b')
+AIC02 = c(AIC(GAM_empty),AIC(GAM_02a),AIC(GAM_02b))
+data.frame(rbind(model02,AIC02))
+#X1               X2               X3
+#model02            empty              02a              02b
+#AIC02   2143.75884213975 1032.98688073045 1033.55960791435
+#Chlorophyll as linear
+
+#EKE
+GAM_03a = gam(HoursNorm ~ EKE_cm, data = TabBinned_Grouped, family = tw, method = "REML")
+GAM_03b = gam(HoursNorm ~ s(EKE_cm, bs = "cc", k =-1), data = TabBinned_Grouped, family = tw, method = "REML")
+
+model03 = c('empty','03a','03b')
+AIC03 = c(AIC(GAM_empty),AIC(GAM_03a),AIC(GAM_03b))
+data.frame(rbind(model03,AIC03))
+#X1               X2              X3
+#model03            empty              03a             03b
+#AIC03   2143.75884213975 2145.70388331462 2143.7678528048
+#EKE as a smooth
+
+#Salinity
+GAM_04a = gam(HoursNorm ~ resSAL, data = TabBinned_Grouped, family = tw, method = "REML")
+GAM_04b = gam(HoursNorm ~ s(resSAL, bs = "cc", k =-1), data = TabBinned_Grouped, family = tw, method = "REML")
+
+model04 = c('empty','04a','04b')
+AIC04 = c(AIC(GAM_empty),AIC(GAM_04a),AIC(GAM_04b))
+data.frame(rbind(model04,AIC04))
+#X1               X2               X3
+#model04            empty              04a              04b
+#AIC04   2143.75884213975 2144.18447053367 2143.55635615522
+#salinity as a smooth
+
+#Test which covariates we should keep
+
+#Round 1
+#Initial model
+Full1 = gam(HoursNorm ~ s(Julian, bs = "cc", k=-1)+resChlA+s(EKE_cm, bs = "cc", k = -1)+
+              s(resSAL, bs = "cc", k =-1), data = TabBinned_Grouped, family = tw, method = "REML")
+J = gam(HoursNorm ~ resChlA+s(EKE_cm, bs = "cc", k = -1)+
+               s(resSAL, bs = "cc", k =-1), data = TabBinned_Grouped, family = tw, method = "REML")
+C = gam(HoursNorm ~ s(Julian, bs = "cc", k=-1)+s(EKE_cm, bs = "cc", k = -1)+
+                s(resSAL, bs = "cc", k =-1), data = TabBinned_Grouped, family = tw, method = "REML")
+E = gam(HoursNorm ~ s(Julian, bs = "cc", k=-1)+resChlA+
+          s(resSAL, bs = "cc", k =-1), data = TabBinned_Grouped, family = tw, method = "REML")
+S = gam(HoursNorm ~ s(Julian, bs = "cc", k=-1)+resChlA+s(EKE_cm, bs = "cc", k = -1)
+          , data = TabBinned_Grouped, family = tw, method = "REML")
+modelR1 = c('Full1','J','C','E','S')
+AICR1 = c(AIC(Full1),AIC(J),AIC(C),AIC(E),AIC(S))
+data.frame(rbind(modelR1,AICR1))
+#X1               X2               X3               X4               X5
+#modelR1             Full                J                C                E                S
+#AICR2   1019.34892500911 1033.14636274139 2103.64643000094 1019.35164622965 1019.35121896164
+#Chlorophyll will be removed; highest AIC
+
+#Round 2
+Full2 = gam(HoursNorm ~ s(Julian, bs = "cc", k=-1)+s(EKE_cm, bs = "cc", k = -1)+
+              s(resSAL, bs = "cc", k =-1), data = TabBinned_Grouped, family = tw, method = "REML")
+J = gam(HoursNorm ~ s(EKE_cm, bs = "cc", k = -1)+
+          s(resSAL, bs = "cc", k =-1), data = TabBinned_Grouped, family = tw, method = "REML")
+E = gam(HoursNorm ~ s(Julian, bs = "cc", k=-1)+
+          s(resSAL, bs = "cc", k =-1), data = TabBinned_Grouped, family = tw, method = "REML")
+S = gam(HoursNorm ~ s(Julian, bs = "cc", k=-1)+s(EKE_cm, bs = "cc", k = -1)
+        , data = TabBinned_Grouped, family = tw, method = "REML")
+modelR2 = c('Full2','J','E','S')
+AICR2 = c(AIC(Full2),AIC(J),AIC(E),AIC(S))
+data.frame(rbind(modelR2,AICR2))
+#X1               X2               X3               X4
+#modelR2            Full2                J                E                S
+#AICR2   2103.64643000094 2143.56302462335 2103.64585831071 2103.63854748498
+
+#Final full model
+FinalGAM = gam(HoursNorm ~ s(Julian, bs = "cc", k=-1)+s(EKE_cm, bs = "cc", k = -1)+
+                 s(resSAL, bs = "cc", k =-1), data = TabBinned_Grouped, family = tw, method = "REML")
+summary(FinalGAM)
+viz = getViz(FinalGAM)
+vizGG = plot(viz,allTerms = T) +
+  labs(title = 'Sperm whales (GAM)')+
+  l_fitLine(linetype = 1, size = 2)  +
+  l_fitContour()+
+  #l_ciLine(mul = 5, colour = "blue", linetype = 2) +
+  l_ciPoly(level = 0.95, alpha = 1/2)+
+  l_ciBar() +
+  theme(axis.text=element_text(size=18),
+        axis.title=element_text(size=20,face="bold"))
+print(vizGG,pages =1)
+fig1 =paste(saveDir,site,"_ENV_GAM.png",sep="")
+ggsave(fig1)
+
+
+
+
+
+
 GAM_trial = gam(HoursNorm ~ s(Julian, bs = "cc", k = -1) + +s(resChlA, bs = "cc", k = -1) +
                   s(EKE_cm, bs = "cc", k = -1) + s(resSAL, bs = "cc", k = -1) + 
                   s(mean_SST, bs = "cc", k = -1) + s(resSSH, bs = "cc", k = -1) + 
@@ -646,7 +764,7 @@ GAM_2D = gam(HoursNorm ~ s(Julian, resChlA, bs = "fs", k = -1) +
                   s(mean_SST, bs = "cc", k = -1) + s(resSSH, bs = "cc", k = -1) + 
                   s(resDEN, bs = "cc", k = -1) + s(SD_SST, bs = "cc", k=-1),
                 data = TabBinned_Grouped, family = tw, method = "REML")
-plot(GAM_2D)
+plot(GAM_2D, pages = 1)
 plot(GAM_2D, scheme= 2)#change scheme for dif plots
 
 vis.gam(x = GAM_trial, view = c("EKE_cm", "resSSH"), plot.type = "contour") 
