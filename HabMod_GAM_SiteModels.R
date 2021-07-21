@@ -102,48 +102,93 @@ rm("DayData", "DayDataF", "DayDataJ", "DayDataM")
 #clear memory 
 gc()
 
+
 #chlorophyll data
-filenameStatAll = paste(envDir,"Chl2.csv",sep="")#load files as data frame
-chl = read.csv(filenameStatAll)
-chl = chl[-1,] #delete first row
-chl$latitude = as.numeric(chl$latitude)
-chl$longitude = as.numeric(chl$longitude)
-chl = chl[complete.cases(chl[ , 2:3]),]#remove any rows with lat or long as na
+#filenameStatAll = paste(envDir,"Chl2.csv",sep="")#load files as data frame
+#chl = read.csv(filenameStatAll)
+#chl = chl[-1,] #delete first row
+#chl$latitude = as.numeric(chl$latitude)
+#chl$longitude = as.numeric(chl$longitude)
+#chl = chl[complete.cases(chl[ , 2:3]),]#remove any rows with lat or long as na
+
+#loading as .ncfile
+filenameStatAll = paste(envDir,"Chl2.nc",sep="")#load files as data frame
+ChlA = nc_open(filenameStatAll)
+v1=ChlA$var[[1]]
+ChlAvar=ncvar_get(ChlA,v1)
+ChlA_lon=v1$dim[[1]]$vals
+ChlA_lat=v1$dim[[2]]$vals
+ChlA_dates= as.POSIXlt(v1$dim[[3]]$vals,origin='1970-01-01',tz='GMT')
+
+#SSH
+#plotting in ggplot
+r = raster(t(ChlAvar[,,1]),xmn = min(ChlA_lon),xmx = max(ChlA_lon),ymn=min(ChlA_lat),ymx=max(ChlA_lat))
+points = rasterToPoints(r, spatial = TRUE)
+df = data.frame(points)
+names(df)[names(df)=="layer"]="Chl"
+mid = mean(df$Chl)
+ggplot(data=world) +  geom_sf()+coord_sf(xlim= c(min(df1$long),max(df1$long)),ylim= c(min(df1$lat),max(df1$lat)),expand=FALSE)+
+  geom_raster(data = df , aes(x = x, y = y, fill = Chl)) + 
+  ggtitle(paste("Daily Chl on", dates[1]))+geom_point(x = 145.46, y = 15.3186, color = "black",size=3)+
+  xlab("Latitude")+ylab("Longitude")+
+  scale_fill_gradient2(midpoint = mid, low="yellow", mid = "orange",high="red")
+
+#plotting timeseries
+I=which(ChlA_lon>=min(df1$long) & ChlA_lon<= max(df1$long)) #only extract the region we care about
+J=which(ChlA_lat>=min(df1$lat) & ChlA_lon<=max(df1$lat)) #only extract the region we care about
+if (length(J) == 1){ #if the latitude only has 1 value, add a second
+  JJ = J:(J+1)
+}
+K=which(ChlA_dates>= startTime & ChlA_dates<= endTime) #extract only the dates we care about
+ChlA2=ChlAvar[I,JJ,K] #index the original data frame to extract the lat, long, dates we care about
+
+n=dim(ChlA2)[3] #find the length of time
+
+#take the mean
+resChlA=rep(NA,n) 
+for (i in 1:n) 
+  resChlA[i]=mean(ChlA2[,,i],na.rm=TRUE) 
+
+#plot the time series
+plot(1:n,resChlA,axes=FALSE,type='o',pch=20,xlab='',ylab='SSH',las = 3) 
+axis(2) 
+axis(1,1:n,format(resChlA[K]),las = 3) 
+box()
 
 #subset the dataframe based on the area of interest
-coordinates(chl) <- c("latitude", "longitude")
-coords <- over(chl, sp_poly)
-chl2 <- chl[coords == 1 & !is.na(coords),]
-chl2$chlorophyll = as.numeric(chl2$chlorophyll)#converting SST from character to numeric
-chl2$time = as.Date(chl2$time)#converting time from character to date
-chl3 = as.data.frame(chl2)#converting SPDF back to DF
-chl3$chlorophyll[chl3$chlorophyll < 0] <- NA #making anything<0 NA
+#coordinates(chl) <- c("latitude", "longitude")
+#coords <- over(chl, sp_poly)
+#chl2 <- chl[coords == 1 & !is.na(coords),]
+#chl2$chlorophyll = as.numeric(chl2$chlorophyll)#converting SST from character to numeric
+#chl2$time = as.Date(chl2$time)#converting time from character to date
+#chl3 = as.data.frame(chl2)#converting SPDF back to DF
+#chl3$chlorophyll[chl3$chlorophyll < 0] <- NA #making anything<0 NA
 
 #average the environmental variable based on the ITS over the area of interest
-chl4 = chl3 %>%
-  mutate(time = floor_date(time)) %>%
-  group_by(time) %>%
-  summarize(mean_chl = mean(chlorophyll), SD_chl = sd(chlorophyll)) #finding daily mean
+#chl4 = chl3 %>%
+ #mutate(time = floor_date(time)) %>%
+  #group_by(time) %>%
+  #summarize(mean_chl = mean(chlorophyll), SD_chl = sd(chlorophyll)) #finding daily mean
 
 #data exploration
-mean(chl2$chlorophyll, na.rm = TRUE)#finding overall mean
+#mean(ChlA$chlorophyll, na.rm = TRUE)#finding overall mean
 #save standard deviation
-sd(chl2$chlorophyll, na.rm = TRUE)
+#sd(chl2$chlorophyll, na.rm = TRUE)
 #SST histogram
-hist(chl2$chlorophyll)
+#hist(chl2$chlorophyll)
 
 #plot time series
-plot(chl4$time, chl4$mean_chl)#exploratory plot
-title1 = paste(site,"Chlorophyll Plot")
-ggplot(chl4, aes(x=time,y=mean_chl))+
-  ggtitle(title1)+
-  labs(y="Mean Chlorophyll (mg m-3)",x="Time (days)")+
-  geom_line()+
-  geom_point()
+#plot(chl4$time, chl4$mean_chl)#exploratory plot
+#title1 = paste(site,"Chlorophyll Plot")
+#ggplot(chl4, aes(x=time,y=mean_chl))+
+  #ggtitle(title1)+
+  #labs(y="Mean Chlorophyll (mg m-3)",x="Time (days)")+
+  #geom_line()+
+  #geom_point()
 
-rm(chl)
-rm(chl2)
-rm(chl3)
+#rm(chl)
+#rm(chl2)
+#rm(chl3)
 
 #clear memory 
 gc()
@@ -529,6 +574,12 @@ NV_ddf = NV_ddf %>%
   rename(
     time = 'NOR_dates[K]',
   )
+ChlA_ddf <- as.data.frame(ChlA_dates[K])
+ChlA_ddf = ChlA_ddf %>% 
+  rename(
+    time = 'ChlA_dates[K]',
+  )
+ChlA_ddf$time=as.Date(ChlA_ddf$time)
 
 #merge res dataframes with dates
 SSHdf<- bind_cols(SSH_ddf,as.data.frame(resSSH))
@@ -538,6 +589,7 @@ TEMPdf<- bind_cols(TEMP_ddf,as.data.frame(resTEMP))
 EVdf<- bind_cols(EV_ddf,as.data.frame(resEV))
 NVdf<- bind_cols(NV_ddf,as.data.frame(resNV))
 EKE <- bind_cols(SSH_ddf,as.data.frame(EKE_cm))
+ChlAdf <- bind_cols(ChlA_ddf, as.data.frame(resChlA))
 
 #clear memory and increase memory limit size
 gc()
@@ -546,7 +598,7 @@ rm("points","sp_poly")
 
 #merge the data sets in chunks because of memory issues
 tab <- left_join(DayTable, SST4, by = "time") %>%
-  left_join(., chl4, by = "time") %>%
+  left_join(., ChlAdf, by = "time") %>%
   left_join(., SSHdf, by = "time") %>%
   left_join(., DENdf, by = "time") %>%
   left_join(., SALdf, by = "time") %>%
@@ -561,11 +613,11 @@ tab = tab[complete.cases(tab[ , 2:4]),]#remove any rows with lat or long as na
   
 #Group by ITS
 startDate = tab$time[1]
-endDate = tab$time[nrow(DayTable)]
+endDate = tab$time[nrow(tab)]
 timeseries = data.frame(date=seq(startDate, endDate, by="days"))
-timeseries$groups = rep(1:(nrow(timeseries)/ITS), times=1, each=ITS)
-#ITSgroups = rep(1:(floor(nrow(timeseries)/ITS)), times=1, each=ITS)
-#timeseries$groups = c(ITSgroups,ITSgroups[3255]+1)
+#timeseries$groups = rep(1:(nrow(timeseries)/ITS), times=1, each=ITS)
+ITSgroups = rep(1:(floor(nrow(timeseries)/ITS)), times=1, each=ITS)
+timeseries$groups = c(ITSgroups,ITSgroups[3180]+1)
 TabBinned = left_join(tab,timeseries,by = c("time" = "date"))
 TabBinned_Grouped = aggregate(TabBinned[, c(1:length(TabBinned))], list(TabBinned$groups), mean, na.rm = TRUE)
 TabBinned_Grouped$Julian = as.numeric(format(TabBinned_Grouped$time,"%j"))
@@ -573,14 +625,18 @@ TabBinned_Grouped$Year = as.numeric(format(TabBinned_Grouped$time,"%Y"))
 
    
 #run GAM
-GAM_trial = gam(HoursNorm ~ mean_SST + SD_SST + mean_chl +
-            resSSH + resDEN + resSAL + EKE_cm + Julian + Year, data = TabBinned_Grouped, family = tw, method = "REML")
+GAM_trial = gam(HoursNorm ~ s(Julian, bs = "cc", k = -1) + +s(resChlA, bs = "cc", k = -1) +
+                  s(EKE_cm, bs = "cc", k = -1) + s(resSAL, bs = "cc", k = -1) + 
+                  s(mean_SST, bs = "cc", k = -1) + s(resSSH, bs = "cc", k = -1) + 
+                  s(resDEN, bs = "cc", k = -1) + s(SD_SST, bs = "cc", k=-1),
+            data = TabBinned_Grouped, family = tw, method = "REML")
 
 summary(GAM_trial)
 plot(GAM_trial, pages = 1)
 viz = getViz(GAM_trial)
 print(plot(viz,allTerms=T),pages=1)
 
+ 
 
 
 #plot GAMs
