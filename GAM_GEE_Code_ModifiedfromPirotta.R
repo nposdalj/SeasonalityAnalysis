@@ -9,18 +9,13 @@ HourTable = read.csv(fileName)
 HourTable = na.omit(HourTable)
 HourTable$date = as.Date(HourTable$tbin)
 HourTable$tbin = as.POSIXct(HourTable$tbin)
+HourTable = HourTable[ order(HourTable$tbin , decreasing = FALSE ),]
 
 #Daily data - for block calculations
 fileName2 = paste("I:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites/AllSitesGrouped_GAMGEE_ROW.csv")#setting the directory
 DayTable = read.csv(fileName2) #no effort days deleted
 DayTable = na.omit(DayTable)
 DayTable$tbin = as.Date(DayTable$tbin)
-
-# Each record in the dataset corresponds to a GPS fix, which constitutes the unit of analysis. Each fix has been associated to the value of each environmental 
-# covariate in that spatial position, including multiple spatial or temporal scales for some of the variables. The column "Line_Id" specifies the block to 
-# which each point belongs. The column "Pres" represents the binary response variable (0: no animal in acoustic contact; 1: acoustic contact). In the 
-# column "Group", the encounters with single animals are classified as 0s, while the encounters with groups as 1s; 2 identifies the absences (this is 
-# just to be able to easily exclude the encounters with single animals or the encounters with groups when carrying out the analysis by grouping behaviour).  
 
 # Each record in the dataset corresponds to an hour of recording, which constitutes the unit of analysis. 
 # The column "PreAbs" represents the binary response variable (0: no animal in acoustic contact; 1: acoustic contact).
@@ -35,7 +30,6 @@ DayTable$tbin = as.Date(DayTable$tbin)
 library(geepack)         # for the GEEs (Wald's hypothesis tests allowed)
 library(splines)         # to construct the B-splines within a GEE-GLM
 library(tidyverse)
-library(lub)
 
 library(rjags)           # replacement for geeglm which is out of date
 
@@ -51,25 +45,91 @@ library(SimDesign)
 startDate = DayTable$tbin[1]
 endDate = DayTable$tbin[nrow(DayTable)]
 timeseries = data.frame(date=seq(startDate, endDate, by="days"))
+
+#15 different datasets
+#one day
 timeseries$one = 1:nrow(timeseries)
+oneday = left_join(HourTable,timeseries,by="date")
+onedaygrouped = aggregate(oneday[, c(2,8)], list(oneday$one), mean)
+onedaygrouped$Group.1 = as.factor(onedaygrouped$Group.1)
+onedaygrouped = onedaygrouped %>% mutate_if(is.numeric, ~1 * (. != 0))
+acf(onedaygrouped$PreAbs, plot = FALSE)
+acf(onedaygrouped$PreAbs, lag.max=70)
+acf(onedaygrouped$PreAbs, lag.max=70, ylim=c(0,0.1), xlim =c(55,65)) 
+pacf(onedaygrouped$PreAbs)
+timeseries$one = NULL
+#autocorrelated
+
 timeseries$two = rep(1:(nrow(timeseries)/2), times=1, each=2)
+twoday = left_join(HourTable,timeseries,by="date")
+twodaygrouped = aggregate(twoday[, c(2,8)], list(twoday$two), mean)
+twodaygrouped$Group.1 = as.factor(twodaygrouped$Group.1)
+twodaygrouped = twodaygrouped %>% mutate_if(is.numeric, ~1 * (. != 0))
+acf(twodaygrouped$PreAbs, plot = FALSE)
+acf(twodaygrouped$PreAbs)
+timeseries$two = NULL
+#autocorrelated
 
 three = rep(1:(floor(nrow(timeseries)/3)), times=1, each=3)
 timeseries$three = c(three,three[3402]+1,three[3402]+1)
+threeday = left_join(HourTable,timeseries,by="date")
+threedaygrouped = aggregate(threeday[, c(2,8)], list(threeday$three), mean)
+threedaygrouped$Group.1 = as.factor(threedaygrouped$Group.1)
+threedaygrouped = threedaygrouped %>% mutate_if(is.numeric, ~1 * (. != 0))
+acf(threedaygrouped$PreAbs, plot = FALSE)
+acf(threedaygrouped$PreAbs)
+timeseries$three = NULL
+#autocorrelated
 
 timeseries$four = rep(1:(floor(nrow(timeseries)/4)), times=1, each=4)
+fourday = left_join(HourTable,timeseries,by="date")
+fourdaygrouped = aggregate(fourday[, c(2,8)], list(fourday$four), mean)
+fourdaygrouped$Group.1 = as.factor(fourdaygrouped$Group.1)
+fourdaygrouped = fourdaygrouped %>% mutate_if(is.numeric, ~1 * (. != 0))
+acf(fourdaygrouped$PreAbs, plot = FALSE)
+acf(fourdaygrouped$PreAbs)
+timeseries$four = NULL
 
 five = rep(1:(floor(nrow(timeseries)/5)), times=1, each=5)
 timeseries$five = c(five,five[3400]+1,five[3400]+1,five[3400]+1,five[3400]+1)
+fiveday = left_join(HourTable,timeseries,by="date")
+fivedaygrouped = aggregate(fiveday[, c(2,8)], list(fiveday$five), mean)
+fivedaygrouped$Group.1 = as.factor(fivedaygrouped$Group.1)
+fivedaygrouped = fivedaygrouped %>% mutate_if(is.numeric, ~1 * (. != 0))
+acf(fivedaygrouped$PreAbs, plot = FALSE)
+acf(fivedaygrouped$PreAbs)
+timeseries$five = NULL
 
 six = rep(1:(floor(nrow(timeseries)/6)), times=1, each=6)
 timeseries$six = c(six,six[3402]+1,six[3402]+1)
+sixday = left_join(HourTable,timeseries,by="date")
+sixdaygrouped = aggregate(sixday[, c(2,8)], list(sixday$six), mean)
+sixdaygrouped$Group.1 = as.factor(sixdaygrouped$Group.1)
+sixdaygrouped = sixdaygrouped %>% mutate_if(is.numeric, ~1 * (. != 0))
+acf(sixdaygrouped$PreAbs, plot = FALSE)
+acf(sixdaygrouped$PreAbs)
+timeseries$six = NULL
 
 seven = rep(1:(floor(nrow(timeseries)/7)), times=1, each=7)
 timeseries$seven = c(seven,seven[3402]+1,seven[3402]+1)
+sevenday = left_join(HourTable,timeseries,by="date")
+sevendaygrouped = aggregate(sevenday[, c(2,8)], list(sevenday$seven), mean)
+sevendaygrouped$Group.1 = as.factor(sevendaygrouped$Group.1)
+sevendaygrouped = sevendaygrouped %>% mutate_if(is.numeric, ~1 * (. != 0))
+acf(sevendaygrouped$PreAbs, plot = FALSE)
+acf(sevendaygrouped$PreAbs)
+timeseries$seven = NULL
 
 eight = rep(1:(floor(nrow(timeseries)/8)), times=1, each=8)
 timeseries$eight = c(eight,eight[3400]+1,eight[3400]+1,eight[3400]+1,eight[3400]+1)
+eightday = left_join(HourTable,timeseries,by="date")
+eightdaygrouped = aggregate(eightday[, c(2,8)], list(eightday$eight), mean)
+eightdaygrouped$Group.1 = as.factor(eightdaygrouped$Group.1)
+eightdaygrouped = eightdaygrouped %>% mutate_if(is.numeric, ~1 * (. != 0))
+acf(eightdaygrouped$PreAbs, plot = FALSE)
+acf(eightdaygrouped$PreAbs)
+pacf(eightdaygrouped$PreAbs)
+timeseries$eight = NULL
 
 nine = rep(1:(floor(nrow(timeseries)/9)), times=1, each=9)
 timeseries$nine = c(nine,nine[3402]+1,nine[3402]+1)
@@ -96,6 +156,12 @@ timeseries$fifteen = c(fifteen, fifteen[3390]+1,fifteen[3390]+1,fifteen[3390]+1,
 HourTableBinned = left_join(HourTable,timeseries,by = "date")
 HourTableBinned = HourTableBinned[ order(HourTableBinned$tbin , decreasing = FALSE ),]
 
+#or if we go by the fact that autocorrelation looked like it ended after 60days....
+sixty = rep(1:(nrow(timeseries)/60), times=1, each=60)
+timeseries$sixty = 
+twoday = left_join(HourTable,timeseries,by="date")
+
+
 ## STEP 3: identify the best temporal or spatial scale for the covariates available at multiple scales ##
 
 # The library geeglm is used to carry out model selection because it automatically provides the QIC score in the model output
@@ -103,7 +169,7 @@ HourTableBinned = HourTableBinned[ order(HourTableBinned$tbin , decreasing = FAL
 # An empty model is fitted: the binary response "Pres" is modelled as a function of Latitude and Longitude only. These are expressed as B-splines with 
 # one knot positioned at the average value. The independence working correlation model is used and the block is defined on the basis of the "Line_Id" values.
 empty<-geeglm(Pres ~ bs(Lat,knots=mean(Lat))+bs(Long,knots=mean(Long)),family="binomial", corstr ="independence",id=dat$Line_Id, data = dat) 
-empty = geeglm(PreAbs ~ Site, family="binomial", corstr="ar1", data = HourTable, id=HourTableBinned$twelve)
+empty = geeglm(PreAbs ~ Site, family="binomial", corstr="ar1", data = HourTableBinned, id=HourTableBinned$twelve)
 summary(empty)
 
 # A series of models is fitted, each containing Latitude, Longitude and chlorophyll-a at one of the scales under examination. Because the package splines 
