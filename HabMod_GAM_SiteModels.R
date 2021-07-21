@@ -636,8 +636,28 @@ plot(GAM_trial, pages = 1)
 viz = getViz(GAM_trial)
 print(plot(viz,allTerms=T),pages=1)
 
- 
+gam.check(GAM_trial)
+concurvity(GAM_trial, full= TRUE)
+concurvity(GAM_trial, full= FALSE)
 
+#do we want 2D Gams? 
+GAM_2D = gam(HoursNorm ~ s(Julian, resChlA, bs = "fs", k = -1) +
+                  s(EKE_cm, bs = "cc", k = -1) + s(resSAL, bs = "cc", k = -1) + 
+                  s(mean_SST, bs = "cc", k = -1) + s(resSSH, bs = "cc", k = -1) + 
+                  s(resDEN, bs = "cc", k = -1) + s(SD_SST, bs = "cc", k=-1),
+                data = TabBinned_Grouped, family = tw, method = "REML")
+plot(GAM_2D)
+plot(GAM_2D, scheme= 2)#change scheme for dif plots
+
+vis.gam(x = GAM_trial, view = c("EKE_cm", "resSSH"), plot.type = "contour") 
+      #plot types include: persp, contour
+      #not displaying 3D plot from tutorial
+      #add too.far function to specify which data should not be included
+      #se function to create high and low predictions surfaces
+      #alter orientation: theta = horizontal, phi = vertical, r = zoom
+
+#GAM_tensor = gam using te()
+plot(GAM_tensor)
 
 #plot GAMs
 
