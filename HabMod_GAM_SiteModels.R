@@ -16,6 +16,7 @@ library(mgcv)
 library(tweedie)
 library(anytime)
 library(mgcViz)
+library(Rcpp)
 
 #increasing memory limit
 memory.limit(size=300000)
@@ -66,6 +67,7 @@ SexDayData = read.csv(filename_sex) #load files as data frame
 SexDayData = SexDayData %>%
   dplyr::select(tbin, FemaleHoursNorm, MaleHoursNorm, JuvenileHoursNorm)
 names(SexDayData)[1] = "time"
+
 SexDayData$time = anytime(as.factor(SexDayData$time))
 SexDayData$time = as.Date(SexDayData$time)
 
