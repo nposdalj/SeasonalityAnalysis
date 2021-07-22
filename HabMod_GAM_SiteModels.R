@@ -92,8 +92,9 @@ ChlAvar=ncvar_get(ChlA,v1)
 ChlA_lon=v1$dim[[1]]$vals
 ChlA_lat=v1$dim[[2]]$vals
 ChlA_dates= as.POSIXlt(v1$dim[[3]]$vals,origin='1970-01-01',tz='GMT')
+ChlA_dates = as.Date(ChlA_dates)
 
-#SSH
+#CHLA
 #plotting in ggplot
 r = raster(t(ChlAvar[,,1]),xmn = min(ChlA_lon),xmx = max(ChlA_lon),ymn=min(ChlA_lat),ymx=max(ChlA_lat))
 points = rasterToPoints(r, spatial = TRUE)
@@ -108,12 +109,12 @@ ggplot(data=world) +  geom_sf()+coord_sf(xlim= c(min(df1$long),max(df1$long)),yl
 
 #plotting timeseries
 I=which(ChlA_lon>=min(df1$long) & ChlA_lon<= max(df1$long)) #only extract the region we care about
-J=which(ChlA_lat>=min(df1$lat) & ChlA_lon<=max(df1$lat)) #only extract the region we care about
+J=which(ChlA_lat>=min(df1$lat) & ChlA_lat<=max(df1$lat)) #only extract the region we care about
 if (length(J) == 1){ #if the latitude only has 1 value, add a second
   JJ = J:(J+1)
 }
 K=which(ChlA_dates>= startTime & ChlA_dates<= endTime) #extract only the dates we care about
-ChlA2=ChlAvar[I,JJ,K] #index the original data frame to extract the lat, long, dates we care about
+ChlA2=ChlAvar[I,J,K] #index the original data frame to extract the lat, long, dates we care about
 
 n=dim(ChlA2)[3] #find the length of time
 
@@ -599,7 +600,6 @@ TabBinned_Grouped = aggregate(TabBinned[, c(1:length(TabBinned))], list(TabBinne
 TabBinned_Grouped$Julian = as.numeric(format(TabBinned_Grouped$time,"%j"))
 TabBinned_Grouped$Year = as.numeric(format(TabBinned_Grouped$time,"%Y"))
 
-   
 #run GAM
 #Test how each covariate should be used (linear, smooth, as.factor())
 #empty model for comparison
