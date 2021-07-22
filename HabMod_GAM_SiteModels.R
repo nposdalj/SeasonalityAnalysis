@@ -14,6 +14,7 @@ library("rnaturalearthdata")
 library(tidyverse)
 library(mgcv)
 library(tweedie)
+library(anytime)
 library(mgcViz)
 
 #increasing memory limit
@@ -56,50 +57,20 @@ filenameStatAll = paste(saveDir,site,"_Day.csv",sep="")
 DayData = read.csv(filenameStatAll) #load files as data frame
 DayTable = DayData %>%
   dplyr::select(tbin, Count_Click, Count_Bin, HoursProp, HoursNorm)
-DayTable = DayTable %>% 
-  rename(
-    time = tbin,
-  )
+names(DayTable)[1] = "time"
 DayTable$time = as.Date(DayTable$time)#converting time from character to date
 
 #load sex specific data
-#Females
-filename_DDF = paste(saveDir,site,"_DayF.csv",sep="")
-DayDataF = read.csv(filename_DDF) #load files as data frame
-DayTableF = DayDataF %>%
-  dplyr::select(tbin, Female, FeHoursProp, FemaleHoursNorm)
-DayTableF = DayTableF %>% 
-  rename(
-    time = tbin,
-  )
-DayTableF$time = as.Date(DayTableF$time)#converting time from character to date
-DayTableF$FeHoursProp <- NULL
-DayTableF$FemaleHoursNorm = NULL
-
-#Juveniles
-filename_DDJ = paste(saveDir,site,"_DayJ.csv",sep="")
-DayDataJ = read.csv(filename_DDJ) #load files as data frame
-DayTableJ = DayDataJ %>%
-  dplyr::select(tbin, Juvenile, JuHoursProp, JuvenileHoursNorm)
-DayTableJ = DayTableJ %>% 
-  rename(
-    time = tbin,
-  )
-DayTableJ$time = as.Date(DayTableJ$time)#converting time from character to date
-
-#Males
-filename_DDM = paste(saveDir,site,"_DayM.csv",sep="")
-DayDataM = read.csv(filename_DDM) #load files as data frame
-DayTableM = DayDataM %>%
-  dplyr::select(tbin, Male, MaHoursProp, MaleHoursNorm)
-DayTableM = DayTableM %>% 
-  rename(
-    time = tbin,
-  )
-DayTableM$time = as.Date(DayTableM$time)#converting time from character to date
+filename_sex = paste(saveDir,site,"_binPresence.csv",sep="")
+SexDayData = read.csv(filename_sex) #load files as data frame
+SexDayData = SexDayData %>%
+  dplyr::select(tbin, FemaleHoursNorm, MaleHoursNorm, JuvenileHoursNorm)
+names(SexDayData)[1] = "time"
+SexDayData$time = anytime(as.factor(SexDayData$time))
+SexDayData$time = as.Date(SexDayData$time)
 
 #removing unnecessary variables
-rm("DayData", "DayDataF", "DayDataJ", "DayDataM")
+rm("DayData")
 
 #clear memory 
 gc()
@@ -614,7 +585,7 @@ tab$mean_SST <- ifelse(is.na(tab$mean_SST), tab$resTEMP, tab$mean_SST)
 tab = tab[complete.cases(tab[ , 2:4]),]#remove any rows with lat or long as na
 
 #Join sex specific presence in daily hours information
-tab <- left_join(tab, DayTableF, by = 'time')
+tab <- left_join(tab, SexDayData, by = 'time')
   
 #Group by ITS
 startDate = tab$time[1]
@@ -792,7 +763,7 @@ MT = gam(HoursNorm ~ s(Julian, bs = "cc", k=-1)+s(EKE_cm, bs = "cc", k = -1)+
            s(resSAL, bs = "cc", k =-1)  +s(resSSH, bs="cc", k=-1)+resDEN+s(SD_SST, bs="cc", k=-1)
          , data = TabBinned_Grouped, family = tw, method = "REML")
 H = gam(HoursNorm ~ s(Julian, bs = "cc", k=-1)+s(EKE_cm, bs = "cc", k = -1)+
-         s(resSAL, bs = "cc", k =-1) + mean_SST) +resDEN+s(SD_SST, bs="cc", k=-1),
+         s(resSAL, bs = "cc", k =-1) + mean_SST +resDEN+s(SD_SST, bs="cc", k=-1),
         data = TabBinned_Grouped, family = tw, method = "REML")
 D = gam(HoursNorm ~ s(Julian, bs = "cc", k=-1)+s(EKE_cm, bs = "cc", k = -1)+
           s(resSAL, bs = "cc", k =-1) + mean_SST +s(resSSH, bs="cc", k=-1)+s(SD_SST, bs="cc", k=-1)

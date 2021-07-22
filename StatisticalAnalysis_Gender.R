@@ -27,7 +27,7 @@ library(gtable)
 
 #load data
 site = 'Wake'
-saveDir = paste('G:/My Drive/CentralPac_TPWS_metadataReduced/Wake/Seasonality/')
+saveDir = paste('I:/My Drive/CentralPac_TPWS_metadataReduced/Wake/Seasonality/')
 filename = paste(saveDir,site,"_binPresence.csv",sep="")
 binPresence = read.csv(filename) #no effort days deleted
 head(binPresence)
@@ -36,7 +36,6 @@ binPresence$Season = as.factor(binPresence$Season) #change season from an intege
 levels(binPresence$Season)
 binPresence$Season = revalue(binPresence$Season, c("1"="Summer", "2"="Fall", "3"="Winter", "4"="Spring")) #change the numbers in actual seasons
 binPresence$tbin = anytime(as.factor(binPresence$tbin))
-
 
 #grouping data according to ITS
 if (site == 'PT'){
