@@ -1,9 +1,14 @@
 ### Modelling habitat preference of sperm whales using Generalized Additive Models with Generalized Estimating Equations ###
-### Script adapted from Pirotta et al. (2011) ###  
-### Example from the GofAK (sites CB, AB, PT, QN, KOA, BD, KS) ###
+### Script adapted from Pirotta et al. (2011) and Benjamins ###  
+### Example from the GofAK + BSAI ###
+### 7 Models total:
+        #Site specific models: CB, PT, QN, BD (more than 270 d of recording)
+        #Region specific models: BSAI + GOA
+        #Big model: all 7 sites
 
 ## STEP 1: the data ##
 #Hourly data
+site = 'PT'
 fileName = paste("I:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites/AllSitesGrouped_Binary_GAMGEE_ROW.csv")#setting the directory
 HourTable = read.csv(fileName)
 HourTable = na.omit(HourTable)
@@ -11,7 +16,7 @@ HourTable$date = as.Date(HourTable$tbin)
 HourTable$tbin = as.POSIXct(HourTable$tbin)
 HourTable = HourTable[ order(HourTable$tbin , decreasing = FALSE ),]
 
-#Daily data - for block calculations
+#Daily data - for block calculations using the Merkens method
 fileName2 = paste("I:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites/AllSitesGrouped_GAMGEE_ROW.csv")#setting the directory
 DayTable = read.csv(fileName2) #no effort days deleted
 DayTable = na.omit(DayTable)
@@ -29,7 +34,7 @@ DayTable$tbin = as.Date(DayTable$tbin)
 
 library(geepack)         # for the GEEs (Wald's hypothesis tests allowed)
 library(splines)         # to construct the B-splines within a GEE-GLM
-library(tidyverse)
+library(tidyverse)       # because it literally does everything
 
 library(rjags)           # replacement for geeglm which is out of date
 
@@ -41,6 +46,7 @@ library(gridExtra)       # to build the partial residual plots
 library(SimDesign)
 
 ## Step 3A: identify the best blocking structure
+#The Merkens way
 #create the blocks based on the full timesereies
 startDate = DayTable$tbin[1]
 endDate = DayTable$tbin[nrow(DayTable)]
@@ -56,7 +62,6 @@ onedaygrouped = onedaygrouped %>% mutate_if(is.numeric, ~1 * (. != 0))
 acf(onedaygrouped$PreAbs, plot = FALSE)
 acf(onedaygrouped$PreAbs, lag.max=70)
 acf(onedaygrouped$PreAbs, lag.max=70, ylim=c(0,0.1), xlim =c(55,65)) 
-pacf(onedaygrouped$PreAbs)
 timeseries$one = NULL
 #autocorrelated
 
@@ -89,6 +94,7 @@ fourdaygrouped = fourdaygrouped %>% mutate_if(is.numeric, ~1 * (. != 0))
 acf(fourdaygrouped$PreAbs, plot = FALSE)
 acf(fourdaygrouped$PreAbs)
 timeseries$four = NULL
+#autocorrelated
 
 five = rep(1:(floor(nrow(timeseries)/5)), times=1, each=5)
 timeseries$five = c(five,five[3400]+1,five[3400]+1,five[3400]+1,five[3400]+1)
@@ -99,6 +105,7 @@ fivedaygrouped = fivedaygrouped %>% mutate_if(is.numeric, ~1 * (. != 0))
 acf(fivedaygrouped$PreAbs, plot = FALSE)
 acf(fivedaygrouped$PreAbs)
 timeseries$five = NULL
+#autocorrelated
 
 six = rep(1:(floor(nrow(timeseries)/6)), times=1, each=6)
 timeseries$six = c(six,six[3402]+1,six[3402]+1)
@@ -109,6 +116,7 @@ sixdaygrouped = sixdaygrouped %>% mutate_if(is.numeric, ~1 * (. != 0))
 acf(sixdaygrouped$PreAbs, plot = FALSE)
 acf(sixdaygrouped$PreAbs)
 timeseries$six = NULL
+#autocorrelated
 
 seven = rep(1:(floor(nrow(timeseries)/7)), times=1, each=7)
 timeseries$seven = c(seven,seven[3402]+1,seven[3402]+1)
@@ -119,6 +127,7 @@ sevendaygrouped = sevendaygrouped %>% mutate_if(is.numeric, ~1 * (. != 0))
 acf(sevendaygrouped$PreAbs, plot = FALSE)
 acf(sevendaygrouped$PreAbs)
 timeseries$seven = NULL
+#autocorrelated
 
 eight = rep(1:(floor(nrow(timeseries)/8)), times=1, each=8)
 timeseries$eight = c(eight,eight[3400]+1,eight[3400]+1,eight[3400]+1,eight[3400]+1)
@@ -128,8 +137,8 @@ eightdaygrouped$Group.1 = as.factor(eightdaygrouped$Group.1)
 eightdaygrouped = eightdaygrouped %>% mutate_if(is.numeric, ~1 * (. != 0))
 acf(eightdaygrouped$PreAbs, plot = FALSE)
 acf(eightdaygrouped$PreAbs)
-pacf(eightdaygrouped$PreAbs)
 timeseries$eight = NULL
+#no autocorrrelation at this point
 
 nine = rep(1:(floor(nrow(timeseries)/9)), times=1, each=9)
 timeseries$nine = c(nine,nine[3402]+1,nine[3402]+1)
@@ -156,10 +165,20 @@ timeseries$fifteen = c(fifteen, fifteen[3390]+1,fifteen[3390]+1,fifteen[3390]+1,
 HourTableBinned = left_join(HourTable,timeseries,by = "date")
 HourTableBinned = HourTableBinned[ order(HourTableBinned$tbin , decreasing = FALSE ),]
 
-#or if we go by the fact that autocorrelation looked like it ended after 60days....
-sixty = rep(1:(nrow(timeseries)/60), times=1, each=60)
-timeseries$sixty = 
-twoday = left_join(HourTable,timeseries,by="date")
+#The Benjamins way
+#Continuous data (not grouped)
+#acf on the 1 day binned data
+acf(DayTable$PreAbs, lag.max = 35)
+#11 days
+
+#acf on the 1-hour binned data
+acf(HourTable$PreAbs, lag.max = 500)
+acf(HourTable$PreAbs, lag.max = 500, ylim=c(0,0.1), xlim =c(450,500)) 
+#457 1-hour bins which is ~19 days
+
+
+#Waiting for block confirmation to move forward
+
 
 
 ## STEP 3: identify the best temporal or spatial scale for the covariates available at multiple scales ##

@@ -1,4 +1,4 @@
-function T = intervalToBinTimetable(Start,End,p) 
+function T = intervalTo1SecBinTimetable(Start,End,p) 
 
 % intervalToBinTimetable.m
 
