@@ -12,6 +12,13 @@ library(ggplot2)
 library("rnaturalearth")
 library("rnaturalearthdata")
 library(tidyverse)
+library(mgcv)
+library(tweedie)
+library(anytime)
+library(mgcViz)
+
+#increasing memory limit
+memory.limit(size=300000)
 
 #define the lat and long of interest
 #df1 = data.frame("lat" = c(19.29, 19.2, 19.2467, 19.2467), "long" = c(-166.69, -166.69, -166.74, -166.64)) #Wake
@@ -29,8 +36,11 @@ df1 = data.frame("lat" = c(15.36, 15.27, 15.3186, 15.3186), "long" = c(145.46, 1
 startTime = "2010-03-05" #this should be formatted like this: 2010-03-05 00:05:00 PDT
 endTime = "2019-02-02" 
 
+#ITS
+ITS = 4
+
 #loading the environmental data
-envDir = paste("I:/My Drive/Gaia_EnvironmentalData/CentralPac/")#setting the directory)
+envDir = paste("O:/My Drive/Gaia_EnvironmentalData/CentralPac/")#setting the directory)
 
 #spatial polygon for area of interest
 ch <- chull(df1$long, df1$lat)
@@ -39,53 +49,28 @@ sp_poly <- SpatialPolygons(list(Polygons(list(Polygon(coords)), ID = 1)))#conver
 
 #loading sperm whale data
 site = 'SAP'
-saveDir = paste("I:/My Drive/CentralPac_TPWS_metadataReduced/Saipan/Seasonality/")#setting the directory
+saveDir = paste("O:/My Drive/CentralPac_TPWS_metadataReduced/Saipan/Seasonality/")#setting the directory
 
 #load data from StatisicalAnalysis_All
 filenameStatAll = paste(saveDir,site,"_Day.csv",sep="")
 DayData = read.csv(filenameStatAll) #load files as data frame
 DayTable = DayData %>%
   dplyr::select(tbin, Count_Click, Count_Bin, HoursProp, HoursNorm)
-DayTable = DayTable %>% 
-  rename(
-    time = tbin,
-  )
+names(DayTable)[1] = "time"
 DayTable$time = as.Date(DayTable$time)#converting time from character to date
 
 #load sex specific data
-#Females
-filename_DDF = paste(saveDir,site,"_DayF.csv",sep="")
-DayDataF = read.csv(filename_DDF) #load files as data frame
-DayTableF = DayDataF %>%
-  dplyr::select(tbin, Count_Click, Count_Bin, HoursProp, HoursNorm)
-DayTableF = DayTableF %>% 
-  rename(
-    time = tbin,
-  )
-DayTableF$time = as.Date(DayTableF$time)#converting time from character to date
+filename_sex = paste(saveDir,site,"_binPresence.csv",sep="")
+SexDayData = read.csv(filename_sex) #load files as data frame
+SexDayData = SexDayData %>%
+  dplyr::select(tbin, FemaleHoursNorm, MaleHoursNorm, JuvenileHoursNorm)
+names(SexDayData)[1] = "time"
 
-#Juveniles
-filename_DDJ = paste(saveDir,site,"_DayJ.csv",sep="")
-DayDataJ = read.csv(filename_DDJ) #load files as data frame
-DayTableJ = DayDataJ %>%
-  dplyr::select(tbin, Count_Click, Count_Bin, HoursProp, HoursNorm)
-DayTableJ = DayTableJ %>% 
-  rename(
-    time = tbin,
-  )
-DayTableJ$time = as.Date(DayTableJ$time)#converting time from character to date
+SexDayData$time = anytime(as.factor(SexDayData$time))
+SexDayData$time = as.Date(SexDayData$time)
 
-#Males
-filename_DDM = paste(saveDir,site,"_DayM.csv",sep="")
-DayDataM = read.csv(filename_DDM) #load files as data frame
-DayTableM = DayDataM %>%
-  dplyr::select(tbin, Count_Click, Count_Bin, HoursProp, HoursNorm)
-DayTableM = DayTableM %>% 
-  rename(
-    time = tbin,
-  )
-DayTableM$time = as.Date(DayTableM$time)#converting time from character to date
-
+#removing unnecessary variables
+rm("DayData")
 
 #clear memory 
 gc()
@@ -124,7 +109,7 @@ v3=AVISO$var[[3]]
 TEMPvar=ncvar_get(AVISO,v3)
 TEMP_lon=v3$dim[[1]]$vals
 TEMP_lat=v3$dim[[2]]$vals
-TEMP_dates=as.POSIXlt(v3$dim[[3]]$vals*60*60,origin='1950-01-01') #extract the date/time
+TEMP_dates=as.POSIXlt(v3$dim[[4]]$vals*60*60,origin='1950-01-01') #extract the date/time
 TEMP_dates = as.Date(TEMP_dates, format = "%m/%d/%y") #get rid of the time
 
 #uo - eastward velocity
@@ -145,6 +130,10 @@ NOR_dates=as.POSIXlt(v5$dim[[4]]$vals*60*60,origin='1950-01-01') #extract the da
 NOR_dates = as.Date(NOR_dates, format = "%m/%d/%y") #get rid of the time
 NORdf <- as.data.frame(NORVvar)
 
+#removing unnecessary variables
+rm("v1","v2","v3","v4","v5","v6")
+
+#Plotting maps and time series
 #loading the world
 world <- ne_countries(scale = "medium", returnclass = "sf")
 class(world)
@@ -162,7 +151,7 @@ ggplot(data=world) +  geom_sf()+coord_sf(xlim= c(min(df1$long),max(df1$long)),yl
   xlab("Latitude")+ylab("Longitude")+
   scale_fill_gradient2(midpoint = mid, low="yellow", mid = "orange",high="red")
 
-#plotting time series SAPTIN 
+#plotting timeseries
 I=which(SSH_lon>=min(df1$long) & SSH_lon<= max(df1$long)) #only extract the region we care about
 J=which(SSH_lat>=min(df1$lat) & SSH_lat<=max(df1$lat)) #only extract the region we care about
 if (length(J) == 1){ #if the latitude only has 1 value, add a second
@@ -174,15 +163,18 @@ SSH2=SSHvar[I,JJ,K] #index the original data frame to extract the lat, long, dat
 n=dim(SSH2)[3] #find the length of time
 
 #take the mean
-res=rep(NA,n) 
+resSSH=rep(NA,n) 
 for (i in 1:n) 
-  res[i]=mean(SSH2[,,i],na.rm=TRUE) 
+  resSSH[i]=mean(SSH2[,,i],na.rm=TRUE) 
 
 #plot the time series
-plot(1:n,res,axes=FALSE,type='o',pch=20,xlab='',ylab='SSH',las = 3) 
+plot(1:n,resSSH,axes=FALSE,type='o',pch=20,xlab='',ylab='SSH',las = 3) 
 axis(2) 
 axis(1,1:n,format(SSH_dates[K]),las = 3) 
 box()
+
+#remove unnecessary variables
+rm("SSHvar","SSH2", "SSH_lon","SSH_lat")
 
 #Density ocean mixed layer thickness
 #Plotting in ggplot
@@ -209,15 +201,18 @@ DEN2=DENvar[I,JJ,K] #index the original data frame to extract the lat, long, dat
 n=dim(DEN2)[3] #find the length of time
 
 #take the mean
-res=rep(NA,n) 
+resDEN=rep(NA,n) 
 for (i in 1:n) 
-  res[i]=mean(DEN2[,,i],na.rm=TRUE) 
+  resDEN[i]=mean(DEN2[,,i],na.rm=TRUE) 
 
 #plot the time series
-plot(1:n,res,axes=FALSE,type='o',pch=20,xlab='',ylab='Density',las = 3) 
+plot(1:n,resDEN,axes=FALSE,type='o',pch=20,xlab='',ylab='Density',las = 3) 
 axis(2) 
 axis(1,1:n,format(DEN_dates[K]),las = 3) 
 box()
+
+#remove unnecessary variables
+rm("DENvar","DEN2", "DEN_lon","DEN_lat")
 
 #Salinity
 #Plotting in ggplot
@@ -244,15 +239,18 @@ SAL2=SALvar[I,JJ,K] #index the original data frame to extract the lat, long, dat
 n=dim(SAL2)[3] #find the length of time
 
 #take the mean
-res=rep(NA,n) 
+resSAL=rep(NA,n) 
 for (i in 1:n) 
-  res[i]=mean(SAL2[,,i],na.rm=TRUE) 
+  resSAL[i]=mean(SAL2[,,i],na.rm=TRUE) 
 
 #plot the time series
-plot(1:n,res,axes=FALSE,type='o',pch=20,xlab='',ylab='Salinity',las = 3) 
+plot(1:n,resSAL,axes=FALSE,type='o',pch=20,xlab='',ylab='Salinity',las = 3) 
 axis(2) 
 axis(1,1:n,format(SAL_dates[K]),las = 3) 
 box()
+
+#remove unnecessary variables
+rm("SALvar","SAL2", "SAL_lon","SAL_lat")
 
 #Temperature
 #Plotting in ggplot
@@ -276,18 +274,21 @@ if (length(J) == 1){ #if the latitude only has 1 value, add a second
 K=which(TEMP_dates>= startTime & TEMP_dates<= endTime) #extract only the dates we care about
 TEMP2=TEMPvar[I,JJ,K] #index the original data frame to extract the lat, long, dates we care about
 
-n=dim(TEMP2)[4] #find the length of time
+n=dim(TEMP2)[3] #find the length of time
 
 #take the mean
-res=rep(NA,n) 
+resTEMP=rep(NA,n) 
 for (i in 1:n) 
-  res[i]=mean(TEMP2[,,i],na.rm=TRUE) 
+  resTEMP[i]=mean(TEMP2[,,i],na.rm=TRUE)
 
 #plot the time series
-plot(1:n,res,axes=FALSE,type='o',pch=20,xlab='',ylab='Temperature',las = 3) 
+plot(1:n,resTEMP,axes=FALSE,type='o',pch=20,xlab='',ylab='Temperature',las = 3) 
 axis(2) 
 axis(1,1:n,format(TEMP_dates[K]),las = 3) 
 box()
+
+#remove unnecessary variables
+rm("TEMPvar","TEMP2", "TEMP_lon","TEMP_lat")
 
 #Eastward Velocity
 #Plotting in ggplot
@@ -314,15 +315,18 @@ EASTV2=EASTVvar[I,JJ,K] #index the original data frame to extract the lat, long,
 n=dim(EASTV2)[3] #find the length of time
 
 #take the mean
-res=rep(NA,n) 
+resEV=rep(NA,n) 
 for (i in 1:n) 
-  res[i]=mean(EASTV2[,,i],na.rm=TRUE) 
+  resEV[i]=mean(EASTV2[,,i],na.rm=TRUE) 
 
 #plot the time series
-plot(1:n,res,axes=FALSE,type='o',pch=20,xlab='',ylab='Eastward Velocity',las = 3) 
+plot(1:n,resEV,axes=FALSE,type='o',pch=20,xlab='',ylab='Eastward Velocity',las = 3) 
 axis(2) 
 axis(1,1:n,format(EAST_dates[K]),las = 3) 
 box()
+
+#remove unnecessary variables
+rm("EASTVvar","EASTV2", "EASTV_lon","EASTV_lat")
 
 #Northward Velocity
 #Plotting in ggplot
@@ -349,116 +353,27 @@ NORV2=NORVvar[I,JJ,K] #index the original data frame to extract the lat, long, d
 n=dim(NORV2)[3] #find the length of time
 
 #take the mean
-res=rep(NA,n) 
+resNV=rep(NA,n) 
 for (i in 1:n) 
-  res[i]=mean(NORV2[,,i],na.rm=TRUE) 
+  resNV[i]=mean(NORV2[,,i],na.rm=TRUE)
 
 #plot the time series
-plot(1:n,res,axes=FALSE,type='o',pch=20,xlab='',ylab='Northward Velocity',las = 3) 
+plot(1:n,resNV,axes=FALSE,type='o',pch=20,xlab='',ylab='Northward Velocity',las = 3) 
 axis(2) 
 axis(1,1:n,format(NOR_dates[K]),las = 3) 
 box()
+
+#remove unnecessary variables
+rm("NORVvar","NORV2", "NORV_lon","NORV_lat")
+
+#remove universal variables
+rm("I","JJ","J")
 
 #subset the dataframe based on the area of interest
 #average the environmental variable based on the ITS over the area of interest
 #save standard deviation 
 
-#mean of SSH per day
-I=which(SSH_lon>=min(df1$long) & SSH_lon<= max(df1$long)) #only extract the region we care about
-J=which(SSH_lat>=min(df1$lat) & SSH_lat<=max(df1$lat)) #only extract the region we care about
-if (length(J) == 1){ #if the latitude only has 1 value, add a second
-  JJ = J:(J+1)
-}
-K=which(SSH_dates>= startTime & SSH_dates<= endTime) #extract only the dates we care about
-SSH2=SSHvar[I,JJ,K] #index the original data frame to extract the lat, long, dates we care about
-
-n=dim(SSH2)[3] #find the length of time
-
-#take the mean
-resSSH=rep(NA,n) 
-for (i in 1:n) 
-  resSSH[i]=mean(SSH2[,,i],na.rm=TRUE) 
-
-#mean of DEN per day
-I=which(DEN_lon>=min(df1$long) & DEN_lon<= max(df1$long)) #only extract the region we care about
-J=which(DEN_lat>=min(df1$lat) & DEN_lat<=max(df1$lat)) #only extract the region we care about
-if (length(J) == 1){ #if the latitude only has 1 value, add a second
-  JJ = J:(J+1)
-}
-K=which(DEN_dates>= startTime & DEN_dates<= endTime) #extract only the dates we care about
-DEN2=DENvar[I,JJ,K] #index the original data frame to extract the lat, long, dates we care about
-
-n=dim(DEN2)[3] #find the length of time
-
-#take the mean
-resDEN=rep(NA,n) 
-for (i in 1:n) 
-  resDEN[i]=mean(DEN2[,,i],na.rm=TRUE)
-
-#mean of SAL per day
-I=which(SAL_lon>=min(df1$long) & SAL_lon<= max(df1$long)) #only extract the region we care about
-J=which(SAL_lat>=min(df1$lat) & SAL_lat<=max(df1$lat)) #only extract the region we care about
-if (length(J) == 1){ #if the latitude only has 1 value, add a second
-  JJ = J:(J+1)
-}
-K=which(SAL_dates>= startTime & SAL_dates<= endTime) #extract only the dates we care about
-SAL2=SALvar[I,JJ,K] #index the original data frame to extract the lat, long, dates we care about
-
-n=dim(SAL2)[3] #find the length of time
-
-#take the mean
-resSAL=rep(NA,n) 
-for (i in 1:n) 
-  resSAL[i]=mean(SAL2[,,i],na.rm=TRUE) 
-
-#mean of TEMP per day
-I=which(TEMP_lon>=min(df1$long) & TEMP_lon<= max(df1$long)) #only extract the region we care about
-J=which(TEMP_lat>=min(df1$lat) & TEMP_lat<=max(df1$lat)) #only extract the region we care about
-if (length(J) == 1){ #if the latitude only has 1 value, add a second
-  JJ = J:(J+1)
-}
-K=which(TEMP_dates>= startTime & TEMP_dates<= endTime) #extract only the dates we care about
-TEMP2=TEMPvar[I,JJ,K] #index the original data frame to extract the lat, long, dates we care about
-
-n=dim(TEMP2)[4] #find the length of time
-
-#take the mean
-resTEMP=rep(NA,n) 
-for (i in 1:n) 
-  resTEMP[i]=mean(TEMP2[,,i],na.rm=TRUE) 
-
-#EKE equation
-#mean of EASTV per day
-I=which(EASTV_lon>=min(df1$long) & EASTV_lon<= max(df1$long)) #only extract the region we care about
-J=which(EASTV_lat>=min(df1$lat) & EASTV_lat<=max(df1$lat)) #only extract the region we care about
-if (length(J) == 1){ #if the latitude only has 1 value, add a second
-  JJ = J:(J+1)
-}
-K=which(EAST_dates>= startTime & EAST_dates<= endTime) #extract only the dates we care about
-EASTV2=EASTVvar[I,JJ,K] #index the original data frame to extract the lat, long, dates we care about
-
-n=dim(EASTV2)[3] #find the length of time
-
-#take the mean
-resEV=rep(NA,n) 
-for (i in 1:n) 
-  resEV[i]=mean(EASTV2[,,i],na.rm=TRUE) 
-
-#mean of NORV per day
-I=which(NORV_lon>=min(df1$long) & NORV_lon<= max(df1$long)) #only extract the region we care about
-J=which(NORV_lat>=min(df1$lat) & NORV_lat<=max(df1$lat)) #only extract the region we care about
-if (length(J) == 1){ #if the latitude only has 1 value, add a second
-  JJ = J:(J+1)
-}
-K=which(NOR_dates>= startTime & NOR_dates<= endTime) #extract only the dates we care about
-NORV2=NORVvar[I,JJ,K] #index the original data frame to extract the lat, long, dates we care about
-
-n=dim(NORV2)[3] #find the length of time
-
-#take the mean
-resNV=rep(NA,n) 
-for (i in 1:n) 
-  resNV[i]=mean(NORV2[,,i],na.rm=TRUE) 
+####
 
 #Calculate EKE
 u <- (resEV)^2
@@ -467,50 +382,55 @@ velocity = u + v
 EKE_meters = 0.5 * velocity
 EKE_cm = EKE_meters * 10000 
 
-#converting res to data frames
-resSSH_df <- as.data.frame(resSSH)
-resDEN_df <- as.data.frame(resDEN)
-resSAL_df <- as.data.frame(resSAL)
-resTEMP_df <- as.data.frame(resTEMP)
-resEV_df <- as.data.frame(resEV)
-resNV_df <- as.data.frame(resNV)
-
 #converting _dates to data frames and renaming column to 'time'
-SSH_ddf <- as.data.frame(SSH_dates)
+SSH_ddf <- as.data.frame(SSH_dates[K])
 SSH_ddf = SSH_ddf %>% 
   rename(
-    time = SSH_dates,
+    time = 'SSH_dates[K]',
   )
-DEN_ddf <- as.data.frame(DEN_dates)
+DEN_ddf <- as.data.frame(DEN_dates[K])
 DEN_ddf = DEN_ddf %>% 
   rename(
-    time = DEN_dates,
+    time = 'DEN_dates[K]',
   )
-SAL_ddf <- as.data.frame(SAL_dates)
+SAL_ddf <- as.data.frame(SAL_dates[K])
 SAL_ddf = SAL_ddf %>% 
   rename(
-    time = SAL_dates,
+    time = 'SAL_dates[K]',
   )
-TEMP_ddf <- as.data.frame(TEMP_dates)
+TEMP_ddf <- as.data.frame(TEMP_dates[K])
 TEMP_ddf = TEMP_ddf %>% 
   rename(
-    time = TEMP_dates,
+    time = 'TEMP_dates[K]',
   )
-EV_ddf <- as.data.frame(EAST_dates)
+EV_ddf <- as.data.frame(EAST_dates[K])
 EV_ddf = EV_ddf %>% 
   rename(
-    time = EAST_dates,
+    time = 'EAST_dates[K]',
   )
-NV_ddf <- as.data.frame(NOR_dates)
+NV_ddf <- as.data.frame(NOR_dates[K])
 NV_ddf = NV_ddf %>% 
   rename(
-    time = NOR_dates,
+    time = 'NOR_dates[K]',
   )
+ChlA_ddf <- as.data.frame(ChlA_dates[K])
+ChlA_ddf = ChlA_ddf %>% 
+  rename(
+    time = 'ChlA_dates[K]',
+  )
+ChlA_ddf$time=as.Date(ChlA_ddf$time)
 
 #merge res dataframes with dates
-SSHdf<- merge(SSH_ddf,resSSH_df)
-DENdf<- merge(DEN_ddf,resDEN_df)
-SALdf<- merge(SAL_ddf,resSAL_df)
-TEMPdf<- merge(TEMP_ddf,resTEMP_df)#fix error in finding mean per day to get df
-EVdf<- merge(EV_ddf,resEV_df)
-NVdf<- merge(NV_ddf,resNV_df)
+SSHdf<- bind_cols(SSH_ddf,as.data.frame(resSSH))
+DENdf<- bind_cols(DEN_ddf,as.data.frame(resDEN))
+SALdf<- bind_cols(SAL_ddf,as.data.frame(resSAL))
+TEMPdf<- bind_cols(TEMP_ddf,as.data.frame(resTEMP))
+EVdf<- bind_cols(EV_ddf,as.data.frame(resEV))
+NVdf<- bind_cols(NV_ddf,as.data.frame(resNV))
+EKE <- bind_cols(SSH_ddf,as.data.frame(EKE_cm))
+ChlAdf <- bind_cols(ChlA_ddf, as.data.frame(resChlA))
+
+#clear memory and increase memory limit size
+gc()
+rm("SSH_ddf","DEN_ddf","SAL_ddf","TEMP_ddf","EV_ddf","NV_ddf")
+rm("points","sp_poly")
