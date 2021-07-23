@@ -843,13 +843,13 @@ data.frame(rbind(modelR4,AICR4))
 #X5               X6
 #modelR4               MT                D
 #AICR4   2105.16883787426 2105.44559132224
-
-
+#keeping round 4 remaining variables
 
 
 #Final full model
 FinalGAM = gam(HoursNorm ~ s(Julian, bs = "cc", k=-1)+s(EKE_cm, bs = "cc", k = -1)+
-                 s(resSAL, bs = "cc", k =-1), data = TabBinned_Grouped, family = tw, method = "REML")
+                 s(resSAL, bs = "cc", k =-1) + mean_SST +resDEN
+               , data = TabBinned_Grouped, family = tw, method = "REML")
 summary(FinalGAM)
 viz = getViz(FinalGAM)
 vizGG = plot(viz,allTerms = T) +
