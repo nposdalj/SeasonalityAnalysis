@@ -1154,7 +1154,106 @@ print(vizGG,pages =1)
 fig1 =paste(saveDir,site,"_ENV_FemaleGAM.png",sep="")
 ggsave(fig1)
 
+#running Male Sex Specific GAM
+#Test how each covariate should be used (linear, smooth, as.factor())
+#empty model for comparison
+GAM_empty = gam(MaleHoursNorm ~ 1, data = TabBinned_Grouped, family = tw, method = "REML")
 
+#Julian day
+GAM_01a = gam(MaleHoursNorm ~ Julian, data = TabBinned_Grouped, family = tw, method = "REML")
+GAM_01b = gam(MaleHoursNorm ~ s(Julian, bs = "cc", k =-1), data = TabBinned_Grouped, family = tw, method = "REML")
+
+model01 = c('empty','01a','01b')
+AIC01 = c(AIC(GAM_empty),AIC(GAM_01a),AIC(GAM_01b))
+data.frame(rbind(model01,AIC01))
+#X1               X2               X3
+#model01            empty              01a              01b
+#AIC01   887.529203151121 878.265022630491 873.011160556566
+#Julian Day as a smooth
+
+#Chlorophyll
+GAM_02a = gam(MaleHoursNorm ~ resChlA, data = TabBinned_Grouped, family = tw, method = "REML")
+GAM_02b = gam(MaleHoursNorm ~ s(resChlA, bs = "cc", k =-1), data = TabBinned_Grouped, family = tw, method = "REML")
+
+model02 = c('empty','02a','02b')
+AIC02 = c(AIC(GAM_empty),AIC(GAM_02a),AIC(GAM_02b))
+data.frame(rbind(model02,AIC02))
+#X1               X2               X3
+#model02            empty              02a              02b
+#AIC02   887.529203151121 522.333605324521 520.782661963009
+#chlorophyll as a smooth
+
+#EKE
+GAM_03a = gam(MaleHoursNorm ~ EKE_cm, data = TabBinned_Grouped, family = tw, method = "REML")
+GAM_03b = gam(MaleHoursNorm ~ s(EKE_cm, bs = "cc", k =-1), data = TabBinned_Grouped, family = tw, method = "REML")
+
+model03 = c('empty','03a','03b')
+AIC03 = c(AIC(GAM_empty),AIC(GAM_03a),AIC(GAM_03b))
+data.frame(rbind(model03,AIC03))
+#X1              X2               X3
+#model03            empty             03a              03b
+#AIC03   887.529203151121 889.43488311573 888.033470215873
+#EKE as a smooth
+
+#Salinity
+GAM_04a = gam(MaleHoursNorm ~ resSAL, data = TabBinned_Grouped, family = tw, method = "REML")
+GAM_04b = gam(MaleHoursNorm ~ s(resSAL, bs = "cc", k =-1), data = TabBinned_Grouped, family = tw, method = "REML")
+
+model04 = c('empty','04a','04b')
+AIC04 = c(AIC(GAM_empty),AIC(GAM_04a),AIC(GAM_04b))
+data.frame(rbind(model04,AIC04))
+#X1               X2               X3
+#model04            empty              04a              04b
+#AIC04   887.529203151121 888.063737473537 885.106938358472
+#Salinity as a smooth
+
+#Mean SST
+GAM_05a = gam(MaleHoursNorm ~ mean_SST, data = TabBinned_Grouped, family = tw, method = "REML")
+GAM_05b = gam(MaleHoursNorm ~ s(mean_SST, bs = "cc", k =-1), data = TabBinned_Grouped, family = tw, method = "REML")
+
+model05 = c('empty','05a','05b')
+AIC05 = c(AIC(GAM_empty),AIC(GAM_05a),AIC(GAM_05b))
+data.frame(rbind(model05,AIC05))
+#X1               X2              X3
+#model05            empty              05a             05b
+#AIC05   887.529203151121 878.203163215944 878.71817204281
+#Mean SST as linear
+
+#SSH
+GAM_06a = gam(MaleHoursNorm ~ resSSH, data = TabBinned_Grouped, family = tw, method = "REML")
+GAM_06b = gam(MaleHoursNorm ~ s(resSSH, bs = "cc", k =-1), data = TabBinned_Grouped, family = tw, method = "REML")
+
+model06 = c('empty','06a','06b')
+AIC06 = c(AIC(GAM_empty),AIC(GAM_06a),AIC(GAM_06b))
+data.frame(rbind(model06,AIC06))
+#X1               X2               X3
+#model06            empty              06a              06b
+#AIC06   887.529203151121 888.818483448203 887.531172601541
+#SSH as a smooth
+
+#Density
+GAM_07a = gam(MaleHoursNorm ~ resDEN, data = TabBinned_Grouped, family = tw, method = "REML")
+GAM_07b = gam(MaleHoursNorm ~ s(resDEN, bs = "cc", k =-1), data = TabBinned_Grouped, family = tw, method = "REML")
+
+model07 = c('empty','07a','07b')
+AIC07 = c(AIC(GAM_empty),AIC(GAM_07a),AIC(GAM_07b))
+data.frame(rbind(model07,AIC07))
+#X1               X2              X3
+#model07            empty              07a             07b
+#AIC07   887.529203151121 882.063834607968 884.37513611068
+#density as linear
+
+#Standard deviation of SST
+GAM_08a = gam(MaleHoursNorm ~ SD_SST, data = TabBinned_Grouped, family = tw, method = "REML")
+GAM_08b = gam(MaleHoursNorm ~ s(SD_SST, bs = "cc", k =-1), data = TabBinned_Grouped, family = tw, method = "REML")
+
+model08 = c('empty','08a','08b')
+AIC08 = c(AIC(GAM_empty),AIC(GAM_08a),AIC(GAM_08b))
+data.frame(rbind(model08,AIC08))
+#X1               X2               X3
+#model08            empty              08a              08b
+#AIC08   887.529203151121 640.444848766138 638.156146161628
+#std dev SST as a smooth
 
 
 GAM_trial = gam(HoursNorm ~ s(Julian, bs = "cc", k = -1) + +s(resChlA, bs = "cc", k = -1) +
