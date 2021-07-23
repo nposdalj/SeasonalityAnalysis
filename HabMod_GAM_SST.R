@@ -11,7 +11,16 @@ library(rgeos)
 library(ggplot2)
 library("rnaturalearth")
 library("rnaturalearthdata")
+library(tidyverse)
+library(mgcv)
+library(tweedie)
+library(anytime)
+library(mgcViz)
 
+#increasing memory limit
+memory.limit(size=300000)
+
+# User Defined sections
 #define the lat and long of interest
 #df1 = data.frame("lat" = c(19.29, 19.2, 19.2467, 19.2467), "long" = c(-166.69, -166.69, -166.74, -166.64)) #Wake
 df1 = data.frame("lat" = c(15.36, 15.27, 15.3186, 15.3186), "long" = c(145.46, 145.46, 145.51, 145.41)) #Saipan
@@ -25,8 +34,14 @@ df1 = data.frame("lat" = c(15.36, 15.27, 15.3186, 15.3186), "long" = c(145.46, 1
 #df1 = data.frame("lat" = c(58.71, 58.62, 58.6668, 58.6668), "long" = C(-148.0034, -148.0034, -148.12, -147.94))#CB
 
 #define the start and end of the datame 
-startTime = "2010-03-05" #this should be formatted like this: 2010-03-05 00:05:00 PDT
+startTime = "2010-03-05" #this should be formatted like this: 2010-03-05
 endTime = "2019-02-02" 
+
+#ITS
+ITS = 4
+
+#loading the environmental data
+envDir = paste("O:/My Drive/Gaia_EnvironmentalData/CentralPac/")#setting the directory)
 
 #spatial polygon for area of interest
 ch <- chull(df1$long, df1$lat)
@@ -35,28 +50,31 @@ sp_poly <- SpatialPolygons(list(Polygons(list(Polygon(coords)), ID = 1)))#conver
 
 #loading sperm whale data
 site = 'SAP'
-saveDir = paste("I:/My Drive/CentralPac_TPWS_metadataReduced/Saipan/Seasonality/")#setting the directory
+saveDir = paste("O:/My Drive/CentralPac_TPWS_metadataReduced/Saipan/Seasonality/")#setting the directory
 
 #load data from StatisicalAnalysis_All
-filenameStatAll = paste(saveDir,site,"_GroupedDay.csv",sep="")
-GroupedDay = read.csv(filenameStatAll) #load files as data frame
+filenameStatAll = paste(saveDir,site,"_Day.csv",sep="")
+DayData = read.csv(filenameStatAll) #load files as data frame
+DayTable = DayData %>%
+  dplyr::select(tbin, Count_Click, Count_Bin, HoursProp, HoursNorm)
+names(DayTable)[1] = "time"
+DayTable$time = as.Date(DayTable$time)#converting time from character to date
 
 #load sex specific data
-#Females
-filename_GDF = paste(saveDir,site,"_GroupedDayF.csv",sep="")
-GroupedDayF = read.csv(filename_GDF) #load files as data frame
-#Juveniles
-filename_GDJ = paste(saveDir,site,"_GroupedDayJ.csv",sep="")
-GroupedDayJ = read.csv(filename_GDJ) #load files as data frame
-#Males
-filename_GDM = paste(saveDir,site,"_GroupedDayM.csv",sep="")
-GroupedDayM = read.csv(filename_GDM) #load files as data frame
+filename_sex = paste(saveDir,site,"_binPresence.csv",sep="")
+SexDayData = read.csv(filename_sex) #load files as data frame
+SexDayData = SexDayData %>%
+  dplyr::select(tbin, FemaleHoursNorm, MaleHoursNorm, JuvenileHoursNorm)
+names(SexDayData)[1] = "time"
+
+SexDayData$time = anytime(as.factor(SexDayData$time))
+SexDayData$time = as.Date(SexDayData$time)
+
+#removing unnecessary variables
+rm("DayData")
 
 #clear memory 
 gc()
-
-#loading the environmental data
-envDir = paste("I:/My Drive/Gaia_EnvironmentalData/CentralPac/")#setting the directory
 
 #SST data
 filenameStatAll = paste(envDir,"AQUASST_SAPTIN.csv",sep="")#load files as data frame
@@ -99,4 +117,3 @@ ggplot(SST4, aes(x=time,y=mean_SST))+
 rm(SST)
 rm(SST2)
 rm(SST3)
-
