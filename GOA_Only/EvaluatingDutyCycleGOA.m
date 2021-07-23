@@ -18,6 +18,11 @@ dir = 'I:\My Drive\GofAK_TPWS_metadataReduced\SeasonalityAnalysis\CB'; %seasonal
 effortXls = 'I:\My Drive\GofAK_TPWS_metadataReduced\ICIgrams\Pm_Effort_CB.xlsx'; % specify excel file with effort times
 saveDir = 'I:\My Drive\GofAK_TPWS_metadataReduced\Plots\CB'; %specify directory to save files
 load([dir,'\',siteabrev,'_workspace125.mat']); %load workspace from sumPPICIbin_seasonality code
+%% Which deployments are duty cycled
+startTime = datetime(2012,05,03);
+endTime = datetime(2013,03,21); 
+SecRec = 600;
+SecPer = 720;
 %% group data by 5min bins, days, weeks, and seasons
 %group data by 5 minute bins
 binDataIDX = (binData.Count < 5); %remove anything with less than 5 clicks in a bin
@@ -59,96 +64,59 @@ dayTable.Year = year(dayTable.tbin); % add year
 %% Evaluating the duty cycle by shifting the 15 minute listening period by 1 minute - THIS IS THE ONE I ENDED UP USING
 %within the entire 20 minute cycle. This will result in 20 samples.
 %group data by 1 second bins
-tbin = datetime([vTT(:,1:4), floor(vTT(:,5)), ...
-    zeros(length(vTT),1)]); %round to the nearest minute
-data = timetable(tbin,TTall,PPall);
-MinData = varfun(@max,data,'GroupingVariable','tbin','InputVariable','PPall');
-MinData.Properties.VariableNames{'GroupCount'} = 'Count'; % #clicks per bin
-MinData.Properties.VariableNames{'max_PPall'} = 'maxPP';
-
-%Calculate 1-minute bin effort
-if er > 1
-    MinbinEffort = intervalTo1MinBinTimetable(effort.Start,effort.End,p); % convert intervals in bins when there is multiple lines of effort
-    %binEffort.sec = binEffort.bin*(p.binDur*60);
-else
-    %binEffort = intervalToBinTimetable_Only1RowEffort(effort.Start,effort.End,p); % convert intervals in bins when there is only one line of effort
-    %binEffort.sec = binEffort.bin*(p.binDur*60);
-end
-
-clickTable = synchronize(MinData,MinbinEffort); %table with clicks per 1-min bin
-clickTable.Properties.VariableNames{'effortBin'} = 'Effort_Bin';
-clickTable.Properties.VariableNames{'effortSec'} = 'Effort_Sec';
-clickTable.maxPP = [];
-
-clickTable = timetable2table(clickTable);
-clickTable.Year = year(clickTable.tbin);
-
-%2016
-clickTable2016 = clickTable(find(clickTable.Year == 2016,1,'first'):find(clickTable.Year == 2016,1,'last'),:);
-clickTable2016.Effort_Bin = [];
-clickTable2016.Effort_Sec = [];
-clickTable2016.Year = [];
-[cT16,~] = size(clickTable2016);
-
-clickTable2016 = table2timetable(clickTable2016);
-
-%group data in 1 second bins
 tbin = datetime(vTT);
 tbin = dateshift(tbin, 'start','second');
 data = timetable(tbin,TTall,PPall);
 SecData = varfun(@max,data,'GroupingVariable','tbin','InputVariable','PPall');
 SecData.Properties.VariableNames{'GroupCount'} = 'Count'; % #clicks per bin
-SecData.Properties.VariableNames{'max_PPall'} = 'maxPP';
+SecData.max_PPall = [];
 
-%Calculate 1-second bin effort
-if er > 1
-    MinbinEffort = intervalTo1SecBinTimetable(effort.Start,effort.End,p); % convert intervals in bins when there is multiple lines of effort
-    %binEffort.sec = binEffort.bin*(p.binDur*60);
-else
-    %binEffort = intervalToBinTimetable_Only1RowEffort(effort.Start,effort.End,p); % convert intervals in bins when there is only one line of effort
-    %binEffort.sec = binEffort.bin*(p.binDur*60);
-end
+%Remove duty cycled portion
+SecData_1 = SecData;
+SecData_2 = SecData;
+SecData_1(SecData_1.tbin > startTime,:) = [];
+SecData_2(SecData_2.tbin < endTime,:)=[];
+SecData_cont = [SecData_1;SecData_2];
+[SDC,~] = size(SecData_cont);
 
-clickTable = synchronize(SecData,MinbinEffort); %table with clicks per 1-min bin
-clickTable.Properties.VariableNames{'effortBin'} = 'Effort_Bin';
-clickTable.Properties.VariableNames{'effortSec'} = 'Effort_Sec';
-clickTable.maxPP = [];
+%make it divisble by the duty cycle
+divis = floor(SDC/SecPer);
+ROWS = divis * SecPer;
+SecData_contRound = SecData_cont(1:ROWS,:);
+[SDCR,~] = size(SecData_contRound);
 
-clickTable = timetable2table(clickTable);
-clickTable.Year = year(clickTable.tbin);
-clickTable.Effort_Bin = [];
-clickTable.Effort_Sec = [];
-
-%2016
-clickTable2016 = clickTable(find(clickTable.Year == 2016,1,'first'):find(clickTable.Year == 2016,1,'last'),:);
-clickTable2016.Effort_Bin = [];
-clickTable2016.Effort_Sec = [];
-clickTable2016.Year = [];
-[cT16,~] = size(clickTable2016);
-
-clickTable2016 = table2timetable(clickTable2016);
-
-All_2016_Clicks = [];
-for j = 1:20
-    Sub_2016 = [];
-    for i = j:20:cT16-2
-        cycleRange = i:i+19;
-        columnsToDelete = cycleRange > 312481;
-        cycleRange(columnsToDelete) = [];
-        dataRange = clickTable2016(cycleRange,:);
+All_Clicks = [];
+for j = 1:100
+    %make an array of zeros that's the length of one duty cycle 
+    Z_array = zeros(SecPer,1); %array of zeros the length of 1 period
+    R = randi(size(Z_array,1)); %choose a random number
+    Z_array(R,1) = 1; %replace a random value with a 1
+    cycle_skeleton = repmat(Z_array, divis,1);%repeat the length of the dataset
+    zidx = find(cycle_skeleton);
+    zidx_shift = zidx + SecRec-1; %shift it to include the entire recording period
+    range = [zidx(:,1),zidx_shift(:,1)]'; %range between both indices
+    
+    
+    fullrange = interp1(zidx(:,1),zidx_shift(:,1),'linear'); 
+    cycle_skeleton(range(:,1):range(:,2)) = 1;
+    for i = R:SecPer:SDCR;
+        cycleRange = i:i+SecPer;
+        %columnsToDelete = cycleRange > 312481;
+        %cycleRange(columnsToDelete) = [];
+        dataRange = SecData_contRound(cycleRange,:);
         [xx,~] = size(dataRange);
-        if xx < 15
+        if xx < SecRec
             SubS = dataRange;
         else
-            SubS = dataRange(1:15,:);
+            SubS = dataRange(1:SecRec,:);
         end
-        Sub_2016 = [Sub_2016;SubS];
+        Sub = [Sub;SubS];
     end
-    Sub_2016.Properties.VariableNames{'Count'} = ['Count_Sub',num2str(j)];
+    Sub.Properties.VariableNames{'Count'} = ['Count_Sub',num2str(j)];
     if j > 1
-        All_2016_Clicks = synchronize(All_2016_Clicks,Sub_2016);
+        All_Clicks = synchronize(All_Clicks,Sub);
     else
-        All_2016_Clicks = synchronize(clickTable2016,Sub_2016);
+        All_Clicks = synchronize(SecData_contRound,Sub);
     end
 end
 
