@@ -6,21 +6,43 @@
         #Region specific models: BSAI + GOA
         #Big model: all 7 sites
 
+## STEP 1: require the libraries needed ##
+
+# All the libraries have to be installed prior to their utilization (see R help on library installation)
+
+library(geepack)         # for the GEEs (Wald's hypothesis tests allowed)
+library(splines)         # to construct the B-splines within a GEE-GLM
+library(tidyverse)       # because it literally does everything
+library(rjags)           # replacement for geeglm which is out of date
+library(ROCR)            # to build the ROC curve
+library(PresenceAbsence) # to build the confusion matrix
+library(ggplot2)         # to build the partial residual plots
+library(mvtnorm)         # to build the partial residual plots
+library(gridExtra)       # to build the partial residual plots
+library(SimDesign)
+library(lubridate)
+library(regclass)
+library(mgcv)
+
 ## STEP 1: the data ##
 #Hourly data
-site = 'PT'
+site = 'CB'
+dir = paste("I:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites")
 fileName = paste("I:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites/AllSitesGrouped_Binary_GAMGEE_ROW.csv")#setting the directory
 HourTable = read.csv(fileName)
 HourTable = na.omit(HourTable)
 HourTable$date = as.Date(HourTable$tbin)
 HourTable$tbin = as.POSIXct(HourTable$tbin)
 HourTable = HourTable[ order(HourTable$tbin , decreasing = FALSE ),]
+SiteHourTable = dplyr::filter(HourTable, grepl(site,Site))
+SiteHourTable$Hour = hour(SiteHourTable$tbin)
 
 #Daily data - for block calculations using the Merkens method
 fileName2 = paste("I:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites/AllSitesGrouped_GAMGEE_ROW.csv")#setting the directory
 DayTable = read.csv(fileName2) #no effort days deleted
 DayTable = na.omit(DayTable)
 DayTable$tbin = as.Date(DayTable$tbin)
+SiteDayTable = dplyr::filter(DayTable,grepl(site,Site))
 
 # Each record in the dataset corresponds to an hour of recording, which constitutes the unit of analysis. 
 # The column "PreAbs" represents the binary response variable (0: no animal in acoustic contact; 1: acoustic contact).
@@ -28,34 +50,17 @@ DayTable$tbin = as.Date(DayTable$tbin)
 # The column "Region" corresponds to the recording region (GOA or BSAI).
 # The column Julian represents the day of the year and the column year represents the year of recording.
 
-## STEP 2: require the libraries needed ##
-
-# All the libraries have to be installed prior to their utilization (see R help on library installation)
-
-library(geepack)         # for the GEEs (Wald's hypothesis tests allowed)
-library(splines)         # to construct the B-splines within a GEE-GLM
-library(tidyverse)       # because it literally does everything
-
-library(rjags)           # replacement for geeglm which is out of date
-
-library(ROCR)            # to build the ROC curve
-library(PresenceAbsence) # to build the confusion matrix
-library(ggplot2)         # to build the partial residual plots
-library(mvtnorm)         # to build the partial residual plots
-library(gridExtra)       # to build the partial residual plots
-library(SimDesign)
-
-## Step 3A: identify the best blocking structure
+## Step 3: identify the best blocking structure
 #The Merkens way
 #create the blocks based on the full timesereies
-startDate = DayTable$tbin[1]
-endDate = DayTable$tbin[nrow(DayTable)]
+startDate = SiteDayTable$tbin[1]
+endDate = SiteDayTable$tbin[nrow(SiteDayTable)]
 timeseries = data.frame(date=seq(startDate, endDate, by="days"))
 
 #15 different datasets
 #one day
 timeseries$one = 1:nrow(timeseries)
-oneday = left_join(HourTable,timeseries,by="date")
+oneday = left_join(SiteHourTable,timeseries,by="date")
 onedaygrouped = aggregate(oneday[, c(2,8)], list(oneday$one), mean)
 onedaygrouped$Group.1 = as.factor(onedaygrouped$Group.1)
 onedaygrouped = onedaygrouped %>% mutate_if(is.numeric, ~1 * (. != 0))
@@ -66,7 +71,7 @@ timeseries$one = NULL
 #autocorrelated
 
 timeseries$two = rep(1:(nrow(timeseries)/2), times=1, each=2)
-twoday = left_join(HourTable,timeseries,by="date")
+twoday = left_join(SiteHourTable,timeseries,by="date")
 twodaygrouped = aggregate(twoday[, c(2,8)], list(twoday$two), mean)
 twodaygrouped$Group.1 = as.factor(twodaygrouped$Group.1)
 twodaygrouped = twodaygrouped %>% mutate_if(is.numeric, ~1 * (. != 0))
@@ -168,179 +173,241 @@ HourTableBinned = HourTableBinned[ order(HourTableBinned$tbin , decreasing = FAL
 #The Benjamins way
 #Continuous data (not grouped)
 #acf on the 1 day binned data
-acf(DayTable$PreAbs, lag.max = 35)
-#11 days
+acf(SiteDayTable$PreAbs, lag.max = 35)
+#11 days for all sites
+#12 days for PT
+#34 days for CB
+
+#CB lag
+thirtyfour = rep(1:(floor(nrow(timeseries)/34)), times=1, each=34)
+timeseries$thirtyfour = c(thirtyfour, thirtyfour[714]+1,thirtyfour[714]+1,thirtyfour[714]+1,
+                          thirtyfour[714]+1,thirtyfour[714]+1,thirtyfour[714]+1,thirtyfour[714]+1)
+HourTableBinned = left_join(SiteHourTable,timeseries,by = "date")
+HourTableBinned = HourTableBinned[ order(HourTableBinned$tbin , decreasing = FALSE ),]
 
 #acf on the 1-hour binned data
-acf(HourTable$PreAbs, lag.max = 500)
-acf(HourTable$PreAbs, lag.max = 500, ylim=c(0,0.1), xlim =c(450,500)) 
-#457 1-hour bins which is ~19 days
-
+acf(SiteHourTable$PreAbs, lag.max = 500)
+acf(SiteHourTable$PreAbs, lag.max = 2000, ylim=c(0,0.1), xlim =c(1100,1150)) 
+#457 1-hour bins which is ~19 days for all sites
+#484 1-hour bins which is ~20 days for PT
+#1134 1-hour bins which is ~47 days for CB
 
 #Waiting for block confirmation to move forward
 
+## Step 4: Data exploration and initial analysis ##
+# Follow data exploration protocols suggested by Zuur et al. (2010), Zuur (2012), to generate pair plots, box plots, and assess collinearity between covariates in the dataset using Varinace Inflation Factors (vif).
+# Basic model for VIF analysis:
+GLM1 = glm(PreAbs ~ Julian + Hour, family = binomial, data = SiteHourTable)
+GLM1_CB = glm(PreAbs ~ Julian + Hour + Year, family = binomial, data = SiteHourTable)
+#VIF scores in GLM to work out collinearity:
+VIF(GLM1)
+VIF(GLM1_CB)
+#CB
+#Julian     Hour     Year 
+#1.070344 1.000000 1.070344 
+
+## STEP 4: Model selection - covariate preparation ##
+# Construct variance-covariance matrices for cyclic covariates:
+AvgDayBasis <- gam(PreAbs~s(Julian, bs ="cc", k=-1), fit=F, data = SiteHourTable, family =binomial, knots = list(HOUR=seq(0,23,length=6)))$X[,2:5]
+AvgDayMat = as.matrix(AvgDayBasis)
+
+# Selection of the correct form (linear or smooth) for the covariates available at a single scale.
+# A series of models is fitted where each of these covariate is tested as a linear term vs. a smoother and compared against an empty model.
+# Extract the QIC scores from the geeglm object to compare the empty model with the others and select how to treat the covariate.
+POD0<-geeglm(PreAbs ~ 1, family = binomial, corstr="ar1", id=thirtyfour, data=HourTableBinned)
+
+#DATENO
+POD0a = geeglm(PreAbs ~ bs(Julian, knots=10), family = binomial, corstr="ar1", id=thirtyfour, data=HourTableBinned)
+POD0b = geeglm(PreAbs ~ AvgDayMat, family = binomial, corstr="ar1", id=thirtyfour, data=HourTableBinned)
+model0A<-c("POD0", "POD0a", "POD0b")
+QIC0A<-c(QIC(POD0)[1],QIC(POD0a)[1],QIC(POD0b)[1])
+QICmod0A<-data.frame(rbind(model0A,QIC0A))
+QICmod0A
+#CB
+#corstr = indpendence
+#QIC            QIC.1            QIC.2
+#model0A            POD0            POD0a            POD0b
+#QIC0A   62707.622017871 60942.4483262005 60383.6808219463
+#Julian day as a variance covariance matrix
+#corstr = ar1
+#QIC            QIC.1            QIC.2
+#model0A            POD0            POD0a            POD0b
+#QIC0A   62461.942370187 60232.7953958141 59728.2335866585
+
+#Year
+POD1a = geeglm(PreAbs ~ as.factor(Year), family = binomial, corstr="ar1", id=thirtyfour, data=HourTableBinned)
+POD1b = geeglm(PreAbs ~ Year, family = binomial, corstr="ar1", id=thirtyfour, data=HourTableBinned)
+POD1c = geeglm(PreAbs ~ bs(Year), family = binomial, corstr="ar1", id=thirtyfour, data=HourTableBinned)
+model1A<-c("POD0", "POD1a", "POD1b","POD1c")
+QIC1A<-c(QIC(POD0)[1],QIC(POD1a)[1],QIC(POD1b)[1],QIC(POD1c)[1])
+QICmod1A<-data.frame(rbind(model1A,QIC1A))
+QICmod1A
+#CB
+#corstr = indpendence
+#QIC            QIC.1           QIC.2            QIC.3
+#model1A            POD0            POD1a           POD1b            POD1c
+#QIC1A   62707.622017871 62454.9622741072 62966.989935442 61587.2259674017
+#Year as smooth
+#corstr = ar1
+
+## STEP 5: Determine which covariates are most relevant, and which can be removed (on the basis of previous collinearity work).         
+#The initial full model is:
+POD2a = geeglm(PreAbs ~ AvgDayMat+bs(Year),family = binomial, corstr="independence", id=thirtyfour, data=HourTableBinned)
+#without AvgDayMat
+POD2b = geeglm(PreAbs ~ bs(Year),family = binomial, corstr="independence", id=thirtyfour, data=HourTableBinned)
+#without Year
+POD2c = geeglm(PreAbs ~ AvgDayMat,family = binomial, corstr="independence", id=thirtyfour, data=HourTableBinned)
+model2A = c("POD0","POD2a","POD2b","POD2c")
+QIC2A = c(QIC(POD0)[1],QIC(POD2a)[1],QIC(POD2b)[1],QIC(POD2c)[1])
+QICmod2A<-data.frame(rbind(model2A,QIC2A))
+QICmod2A
+#QIC            QIC.1            QIC.2            QIC.3
+#model2A            POD0            POD2a            POD2b            POD2c
+#QIC2A   62707.622017871 59362.4453354621 61587.2259674017 60383.6808219463
+
+# STEP 6: Testing covariate significance.
+# At this point, the resulting model is fitted using the library geeglm. The order in which the covariates enter the model is determined by the QIC score
+# (the ones that, if removed, determine the biggest increase in QIC enter the model first).
+
+#In descending order:
+#AvgDayMat
+#Year
+
+POD3 = geeglm(PreAbs ~ AvgDayMat+bs(Year),family = binomial, corstr="independence", id=thirtyfour, data=HourTableBinned)
+anova(POD3)
+#CB
+#Analysis of 'Wald statistic' Table
+#Model: binomial, link: logit
+#Response: PreAbs
+#Terms added sequentially (first to last)
+
+#Df     X2 P(>|Chi|)    
+#AvgDayMat  4 37.059 1.752e-07 ***
+  #bs(Year)   3 21.683 7.594e-05 ***
+  #---
+  #Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+# Retain all covariates. This is the final model.
+
+#Step 7: Construction of the ROC curve
+# STEP 6: Construction of the ROC curve     
+pr <- predict(POD3, type="response")  
+pred <- prediction(pr,SiteHourTable$PreAbs) 
+perf <- performance(pred, measure="tpr", x.measure="fpr")   
+plot(perf, colorize=TRUE, print.cutoffs.at=c(0.1,0.2,0.3,0.4,0.5))
+#This creates a ROC plot
+
+# Choice of the best cut-off probability
+
+y<-as.data.frame(perf@y.values)
+x<-as.data.frame(perf@x.values)
+fi <- atan(y/x) - pi/4                                             # to calculate the angle between the 45° line and the line joining the origin with the point (x;y) on the ROC curve
+L <- sqrt(x^2+y^2)                                                 # to calculate the length of the line joining the origin to the point (x;y) on the ROC curve
+d <- L*sin(fi)                                                     # to calculate the distance between the 45° line and the ROC curve
+fileName2 = paste(dir,'/',site,'distances.txt',sep="")
+write.table(d,fileName2)                                 # to write a table with the computed distances
+
+# The table should then be opened in Microsoft Excel to find the maximum distance with the command "Sort", and the relative position (i.e. the number of the corresponding record)
+# MAX d= 0.147907576861441 --> position 999
+
+alpha<-as.data.frame(perf@alpha.values)                            # the alpha values represent the corresponding cut-offs
+alpha[999,]                                                       # to identify the alpha value (i.e. the cut-off) that corresponds to the maximum distance between the 45° line and the curve
+#[1] 0.4422233
+# Best cutoff:     0.4422233
+# This value can now be used to build the confusion matrix:
+
+DATA<-matrix(0,45354 ,9)                                             # to build a matrix with 3 columns and n rows, where n is the dimension of the data set (here 4973 - the number of rows can be checked with dim())
+dim(SiteHourTable)
+#CB
+#[1] 45354     9
+DATA<-as.data.frame(DATA)
+names(DATA)<-c("plotID","Observed","Predicted")
+DATA$plotID<-1:45354                                    # the first column is filled with an ID value that is unique for each row
+DATA$Observed<-SiteHourTable$PreAbs                                           # the second column reports the observed response (0s and 1s)
+DATA$Predicted<-predict(POD3,type="response")                 # the third column reports the predictions
+cmx(DATA, threshold = 0.4422233)                                   # the identified cut-off must be used here
+
+#Confusion matrix:
+          #observed
+#predicted     1     0
+#1          13115 10693
+#0           7387 14159
+
+# The confusion matrix can then be transformed into percentages:
+# The area under the curve (auc) can also be used as an rough indication of model performance:
+
+auc <- performance(pred, measure="auc")
+#auc = 0.6623965
+
+#Step 8: visualise the contribution of the explanatory variables by means of the partial residual plots, which plot the relationship between the response (on the response scale) and each predictor ##
+POD3 = geeglm(PreAbs ~ AvgDayMat+bs(Year),family = binomial, corstr="independence", id=thirtyfour, data=HourTableBinned)
+dimnames(AvgDayMat)<-list(NULL,c("AHBM1", "AHBM2", "AHBM3", "AHBM4"))
+
+#Probability of covariate #1: AvgDayMat:
+BootstrapParameters1<-rmvnorm(10000, coef(POD3),summary(POD3)$cov.unscaled, method="chol")
+start=2; finish=5; Variable=AvgDayMat; xlabel="Julian Day"; ylabel="Probability"  
+PlottingVar1<-seq(min(Variable), max(Variable), length=5000)
+CenterVar1<-model.matrix(POD3)[,start:finish]*coef(POD3)[c(start:finish)]
+BootstrapCoefs1<-BootstrapParameters1[,c(start:finish)]
+Basis1<-gam(rbinom(5000,1,0.5)~s(PlottingVar1, bs="tp", k=6), fit=F, family=binomial, knots=list(PlottingVar1=seq(0,61,length=6)))$X[,2:5]
+RealFit1<-Basis1%*%coef(POD8)[c(start:finish)]
+RealFitCenter1<-RealFit1-mean(CenterVar1)
+RealFitCenter1a<-inv.logit(RealFitCenter1)
+BootstrapFits1<-Basis1%*%t(BootstrapCoefs1)
+quant.func1<-function(x){quantile(x,probs=c(0.025, 0.975))}
+cis1<-apply(BootstrapFits1, 1, quant.func1)-mean(CenterVar1)
+cis1a<-inv.logit(cis1)
+plot(PlottingVar1,(RealFitCenter1a), type="l", col=1,ylim=c(0, 1),xlab=xlabel, ylab=ylabel, xlim=c(0,61), main ="M7 covariate 1: # Days since deployment" , cex.lab = 1.5, cex.axis=1.5)
+segments(PlottingVar1,(cis1a[1,]),PlottingVar1,(cis1a[2,]), col="grey", main = "Influence of DATENO")
+lines(PlottingVar1,(RealFitCenter1a),lwd=2, col=1)
+rug(PlottingVar1)
 
 
-## STEP 3: identify the best temporal or spatial scale for the covariates available at multiple scales ##
 
-# The library geeglm is used to carry out model selection because it automatically provides the QIC score in the model output
 
-# An empty model is fitted: the binary response "Pres" is modelled as a function of Latitude and Longitude only. These are expressed as B-splines with 
-# one knot positioned at the average value. The independence working correlation model is used and the block is defined on the basis of the "Line_Id" values.
-empty<-geeglm(Pres ~ bs(Lat,knots=mean(Lat))+bs(Long,knots=mean(Long)),family="binomial", corstr ="independence",id=dat$Line_Id, data = dat) 
-empty = geeglm(PreAbs ~ Site, family="binomial", corstr="ar1", data = HourTableBinned, id=HourTableBinned$twelve)
-summary(empty)
+#Probability of covariate #2: TideBasisMat:  
+BootstrapParameters2<-rmvnorm(10000, coef(POD8),summary(POD8)$cov.unscaled, method="chol")
+start=6; finish=9; Variable=MINUTE; xlabel="Tidal cycle (0 = 1 = Low Tide at Oban)"; ylabel="Probability"   
+PlottingVar2<-seq(min(Variable), max(Variable), length=5000)
+CenterVar2<-model.matrix(POD8)[,start:finish]*coef(POD8)[c(start:finish)]
+BootstrapCoefs2<-BootstrapParameters2[,c(start:finish)]
+Basis2<-gam(rbinom(5000,1,0.5)~s(PlottingVar2, bs="cc", k=6), fit=F, family=binomial, knots=list(PlottingVar2=seq(0,1,length=6)))$X[,2:5]
+RealFit2<-Basis2%*%coef(POD8)[c(start:finish)]
+RealFitCenter2<-RealFit2-mean(CenterVar2)
+RealFitCenter2a<-inv.logit(RealFitCenter2)
+BootstrapFits2<-Basis2%*%t(BootstrapCoefs2)
+quant.func2<-function(x){quantile(x,probs=c(0.025, 0.975))}
+cis2<-apply(BootstrapFits2, 1, quant.func2)-mean(CenterVar2)
+cis2a<-inv.logit(cis2)
+plot(PlottingVar2,(RealFitCenter2a), type="l", col=1,ylim=c(0, 1),xlab=xlabel, ylab=ylabel, xlim=c(0,1),main ="M7 covariate 2: Tidal cycle" , cex.lab = 1.5, cex.axis=1.5)
+segments(PlottingVar2,(cis2a[1,]),PlottingVar2,(cis2a[2,]), col="grey")
+lines(PlottingVar2,(RealFitCenter2a),lwd=2, col=1)
+rug(PlottingVar2)
 
-# A series of models is fitted, each containing Latitude, Longitude and chlorophyll-a at one of the scales under examination. Because the package splines 
-# does not allow the 'shrinkage', the inclusion of each covariate as a linear term is also tested.  
 
-# Spatial scale: 0.05 degrees
 
-feb1<-geeglm(Pres ~ bs(Lat,knots=mean(Lat))+bs(Long,knots=mean(Long))+bs(chla_feb1,knots=mean(chla_feb1)),data = dat,family=binomial, corstr="independence",id=Line_Id)
-feb1l<-geeglm(Pres ~ bs(Lat,knots=mean(Lat))+bs(Long,knots=mean(Long))+chla_feb1,family=binomial, corstr="independence",id=Line_Id, data = dat)
-feb2<-geeglm(Pres ~ bs(Lat,knots=mean(Lat))+bs(Long,knots=mean(Long))+bs(chla_feb2,knots=mean(chla_feb2)),family=binomial, corstr="independence",id=Line_Id, data = dat)
-feb2l<-geeglm(Pres ~ bs(Lat,knots=mean(Lat))+bs(Long,knots=mean(Long))+chla_feb2,family=binomial, corstr="independence",id=Line_Id, data = dat)
-feb3<-geeglm(Pres ~ bs(Lat,knots=mean(Lat))+bs(Long,knots=mean(Long))+bs(chla_feb3,knots=mean(chla_feb3)),family=binomial, corstr="independence",id=Line_Id, data = dat)
-feb3l<-geeglm(Pres ~ bs(Lat,knots=mean(Lat))+bs(Long,knots=mean(Long))+chla_feb3,family=binomial, corstr="independence",id=Line_Id, data = dat)
+#Probability of covariate #3: AvgHrBasisMat:
+BootstrapParameters3<-rmvnorm(10000, coef(POD8),summary(POD8)$cov.unscaled, method="chol")
+start=10; finish=13; Variable=HOUR; xlabel="Diel Hour"; ylabel="Probability"  
+PlottingVar3<-seq(min(Variable), max(Variable), length=5000)
+CenterVar3<-model.matrix(POD8)[,start:finish]*coef(POD8)[c(start:finish)]
+BootstrapCoefs3<-BootstrapParameters3[,c(start:finish)]
+Basis3<-gam(rbinom(5000,1,0.5)~s(PlottingVar3, bs="cc", k=6), fit=F, family=binomial, knots=list(PlottingVar2=seq(0,23,length=6)))$X[,2:5]
+RealFit3<-Basis3%*%coef(POD8)[c(start:finish)]
+RealFitCenter3<-RealFit3-mean(CenterVar3)
+RealFitCenter3a<-inv.logit(RealFitCenter3)
+BootstrapFits3<-Basis3%*%t(BootstrapCoefs3)
+quant.func3<-function(x){quantile(x,probs=c(0.025, 0.975))}
+cis3<-apply(BootstrapFits3, 1, quant.func3)-mean(CenterVar3)
+cis3a<-inv.logit(cis3)
+plot(PlottingVar3,(RealFitCenter3a), type="l", col=1,ylim=c(0, 1),xlab=xlabel, ylab=ylabel, xlim=c(0,23), main ="M7 covariate 3: Diel Hour" , cex.lab = 1.5, cex.axis=1.5)    
+segments(PlottingVar3,(cis3a[1,]),PlottingVar3,(cis3a[2,]), col="grey")
+lines(PlottingVar3,(RealFitCenter3a),lwd=2, col=1)
+rug(PlottingVar3)
 
-apr1<-geeglm(Pres ~ bs(Lat,knots=mean(Lat))+bs(Long,knots=mean(Long))+bs(chla_apr1,knots=mean(chla_apr1)),family=binomial, corstr="independence",id=Line_Id, data = dat)
-apr1l<-geeglm(Pres ~ bs(Lat,knots=mean(Lat))+bs(Long,knots=mean(Long))+chla_apr1,family=binomial, corstr="independence",id=Line_Id, data = dat)
-apr2<-geeglm(Pres ~ bs(Lat,knots=mean(Lat))+bs(Long,knots=mean(Long))+bs(chla_apr2,knots=mean(chla_apr2)),family=binomial, corstr="independence",id=Line_Id, data = dat)
-apr2l<-geeglm(Pres ~ bs(Lat,knots=mean(Lat))+bs(Long,knots=mean(Long))+chla_apr2,family=binomial, corstr="independence",id=Line_Id, data = dat)
-apr3<-geeglm(Pres ~ bs(Lat,knots=mean(Lat))+bs(Long,knots=mean(Long))+bs(chla_apr3,knots=mean(chla_apr3)),family=binomial, corstr="independence",id=Line_Id, data = dat)
-apr3l<-geeglm(Pres ~ bs(Lat,knots=mean(Lat))+bs(Long,knots=mean(Long))+chla_apr3,family=binomial, corstr="independence",id=Line_Id, data = dat)
-
-jun1<-geeglm(Pres ~ bs(Lat,knots=mean(Lat))+bs(Long,knots=mean(Long))+bs(chla_jun1,knots=mean(chla_jun1)),family=binomial, corstr="independence",id=Line_Id, data = dat)
-jun1l<-geeglm(Pres ~ bs(Lat,knots=mean(Lat))+bs(Long,knots=mean(Long))+chla_jun1,family=binomial, corstr="independence",id=Line_Id, data = dat)
-jun2<-geeglm(Pres ~ bs(Lat,knots=mean(Lat))+bs(Long,knots=mean(Long))+bs(chla_jun2,knots=mean(chla_jun2)),family=binomial, corstr="independence",id=Line_Id, data = dat)
-jun2l<-geeglm(Pres ~ bs(Lat,knots=mean(Lat))+bs(Long,knots=mean(Long))+chla_jun2,family=binomial, corstr="independence",id=Line_Id, data = dat)
-jun3<-geeglm(Pres ~ bs(Lat,knots=mean(Lat))+bs(Long,knots=mean(Long))+bs(chla_jun3,knots=mean(chla_jun3)),family=binomial, corstr="independence",id=Line_Id, data = dat)
-jun3l<-geeglm(Pres ~ bs(Lat,knots=mean(Lat))+bs(Long,knots=mean(Long))+chla_jun3,family=binomial, corstr="independence",id=Line_Id, data = dat)
-
-# Spatial scale: 0.5 degrees
-
-feb1x10<-geeglm(Pres ~ bs(Lat,knots=mean(Lat))+bs(Long,knots=mean(Long))+bs(chla_feb1x10,knots=mean(chla_feb1x10)),family=binomial, corstr="independence",id=Line_Id, data = dat)
-feb1lx10<-geeglm(Pres ~ bs(Lat,knots=mean(Lat))+bs(Long,knots=mean(Long))+chla_feb1x10,family=binomial, corstr="independence",id=Line_Id, data = dat)
-feb2x10<-geeglm(Pres ~ bs(Lat,knots=mean(Lat))+bs(Long,knots=mean(Long))+bs(chla_feb2x10,knots=mean(chla_feb2x10)),family=binomial, corstr="independence",id=Line_Id, data = dat)
-feb2lx10<-geeglm(Pres ~ bs(Lat,knots=mean(Lat))+bs(Long,knots=mean(Long))+chla_feb2x10,family=binomial, corstr="independence",id=Line_Id, data = dat)
-feb3x10<-geeglm(Pres ~ bs(Lat,knots=mean(Lat))+bs(Long,knots=mean(Long))+bs(chla_feb3x10,knots=mean(chla_feb3x10)),family=binomial, corstr="independence",id=Line_Id, data = dat)
-feb3lx10<-geeglm(Pres ~ bs(Lat,knots=mean(Lat))+bs(Long,knots=mean(Long))+chla_feb3x10,family=binomial, corstr="independence",id=Line_Id, data = dat)
-
-apr1x10<-geeglm(Pres ~ bs(Lat,knots=mean(Lat))+bs(Long,knots=mean(Long))+bs(chla_apr1x10,knots=mean(chla_apr1x10)),family=binomial, corstr="independence",id=Line_Id, data = dat)
-apr1lx10<-geeglm(Pres ~ bs(Lat,knots=mean(Lat))+bs(Long,knots=mean(Long))+chla_apr1x10,family=binomial, corstr="independence",id=Line_Id, data = dat)
-apr2x10<-geeglm(Pres ~ bs(Lat,knots=mean(Lat))+bs(Long,knots=mean(Long))+bs(chla_apr2x10,knots=mean(chla_apr2x10)),family=binomial, corstr="independence",id=Line_Id, data = dat)
-apr2lx10<-geeglm(Pres ~ bs(Lat,knots=mean(Lat))+bs(Long,knots=mean(Long))+chla_apr2x10,family=binomial, corstr="independence",id=Line_Id, data = dat)
-apr3x10<-geeglm(Pres ~ bs(Lat,knots=mean(Lat))+bs(Long,knots=mean(Long))+bs(chla_apr3x10,knots=mean(chla_apr3x10)),family=binomial, corstr="independence",id=Line_Id, data = dat)
-apr3lx10<-geeglm(Pres ~ bs(Lat,knots=mean(Lat))+bs(Long,knots=mean(Long))+chla_apr3x10,family=binomial, corstr="independence",id=Line_Id, data = dat)
-
-jun1x10<-geeglm(Pres ~ bs(Lat,knots=mean(Lat))+bs(Long,knots=mean(Long))+bs(chla_jun1x10,knots=mean(chla_jun1x10)),family=binomial, corstr="independence",id=Line_Id, data = dat)
-jun1lx10<-geeglm(Pres ~ bs(Lat,knots=mean(Lat))+bs(Long,knots=mean(Long))+chla_jun1x10,family=binomial, corstr="independence",id=Line_Id, data = dat)
-jun2x10<-geeglm(Pres ~ bs(Lat,knots=mean(Lat))+bs(Long,knots=mean(Long))+bs(chla_jun2x10,knots=mean(chla_jun2x10)),family=binomial, corstr="independence",id=Line_Id, data = dat)
-jun2lx10<-geeglm(Pres ~ bs(Lat,knots=mean(Lat))+bs(Long,knots=mean(Long))+chla_jun2x10,family=binomial, corstr="independence",id=Line_Id, data = dat)
-jun3x10<-geeglm(Pres ~ bs(Lat,knots=mean(Lat))+bs(Long,knots=mean(Long))+bs(chla_jun3x10,knots=mean(chla_jun3x10)),family=binomial, corstr="independence",id=Line_Id, data = dat)
-jun3lx10<-geeglm(Pres ~ bs(Lat,knots=mean(Lat))+bs(Long,knots=mean(Long))+chla_jun3x10,family=binomial, corstr="independence",id=Line_Id, data = dat)
-
-# Extract the QIC scores from the geeglm object to compare the empty model with the others and select the best temporal and spatial scale to use.
-
-model<-c("empty","feb1","feb1l","feb1x10","feb1lx10","feb2","feb2l","feb2x10","feb2lx10","feb3","feb3l","feb3x10","feb3lx10","apr1","apr1l","apr1x10","apr1lx10","apr2","apr2l","apr2x10","apr2lx10","apr3","apr3l","apr3x10","apr3lx10","jun1","jun1l","jun1x10","jun1lx10","jun2","jun2l","jun2x10","jun2lx10","jun3","jun3l","jun3x10","jun3lx10")
-QIC<-c(QIC(empty)[1],QIC(feb1)[1],QIC(feb1l)[1],QIC(feb1x10)[1],QIC(feb1lx10)[1],QIC(feb2)[1],QIC(feb2l)[1],QIC(feb2x10)[1],QIC(feb2lx10)[1],QIC(feb3)[1],QIC(feb3l)[1],QIC(feb3x10)[1],QIC(feb3lx10)[1],QIC(apr1)[1],QIC(apr1l)[1],QIC(apr1x10)[1],QIC(apr1lx10)[1],QIC(apr2)[1],QIC(apr2l)[1],QIC(apr2x10)[1],QIC(apr2lx10)[1],QIC(apr3)[1],QIC(apr3l)[1],QIC(apr3x10)[1],QIC(apr3lx10)[1],QIC(jun1)[1],QIC(jun1l)[1],QIC(jun1x10)[1],QIC(jun1lx10)[1],QIC(jun2)[1],QIC(jun2l)[1],QIC(jun2x10)[1],QIC(jun2lx10)[1],QIC(jun3)[1],QIC(jun3l)[1],QIC(jun3x10)[1],QIC(jun3lx10)[1])
-QICchla<-data.frame(rbind(model,QIC))
-QICchla
-
-#Their Results
-# model            empty             feb1            feb1l          feb1x10         feb1lx10             feb2            feb2l          feb2x10
-# QIC   5026.34793615389 5187.15778286387 5114.56776261041 5174.82012046918 5094.69737877542 5128.32066946709 5093.71074321849 5187.05781045695
-
-# model         feb2lx10             feb3            feb3l          feb3x10        feb3lx10             apr1            apr1l          apr1x10
-# QIC   5091.24275816031 5123.19122565112 5079.63471700079 5102.99654102128 5068.0938861138 5227.89966708911 5112.30470325738 5051.15079409273
-
-# model         apr1lx10             apr2            apr2l          apr2x10        apr2lx10            apr3            apr3l          apr3x10
-# QIC   5061.60129276699 5178.13160903504 5057.75716607626 5072.43365973927 5005.8862255677 9600.0971098554 5024.86832535829 5079.86270230891
-
-# model         apr3lx10            jun1            jun1l          jun1x10         jun1lx10             jun2            jun2l          jun2x10
-# QIC   5000.12095826579 5151.3618764083 5091.47581326649 5165.56464281556 5072.20966807794 5161.86614789761 5083.67817220354 5165.79048250028
-
-# model         jun2lx10             jun3            jun3l          jun3x10         jun3lx10
-# QIC   5072.16031111493 5171.37258715258 5094.32682733815 5167.00226478057 5071.12590748435
-
-# The scale selected for chlorophyll is the April peak, on the 20x20 nm scale, with standard deviation of the weights equal to 1/10 of the lag and in 
-# linear form (i.e. apr3lx10), as this model corresponds to the lowest QIC score.
-
-#My results
-#QIC            QIC.1            QIC.2            QIC.3            QIC.4            QIC.5            QIC.6            QIC.7            QIC.8
-#model            empty             feb1            feb1l          feb1x10         feb1lx10             feb2            feb2l          feb2x10         feb2lx10
-#QIC   5058.09958612982 5248.41420367293 5167.89442364194 5226.94394445091 5141.62577648956 5192.58804610197 5150.13757074586 5249.32294503431 5146.68572578772
-#QIC.9           QIC.10           QIC.11           QIC.12           QIC.13           QIC.14           QIC.15          QIC.16           QIC.17
-#model             feb3            feb3l          feb3x10         feb3lx10             apr1            apr1l          apr1x10        apr1lx10             apr2
-#QIC   5200.18695044136 5129.08429862629 5145.54087099789 5139.25688988173 5302.75938092609 5157.63824784387 5125.21347755405 5094.5788580795 5238.90653861561
-#QIC.18           QIC.19           QIC.20           QIC.21           QIC.22           QIC.23           QIC.24           QIC.25        QIC.26
-#model            apr2l          apr2x10         apr2lx10             apr3            apr3l          apr3x10         apr3lx10             jun1         jun1l
-#QIC   5085.95577378882 5125.04537392318 5054.70656538255 5179.03298779145 5059.74874977073 5143.11670754838 5048.10346331627 5198.27834178413 5115.18863407
-#QIC.27           QIC.28           QIC.29           QIC.30          QIC.31           QIC.32           QIC.33           QIC.34           QIC.35
-#model          jun1x10         jun1lx10             jun2            jun2l         jun2x10         jun2lx10             jun3            jun3l          jun3x10
-#QIC   5196.07021598944 5112.84286192295 5198.35031463279 5095.97744023527 5207.4398802209 5110.44330814224 5210.28048622523 5113.74815842412 5210.23855102813
-#QIC.36
-#model         jun3lx10
-#QIC   5111.44521167552
-
-# The scale selected for chlorophyll is the April peak, on the 20x20 nm scale, with standard deviation of the weights equal to 1/10 of the lag and in 
-# linear form (i.e. apr3lx10), as this model corresponds to the lowest QIC score. -- same as them
-
-# The same procedure is repeated to select one single scale for slope, in the correct form (linear or smooth).
-
-sl1x<-geeglm(Pres ~ bs(Lat,knots=mean(Lat))+bs(Long,knots=mean(Long))+bs(Slope1x,knots=mean(Slope1x)),family=binomial, corstr="independence",id=Line_Id, data = dat)
-sl1xl<-geeglm(Pres ~ bs(Lat,knots=mean(Lat))+bs(Long,knots=mean(Long))+Slope1x,family=binomial, corstr="independence",id=Line_Id, data = dat)
-sl5x<-geeglm(Pres ~ bs(Lat,knots=mean(Lat))+bs(Long,knots=mean(Long))+bs(Slope5x,knots=mean(Slope5x)),family=binomial, corstr="independence",id=Line_Id, data = dat)
-sl5xl<-geeglm(Pres ~ bs(Lat,knots=mean(Lat))+bs(Long,knots=mean(Long))+Slope5x,family=binomial, corstr="independence",id=Line_Id, data = dat)
-sl10x<-geeglm(Pres ~ bs(Lat,knots=mean(Lat))+bs(Long,knots=mean(Long))+bs(Slope10x,knots=mean(Slope10x)),family=binomial, corstr="independence",id=Line_Id, data = dat)
-sl10xl<-geeglm(Pres ~ bs(Lat,knots=mean(Lat))+bs(Long,knots=mean(Long))+Slope10x,family=binomial, corstr="independence",id=Line_Id, data = dat)
-
-model<-c("empty","slope1x","slope1x_linear","slope5x","slope5x_linear","slope10x","slope10x_linear")
-QIC<-c(QIC(empty)[1],QIC(sl1x)[1],QIC(sl1xl)[1],QIC(sl5x)[1],QIC(sl5xl)[1],QIC(sl10x)[1],QIC(sl10xl)[1])
-QIC_slope<-data.frame(rbind(model,QIC))
-QIC_slope
-
-#Their results
-# model            empty         slope1x   slope1x_linear          slope5x   slope5x_linear         slope10x  slope10x_linear
-# QIC   5026.34793615389 5014.0674801405 5038.57972112403 5068.51205021298 5025.94329894353 5045.63901019836 5009.06984242041
-
-# Slope on the 20x20 nm scale, in a linear form, must be retained (i.e. slope10x_linear).
-
-#My results
-#QIC            QIC.1            QIC.2            QIC.3           QIC.4            QIC.5            QIC.6
-#model            empty          slope1x   slope1x_linear          slope5x  slope5x_linear         slope10x  slope10x_linear
-#QIC   5058.09958612982 5074.18175177641 5085.38761782037 5103.14905112867 5061.8724928303 5121.98314715202 5053.29350600014
-
-# Slope on the 20x20 nm scale, in a linear form, must be retained (i.e. slope10x_linear). -- same as them
-
-# The same procedure is repeated to select either monthly or weekly values of SST (linear or smooth).
-
-monthly<-geeglm(Pres ~ bs(Lat,knots=mean(Lat))+bs(Long,knots=mean(Long))+bs(SST_monthly,knots=mean(SST_monthly)),family=binomial, corstr="independence",id=Line_Id, data = dat)
-monthlyl<-geeglm(Pres ~ bs(Lat,knots=mean(Lat))+bs(Long,knots=mean(Long))+SST_monthly,family=binomial, corstr="independence",id=Line_Id, data = dat)
-weekly<-geeglm(Pres ~ bs(Lat,knots=mean(Lat))+bs(Long,knots=mean(Long))+bs(SST_weekly,knots=mean(SST_weekly)),family=binomial, corstr="independence",id=Line_Id, data = dat)
-weeklyl<-geeglm(Pres ~ bs(Lat,knots=mean(Lat))+bs(Long,knots=mean(Long))+SST_weekly,family=binomial, corstr="independence",id=Line_Id, data = dat)
-
-model<-c("empty","monthly","monthly_linear","weekly","weekly_linear")
-QIC<-c(QIC(empty)[1],QIC(monthly)[1],QIC(monthlyl)[1],QIC(weekly)[1],QIC(weeklyl)[1])
-QIC_sst<-data.frame(rbind(model,QIC))
-QIC_sst
-
-#Their results
-# model            empty          monthly  monthly_linear           weekly    weekly_linear
-# QIC   5026.34793615389 5180.13860197143 5044.1039424879 5074.17086176602 5013.68200876173
-
-# The QIC score suggests that weekly values of the SST must be used. The form is again linear (i.e. weekly_linear).
-
-#My results
-#QIC            QIC.1            QIC.2            QIC.3            QIC.4
-#model            empty          monthly   monthly_linear           weekly    weekly_linear
-#QIC   5058.09958612982 5223.95540183658 5077.11676251528 5110.03652191637 5053.30946828008
-
-# The QIC score suggests that weekly values of the SST must be used. The form is again linear (i.e. weekly_linear). -- same as them
 
 ## STEP 4: fit the full model ##
 
-fit1<-geeglm(Pres ~ bs(Lat,knots=mean(Lat))+bs(Long,knots=mean(Long))+ as.factor(Year)+bs(Depth,knots=mean(Depth))+Slope10x+bs(Aspect,knots=mean(Aspect))+bs(wind,knots=mean(wind))+bs(SSH,knots=mean(SSH))+SST_weekly+bs(SST_mdeviation,knots=mean(SST_mdeviation))+bs(SST_weekly_slope,knots=mean(SST_weekly_slope))+chla_apr3x10,family=binomial, corstr="independence",id=Line_Id, data = dat)  
+fit1<-geeglm(PreAbs ~ bs(Lat,knots=mean(Lat))+bs(Long,knots=mean(Long))+ as.factor(Year)+bs(Depth,knots=mean(Depth))+Slope10x+bs(Aspect,knots=mean(Aspect))+bs(wind,knots=mean(wind))+bs(SSH,knots=mean(SSH))+SST_weekly+bs(SST_mdeviation,knots=mean(SST_mdeviation))+bs(SST_weekly_slope,knots=mean(SST_weekly_slope))+chla_apr3x10,family=binomial, corstr="independence",id=Line_Id, data = dat)  
 
 # Exploratory data analysis: summarise the values of the covariates for the response "Pres". Boxplots could also be used for a visual inspection of the data.
 

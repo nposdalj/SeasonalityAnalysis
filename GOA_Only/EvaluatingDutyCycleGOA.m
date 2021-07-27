@@ -71,9 +71,18 @@ SecData = varfun(@max,data,'GroupingVariable','tbin','InputVariable','PPall');
 SecData.Properties.VariableNames{'GroupCount'} = 'Count'; % #clicks per bin
 SecData.max_PPall = [];
 
+%Calculate 1-second bin effort
+if er > 1
+    MinbinEffort = intervalTo1SecBinTimetable(effort.Start,effort.End,p); % convert intervals in bins when there is multiple lines of effort
+else
+    %binEffort = intervalToBinTimetable_Only1RowEffort(effort.Start,effort.End,p); % convert intervals in bins when there is only one line of effort
+end
+
+clickTable = synchronize(SecData,MinbinEffort);
+
 %Remove duty cycled portion
-SecData_1 = SecData;
-SecData_2 = SecData;
+SecData_1 = clickTable;
+SecData_2 = clickTable;
 SecData_1(SecData_1.tbin > startTime,:) = [];
 SecData_2(SecData_2.tbin < endTime,:)=[];
 SecData_cont = [SecData_1;SecData_2];
@@ -85,70 +94,60 @@ ROWS = divis * SecPer;
 SecData_contRound = SecData_cont(1:ROWS,:);
 [SDCR,~] = size(SecData_contRound);
 
+%choose 100 random samples
+R = randperm(SecPer,100); %choose 100 random numbers
+
 All_Clicks = [];
 for j = 1:100
     %make an array of zeros that's the length of one duty cycle 
     Z_array = zeros(SecPer,1); %array of zeros the length of 1 period
-    R = randi(size(Z_array,1)); %choose a random number
-    Z_array(R,1) = 1; %replace a random value with a 1
+    Z_array(R(j),1) = 1; %replace a random value with a 1
     cycle_skeleton = repmat(Z_array, divis,1);%repeat the length of the dataset
     zidx = find(cycle_skeleton);
-    zidx_shift = zidx + SecRec-1; %shift it to include the entire recording period
-    range = [zidx(:,1),zidx_shift(:,1)]'; %range between both indices
-    
-    
-    fullrange = interp1(zidx(:,1),zidx_shift(:,1),'linear'); 
-    cycle_skeleton(range(:,1):range(:,2)) = 1;
-    for i = R:SecPer:SDCR;
-        cycleRange = i:i+SecPer;
-        %columnsToDelete = cycleRange > 312481;
-        %cycleRange(columnsToDelete) = [];
-        dataRange = SecData_contRound(cycleRange,:);
-        [xx,~] = size(dataRange);
-        if xx < SecRec
-            SubS = dataRange;
-        else
-            SubS = dataRange(1:SecRec,:);
-        end
-        Sub = [Sub;SubS];
+    PositionsToFill = SecRec;
+    for na = 1:numel(zidx)
+        anchor = zidx(na);
+        cycle_skeleton(anchor:anchor+PositionsToFill-1) = 1;
     end
-    Sub.Properties.VariableNames{'Count'} = ['Count_Sub',num2str(j)];
+    cycle_skeleton = cycle_skeleton(1:ROWS,:); %make the duty cycled table equal to the original data table
+    cycle_skeleton = array2table(cycle_skeleton);
+    cycle_skeleton.Properties.VariableNames{'cycle_skeleton'} = ['Count_Sub',num2str(j)];
     if j > 1
-        All_Clicks = synchronize(All_Clicks,Sub);
+        All_Clicks = [All_Clicks,cycle_skeleton];
     else
-        All_Clicks = synchronize(SecData_contRound,Sub);
+        All_Clicks = [SecData_contRound,cycle_skeleton];
     end
 end
+
+%Group the duty cycled data back into 
 
 binEffort.Year = year(binEffort.tbin); 
 binEffort16 = binEffort(find(binEffort.Year == 2016,1,'first'):find(binEffort.Year == 2016,1,'last'),:);
 
-All_2016_Bins = synchronize(binEffort16,All_2016_Clicks,'regular','sum','TimeStep',minutes(5));
+All_Clicks_Effort = synchronize(All_Clicks,MinbinEffort); %,'regular','sum','TimeStep',minutes(5));
 
-%remove bins with less than 5 clicks for continuous data
-Count2016IDX = (All_2016_Bins.Count < 5);
-All_2016_Bins.Count(Count2016IDX) = 0;
 
-for i = 1:20
+
+for i = 1:100
     variableName = ['Count_Sub',num2str(i)];
-    All2016IDX = (All_2016_Bins.(variableName) < 5); %remove anything with less than 5 clicks in a bin
-    All_2016_Bins.(variableName)(All2016IDX) = 0;
+    ALLIDX = (All_Clicks.(variableName) < 5); %remove anything with less than 5 clicks in a bin
+    All_Clicks.(variableName)(ALLIDX) = 0;
 end
 
 %Average # of bins with sperm whales
 %All_2016_Bins{:,2:end}(All_2016_Bins{:,2:end} == 0) = NaN;
 %All_2016_Bins.DutyAvg = mean(All_2016_Bins{:,3:end},2,'omitnan'); %average number of clicks in each bin
-All_2016_Bins.DutyAvg = mean(All_2016_Bins{:,3:end},2);
-All_2016_Bins.Diff = All_2016_Bins.Count - All_2016_Bins.DutyAvg; %average number of missed clicks in each bin
+All_Clicks.DutyAvg = mean(All_Clicks{:,2:end},2);
+All_Clicks.Diff = All_Clicks.Count - All_Clicks.DutyAvg; %average number of missed clicks in each bin
 %what to multiply the duty cycled data by to supplement so it can look like the continuous data
-All_2016_Bins.Supp = All_2016_Bins.Count./All_2016_Bins.DutyAvg; 
+All_Clicks.Supp = All_Clicks.Count./All_Clicks.DutyAvg; 
 %what does the duty cycle percent look like, compared to the actual duty cycle which was recording 43% of the time
-All_2016_Bins.DutyPercent = All_2016_Bins.DutyAvg./All_2016_Bins.Count; 
+All_Clicks.DutyPercent = All_Clicks.DutyAvg./All_Clicks.Count; 
 %Multiply the duty cycled average number of clicks in each bin by the
 %'supplement' so you can see what number of clicks you'd have if you
 %recorded continuously
-All_2016_Bins.Adj = All_2016_Bins.DutyAvg .* All_2016_Bins.Supp;
-All_2016_Bins.DiffAdj = All_2016_Bins.Count - All_2016_Bins.Adj; %sanity check, what's the difference between the 
+All_Clicks.Adj = All_Clicks.DutyAvg .* All_Clicks.Supp;
+All_Clicks.DiffAdj = All_Clicks.Count - All_Clicks.Adj; %sanity check, what's the difference between the 
 %actual recorded number of clicks and the 'adjusted' number of clicks based
 %on the supplemented duty cycled data
 

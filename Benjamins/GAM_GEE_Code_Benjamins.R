@@ -124,12 +124,12 @@ model1<-c("POD0", "POD1", "POD1a", "POD1b", "POD1c", "POD1d", "POD1e")
 QIC1<-c(POD0@pan.aic, POD1@pan.aic, POD1a@pan.aic, POD1b@pan.aic, POD1c@pan.aic, POD1d@pan.aic, POD1e@pan.aic)
 QICmod1<-data.frame(rbind(model1,QIC1))
 QICmod1
-X1               X2               X3               X4
-model1             POD0             POD1            POD1a            POD1b
-QIC1   15401.3578427153 13357.7779995713 14548.9472235935 13363.3777457815
-X5               X6               X7
-model1            POD1c            POD1d            POD1e
-QIC1   13349.9646158432 13358.5697983154 13687.7385781282
+#X1               X2               X3               X4
+#model1             POD0             POD1            POD1a            POD1b
+#QIC1   15401.3578427153 13357.7779995713 14548.9472235935 13363.3777457815
+#X5               X6               X7
+#model1            POD1c            POD1d            POD1e
+#QIC1   13349.9646158432 13358.5697983154 13687.7385781282
 
 #Remove PODANGLE:
 POD2<-geeglm(DPM ~bs(DATENO , knots=mean(DATENO)) + AvgHrBasisMat + X.TimeLost + TideBasisMat , family = binomial, corstr="independence", id=Panel, data=M7)
@@ -169,34 +169,34 @@ TideBasisMat
 POD5<-geeglm(DPM ~  bs(DATENO , knots=mean(DATENO)) + TideBasisMat  + AvgHrBasisMat + X.TimeLost  , family = binomial, corstr="independence", id=Panel, data=M7) 
 # The significance of the covariates is tested using Wald's tests (i.e. the anova.geeglm function of the library geeglm). Non-significant covariates are removed one at a time.
 anova(POD5)
-Analysis of 'Wald statistic' Table
-Model: binomial, link: logit
-Response: DPM
-Terms added sequentially (first to last)
+#Analysis of 'Wald statistic' Table
+#Model: binomial, link: logit
+#Response: DPM
+#Terms added sequentially (first to last)
 
-Df     X2 P(>|Chi|)    
-bs(DATENO, knots = mean(DATENO))  4 92.535   < 2e-16 ***
-  TideBasisMat                      4 99.797   < 2e-16 ***
-  AvgHrBasisMat                     4 10.084   0.03904 *  
-  X.TimeLost                        1  1.643   0.19990    
----
-  Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+#Df     X2 P(>|Chi|)    
+#bs(DATENO, knots = mean(DATENO))  4 92.535   < 2e-16 ***
+  #TideBasisMat                      4 99.797   < 2e-16 ***
+  #AvgHrBasisMat                     4 10.084   0.03904 *  
+  #X.TimeLost                        1  1.643   0.19990    
+#---
+  #Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
 # Remove X.TimeLost:
 POD6<-geeglm(DPM ~  bs(DATENO , knots=mean(DATENO)) + TideBasisMat  + AvgHrBasisMat , family = binomial, corstr="independence", id=Panel, data=M7) 
 # The significance of the covariates is tested using Wald's tests (i.e. the anova.geeglm function of the library geeglm). Non-significant covariates are removed one at a time.
 anova(POD6)
-Analysis of 'Wald statistic' Table
-Model: binomial, link: logit
-Response: DPM
-Terms added sequentially (first to last)
+#Analysis of 'Wald statistic' Table
+#Model: binomial, link: logit
+#Response: DPM
+#Terms added sequentially (first to last)
 
-Df     X2 P(>|Chi|)    
-bs(DATENO, knots = mean(DATENO))  4 92.535   < 2e-16 ***
-  TideBasisMat                      4 99.797   < 2e-16 ***
-  AvgHrBasisMat                     4 10.084   0.03904 *  
-  ---
-  Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+#Df     X2 P(>|Chi|)    
+#bs(DATENO, knots = mean(DATENO))  4 92.535   < 2e-16 ***
+  #TideBasisMat                      4 99.797   < 2e-16 ***
+  #AvgHrBasisMat                     4 10.084   0.03904 *  
+  #---
+  #Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
 # Retain all covariates. This is the final model.
 
