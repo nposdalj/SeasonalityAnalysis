@@ -25,8 +25,8 @@ library(lubridate)
 library(survival)
 
 #load data
-site = 'SAP'
-saveDir = paste("I:\My Drive\GofAK_TPWS_metadataReduced\SeasonalityAnalysis")
+site = 'Wake'
+saveDir = paste("O:/My Drive/CentralPac_TPWS_metadataReduced/Wake/Seasonality/")
 filename = paste(saveDir,site,"_dayData_forGLMR125.csv",sep="")
 dayBinTAB = read.csv(filename) #no effort days deleted
 head(dayBinTAB)
