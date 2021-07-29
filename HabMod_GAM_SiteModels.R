@@ -23,22 +23,23 @@ memory.limit(size=300000)
 # User Defined sections
 #define the lat and long of interest
 #df1 = data.frame("lat" = c(19.29, 19.2, 19.2467, 19.2467), "long" = c(-166.69, -166.69, -166.74, -166.64)) #Wake
-df1 = data.frame("lat" = c(15.36, 15.27, 15.3186, 15.3186), "long" = c(145.46, 145.46, 145.51, 145.41)) #Saipan
-#df1 = data.frame("lat" = c(15.08, 14.99, 15.0387, 15.0387), "long" = C(145.75, 145.75, 145.8, 145.7))#Tinian
-#df1 = data.frame("lat" = c(29.185, 29.1, 29.1410, 29.1410), "long" = C(-118.26, -118.26, -118.31, -118.21))#GI
-#df1 = data.frame("lat" = c(31.79, 31.7, 31.747, 31.747), "long" = C(-121.38, -121.38, -121.43, -121.33))#CORC
-#df1 = data.frame("lat" = c(52.4, 52.31, 52.3547, 52.3547), "long" = C(-175.635, -175.635, -175.71, -175.56))#BD
-#df1 = data.frame("lat" = c(47.54, 47.45, 47.4936, 47.4936), "long" = C(-125.378, -125.378, -125.44, -125.31))#QC
-#df1 = data.frame("lat" = c(56.385, 56.295, 56.34, 56.34), "long" = C(-145.182, -145.182, -145.26, -145.1))#QN
-#df1 = data.frame("lat" = c(56.29, 56.2, 56.2434, 56.2434), "long" = C(-142.75, -142.75, -142.83, -142.67))#PT
-#df1 = data.frame("lat" = c(58.71, 58.62, 58.6668, 58.6668), "long" = C(-148.0034, -148.0034, -148.12, -147.94))#CB
+#df1 = data.frame("lat" = c(15.36, 15.27, 15.3186, 15.3186), "long" = c(145.46, 145.46, 145.51, 145.41)) #Saipan
+df1 = data.frame("lat" = c(15.08, 14.99, 15.0387, 15.0387), "long" = c(145.75, 145.75, 145.8, 145.7))#Tinian
+#df1 = data.frame("lat" = c(29.185, 29.1, 29.1410, 29.1410), "long" = c(-118.26, -118.26, -118.31, -118.21))#GI
+#df1 = data.frame("lat" = c(31.79, 31.7, 31.747, 31.747), "long" = c(-121.38, -121.38, -121.43, -121.33))#CORC
+#df1 = data.frame("lat" = c(52.4, 52.31, 52.3547, 52.3547), "long" = c(-175.635, -175.635, -175.71, -175.56))#BD
+#df1 = data.frame("lat" = c(47.54, 47.45, 47.4936, 47.4936), "long" = c(-125.378, -125.378, -125.44, -125.31))#QC
+#df1 = data.frame("lat" = c(56.385, 56.295, 56.34, 56.34), "long" = c(-145.182, -145.182, -145.26, -145.1))#QN
+#df1 = data.frame("lat" = c(56.29, 56.2, 56.2434, 56.2434), "long" = c(-142.75, -142.75, -142.83, -142.67))#PT
+#df1 = data.frame("lat" = c(58.71, 58.62, 58.6668, 58.6668), "long" = c(-148.0034, -148.0034, -148.12, -147.94))#CB
 
 #define the start and end of the datame 
-startTime = "2010-03-05" #this should be formatted like this: 2010-03-05
-endTime = "2019-02-02" 
+startTime = "2011-04-13" #this should be formatted like this: 2010-03-05
+endTime = "2019-05-13" 
 
 #ITS
-ITS = 4
+#ITS = 4 #Saipan
+ITS = 2 #Tinian
 
 #loading the environmental data
 envDir = paste("O:/My Drive/Gaia_EnvironmentalData/CentralPac/")#setting the directory)
@@ -49,11 +50,11 @@ coords <- df1[c(ch, ch[1]), ]#creating convex hull
 sp_poly <- SpatialPolygons(list(Polygons(list(Polygon(coords)), ID = 1)))#converting convex hull to spatial polygon
 
 #loading sperm whale data
-site = 'SAP'
-saveDir = paste("O:/My Drive/CentralPac_TPWS_metadataReduced/Saipan/Seasonality/")#setting the directory
+site = 'TIN'
+saveDir = paste("O:/My Drive/CentralPac_TPWS_metadataReduced/Tinian/Seasonality/")#setting the directory
 
 #load data from StatisicalAnalysis_All
-filenameStatAll = paste(saveDir,site,"_Day.csv",sep="")
+filenameStatAll = paste(saveDir,site,"_Day.csv",sep="")#_Day.csv created from StatisticalAnalysis_All.R
 DayData = read.csv(filenameStatAll) #load files as data frame
 DayTable = DayData %>%
   dplyr::select(tbin, Count_Click, Count_Bin, HoursProp, HoursNorm)
@@ -104,7 +105,7 @@ names(df)[names(df)=="layer"]="Chl"
 mid = mean(df$Chl)
 ggplot(data=world) +  geom_sf()+coord_sf(xlim= c(min(df1$long),max(df1$long)),ylim= c(min(df1$lat),max(df1$lat)),expand=FALSE)+
   geom_raster(data = df , aes(x = x, y = y, fill = Chl)) + 
-  ggtitle(paste("Daily Chl on", dates[1]))+geom_point(x = 145.46, y = 15.3186, color = "black",size=3)+
+  ggtitle(paste("Daily Chl on", ChlA_dates[1]))+geom_point(x = 145.46, y = 15.3186, color = "black",size=3)+
   xlab("Latitude")+ylab("Longitude")+
   scale_fill_gradient2(midpoint = mid, low="yellow", mid = "orange",high="red")
 
@@ -282,7 +283,7 @@ names(df)[names(df)=="layer"]="SSH"
 mid = mean(df$SSH)
 ggplot(data=world) +  geom_sf()+coord_sf(xlim= c(min(df1$long),max(df1$long)),ylim= c(min(df1$lat),max(df1$lat)),expand=FALSE)+
   geom_raster(data = df , aes(x = x, y = y, fill = SSH)) + 
-  ggtitle(paste("Daily SSH on", dates[1]))+geom_point(x = 145.46, y = 15.3186, color = "black",size=3)+
+  ggtitle(paste("Daily SSH on", SSH_dates[1]))+geom_point(x = 145.46, y = 15.3186, color = "black",size=3)+
   xlab("Latitude")+ylab("Longitude")+
   scale_fill_gradient2(midpoint = mid, low="yellow", mid = "orange",high="red")
 
@@ -521,37 +522,37 @@ EKE_cm = EKE_meters * 10000
 #converting _dates to data frames and renaming column to 'time'
 SSH_ddf <- as.data.frame(SSH_dates[K])
 SSH_ddf = SSH_ddf %>% 
-  rename(
+  dplyr::rename(
     time = 'SSH_dates[K]',
   )
 DEN_ddf <- as.data.frame(DEN_dates[K])
 DEN_ddf = DEN_ddf %>% 
-  rename(
+  dplyr::rename(
     time = 'DEN_dates[K]',
   )
 SAL_ddf <- as.data.frame(SAL_dates[K])
 SAL_ddf = SAL_ddf %>% 
-  rename(
+  dplyr::rename(
     time = 'SAL_dates[K]',
   )
 TEMP_ddf <- as.data.frame(TEMP_dates[K])
 TEMP_ddf = TEMP_ddf %>% 
-  rename(
+  dplyr::rename(
     time = 'TEMP_dates[K]',
   )
 EV_ddf <- as.data.frame(EAST_dates[K])
 EV_ddf = EV_ddf %>% 
-  rename(
+  dplyr::rename(
     time = 'EAST_dates[K]',
   )
 NV_ddf <- as.data.frame(NOR_dates[K])
 NV_ddf = NV_ddf %>% 
-  rename(
+  dplyr::rename(
     time = 'NOR_dates[K]',
   )
 ChlA_ddf <- as.data.frame(ChlA_dates[K])
 ChlA_ddf = ChlA_ddf %>% 
-  rename(
+  dplyr::rename(
     time = 'ChlA_dates[K]',
   )
 ChlA_ddf$time=as.Date(ChlA_ddf$time)
