@@ -640,14 +640,19 @@ tab = tab[complete.cases(tab[ , 2:4]),]#remove any rows with lat or long as na
 
 #Join sex specific presence in daily hours information
 tab <- left_join(tab, SexDayData, by = 'time')
+
+#Change column names to look good on plots
   
 #Group by ITS for the general sperm whale model
 startDate = tab$time[1]
 endDate = tab$time[nrow(tab)]
 timeseries = data.frame(date=seq(startDate, endDate, by="days"))
-#timeseries$groups = rep(1:(nrow(timeseries)/ITS), times=1, each=ITS)
-ITSgroups = rep(1:(floor(nrow(timeseries)/ITS)), times=1, each=ITS)
-timeseries$groups = c(ITSgroups,ITSgroups[3180]+1)
+div = floor(nrow(timeseries)/ITS)
+ITSgroups = rep(1:div, times=1, each=ITS)
+divdiff = nrow(timeseries) - length(ITSgroups)
+last = tail(ITSgroups, n = 1)
+lastVec = rep(last,each = divdiff)
+timeseries$groups = c(ITSgroups,lastVec)
 TabBinned = left_join(tab,timeseries,by = c("time" = "date"))
 TabBinned_Grouped = aggregate(TabBinned[, c(1:length(TabBinned))], list(TabBinned$groups), mean, na.rm = TRUE)
 TabBinned_Grouped$Julian = as.numeric(format(TabBinned_Grouped$time,"%j"))
@@ -658,7 +663,12 @@ if (exists("ITSF")){
   if (ITSF > 1){
     ITSgroupsF = rep(1:(floor(nrow(timeseries)/ITSF)), times=1, each=ITSF)
     timeseriesF = data.frame(date=seq(startDate, endDate, by="days"))
-    timeseriesF$groups = c(ITSgroupsF,ITSgroupsF[3180]+1) #FIGURE THIS OUT
+    div = floor(nrow(timeseriesF)/ITSF)
+    ITSgroups = rep(1:div, times=1, each=ITSF)
+    divdiff = nrow(timeseriesF) - length(ITSgroups)
+    last = tail(ITSgroups, n = 1)
+    lastVec = rep(last,each = divdiff)
+    timeseriesF$groups = c(ITSgroups,lastVec)
     TabBinnedF = left_join(tab,timeseriesF,by = c("time" = "date"))
     TabBinned_GroupedF = aggregate(TabBinnedF[, c(1:length(TabBinnedF))], list(TabBinnedF$groups), mean, na.rm = TRUE)
     TabBinned_GroupedF$Julian = as.numeric(format(TabBinned_GroupedF$time,"%j"))
@@ -1453,7 +1463,7 @@ FinalMaleGAM = gam(MaleHoursNorm ~ s(Julian, bs = "cc", k=-1)+s(EKE_cm, bs = "cc
 summary(FinalMaleGAM)
 viz = getViz(FinalFemaleGAM)
 vizGG = plot(viz,allTerms = T) +
-  labs(title = 'Sperm whales (GAM)')+
+  labs(ylab = "Sperm Whale Presence (Hours/Day)")+
   l_fitLine(linetype = 1, size = 2)  +
   l_fitContour()+
   #l_ciLine(mul = 5, colour = "blue", linetype = 2) +
