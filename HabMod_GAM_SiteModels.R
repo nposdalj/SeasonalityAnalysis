@@ -39,7 +39,11 @@ endTime = "2019-05-13"
 
 #ITS
 #ITS = 4 #Saipan
+#ITSF = 6 #Saipan Females
+#ITSM = 1 #Saipan Males
 ITS = 2 #Tinian
+ITSJ = 1 #Tinian Juveniles
+ITSM = 1 #Tinian Males
 
 #loading the environmental data
 envDir = paste("O:/My Drive/Gaia_EnvironmentalData/CentralPac/")#setting the directory)
@@ -289,12 +293,20 @@ ggplot(data=world) +  geom_sf()+coord_sf(xlim= c(min(df1$long),max(df1$long)),yl
 
 #plotting timeseries
 I=which(SSH_lon>=min(df1$long) & SSH_lon<= max(df1$long)) #only extract the region we care about
+if (length(I) == 1){ #if the longitude only has 1 value, add a second
+  II = I:(I+1)
+}else{
+  II = I
+}
 J=which(SSH_lat>=min(df1$lat) & SSH_lat<=max(df1$lat)) #only extract the region we care about
 if (length(J) == 1){ #if the latitude only has 1 value, add a second
-  JJ = J:(J+1)
+  JJ = J:(I+1)
+}else{
+  JJ = J
 }
 K=which(SSH_dates>= startTime & SSH_dates<= endTime) #extract only the dates we care about
-SSH2=SSHvar[I,JJ,K] #index the original data frame to extract the lat, long, dates we care about
+
+SSH2=SSHvar[II,JJ,K] #index the original data frame to extract the lat, long, dates we care about
 
 n=dim(SSH2)[3] #find the length of time
 
@@ -590,7 +602,7 @@ tab = tab[complete.cases(tab[ , 2:4]),]#remove any rows with lat or long as na
 #Join sex specific presence in daily hours information
 tab <- left_join(tab, SexDayData, by = 'time')
   
-#Group by ITS
+#Group by ITS for the general sperm whale model
 startDate = tab$time[1]
 endDate = tab$time[nrow(tab)]
 timeseries = data.frame(date=seq(startDate, endDate, by="days"))
@@ -601,6 +613,28 @@ TabBinned = left_join(tab,timeseries,by = c("time" = "date"))
 TabBinned_Grouped = aggregate(TabBinned[, c(1:length(TabBinned))], list(TabBinned$groups), mean, na.rm = TRUE)
 TabBinned_Grouped$Julian = as.numeric(format(TabBinned_Grouped$time,"%j"))
 TabBinned_Grouped$Year = as.numeric(format(TabBinned_Grouped$time,"%Y"))
+
+#Group by ITS for Female
+if (exists("ITSF")){
+  if (ITSF > 1){
+    ITSgroupsF = rep(1:(floor(nrow(timeseries)/ITSF)), times=1, each=ITSF)
+    timeseriesF = data.frame(date=seq(startDate, endDate, by="days"))
+    timeseriesF$groups = c(ITSgroupsF,ITSgroupsF[3180]+1) #FIGURE THIS OUT
+    TabBinnedF = left_join(tab,timeseriesF,by = c("time" = "date"))
+    TabBinned_GroupedF = aggregate(TabBinnedF[, c(1:length(TabBinnedF))], list(TabBinnedF$groups), mean, na.rm = TRUE)
+    TabBinned_GroupedF$Julian = as.numeric(format(TabBinned_GroupedF$time,"%j"))
+    TabBinned_GroupedF$Year = as.numeric(format(TabBinned_GroupedF$time,"%Y"))
+  } else {
+    TabBinned_GroupedF = tab
+    TabBinned_GroupedF$Julian = as.numeric(format(TabBinned_GroupedF$time,"%j"))
+    TabBinned_GroupedF$Year = as.numeric(format(TabBinned_GroupedF$time,"%Y"))
+  }
+}
+
+#Group by ITS for Juvenile
+
+#Group by ITS for Male
+
 
 #run GAM
 #Test how each covariate should be used (linear, smooth, as.factor())
