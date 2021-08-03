@@ -339,12 +339,19 @@ ggplot(data=world) +  geom_sf()+coord_sf(xlim= c(min(df1$long),max(df1$long)),yl
 
 #plotting time series SAPTIN 
 I=which(DEN_lon>=min(df1$long) & DEN_lon<= max(df1$long)) #only extract the region we care about
+if (length(I) == 1){ #if the longitude only has 1 value, add a second
+  II = I:(I+1)
+}else{
+  II = I
+}
 J=which(DEN_lat>=min(df1$lat) & DEN_lat<=max(df1$lat)) #only extract the region we care about
 if (length(J) == 1){ #if the latitude only has 1 value, add a second
-  JJ = J:(J+1)
+  JJ = J:(I+1)
+}else{
+  JJ = J
 }
 K=which(DEN_dates>= startTime & DEN_dates<= endTime) #extract only the dates we care about
-DEN2=DENvar[I,JJ,K] #index the original data frame to extract the lat, long, dates we care about
+DEN2=DENvar[II,JJ,K] #index the original data frame to extract the lat, long, dates we care about
 
 n=dim(DEN2)[3] #find the length of time
 
@@ -377,12 +384,19 @@ ggplot(data=world) +  geom_sf()+coord_sf(xlim= c(min(df1$long),max(df1$long)),yl
 
 #plotting time series SAPTIN 
 I=which(SAL_lon>=min(df1$long) & SAL_lon<= max(df1$long)) #only extract the region we care about
+if (length(I) == 1){ #if the longitude only has 1 value, add a second
+  II = I:(I+1)
+}else{
+  II = I
+}
 J=which(SAL_lat>=min(df1$lat) & SAL_lat<=max(df1$lat)) #only extract the region we care about
 if (length(J) == 1){ #if the latitude only has 1 value, add a second
-  JJ = J:(J+1)
+  JJ = J:(I+1)
+}else{
+  JJ = J
 }
 K=which(SAL_dates>= startTime & SAL_dates<= endTime) #extract only the dates we care about
-SAL2=SALvar[I,JJ,K] #index the original data frame to extract the lat, long, dates we care about
+SAL2=SALvar[II,JJ,K] #index the original data frame to extract the lat, long, dates we care about
 
 n=dim(SAL2)[3] #find the length of time
 
@@ -415,12 +429,19 @@ ggplot(data=world) +  geom_sf()+coord_sf(xlim= c(min(df1$long),max(df1$long)),yl
 
 #plotting time series SAPTIN 
 I=which(TEMP_lon>=min(df1$long) & TEMP_lon<= max(df1$long)) #only extract the region we care about
+if (length(I) == 1){ #if the longitude only has 1 value, add a second
+  II = I:(I+1)
+}else{
+  II = I
+}
 J=which(TEMP_lat>=min(df1$lat) & TEMP_lat<=max(df1$lat)) #only extract the region we care about
 if (length(J) == 1){ #if the latitude only has 1 value, add a second
-  JJ = J:(J+1)
+  JJ = J:(I+1)
+}else{
+  JJ = J
 }
 K=which(TEMP_dates>= startTime & TEMP_dates<= endTime) #extract only the dates we care about
-TEMP2=TEMPvar[I,JJ,K] #index the original data frame to extract the lat, long, dates we care about
+TEMP2=TEMPvar[II,JJ,K] #index the original data frame to extract the lat, long, dates we care about
 
 n=dim(TEMP2)[3] #find the length of time
 
@@ -453,12 +474,19 @@ ggplot(data=world) +  geom_sf()+coord_sf(xlim= c(min(df1$long),max(df1$long)),yl
 
 #plotting time series SAPTIN 
 I=which(EASTV_lon>=min(df1$long) & EASTV_lon<= max(df1$long)) #only extract the region we care about
+if (length(I) == 1){ #if the longitude only has 1 value, add a second
+  II = I:(I+1)
+}else{
+  II = I
+}
 J=which(EASTV_lat>=min(df1$lat) & EASTV_lat<=max(df1$lat)) #only extract the region we care about
 if (length(J) == 1){ #if the latitude only has 1 value, add a second
-  JJ = J:(J+1)
+  JJ = J:(I+1)
+}else{
+  JJ = J
 }
 K=which(EAST_dates>= startTime & EAST_dates<= endTime) #extract only the dates we care about
-EASTV2=EASTVvar[I,JJ,K] #index the original data frame to extract the lat, long, dates we care about
+EASTV2=EASTVvar[II,JJ,K] #index the original data frame to extract the lat, long, dates we care about
 
 n=dim(EASTV2)[3] #find the length of time
 
@@ -491,12 +519,19 @@ ggplot(data=world) +  geom_sf()+coord_sf(xlim= c(min(df1$long),max(df1$long)),yl
 
 #plotting time series SAPTIN 
 I=which(NORV_lon>=min(df1$long) & NORV_lon<= max(df1$long)) #only extract the region we care about
+if (length(I) == 1){ #if the longitude only has 1 value, add a second
+  II = I:(I+1)
+}else{
+  II = I
+}
 J=which(NORV_lat>=min(df1$lat) & NORV_lat<=max(df1$lat)) #only extract the region we care about
 if (length(J) == 1){ #if the latitude only has 1 value, add a second
-  JJ = J:(J+1)
+  JJ = J:(I+1)
+}else{
+  JJ = J
 }
 K=which(NOR_dates>= startTime & NOR_dates<= endTime) #extract only the dates we care about
-NORV2=NORVvar[I,JJ,K] #index the original data frame to extract the lat, long, dates we care about
+NORV2=NORVvar[II,JJ,K] #index the original data frame to extract the lat, long, dates we care about
 
 n=dim(NORV2)[3] #find the length of time
 
@@ -515,7 +550,7 @@ box()
 rm("NORVvar","NORV2", "NORV_lon","NORV_lat")
 
 #remove universal variables
-rm("I","JJ","J")
+rm("II","JJ","J")
 
 #subset the dataframe based on the area of interest
 #average the environmental variable based on the ITS over the area of interest
@@ -578,6 +613,10 @@ EVdf<- bind_cols(EV_ddf,as.data.frame(resEV))
 NVdf<- bind_cols(NV_ddf,as.data.frame(resNV))
 EKE <- bind_cols(SSH_ddf,as.data.frame(EKE_cm))
 ChlAdf <- bind_cols(ChlA_ddf, as.data.frame(resChlA))
+
+#Visualize Eddy Kinetic Energy
+hist(EKE_cm)
+plot(EKE)
 
 #clear memory and increase memory limit size
 gc()
@@ -648,10 +687,14 @@ GAM_01b = gam(HoursNorm ~ s(Julian, bs = "cc", k =-1), data = TabBinned_Grouped,
 model01 = c('empty','01a','01b')
 AIC01 = c(AIC(GAM_empty),AIC(GAM_01a),AIC(GAM_01b))
 data.frame(rbind(model01,AIC01))
+#Saipan
 #X1               X2               X3
 #model01            empty              01a              01b
 #AIC01   2143.75884213975 2130.74080097241 2103.62871708431
 #Julian day as a smooth
+
+#Tinian
+
 
 #Chlorophyll
 GAM_02a = gam(HoursNorm ~ resChlA, data = TabBinned_Grouped, family = tw, method = "REML")
