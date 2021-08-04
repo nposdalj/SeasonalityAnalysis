@@ -642,38 +642,38 @@ tab = tab[complete.cases(tab[ , 2:4]),]#remove any rows with lat or long as na
 tab <- left_join(tab, SexDayData, by = 'time')
 
 #Change column names to look good on plots
-TabBinned_Grouped = TabBinned_Grouped %>% 
-  dplyr::rename(
-    'Julian Day' = 'Julian',
-  )
-TabBinned_Grouped = TabBinned_Grouped %>% 
-  dplyr::rename(
-    'Mean SST (C)' = 'mean_SST',
-  )
-TabBinned_Grouped = TabBinned_Grouped %>% 
-  dplyr::rename(
-    'Standard Deviation of SST (C)' = 'SD_SST',
-  )
-TabBinned_Grouped = TabBinned_Grouped %>% 
-  dplyr::rename(
-    'Chlorophyll (mg m^-3)' = 'resChlA',
-  )
-TabBinned_Grouped = TabBinned_Grouped %>% 
-  dplyr::rename(
-    'SSH (m)' = 'resSSH',
-  )
-TabBinned_Grouped = TabBinned_Grouped %>% 
-  dplyr::rename(
-    'Mixed Layer Thickness (m)' = 'resDEN',
-  )
-TabBinned_Grouped = TabBinned_Grouped %>% 
-  dplyr::rename(
-    'Salinity (ppt)' = 'resSAL',
-  )
-TabBinned_Grouped = TabBinned_Grouped %>% 
-  dplyr::rename(
-    'EKE (cm^2 s^-2)' = 'EKE_cm',
-  )
+#TabBinned_Grouped = TabBinned_Grouped %>% 
+ # dplyr::rename(
+ #   'Julian Day' = 'Julian',
+ # )
+#TabBinned_Grouped = TabBinned_Grouped %>% 
+  #dplyr::rename(
+   # 'Mean SST (C)' = 'mean_SST',
+  #)
+#TabBinned_Grouped = TabBinned_Grouped %>% 
+  #dplyr::rename(
+  #  'Standard Deviation of SST (C)' = 'SD_SST',
+  #)
+#TabBinned_Grouped = TabBinned_Grouped %>% 
+  #dplyr::rename(
+   # 'Chlorophyll (mg m^-3)' = 'resChlA',
+ # )
+#TabBinned_Grouped = TabBinned_Grouped %>% 
+  #dplyr::rename(
+  #  'SSH (m)' = 'resSSH',
+ # )
+#TabBinned_Grouped = TabBinned_Grouped %>% 
+  #dplyr::rename(
+    #'Mixed Layer Thickness (m)' = 'resDEN',
+ # )
+#TabBinned_Grouped = TabBinned_Grouped %>% 
+  #dplyr::rename(
+  #  'Salinity (ppt)' = 'resSAL',
+  #)
+#TabBinned_Grouped = TabBinned_Grouped %>% 
+  #dplyr::rename(
+  #  'EKE (cm^2 s^-2)' = 'EKE_cm',
+ # )
   
 #Group by ITS for the general sperm whale model
 startDate = tab$time[1]
@@ -762,7 +762,7 @@ if (exists("ITSM")){
 #empty model for comparison
 GAM_empty = gam(HoursNorm ~ 1, data = TabBinned_Grouped, family = tw, method = "REML")
 
-#Julian day
+#Julian Day
 GAM_01a = gam(HoursNorm ~ Julian, data = TabBinned_Grouped, family = tw, method = "REML")
 GAM_01b = gam(HoursNorm ~ s(Julian, bs = "cc", k =-1), data = TabBinned_Grouped, family = tw, method = "REML")
 
@@ -773,13 +773,13 @@ data.frame(rbind(model01,AIC01))
 #X1               X2               X3
 #model01            empty              01a              01b
 #AIC01   2143.75884213975 2130.74080097241 2103.62871708431
-#Julian day as a smooth
+#Julian as a smooth
 
 #Tinian
 #X1               X2               X3
 #model01            empty              01a              01b
 #AIC01   1634.79054479956 1623.26560883975 1616.30134957535
-#Julian day as a smooth
+#Julian as a smooth
 
 #Chlorophyll
 GAM_02a = gam(HoursNorm ~ resChlA, data = TabBinned_Grouped, family = tw, method = "REML")
@@ -801,8 +801,8 @@ data.frame(rbind(model02,AIC02))
 #Chlorophyll as a smooth
 
 #EKE
-GAM_03a = gam(HoursNorm ~ EKE_cm, data = TabBinned_Grouped, family = tw, method = "REML")
-GAM_03b = gam(HoursNorm ~ s(EKE_cm, bs = "cc", k =-1), data = TabBinned_Grouped, family = tw, method = "REML")
+GAM_03a = gam(HoursNorm ~ 'EKE_cm', data = TabBinned_Grouped, family = tw, method = "REML")
+GAM_03b = gam(HoursNorm ~ s('EKE_cm', bs = "cc", k =-1), data = TabBinned_Grouped, family = tw, method = "REML")
 
 model03 = c('empty','03a','03b')
 AIC03 = c(AIC(GAM_empty),AIC(GAM_03a),AIC(GAM_03b))
@@ -820,8 +820,8 @@ data.frame(rbind(model03,AIC03))
 #EKE as linear
 
 #Salinity
-GAM_04a = gam(HoursNorm ~ resSAL, data = TabBinned_Grouped, family = tw, method = "REML")
-GAM_04b = gam(HoursNorm ~ s(resSAL, bs = "cc", k =-1), data = TabBinned_Grouped, family = tw, method = "REML")
+GAM_04a = gam(HoursNorm ~ 'resSAL', data = TabBinned_Grouped, family = tw, method = "REML")
+GAM_04b = gam(HoursNorm ~ s('resSAL', bs = "cc", k =-1), data = TabBinned_Grouped, family = tw, method = "REML")
 
 model04 = c('empty','04a','04b')
 AIC04 = c(AIC(GAM_empty),AIC(GAM_04a),AIC(GAM_04b))
@@ -1049,7 +1049,7 @@ data.frame(rbind(modelR3,AICR3))
 #X5               X6               X7
 #modelR3             MT                H                D
 #AICR3   2097.304971053 2107.85285812374 2094.33356083903
-#SSH removed because want to keep Julian Day despite high AIC
+#SSH removed because want to keep Julian despite high AIC
 
 #Tinian
 #X1               X2               X3               X4
@@ -1058,7 +1058,7 @@ data.frame(rbind(modelR3,AICR3))
 #X5               X6               X7
 #modelR3               MT                H                D
 #AICR3   1600.48062443816 1599.63678542674 1610.11271396339
-#density removed, keeping Julian day despite high AIC
+#density removed, keeping Julian despite high AIC
 
 #Round 4
 Full4 = gam(HoursNorm ~ s(Julian, bs = "cc", k=-1)+EKE_cm+
@@ -1152,7 +1152,7 @@ ggsave(fig1)
 #empty model for comparison
 GAM_empty = gam(FemaleHoursNorm ~ 1, data = TabBinned_Grouped, family = tw, method = "REML")
 
-#Julian day
+#Julian
 GAM_01a = gam(FemaleHoursNorm ~ Julian, data = TabBinned_Grouped, family = tw, method = "REML")
 GAM_01b = gam(FemaleHoursNorm ~ s(Julian, bs = "cc", k =-1), data = TabBinned_Grouped, family = tw, method = "REML")
 
@@ -1162,7 +1162,7 @@ data.frame(rbind(model01,AIC01))
 #X1               X2               X3
 #model01            empty              01a              01b
 #AIC01   2665.37688613595 2658.91448130588 2633.63404062137
-#Julian day as a smooth
+#Julian as a smooth
 
 #Chlorophyll
 GAM_02a = gam(FemaleHoursNorm ~ resChlA, data = TabBinned_Grouped, family = tw, method = "REML")
@@ -1359,7 +1359,7 @@ data.frame(rbind(modelR3,AICR3))
 #X5              X6               X7
 #modelR3               MT               H                D
 #AICR3   2623.49914510541 2634.7100193122 2623.89766622477
-#remove SSH, but keeping Julian Day
+#remove SSH, but keeping Julian
 
 #Round 4
 Full4 = gam(FemaleHoursNorm ~ s(Julian, bs = "cc", k=-1)+s(EKE_cm, bs = "cc", k = -1)+
@@ -1441,7 +1441,7 @@ ggsave(fig1)
 #empty model for comparison
 GAM_empty = gam(MaleHoursNorm ~ 1, data = TabBinned_Grouped, family = tw, method = "REML")
 
-#Julian day
+#Julian
 GAM_01a = gam(MaleHoursNorm ~ Julian, data = TabBinned_Grouped, family = tw, method = "REML")
 GAM_01b = gam(MaleHoursNorm ~ s(Julian, bs = "cc", k =-1), data = TabBinned_Grouped, family = tw, method = "REML")
 
@@ -1451,7 +1451,7 @@ data.frame(rbind(model01,AIC01))
 #X1               X2               X3
 #model01            empty              01a              01b
 #AIC01   887.529203151121 878.265022630491 873.011160556566
-#Julian Day as a smooth
+#Julian as a smooth
 
 #Chlorophyll
 GAM_02a = gam(MaleHoursNorm ~ resChlA, data = TabBinned_Grouped, family = tw, method = "REML")
