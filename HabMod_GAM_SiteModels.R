@@ -642,6 +642,38 @@ tab = tab[complete.cases(tab[ , 2:4]),]#remove any rows with lat or long as na
 tab <- left_join(tab, SexDayData, by = 'time')
 
 #Change column names to look good on plots
+TabBinned_Grouped = TabBinned_Grouped %>% 
+  dplyr::rename(
+    'Julian Day' = 'Julian',
+  )
+TabBinned_Grouped = TabBinned_Grouped %>% 
+  dplyr::rename(
+    'Mean SST (C)' = 'mean_SST',
+  )
+TabBinned_Grouped = TabBinned_Grouped %>% 
+  dplyr::rename(
+    'Standard Deviation of SST (C)' = 'SD_SST',
+  )
+TabBinned_Grouped = TabBinned_Grouped %>% 
+  dplyr::rename(
+    'Chlorophyll (mg m^-3)' = 'resChlA',
+  )
+TabBinned_Grouped = TabBinned_Grouped %>% 
+  dplyr::rename(
+    'SSH (m)' = 'resSSH',
+  )
+TabBinned_Grouped = TabBinned_Grouped %>% 
+  dplyr::rename(
+    'Mixed Layer Thickness (m)' = 'resDEN',
+  )
+TabBinned_Grouped = TabBinned_Grouped %>% 
+  dplyr::rename(
+    'Salinity (ppt)' = 'resSAL',
+  )
+TabBinned_Grouped = TabBinned_Grouped %>% 
+  dplyr::rename(
+    'EKE (cm^2 s^-2)' = 'EKE_cm',
+  )
   
 #Group by ITS for the general sperm whale model
 startDate = tab$time[1]
