@@ -47,7 +47,7 @@ DayTab = data.frame(matrix(ncol = 0, nrow=0))
 for (i in 1:length(Sites)){
   dayBinTAB = read.csv(filename[i])
   modDayBinTAB = dayBinTAB %>%
-    dplyr::select(tbin, HoursNorm)
+    dplyr::select(tbin, HoursNorm, Effort_Bin, Effort_Sec)
   name = Sites[i]
   modDayBinTAB$Site = name
   modDayBinTAB$ID = i
@@ -70,7 +70,7 @@ DayTab$Julian = format(DayTab$tbin,"%j")
 DayTab$Year = format(DayTab$tbin,"%Y")
 
 #PreAbs
-DayTab$HoursNorm %>% mutate_if(is.numeric, ~1 * (. > 0))
+DayTab$HoursNorm %>% mutate_if(is.numeric, ~1 * (. > 0)) #replaces NA values with 0
 DayTab$PreAbs = ifelse(DayTab$HoursNorm>0,1,0)
 
 #Export grouped table as .csv
@@ -84,7 +84,7 @@ HourTab = data.frame(matrix(ncol = 0, nrow=0))
 for (i in 1:length(Sites)){
   HourBinTab = read.csv(filename2[i])
   modHourBinTAB = HourBinTab %>%
-    dplyr::select(tbin, PreAbs)
+    dplyr::select(tbin, PreAbs, Effort_Bin, Effort_Sec)
   name = Sites[i]
   names(modHourBinTAB)[names(modHourBinTAB) == "PreAbs"] = name
   if (i == 1){
@@ -108,7 +108,7 @@ HourTab = data.frame(matrix(ncol = 0, nrow=0))
 for (i in 1:length(Sites)){
   HourBinTab = read.csv(filename2[i])
   modHourBinTAB = HourBinTab %>%
-    dplyr::select(tbin, PreAbs)
+    dplyr::select(tbin, PreAbs, Effort_Bin, Effort_Sec)
   name = Sites[i]
   modHourBinTAB$Site = name
   modHourBinTAB$ID = i
