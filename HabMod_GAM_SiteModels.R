@@ -744,7 +744,10 @@ data.frame(rbind(model01,AIC01))
 #Julian day as a smooth
 
 #Tinian
-
+#X1               X2               X3
+#model01            empty              01a              01b
+#AIC01   1634.79054479956 1623.26560883975 1616.30134957535
+#Julian day as a smooth
 
 #Chlorophyll
 GAM_02a = gam(HoursNorm ~ resChlA, data = TabBinned_Grouped, family = tw, method = "REML")
@@ -753,10 +756,17 @@ GAM_02b = gam(HoursNorm ~ s(resChlA, bs = "cc", k =-1), data = TabBinned_Grouped
 model02 = c('empty','02a','02b')
 AIC02 = c(AIC(GAM_empty),AIC(GAM_02a),AIC(GAM_02b))
 data.frame(rbind(model02,AIC02))
+#Saipan
 #X1               X2               X3
 #model02            empty              02a              02b
 #AIC02   2143.75884213975 1032.98688073045 1033.55960791435
 #Chlorophyll as linear
+
+#Tinian
+#X1               X2               X3
+#model02            empty              02a              02b
+#AIC02   1634.79054479956 406.874091957057 405.618387661288
+#Chlorophyll as a smooth
 
 #EKE
 GAM_03a = gam(HoursNorm ~ EKE_cm, data = TabBinned_Grouped, family = tw, method = "REML")
@@ -765,10 +775,17 @@ GAM_03b = gam(HoursNorm ~ s(EKE_cm, bs = "cc", k =-1), data = TabBinned_Grouped,
 model03 = c('empty','03a','03b')
 AIC03 = c(AIC(GAM_empty),AIC(GAM_03a),AIC(GAM_03b))
 data.frame(rbind(model03,AIC03))
+#Saipan
 #X1               X2              X3
 #model03            empty              03a             03b
 #AIC03   2143.75884213975 2145.70388331462 2143.7678528048
 #EKE as a smooth
+
+#Tinian
+#X1               X2               X3
+#model03            empty              03a              03b
+#AIC03   1634.79054479956 1635.20411990693 1635.21473660789
+#EKE as linear
 
 #Salinity
 GAM_04a = gam(HoursNorm ~ resSAL, data = TabBinned_Grouped, family = tw, method = "REML")
@@ -777,10 +794,17 @@ GAM_04b = gam(HoursNorm ~ s(resSAL, bs = "cc", k =-1), data = TabBinned_Grouped,
 model04 = c('empty','04a','04b')
 AIC04 = c(AIC(GAM_empty),AIC(GAM_04a),AIC(GAM_04b))
 data.frame(rbind(model04,AIC04))
+#Saipan
 #X1               X2               X3
 #model04            empty              04a              04b
 #AIC04   2143.75884213975 2144.18447053367 2143.55635615522
 #salinity as a smooth
+
+#Tinian
+#X1              X2               X3
+#model04            empty             04a              04b
+#AIC04   1634.79054479956 1616.3539671556 1620.16995410007
+#salinity as linear
 
 #Mean SST
 GAM_05a = gam(HoursNorm ~ mean_SST, data = TabBinned_Grouped, family = tw, method = "REML")
@@ -789,9 +813,16 @@ GAM_05b = gam(HoursNorm ~ s(mean_SST, bs = "cc", k =-1), data = TabBinned_Groupe
 model05 = c('empty','05a','05b')
 AIC05 = c(AIC(GAM_empty),AIC(GAM_05a),AIC(GAM_05b))
 data.frame(rbind(model05,AIC05))
+#Saipan
 #X1               X2               X3
 #model05            empty              05a              05b
 #AIC05   2143.75884213975 2137.89747496607 2138.79817539631
+#mean SST as linear
+
+#Tinian
+#X1               X2               X3
+#model05            empty              05a              05b
+#AIC05   1634.79054479956 1631.63015848574 1633.92413143704
 #mean SST as linear
 
 #SSH
@@ -801,9 +832,16 @@ GAM_06b = gam(HoursNorm ~ s(resSSH, bs = "cc", k =-1), data = TabBinned_Grouped,
 model06 = c('empty','06a','06b')
 AIC06 = c(AIC(GAM_empty),AIC(GAM_06a),AIC(GAM_06b))
 data.frame(rbind(model06,AIC06))
+#Saipan
 #X1               X2              X3
 #model06            empty              06a             06b
 #AIC06   2143.75884213975 2139.08068098461 2132.5023262054
+#SSH as a smooth
+
+#Tinian
+#X1               X2               X3
+#model06            empty              06a              06b
+#AIC06   1634.79054479956 1635.54104874212 1634.98058063512
 #SSH as a smooth
 
 #Density
@@ -813,9 +851,16 @@ GAM_07b = gam(HoursNorm ~ s(resDEN, bs = "cc", k =-1), data = TabBinned_Grouped,
 model07 = c('empty','07a','07b')
 AIC07 = c(AIC(GAM_empty),AIC(GAM_07a),AIC(GAM_07b))
 data.frame(rbind(model07,AIC07))
+#Saipan
 #X1               X2               X3
 #model07            empty              07a              07b
 #AIC07   2143.75884213975 2142.00922461761 2143.75905922045
+#density as linear
+
+#Tinian
+#X1               X2               X3
+#model07            empty              07a              07b
+#AIC07   1634.79054479956 1626.63429109943 1628.13799986131
 #density as linear
 
 #Standard deviation of SST
@@ -825,44 +870,52 @@ GAM_08b = gam(HoursNorm ~ s(SD_SST, bs = "cc", k =-1), data = TabBinned_Grouped,
 model08 = c('empty','08a','08b')
 AIC08 = c(AIC(GAM_empty),AIC(GAM_08a),AIC(GAM_08b))
 data.frame(rbind(model08,AIC08))
+#Saipan
 #X1               X2               X3
 #model08            empty              08a              08b
 #AIC08   2143.75884213975 1457.77690764797 1456.05186214008
 #std dev of SST as a smooth
 
+#Tinian
+#X1               X2              X3
+#model08            empty              08a             08b
+#AIC08   1634.79054479956 805.705048109246 805.79501791028
+#std dev of SST as linear
+
 #Test which covariates we should keep
 #Round 1
 #Initial model
-Full1 = gam(HoursNorm ~ s(Julian, bs = "cc", k=-1)+resChlA+s(EKE_cm, bs = "cc", k = -1)+
-              s(resSAL, bs = "cc", k =-1) + mean_SST +s(resSSH, bs="cc", k=-1)+resDEN+s(SD_SST, bs="cc", k=-1)
+Full1 = gam(HoursNorm ~ s(Julian, bs = "cc", k=-1)+s(resChlA, bs="cc", k=-1)+EKE_cm+
+              resSAL + mean_SST +s(resSSH, bs="cc", k=-1)+resDEN+SD_SST
               , data = TabBinned_Grouped, family = tw, method = "REML")
-J = gam(HoursNorm ~ resChlA+s(EKE_cm, bs = "cc", k = -1)+
-          s(resSAL, bs = "cc", k =-1) + mean_SST +s(resSSH, bs="cc", k=-1)+resDEN+s(SD_SST, bs="cc", k=-1)
-        , data = TabBinned_Grouped, family = tw, method = "REML")
-C = gam(HoursNorm ~ s(Julian, bs = "cc", k=-1)+s(EKE_cm, bs = "cc", k = -1)+
-          s(resSAL, bs = "cc", k =-1) + mean_SST +s(resSSH, bs="cc", k=-1)+resDEN+s(SD_SST, bs="cc", k=-1)
-        , data = TabBinned_Grouped, family = tw, method = "REML")
-E = gam(HoursNorm ~ s(Julian, bs = "cc", k=-1)+resChlA+
-          s(resSAL, bs = "cc", k =-1) + mean_SST +s(resSSH, bs="cc", k=-1)+resDEN+s(SD_SST, bs="cc", k=-1)
-        , data = TabBinned_Grouped, family = tw, method = "REML")
-S = gam(HoursNorm ~ s(Julian, bs = "cc", k=-1)+resChlA+s(EKE_cm, bs = "cc", k = -1)
-           + mean_SST +s(resSSH, bs="cc", k=-1)+resDEN+s(SD_SST, bs="cc", k=-1)
-        , data = TabBinned_Grouped, family = tw, method = "REML")
-MT = gam(HoursNorm ~ s(Julian, bs = "cc", k=-1)+resChlA+s(EKE_cm, bs = "cc", k = -1)+
-           s(resSAL, bs = "cc", k =-1) +s(resSSH, bs="cc", k=-1)+resDEN+s(SD_SST)
+J = gam(HoursNorm ~ s(resChlA, bs="cc", k=-1)+EKE_cm+
+           resSAL + mean_SST +s(resSSH, bs="cc", k=-1)+resDEN+SD_SST
          , data = TabBinned_Grouped, family = tw, method = "REML")
-H = gam(HoursNorm ~ s(Julian, bs = "cc", k=-1)+resChlA+s(EKE_cm, bs = "cc", k = -1)+
-          s(resSAL, bs = "cc", k =-1) + mean_SST+resDEN+s(SD_SST, bs="cc", k=-1)
+C = gam(HoursNorm ~ s(Julian, bs = "cc", k=-1)+EKE_cm+
+          resSAL + mean_SST +s(resSSH, bs="cc", k=-1)+resDEN+SD_SST
         , data = TabBinned_Grouped, family = tw, method = "REML")
-D = gam(HoursNorm ~ s(Julian, bs = "cc", k=-1)+resChlA+s(EKE_cm, bs = "cc", k = -1)+
-          s(resSAL, bs = "cc", k =-1) + mean_SST +s(resSSH, bs="cc", k=-1)+s(SD_SST, bs="cc", k=-1)
+E = gam(HoursNorm ~ s(Julian, bs = "cc", k=-1)+s(resChlA, bs="cc", k=-1)+
+          resSAL + mean_SST +s(resSSH, bs="cc", k=-1)+resDEN+SD_SST
         , data = TabBinned_Grouped, family = tw, method = "REML")
-SDT = gam(HoursNorm ~ s(Julian, bs = "cc", k=-1)+resChlA+s(EKE_cm, bs = "cc", k = -1)+
-            s(resSAL, bs = "cc", k =-1) + mean_SST +s(resSSH, bs="cc", k=-1)+resDEN
+S = gam(HoursNorm ~ s(Julian, bs = "cc", k=-1)+s(resChlA, bs="cc", k=-1)+EKE_cm+
+          mean_SST +s(resSSH, bs="cc", k=-1)+resDEN+SD_SST
+        , data = TabBinned_Grouped, family = tw, method = "REML")
+MT = gam(HoursNorm ~ s(Julian, bs = "cc", k=-1)+s(resChlA, bs="cc", k=-1)+EKE_cm+
+           resSAL+s(resSSH, bs="cc", k=-1)+resDEN+SD_SST
+         , data = TabBinned_Grouped, family = tw, method = "REML")
+H = gam(HoursNorm ~ s(Julian, bs = "cc", k=-1)+s(resChlA, bs="cc", k=-1)+EKE_cm+
+          resSAL + mean_SST+resDEN+SD_SST
+        , data = TabBinned_Grouped, family = tw, method = "REML")
+D = gam(HoursNorm ~ s(Julian, bs = "cc", k=-1)+s(resChlA, bs="cc", k=-1)+EKE_cm+
+          resSAL + mean_SST +s(resSSH, bs="cc", k=-1)+SD_SST
+        , data = TabBinned_Grouped, family = tw, method = "REML")
+SDT = gam(HoursNorm ~ s(Julian, bs = "cc", k=-1)+s(resChlA, bs="cc", k=-1)+EKE_cm+
+            resSAL + mean_SST +s(resSSH, bs="cc", k=-1)+resDEN
           , data = TabBinned_Grouped, family = tw, method = "REML")
 modelR1 = c('Full1','J','C','E','S','MT','H','D','SDT')
 AICR1 = c(AIC(Full1),AIC(J),AIC(C),AIC(E),AIC(S),AIC(MT),AIC(H),AIC(D),AIC(SDT))
 data.frame(rbind(modelR1,AICR1))
+#Saipan
 #X1              X2               X3               X4
 #modelR1            Full1               J                C                E
 #AICR1   830.227882831821 832.56314687881 1425.18811746228 830.229480278946
@@ -874,34 +927,47 @@ data.frame(rbind(modelR1,AICR1))
 #AICR1   1016.80934718085
 #Chlorophyll removed
 
+#Tinian
+#X1               X2               X3               X4
+#modelR1            Full1                J                C                E
+#AICR1   347.937236273978 355.554294014835 783.336716462128 353.433707876557
+#X5               X6               X7               X8
+#modelR1                S               MT                H                D
+#AICR1   348.530326551007 346.152169567432 351.029230463733 353.333003205745
+#X9
+#modelR1              SDT
+#AICR1   392.376363522144
+#Chlorophyll removed
+
 #Round 2
-Full2 = gam(HoursNorm ~ s(Julian, bs = "cc", k=-1)+s(EKE_cm, bs = "cc", k = -1)+
-              s(resSAL, bs = "cc", k =-1) + mean_SST +s(resSSH, bs="cc", k=-1)+resDEN+s(SD_SST, bs="cc", k=-1)
+Full2 = gam(HoursNorm ~ s(Julian, bs = "cc", k=-1)+EKE_cm+
+              resSAL + mean_SST +s(resSSH, bs="cc", k=-1)+resDEN+SD_SST
             , data = TabBinned_Grouped, family = tw, method = "REML")
-J = gam(HoursNorm ~ s(EKE_cm, bs = "cc", k = -1)+
-          s(resSAL, bs = "cc", k =-1) + mean_SST +s(resSSH, bs="cc", k=-1)+resDEN+s(SD_SST, bs="cc", k=-1)
+J = gam(HoursNorm ~ EKE_cm+
+          resSAL + mean_SST +s(resSSH, bs="cc", k=-1)+resDEN+SD_SST
         , data = TabBinned_Grouped, family = tw, method = "REML")
 E = gam(HoursNorm ~ s(Julian, bs = "cc", k=-1)+
-          s(resSAL, bs = "cc", k =-1) + mean_SST +s(resSSH, bs="cc", k=-1)+resDEN+s(SD_SST, bs="cc", k=-1)
+          resSAL + mean_SST +s(resSSH, bs="cc", k=-1)+resDEN+SD_SST
         , data = TabBinned_Grouped, family = tw, method = "REML")
-S = gam(HoursNorm ~ s(Julian, bs = "cc", k=-1)+s(EKE_cm, bs = "cc", k = -1)+
-           mean_SST +s(resSSH, bs="cc", k=-1)+resDEN+s(SD_SST, bs="cc", k=-1)
+S = gam(HoursNorm ~ s(Julian, bs = "cc", k=-1)+EKE_cm+
+         mean_SST +s(resSSH, bs="cc", k=-1)+resDEN+SD_SST
         , data = TabBinned_Grouped, family = tw, method = "REML")
-MT = gam(HoursNorm ~ s(Julian, bs = "cc", k=-1)+s(EKE_cm, bs = "cc", k = -1)+
-           s(resSAL, bs = "cc", k =-1)  +s(resSSH, bs="cc", k=-1)+resDEN+s(SD_SST, bs="cc", k=-1)
+MT = gam(HoursNorm ~ s(Julian, bs = "cc", k=-1)+EKE_cm+
+           resSAL +s(resSSH, bs="cc", k=-1)+resDEN+SD_SST
          , data = TabBinned_Grouped, family = tw, method = "REML")
-H = gam(HoursNorm ~ s(Julian, bs = "cc", k=-1)+s(EKE_cm, bs = "cc", k = -1)+
-         s(resSAL, bs = "cc", k =-1) + mean_SST +resDEN+s(SD_SST, bs="cc", k=-1),
-        data = TabBinned_Grouped, family = tw, method = "REML")
-D = gam(HoursNorm ~ s(Julian, bs = "cc", k=-1)+s(EKE_cm, bs = "cc", k = -1)+
-          s(resSAL, bs = "cc", k =-1) + mean_SST +s(resSSH, bs="cc", k=-1)+s(SD_SST, bs="cc", k=-1)
+H = gam(HoursNorm ~ s(Julian, bs = "cc", k=-1)+EKE_cm+
+          resSAL + mean_SST +resDEN+SD_SST
         , data = TabBinned_Grouped, family = tw, method = "REML")
-SDT = gam(HoursNorm ~ s(Julian, bs = "cc", k=-1)+s(EKE_cm, bs = "cc", k = -1)+
-           s(resSAL, bs = "cc", k =-1) + mean_SST +s(resSSH, bs="cc", k=-1)+resDEN
-         , data = TabBinned_Grouped, family = tw, method = "REML")
+D = gam(HoursNorm ~ s(Julian, bs = "cc", k=-1)+EKE_cm+
+          resSAL + mean_SST +s(resSSH, bs="cc", k=-1)+SD_SST
+        , data = TabBinned_Grouped, family = tw, method = "REML")
+SDT = gam(HoursNorm ~ s(Julian, bs = "cc", k=-1)+EKE_cm+
+            resSAL + mean_SST +s(resSSH, bs="cc", k=-1)+resDEN
+          , data = TabBinned_Grouped, family = tw, method = "REML")
 modelR2 = c('Full2','J','E','S','MT','H','D','SDT')
 AICR2 = c(AIC(Full2),AIC(J),AIC(E),AIC(S),AIC(MT),AIC(H),AIC(D),AIC(SDT))
 data.frame(rbind(modelR2,AICR2))
+#Saipan
 #X1               X2               X3               X4
 #modelR2            Full2                J                E                S
 #AICR2   1425.18811746228 1446.14871965395 1425.18858469934 1424.29137767899
@@ -910,31 +976,41 @@ data.frame(rbind(modelR2,AICR2))
 #AICR2   1426.6336193432 1433.34011165727 1425.80106718315 2096.24862054496
 #std dev SST removed
 
+#Tinian
+#X1               X2              X3               X4
+#modelR2            Full2                J               E                S
+#AICR2   783.336716462128 796.097981593796 793.46275558682 784.381966016954
+#X5               X6               X7               X8
+#modelR2               MT                H                D              SDT
+#AICR2   783.840815609277 783.230482519778 788.394191041227 1600.41387126888
+#std dev of SST removed
+
 #Round 3
-Full3 = gam(HoursNorm ~ s(Julian, bs = "cc", k=-1)+s(EKE_cm, bs = "cc", k = -1)+
-              s(resSAL, bs = "cc", k =-1) + mean_SST +s(resSSH, bs="cc", k=-1)+resDEN
+Full3 = gam(HoursNorm ~ s(Julian, bs = "cc", k=-1)+EKE_cm+
+              resSAL + mean_SST +s(resSSH, bs="cc", k=-1)+resDEN
             , data = TabBinned_Grouped, family = tw, method = "REML")
-J = gam(HoursNorm ~ s(EKE_cm, bs = "cc", k = -1)+
-          s(resSAL, bs = "cc", k =-1) + mean_SST +s(resSSH, bs="cc", k=-1)+resDEN
+J = gam(HoursNorm ~ EKE_cm+
+          resSAL + mean_SST +s(resSSH, bs="cc", k=-1)+resDEN
         , data = TabBinned_Grouped, family = tw, method = "REML")
 E = gam(HoursNorm ~ s(Julian, bs = "cc", k=-1)+
-          s(resSAL, bs = "cc", k =-1) + mean_SST +s(resSSH, bs="cc", k=-1)+resDEN
+          resSAL + mean_SST +s(resSSH, bs="cc", k=-1)+resDEN
         , data = TabBinned_Grouped, family = tw, method = "REML")
-S = gam(HoursNorm ~ s(Julian, bs = "cc", k=-1)+s(EKE_cm, bs = "cc", k = -1)+
+S = gam(HoursNorm ~ s(Julian, bs = "cc", k=-1)+EKE_cm+
           mean_SST +s(resSSH, bs="cc", k=-1)+resDEN
         , data = TabBinned_Grouped, family = tw, method = "REML")
-MT = gam(HoursNorm ~ s(Julian, bs = "cc", k=-1)+s(EKE_cm, bs = "cc", k = -1)+
-           s(resSAL, bs = "cc", k =-1)  +s(resSSH, bs="cc", k=-1)+resDEN
+MT = gam(HoursNorm ~ s(Julian, bs = "cc", k=-1)+EKE_cm+
+           resSAL +s(resSSH, bs="cc", k=-1)+resDEN
          , data = TabBinned_Grouped, family = tw, method = "REML")
-H = gam(HoursNorm ~ s(Julian, bs = "cc", k=-1)+s(EKE_cm, bs = "cc", k = -1)+
-          s(resSAL, bs = "cc", k =-1) + mean_SST +resDEN,
-        data = TabBinned_Grouped, family = tw, method = "REML")
-D = gam(HoursNorm ~ s(Julian, bs = "cc", k=-1)+s(EKE_cm, bs = "cc", k = -1)+
-          s(resSAL, bs = "cc", k =-1) + mean_SST +s(resSSH, bs="cc", k=-1)
+H = gam(HoursNorm ~ s(Julian, bs = "cc", k=-1)+EKE_cm+
+          resSAL + mean_SST +resDEN
+        , data = TabBinned_Grouped, family = tw, method = "REML")
+D = gam(HoursNorm ~ s(Julian, bs = "cc", k=-1)+EKE_cm+
+          resSAL + mean_SST +s(resSSH, bs="cc", k=-1)
         , data = TabBinned_Grouped, family = tw, method = "REML")
 modelR3 = c('Full3','J','E','S','MT','H','D')
 AICR3 = c(AIC(Full3),AIC(J),AIC(E),AIC(S),AIC(MT),AIC(H),AIC(D))
 data.frame(rbind(modelR3,AICR3))
+#Saipan
 #X1               X2               X3               X4
 #modelR3            Full3                J                E                S
 #AICR3   1425.18811746228 2128.97009012411 2096.24772996916 2096.24713217825
@@ -943,28 +1019,38 @@ data.frame(rbind(modelR3,AICR3))
 #AICR3   2097.304971053 2107.85285812374 2094.33356083903
 #SSH removed because want to keep Julian Day despite high AIC
 
+#Tinian
+#X1               X2               X3               X4
+#modelR3            Full3                J                E                S
+#AICR3   1600.41387126888 1613.02010710228 1603.11588933772 1602.81465724763
+#X5               X6               X7
+#modelR3               MT                H                D
+#AICR3   1600.48062443816 1599.63678542674 1610.11271396339
+#density removed, keeping Julian day despite high AIC
+
 #Round 4
-Full4 = gam(HoursNorm ~ s(Julian, bs = "cc", k=-1)+s(EKE_cm, bs = "cc", k = -1)+
-              s(resSAL, bs = "cc", k =-1) + mean_SST +resDEN
+Full4 = gam(HoursNorm ~ s(Julian, bs = "cc", k=-1)+EKE_cm+
+              resSAL + mean_SST +s(resSSH, bs="cc", k=-1)
             , data = TabBinned_Grouped, family = tw, method = "REML")
-J = gam(HoursNorm ~ s(EKE_cm, bs = "cc", k = -1)+
-          s(resSAL, bs = "cc", k =-1) + mean_SST +resDEN
+J = gam(HoursNorm ~ EKE_cm+
+          resSAL + mean_SST +s(resSSH, bs="cc", k=-1)+resDEN
         , data = TabBinned_Grouped, family = tw, method = "REML")
 E = gam(HoursNorm ~ s(Julian, bs = "cc", k=-1)+
-          s(resSAL, bs = "cc", k =-1) + mean_SST +resDEN
+          resSAL + mean_SST +s(resSSH, bs="cc", k=-1)
         , data = TabBinned_Grouped, family = tw, method = "REML")
-S = gam(HoursNorm ~ s(Julian, bs = "cc", k=-1)+s(EKE_cm, bs = "cc", k = -1)+
-          mean_SST +resDEN
+S = gam(HoursNorm ~ s(Julian, bs = "cc", k=-1)+EKE_cm+
+          mean_SST +s(resSSH, bs="cc", k=-1)
         , data = TabBinned_Grouped, family = tw, method = "REML")
-MT = gam(HoursNorm ~ s(Julian, bs = "cc", k=-1)+s(EKE_cm, bs = "cc", k = -1)+
-           s(resSAL, bs = "cc", k =-1)+resDEN
+MT = gam(HoursNorm ~ s(Julian, bs = "cc", k=-1)+EKE_cm+
+           resSAL +s(resSSH, bs="cc", k=-1)
          , data = TabBinned_Grouped, family = tw, method = "REML")
-D = gam(HoursNorm ~ s(Julian, bs = "cc", k=-1)+s(EKE_cm, bs = "cc", k = -1)+
-          s(resSAL, bs = "cc", k =-1) + mean_SST 
+H = gam(HoursNorm ~ s(Julian, bs = "cc", k=-1)+EKE_cm+
+          resSAL + mean_SST 
         , data = TabBinned_Grouped, family = tw, method = "REML")
-modelR4 = c('Full4','J','E','S','MT','D')
-AICR4 = c(AIC(Full4),AIC(J),AIC(E),AIC(S),AIC(MT),AIC(D))
+modelR4 = c('Full4','J','E','S','MT','H')
+AICR4 = c(AIC(Full4),AIC(J),AIC(E),AIC(S),AIC(MT), AIC(H))
 data.frame(rbind(modelR4,AICR4))
+#Saipan
 #X1               X2               X3              X4
 #modelR4            Full4                J                E               S
 #AICR4   2107.85285812374 2139.59020978204 2107.86893670364 2106.8874359167
@@ -973,10 +1059,46 @@ data.frame(rbind(modelR4,AICR4))
 #AICR4   2105.16883787426 2105.44559132224
 #keeping round 4 remaining variables
 
+#Tinian
+#X1               X2               X3              X4
+#modelR4            Full4                J                E               S
+#AICR4   1610.11271396339 1613.02010710228 1610.32795891867 1616.5529387147
+#X5               X6
+#modelR4               MT                H
+#AICR4   1608.66345169122 1610.05221911716
+#salinity removed
+
+#Round 5
+Full5 = gam(HoursNorm ~ s(Julian, bs = "cc", k=-1)+EKE_cm+
+            mean_SST +s(resSSH, bs="cc", k=-1)
+            , data = TabBinned_Grouped, family = tw, method = "REML")
+J = gam(HoursNorm ~ EKE_cm+
+          mean_SST +s(resSSH, bs="cc", k=-1)+resDEN
+        , data = TabBinned_Grouped, family = tw, method = "REML")
+E = gam(HoursNorm ~ s(Julian, bs = "cc", k=-1)+
+         mean_SST +s(resSSH, bs="cc", k=-1)
+        , data = TabBinned_Grouped, family = tw, method = "REML")
+MT = gam(HoursNorm ~ s(Julian, bs = "cc", k=-1)+EKE_cm+
+           s(resSSH, bs="cc", k=-1)
+         , data = TabBinned_Grouped, family = tw, method = "REML")
+H = gam(HoursNorm ~ s(Julian, bs = "cc", k=-1)+EKE_cm+
+         mean_SST 
+        , data = TabBinned_Grouped, family = tw, method = "REML")
+modelR5 = c('Full5','J','E','MT','H')
+AICR5 = c(AIC(Full5),AIC(J),AIC(E),AIC(MT), AIC(H))
+data.frame(rbind(modelR5,AICR5))
+#Tinian
+#X1               X2               X3               X4
+#modelR5           Full5                J                E               MT
+#AICR5   1616.5529387147 1626.91277331557 1617.59914674097 1616.85853932876
+#X5
+#modelR5                H
+#AICR5   1615.23596666221
+#keep remaining environmental vars for full model
 
 #Final full model
-FinalGAM = gam(HoursNorm ~ s(Julian, bs = "cc", k=-1)+s(EKE_cm, bs = "cc", k = -1)+
-                 s(resSAL, bs = "cc", k =-1) + mean_SST +resDEN
+FinalGAM = gam(HoursNorm ~ s(Julian, bs = "cc", k=-1)+EKE_cm+
+                 mean_SST +s(resSSH, bs="cc", k=-1)
                , data = TabBinned_Grouped, family = tw, method = "REML")
 summary(FinalGAM)
 viz = getViz(FinalGAM)
