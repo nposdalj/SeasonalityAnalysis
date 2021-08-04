@@ -681,8 +681,48 @@ if (exists("ITSF")){
 }
 
 #Group by ITS for Juvenile
+if (exists("ITSJ")){
+  if (ITSJ > 1){
+    ITSgroupsJ = rep(1:(floor(nrow(timeseries)/ITSJ)), times=1, each=ITSJ)
+    timeseriesJ = data.frame(date=seq(startDate, endDate, by="days"))
+    div = floor(nrow(timeseriesJ)/ITSJ)
+    ITSgroups = rep(1:div, times=1, each=ITSJ)
+    divdiff = nrow(timeseriesJ) - length(ITSgroups)
+    last = tail(ITSgroups, n = 1)
+    lastVec = rep(last,each = divdiff)
+    timeseriesJ$groups = c(ITSgroups,lastVec)
+    TabBinnedJ = left_join(tab,timeseriesJ,by = c("time" = "date"))
+    TabBinned_GroupedJ = aggregate(TabBinnedJ[, c(1:length(TabBinnedJ))], list(TabBinnedJ$groups), mean, na.rm = TRUE)
+    TabBinned_GroupedJ$Julian = as.numeric(format(TabBinned_GroupedJ$time,"%j"))
+    TabBinned_GroupedJ$Year = as.numeric(format(TabBinned_GroupedJ$time,"%Y"))
+  } else {
+    TabBinned_GroupedJ = tab
+    TabBinned_GroupedJ$Julian = as.numeric(format(TabBinned_GroupedJ$time,"%j"))
+    TabBinned_GroupedJ$Year = as.numeric(format(TabBinned_GroupedJ$time,"%Y"))
+  }
+}
 
 #Group by ITS for Male
+if (exists("ITSM")){
+  if (ITSM > 1){
+    ITSgroupsM = rep(1:(floor(nrow(timeseries)/ITSM)), times=1, each=ITSM)
+    timeseriesM = data.frame(date=seq(startDate, endDate, by="days"))
+    div = floor(nrow(timeseriesM)/ITSM)
+    ITSgroups = rep(1:div, times=1, each=ITSM)
+    divdiff = nrow(timeseriesM) - length(ITSgroups)
+    last = tail(ITSgroups, n = 1)
+    lastVec = rep(last,each = divdiff)
+    timeseriesM$groups = c(ITSgroups,lastVec)
+    TabBinnedM = left_join(tab,timeseriesM,by = c("time" = "date"))
+    TabBinned_GroupedM = aggregate(TabBinnedM[, c(1:length(TabBinnedM))], list(TabBinnedM$groups), mean, na.rm = TRUE)
+    TabBinned_GroupedM$Julian = as.numeric(format(TabBinned_GroupedM$time,"%j"))
+    TabBinned_GroupedM$Year = as.numeric(format(TabBinned_GroupedM$time,"%Y"))
+  } else {
+    TabBinned_GroupedM = tab
+    TabBinned_GroupedM$Julian = as.numeric(format(TabBinned_GroupedM$time,"%j"))
+    TabBinned_GroupedM$Year = as.numeric(format(TabBinned_GroupedM$time,"%Y"))
+  }
+}
 
 
 #run GAM
