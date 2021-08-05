@@ -28,7 +28,7 @@ library(mgcv)
 #Hourly data
 site = 'CB'
 dir = paste("I:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites")
-fileName = paste("I:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites/AllSitesGrouped_Binary_GAMGEE_ROW.csv")#setting the directory
+fileName = paste(saveDir,site,"_dayData_forGLMR125.csv",sep="") #setting the directory
 HourTable = read.csv(fileName)
 HourTable = na.omit(HourTable)
 HourTable$date = as.Date(HourTable$tbin)
@@ -37,7 +37,7 @@ HourTable = HourTable[ order(HourTable$tbin , decreasing = FALSE ),]
 SiteHourTable = dplyr::filter(HourTable, grepl(site,Site))
 SiteHourTable$Hour = hour(SiteHourTable$tbin)
 
-#Daily data - for block calculations using the Merkens method
+#Daily data - for block calculations
 fileName2 = paste("I:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites/AllSitesGrouped_GAMGEE_ROW.csv")#setting the directory
 DayTable = read.csv(fileName2) #no effort days deleted
 DayTable = na.omit(DayTable)
@@ -249,18 +249,24 @@ QICmod1A
 #QIC1A   62707.622017871 62454.9622741072 62966.989935442 61587.2259674017
 #Year as smooth
 #corstr = ar1
+#QIC            QIC.1            QIC.2            QIC.3
+#model1A            POD0            POD1a            POD1b            POD1c
+#QIC1A   62461.942370187 60987.6811309012 62451.4542013736 60934.0919883293
+#Year as smooth
 
 ## STEP 5: Determine which covariates are most relevant, and which can be removed (on the basis of previous collinearity work).         
 #The initial full model is:
-POD2a = geeglm(PreAbs ~ AvgDayMat+bs(Year),family = binomial, corstr="independence", id=thirtyfour, data=HourTableBinned)
+POD2a = geeglm(PreAbs ~ AvgDayMat+bs(Year),family = binomial, corstr="ar1", id=thirtyfour, data=HourTableBinned)
 #without AvgDayMat
-POD2b = geeglm(PreAbs ~ bs(Year),family = binomial, corstr="independence", id=thirtyfour, data=HourTableBinned)
+POD2b = geeglm(PreAbs ~ bs(Year),family = binomial, corstr="ar1", id=thirtyfour, data=HourTableBinned)
 #without Year
-POD2c = geeglm(PreAbs ~ AvgDayMat,family = binomial, corstr="independence", id=thirtyfour, data=HourTableBinned)
+POD2c = geeglm(PreAbs ~ AvgDayMat,family = binomial, corstr="ar1", id=thirtyfour, data=HourTableBinned)
 model2A = c("POD0","POD2a","POD2b","POD2c")
 QIC2A = c(QIC(POD0)[1],QIC(POD2a)[1],QIC(POD2b)[1],QIC(POD2c)[1])
 QICmod2A<-data.frame(rbind(model2A,QIC2A))
 QICmod2A
+#CB
+#corstr = independence
 #QIC            QIC.1            QIC.2            QIC.3
 #model2A            POD0            POD2a            POD2b            POD2c
 #QIC2A   62707.622017871 59362.4453354621 61587.2259674017 60383.6808219463
