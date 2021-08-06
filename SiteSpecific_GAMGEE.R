@@ -28,7 +28,7 @@ library(mgcv)
 #Hourly data
 site = 'CB'
 dir = paste("I:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites")
-fileName = paste(saveDir,site,"_dayData_forGLMR125.csv",sep="") #setting the directory
+fileName = paste("I:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites/AllSitesGrouped_Binary_GAMGEE_ROW.csv",sep="") #setting the directory
 HourTable = read.csv(fileName)
 HourTable = na.omit(HourTable)
 HourTable$date = as.Date(HourTable$tbin)
@@ -36,6 +36,8 @@ HourTable$tbin = as.POSIXct(HourTable$tbin)
 HourTable = HourTable[ order(HourTable$tbin , decreasing = FALSE ),]
 SiteHourTable = dplyr::filter(HourTable, grepl(site,Site))
 SiteHourTable$Hour = hour(SiteHourTable$tbin)
+SiteHourTable$Effort_Bin[SiteHourTable$Effort_Bin > 12] = 12
+SiteHourTable = subset(SiteHourTable, Site == site)#subset the table for the site only
 
 #Daily data - for block calculations
 fileName2 = paste("I:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites/AllSitesGrouped_GAMGEE_ROW.csv")#setting the directory
@@ -43,6 +45,12 @@ DayTable = read.csv(fileName2) #no effort days deleted
 DayTable = na.omit(DayTable)
 DayTable$tbin = as.Date(DayTable$tbin)
 SiteDayTable = dplyr::filter(DayTable,grepl(site,Site))
+SiteDayTable$Effort_Bin[SiteDayTable$Effort_Bin > 12] = 12
+SiteDayTable = subset(SiteDayTable, Site == site)#subset the table for the site only
+
+#Time lost variable
+SiteHourTable$TimeLost = max(SiteHourTable$Effort_Bin) - SiteHourTable$Effort_Bin
+SiteDayTable$TimeLost = max(SiteDayTable$Effort_Bin) - SiteDayTable$Effort_Bin
 
 # Each record in the dataset corresponds to an hour of recording, which constitutes the unit of analysis. 
 # The column "PreAbs" represents the binary response variable (0: no animal in acoustic contact; 1: acoustic contact).
@@ -51,208 +59,98 @@ SiteDayTable = dplyr::filter(DayTable,grepl(site,Site))
 # The column Julian represents the day of the year and the column year represents the year of recording.
 
 ## Step 3: identify the best blocking structure
-#The Merkens way
-#create the blocks based on the full timesereies
-startDate = SiteDayTable$tbin[1]
-endDate = SiteDayTable$tbin[nrow(SiteDayTable)]
-timeseries = data.frame(date=seq(startDate, endDate, by="days"))
-
-#15 different datasets
-#one day
-timeseries$one = 1:nrow(timeseries)
-oneday = left_join(SiteHourTable,timeseries,by="date")
-onedaygrouped = aggregate(oneday[, c(2,8)], list(oneday$one), mean)
-onedaygrouped$Group.1 = as.factor(onedaygrouped$Group.1)
-onedaygrouped = onedaygrouped %>% mutate_if(is.numeric, ~1 * (. != 0))
-acf(onedaygrouped$PreAbs, plot = FALSE)
-acf(onedaygrouped$PreAbs, lag.max=70)
-acf(onedaygrouped$PreAbs, lag.max=70, ylim=c(0,0.1), xlim =c(55,65)) 
-timeseries$one = NULL
-#autocorrelated
-
-timeseries$two = rep(1:(nrow(timeseries)/2), times=1, each=2)
-twoday = left_join(SiteHourTable,timeseries,by="date")
-twodaygrouped = aggregate(twoday[, c(2,8)], list(twoday$two), mean)
-twodaygrouped$Group.1 = as.factor(twodaygrouped$Group.1)
-twodaygrouped = twodaygrouped %>% mutate_if(is.numeric, ~1 * (. != 0))
-acf(twodaygrouped$PreAbs, plot = FALSE)
-acf(twodaygrouped$PreAbs)
-timeseries$two = NULL
-#autocorrelated
-
-three = rep(1:(floor(nrow(timeseries)/3)), times=1, each=3)
-timeseries$three = c(three,three[3402]+1,three[3402]+1)
-threeday = left_join(HourTable,timeseries,by="date")
-threedaygrouped = aggregate(threeday[, c(2,8)], list(threeday$three), mean)
-threedaygrouped$Group.1 = as.factor(threedaygrouped$Group.1)
-threedaygrouped = threedaygrouped %>% mutate_if(is.numeric, ~1 * (. != 0))
-acf(threedaygrouped$PreAbs, plot = FALSE)
-acf(threedaygrouped$PreAbs)
-timeseries$three = NULL
-#autocorrelated
-
-timeseries$four = rep(1:(floor(nrow(timeseries)/4)), times=1, each=4)
-fourday = left_join(HourTable,timeseries,by="date")
-fourdaygrouped = aggregate(fourday[, c(2,8)], list(fourday$four), mean)
-fourdaygrouped$Group.1 = as.factor(fourdaygrouped$Group.1)
-fourdaygrouped = fourdaygrouped %>% mutate_if(is.numeric, ~1 * (. != 0))
-acf(fourdaygrouped$PreAbs, plot = FALSE)
-acf(fourdaygrouped$PreAbs)
-timeseries$four = NULL
-#autocorrelated
-
-five = rep(1:(floor(nrow(timeseries)/5)), times=1, each=5)
-timeseries$five = c(five,five[3400]+1,five[3400]+1,five[3400]+1,five[3400]+1)
-fiveday = left_join(HourTable,timeseries,by="date")
-fivedaygrouped = aggregate(fiveday[, c(2,8)], list(fiveday$five), mean)
-fivedaygrouped$Group.1 = as.factor(fivedaygrouped$Group.1)
-fivedaygrouped = fivedaygrouped %>% mutate_if(is.numeric, ~1 * (. != 0))
-acf(fivedaygrouped$PreAbs, plot = FALSE)
-acf(fivedaygrouped$PreAbs)
-timeseries$five = NULL
-#autocorrelated
-
-six = rep(1:(floor(nrow(timeseries)/6)), times=1, each=6)
-timeseries$six = c(six,six[3402]+1,six[3402]+1)
-sixday = left_join(HourTable,timeseries,by="date")
-sixdaygrouped = aggregate(sixday[, c(2,8)], list(sixday$six), mean)
-sixdaygrouped$Group.1 = as.factor(sixdaygrouped$Group.1)
-sixdaygrouped = sixdaygrouped %>% mutate_if(is.numeric, ~1 * (. != 0))
-acf(sixdaygrouped$PreAbs, plot = FALSE)
-acf(sixdaygrouped$PreAbs)
-timeseries$six = NULL
-#autocorrelated
-
-seven = rep(1:(floor(nrow(timeseries)/7)), times=1, each=7)
-timeseries$seven = c(seven,seven[3402]+1,seven[3402]+1)
-sevenday = left_join(HourTable,timeseries,by="date")
-sevendaygrouped = aggregate(sevenday[, c(2,8)], list(sevenday$seven), mean)
-sevendaygrouped$Group.1 = as.factor(sevendaygrouped$Group.1)
-sevendaygrouped = sevendaygrouped %>% mutate_if(is.numeric, ~1 * (. != 0))
-acf(sevendaygrouped$PreAbs, plot = FALSE)
-acf(sevendaygrouped$PreAbs)
-timeseries$seven = NULL
-#autocorrelated
-
-eight = rep(1:(floor(nrow(timeseries)/8)), times=1, each=8)
-timeseries$eight = c(eight,eight[3400]+1,eight[3400]+1,eight[3400]+1,eight[3400]+1)
-eightday = left_join(HourTable,timeseries,by="date")
-eightdaygrouped = aggregate(eightday[, c(2,8)], list(eightday$eight), mean)
-eightdaygrouped$Group.1 = as.factor(eightdaygrouped$Group.1)
-eightdaygrouped = eightdaygrouped %>% mutate_if(is.numeric, ~1 * (. != 0))
-acf(eightdaygrouped$PreAbs, plot = FALSE)
-acf(eightdaygrouped$PreAbs)
-timeseries$eight = NULL
-#no autocorrrelation at this point
-
-nine = rep(1:(floor(nrow(timeseries)/9)), times=1, each=9)
-timeseries$nine = c(nine,nine[3402]+1,nine[3402]+1)
-
-ten = rep(1:(floor(nrow(timeseries)/10)), times=1, each=10)
-timeseries$ten = c(ten,ten[3400]+1,ten[3400]+1,ten[3400]+1,ten[3400]+1)
-
-eleven = rep(1:(floor(nrow(timeseries)/11)), times=1, each=11)
-timeseries$eleven = c(eleven,eleven[3399]+1,eleven[3399]+1,eleven[3399]+1,eleven[3399]+1,eleven[3399]+1)
-
-twelve = rep(1:(floor(nrow(timeseries)/12)), times=1, each=12)
-timeseries$twelve = c(twelve,twelve[3396]+1,twelve[3396]+1,twelve[3396]+1,twelve[3396]+1,twelve[3396]+1,twelve[3396]+1,twelve[3396]+1,twelve[3396]+1)
-
-thirteen = rep(1:(floor(nrow(timeseries)/13)), times=1, each=13)
-timeseries$thirteen = c(thirteen,thirteen[3393]+1,thirteen[3393]+1,thirteen[3393]+1,thirteen[3393]+1,thirteen[3393]+1,thirteen[3393]+1,thirteen[3393]+1,thirteen[3393]+1,thirteen[3393]+1,thirteen[3393]+1,thirteen[3393]+1)
-
-fourteen = rep(1:(floor(nrow(timeseries)/14)), times=1, each=14)
-timeseries$fourteen = c(fourteen, fourteen[3402]+1, fourteen[3402]+1)
-
-fifteen = rep(1:(floor(nrow(timeseries)/15)), times=1, each=15)
-timeseries$fifteen = c(fifteen, fifteen[3390]+1,fifteen[3390]+1,fifteen[3390]+1,fifteen[3390]+1,fifteen[3390]+1,fifteen[3390]+1,fifteen[3390]+1,fifteen[3390]+1,fifteen[3390]+1,fifteen[3390]+1,fifteen[3390]+1,fifteen[3390]+1,fifteen[3390]+1,fifteen[3390]+1)
-
-# Group everything in blocks from 1d to 15d (15 different data sets)
-HourTableBinned = left_join(HourTable,timeseries,by = "date")
-HourTableBinned = HourTableBinned[ order(HourTableBinned$tbin , decreasing = FALSE ),]
-
-#The Benjamins way
-#Continuous data (not grouped)
+#NOT ON MODEL RESIDUALS
+#Day Table
 #acf on the 1 day binned data
 acf(SiteDayTable$PreAbs, lag.max = 35)
-#11 days for all sites
-#12 days for PT
-#34 days for CB
+#CB - at day 30 it gets close enough to the CI intervals
 
-#CB lag
-thirtyfour = rep(1:(floor(nrow(timeseries)/34)), times=1, each=34)
-timeseries$thirtyfour = c(thirtyfour, thirtyfour[714]+1,thirtyfour[714]+1,thirtyfour[714]+1,
-                          thirtyfour[714]+1,thirtyfour[714]+1,thirtyfour[714]+1,thirtyfour[714]+1)
-HourTableBinned = left_join(SiteHourTable,timeseries,by = "date")
-HourTableBinned = HourTableBinned[ order(HourTableBinned$tbin , decreasing = FALSE ),]
-
-#acf on the 1-hour binned data
-acf(SiteHourTable$PreAbs, lag.max = 500)
+#Hour Table
+#acf on the 1 hour binned data
+acf(SiteHourTable$PreAbs, lag.max = 2000)
 acf(SiteHourTable$PreAbs, lag.max = 2000, ylim=c(0,0.1), xlim =c(1100,1150)) 
-#457 1-hour bins which is ~19 days for all sites
-#484 1-hour bins which is ~20 days for PT
-#1134 1-hour bins which is ~47 days for CB
+#CB - at hour 1135 it goes below the CI intervals (approximately 47 days)
 
-#Waiting for block confirmation to move forward
+#ON MODEL RESIDUALS
+#CB ONLY
+BlockMod<-glm(PreAbs~
+               bs(Julian)+
+               bs(TimeLost)+
+               as.factor(Year)
+             ,data=SiteHourTable,family=binomial)
+
+summary(BlockMod)
+acf(residuals(BlockMod), lag.max = 1000, ylim=c(0,0.1))
+acf(residuals(BlockMod), lag.max = 1000, ylim=c(0,0.1), xlim =c(500,600)) 
+ACFval = 602
+#CB - at hour 602 it drops below the CI intervals (approximately 25 days)
+
+#create the blocks based on the full timesereies
+startDate = SiteHourTable$tbin[1]
+endDate = SiteHourTable$tbin[nrow(SiteHourTable)]
+timeseries = data.frame(date=seq(startDate, endDate, by="hours"))
+preBlock = rep(1:(floor(nrow(timeseries)/ACFval)), times=1, each=ACFval)
+divdiff = nrow(timeseries) - length(preBlock)
+last = tail(preBlock, n = 1)
+lastVec = rep(last,each = divdiff)
+timeseries$block = c(preBlock,lastVec)
+SiteHourTableB = left_join(SiteHourTable,timeseries,by="date")
 
 ## Step 4: Data exploration and initial analysis ##
 # Follow data exploration protocols suggested by Zuur et al. (2010), Zuur (2012), to generate pair plots, box plots, and assess collinearity between covariates in the dataset using Varinace Inflation Factors (vif).
 # Basic model for VIF analysis:
-GLM1 = glm(PreAbs ~ Julian + Hour, family = binomial, data = SiteHourTable)
-GLM1_CB = glm(PreAbs ~ Julian + Hour + Year, family = binomial, data = SiteHourTable)
+GLM1_CB = glm(PreAbs ~ Julian + TimeLost + Year, family = binomial, data = SiteHourTableB)
 #VIF scores in GLM to work out collinearity:
-VIF(GLM1)
 VIF(GLM1_CB)
 #CB
-#Julian     Hour     Year 
-#1.070344 1.000000 1.070344 
+#Julian TimeLost     Year 
+#1.070380 1.006304 1.076902 
 
 ## STEP 4: Model selection - covariate preparation ##
 # Construct variance-covariance matrices for cyclic covariates:
-AvgDayBasis <- gam(PreAbs~s(Julian, bs ="cc", k=-1), fit=F, data = SiteHourTable, family =binomial, knots = list(HOUR=seq(0,23,length=6)))$X[,2:5]
+AvgDayBasis <- gam(PreAbs~s(Julian, bs ="cc", k=-1), fit=F, data = SiteHourTableB, family =binomial, knots = list(HOUR=seq(0,23,length=6)))$X[,2:5]
 AvgDayMat = as.matrix(AvgDayBasis)
 
 # Selection of the correct form (linear or smooth) for the covariates available at a single scale.
 # A series of models is fitted where each of these covariate is tested as a linear term vs. a smoother and compared against an empty model.
 # Extract the QIC scores from the geeglm object to compare the empty model with the others and select how to treat the covariate.
-POD0<-geeglm(PreAbs ~ 1, family = binomial, corstr="ar1", id=thirtyfour, data=HourTableBinned)
+POD0<-geeglm(PreAbs ~ 1, family = binomial, corstr="ar1", id=block, data=SiteHourTableB)
 
-#DATENO
-POD0a = geeglm(PreAbs ~ bs(Julian, knots=10), family = binomial, corstr="ar1", id=thirtyfour, data=HourTableBinned)
-POD0b = geeglm(PreAbs ~ AvgDayMat, family = binomial, corstr="ar1", id=thirtyfour, data=HourTableBinned)
+#Julian Day
+POD0a = geeglm(PreAbs ~ bs(Julian, knots=10), family = binomial, corstr="ar1", id=block, data=SiteHourTableB)
+POD0b = geeglm(PreAbs ~ AvgDayMat, family = binomial, corstr="ar1", id=block, data=SiteHourTableB)
 model0A<-c("POD0", "POD0a", "POD0b")
 QIC0A<-c(QIC(POD0)[1],QIC(POD0a)[1],QIC(POD0b)[1])
 QICmod0A<-data.frame(rbind(model0A,QIC0A))
 QICmod0A
 #CB
-#corstr = indpendence
-#QIC            QIC.1            QIC.2
-#model0A            POD0            POD0a            POD0b
-#QIC0A   62707.622017871 60942.4483262005 60383.6808219463
+#QIC          QIC.1            QIC.2
+#model0A            POD0          POD0a            POD0b
+#QIC0A   62462.927331586 60290.76893056 59731.5595042787
 #Julian day as a variance covariance matrix
-#corstr = ar1
-#QIC            QIC.1            QIC.2
-#model0A            POD0            POD0a            POD0b
-#QIC0A   62461.942370187 60232.7953958141 59728.2335866585
 
 #Year
-POD1a = geeglm(PreAbs ~ as.factor(Year), family = binomial, corstr="ar1", id=thirtyfour, data=HourTableBinned)
-POD1b = geeglm(PreAbs ~ Year, family = binomial, corstr="ar1", id=thirtyfour, data=HourTableBinned)
-POD1c = geeglm(PreAbs ~ bs(Year), family = binomial, corstr="ar1", id=thirtyfour, data=HourTableBinned)
+POD1a = geeglm(PreAbs ~ as.factor(Year), family = binomial, corstr="ar1", id=block, data=SiteHourTableB)
+POD1b = geeglm(PreAbs ~ Year, family = binomial, corstr="ar1", id=block, data=SiteHourTableB)
+POD1c = geeglm(PreAbs ~ bs(Year), family = binomial, corstr="ar1", id=block, data=SiteHourTableB)
 model1A<-c("POD0", "POD1a", "POD1b","POD1c")
 QIC1A<-c(QIC(POD0)[1],QIC(POD1a)[1],QIC(POD1b)[1],QIC(POD1c)[1])
 QICmod1A<-data.frame(rbind(model1A,QIC1A))
 QICmod1A
 #CB
-#corstr = indpendence
 #QIC            QIC.1           QIC.2            QIC.3
 #model1A            POD0            POD1a           POD1b            POD1c
 #QIC1A   62707.622017871 62454.9622741072 62966.989935442 61587.2259674017
 #Year as smooth
-#corstr = ar1
-#QIC            QIC.1            QIC.2            QIC.3
-#model1A            POD0            POD1a            POD1b            POD1c
-#QIC1A   62461.942370187 60987.6811309012 62451.4542013736 60934.0919883293
-#Year as smooth
+
+#TimeLost
+POD2a = geeglm(PreAbs ~ as.factor(TimeLost), family = binomial, corstr="ar1", id=block, data=SiteHourTableB)
+POD2b = geeglm(PreAbs ~ TimeLost, family = binomial, corstr="ar1", id=block, data=SiteHourTableB)
+POD2c = geeglm(PreAbs ~ bs(TimeLost), family = binomial, corstr="ar1", id=block, data=SiteHourTableB)
+model2A<-c("POD0", "POD2a", "POD2b","POD2c")
+QIC2A<-c(QIC(POD0)[1],QIC(POD2a)[1],QIC(POD2b)[1],QIC(POD2c)[1])
+QICmod2A<-data.frame(rbind(model2A,QIC2A))
+QICmod12
 
 ## STEP 5: Determine which covariates are most relevant, and which can be removed (on the basis of previous collinearity work).         
 #The initial full model is:
