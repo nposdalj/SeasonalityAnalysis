@@ -18,7 +18,7 @@ library(anytime)
 library(mgcViz)
 
 #load functions
-source('C:/Users/DAM1/Documents/Github/SeasonalityAnalysis/HabMod_GAM_Chl.R')
+source('C:/Users/DAM1/Documents/Github/SeasonalityAnalysis/GetChlA.R')
 source('C:/Users/DAM1/Documents/Github/SeasonalityAnalysis/HabMod_GAM_AVISOO.R')
 
 #increasing memory limit
@@ -39,7 +39,7 @@ df1 = data.frame("lat" = c(15.08, 14.99, 15.0387, 15.0387), "long" = c(145.75, 1
 
 #define the start and end of the data 
 startTime = "2011-04-13" #this should be formatted like this: 2010-03-05
-endTime = "2019-05-12" 
+endTime = "2019-05-12"
 
 #ITS
 #ITS = 4 #Saipan

@@ -1,4 +1,7 @@
 GetChla <- function(envDir){
+  
+startTime = as.Date(startTime) #this should be formatted like this: 2010-03-05
+endTime = as.Date(endTime)
 
 #loading as .ncfile
 filenameStatAll = paste(envDir,"Chl2.nc",sep="")#load files as data frame
@@ -23,9 +26,13 @@ if (length(J) == 1){ #if the latitude only has 1 value, add a second
 }else{
   JJ = J
 }
-K<<-which(ChlA_dates>=startTime & ChlA_dates<=endTime) #extract only the dates we care about
+Ka = which(ChlA_dates<startTime)
+Kb = which(ChlA_dates>endTime)
+Kb = Kb[2:length(Kb)]
+#K <<- ChlA_dates[-c(Ka,Kb)]
+#KK<<-which(ChlA_dates>=startTime & ChlA_dates<endTime) #extract only the dates we care about
 
-ChlA2=ChlAvar[II,JJ,K] #index the original data frame to extract the lat, long, dates we care about
+ChlA2=ChlAvar[II,JJ,-c(Ka,Kb)] #index the original data frame to extract the lat, long, dates we care about
 
 n=dim(ChlA2)[3] #find the length of time
 
@@ -36,10 +43,10 @@ for (i in 1:n)
 
 resChlA <<- resChlA
 
-ChlA_ddf <- as.data.frame(ChlA_dates[K])
+ChlA_ddf <- as.data.frame(ChlA_dates[-c(Ka,Kb)])
 ChlA_ddf = ChlA_ddf %>% 
   dplyr::rename(
-    time = 'ChlA_dates[K]',
+    time = 'ChlA_dates[-c(Ka, Kb)]',
   )
 ChlA_ddf$time=as.Date(ChlA_ddf$time)
 
@@ -48,6 +55,6 @@ ChlAdf <<- bind_cols(ChlA_ddf, as.data.frame(resChlA))
 #plot the time series
 plot(1:n,resChlA,axes=FALSE,type='o',pch=20,xlab='',ylab='ChlA',las = 3)
 axis(2)
-axis(1,1:n,format(resChlA[K]),las = 3)
+axis(1,1:n,format(resChlA),las = 3)
 box()
 }
