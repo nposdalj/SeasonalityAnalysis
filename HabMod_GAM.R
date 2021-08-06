@@ -37,9 +37,9 @@ df1 = data.frame("lat" = c(15.08, 14.99, 15.0387, 15.0387), "long" = c(145.75, 1
 #df1 = data.frame("lat" = c(56.29, 56.2, 56.2434, 56.2434), "long" = c(-142.75, -142.75, -142.83, -142.67))#PT
 #df1 = data.frame("lat" = c(58.71, 58.62, 58.6668, 58.6668), "long" = c(-148.0034, -148.0034, -148.12, -147.94))#CB
 
-#define the start and end of the datame 
+#define the start and end of the data 
 startTime = "2011-04-13" #this should be formatted like this: 2010-03-05
-endTime = "2019-05-13" 
+endTime = "2019-05-12" 
 
 #ITS
 #ITS = 4 #Saipan
@@ -50,12 +50,7 @@ ITSJ = 1 #Tinian Juveniles
 ITSM = 1 #Tinian Males
 
 #loading the environmental data
-envDir = paste("O:/My Drive/Gaia_EnvironmentalData/CentralPac/")#setting the directory)
-
-#spatial polygon for area of interest
-ch <- chull(df1$long, df1$lat)
-coords <- df1[c(ch, ch[1]), ]#creating convex hull
-sp_poly <- SpatialPolygons(list(Polygons(list(Polygon(coords)), ID = 1)))#converting convex hull to spatial polygon
+envDir = paste("O:/My Drive/Gaia_EnvironmentalData/CentralPac/")#setting the directory
 
 #loading sperm whale data
 site = 'TIN'
@@ -85,9 +80,15 @@ rm("DayData")
 #clear memory 
 gc()
 
-GetChla(envDir, df1, startTime, endTime)
+#Load chlorophyll
+GetChla(envDir)
 
 #SST data
+#spatial polygon for area of interest
+ch <- chull(df1$long, df1$lat)
+coords <- df1[c(ch, ch[1]), ]#creating convex hull
+sp_poly <- SpatialPolygons(list(Polygons(list(Polygon(coords)), ID = 1)))#converting convex hull to spatial polygon
+
 filenameStatAll = paste(envDir,"AQUASST_SAPTIN.csv",sep="")#load files as data frame
 SST = read.csv(filenameStatAll)
 SST = SST[-1,] #delete first row
@@ -519,12 +520,7 @@ NV_ddf = NV_ddf %>%
   dplyr::rename(
     time = 'NOR_dates[K]',
   )
-ChlA_ddf <- as.data.frame(ChlA_dates[K])
-ChlA_ddf = ChlA_ddf %>% 
-  dplyr::rename(
-    time = 'ChlA_dates[K]',
-  )
-ChlA_ddf$time=as.Date(ChlA_ddf$time)
+
 
 #merge res dataframes with dates
 SSHdf<- bind_cols(SSH_ddf,as.data.frame(resSSH))
@@ -534,7 +530,7 @@ TEMPdf<- bind_cols(TEMP_ddf,as.data.frame(resTEMP))
 EVdf<- bind_cols(EV_ddf,as.data.frame(resEV))
 NVdf<- bind_cols(NV_ddf,as.data.frame(resNV))
 EKE <- bind_cols(SSH_ddf,as.data.frame(EKE_cm))
-ChlAdf <- bind_cols(ChlA_ddf, as.data.frame(resChlA))
+
 
 #Visualize Eddy Kinetic Energy
 hist(EKE_cm)

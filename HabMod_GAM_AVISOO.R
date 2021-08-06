@@ -12,16 +12,23 @@ SSHvar=ncvar_get(AVISO,v6)
 SSH_lon=v6$dim[[1]]$vals
 SSH_lat=v6$dim[[2]]$vals
 SSH_dates=as.POSIXlt(v6$dim[[3]]$vals*60*60,origin='1950-01-01') #extract the date/time
-SSH_dates = as.Date(SSH_dates, format = "%m/%d/%y") #get rid of the time
+SSH_dates <<- as.Date(SSH_dates, format = "%m/%d/%y") #get rid of the time
 
 #plotting timeseries
 I=which(SSH_lon>=min(df1$long) & SSH_lon<= max(df1$long)) #only extract the region we care about
+if (length(I) == 1){ #if the longitude only has 1 value, add a second
+  II = I:(I+1)
+}else{
+  II = I
+}
 J=which(SSH_lat>=min(df1$lat) & SSH_lat<=max(df1$lat)) #only extract the region we care about
 if (length(J) == 1){ #if the latitude only has 1 value, add a second
-  JJ = J:(J+1)
+  JJ = J:(I+1)
+}else{
+  JJ = J
 }
 K=which(SSH_dates>= startTime & SSH_dates<= endTime) #extract only the dates we care about
-SSH2=SSHvar[I,JJ,K] #index the original data frame to extract the lat, long, dates we care about
+SSH2=SSHvar[II,JJ,K] #index the original data frame to extract the lat, long, dates we care about
 
 n=dim(SSH2)[3] #find the length of time
 
