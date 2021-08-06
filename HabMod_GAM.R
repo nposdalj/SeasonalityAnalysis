@@ -16,10 +16,11 @@ library(mgcv)
 library(tweedie)
 library(anytime)
 library(mgcViz)
+library(zoo)
 
 #load functions
 source('C:/Users/DAM1/Documents/Github/SeasonalityAnalysis/GetChlA.R')
-source('C:/Users/DAM1/Documents/Github/SeasonalityAnalysis/HabMod_GAM_AVISOO.R')
+source('C:/Users/DAM1/Documents/Github/SeasonalityAnalysis/GetAVISOO.R')
 
 #increasing memory limit
 memory.limit(size=300000)
@@ -1476,7 +1477,7 @@ data.frame(rbind(model08,AIC08))
 #AIC08   1860.496588857 545.818162842231 546.913816480417
 #std dev SST as linear
 
-#Test which covariates we should keep for Male Specific GAM
+#Test which covariates we should keep for Juvenile Specific GAM
 #Round 1
 #Initial model
 Full1 = gam(JuvenileHoursNorm ~ s(Julian, bs="cc", k=-1)+s(resChlA, bs ="cc", k=-1)+EKE_cm+
