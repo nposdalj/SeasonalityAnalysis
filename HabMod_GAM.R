@@ -20,7 +20,7 @@ library(zoo)
 
 #load functions
 source('C:/Users/DAM1/Documents/Github/SeasonalityAnalysis/GetChlA.R')
-source('C:/Users/DAM1/Documents/Github/SeasonalityAnalysis/GetAVISOO.R')
+source('C:/Users/DAM1/Documents/Github/SeasonalityAnalysis/GetAVISO.R')
 
 #increasing memory limit
 memory.limit(size=300000)
@@ -84,6 +84,9 @@ gc()
 #Load chlorophyll
 GetChla(envDir)
 
+#Load SST
+GetSST(envDir)
+
 #SST data
 #spatial polygon for area of interest
 ch <- chull(df1$long, df1$lat)
@@ -135,9 +138,9 @@ rm(SST3)
 
 LoadAVISO(envDir)
 GetSSH(AVISO)
-GetDEN
-GetSAL
-GetTEMP
+GetDEN(AvISO)
+GetSAL(AVISO)
+GetTEMP(AVISO)
 GetEKE(AVISO)
 
 filenameStatAll = paste(envDir,"AVISOglobalvars.nc",sep="")#load files as data frame
@@ -1523,65 +1526,39 @@ data.frame(rbind(modelR1,AICR1))
 #remove SST, mean SST, and height
 
 #Round 2
-Full2 = gam(JuvenileHoursNorm ~ s(Julian, bs="cc", k=-1)+EKE_cm+
-              s(resSAL, bs = "cc", k=-1) + mean_SST +s(resSSH, bs="cc", k=-1)+s(resDEN, bs="cc", k=-1)+SD_SST
+Full2 = gam(JuvenileHoursNorm ~ s(Julian, bs="cc", k=-1)+s(resChlA, bs ="cc", k=-1)+EKE_cm+
+              s(resDEN, bs="cc", k=-1)+SD_SST
             , data = TabBinned_GroupedJ, family = tw, method = "REML")
-J = gam(JuvenileHoursNorm ~ EKE_cm+
-          s(resSAL, bs = "cc", k=-1) + mean_SST +s(resSSH, bs="cc", k=-1)+s(resDEN, bs="cc", k=-1)+SD_SST
+J = gam(JuvenileHoursNorm ~ s(resChlA, bs ="cc", k=-1)+EKE_cm+
+         s(resDEN, bs="cc", k=-1)+SD_SST
         , data = TabBinned_GroupedJ, family = tw, method = "REML")
-E = gam(JuvenileHoursNorm ~ s(Julian, bs="cc", k=-1)+
-          s(resSAL, bs = "cc", k=-1) + mean_SST +s(resSSH, bs="cc", k=-1)+s(resDEN, bs="cc", k=-1)+SD_SST
+C = gam(JuvenileHoursNorm ~ s(Julian, bs="cc", k=-1)+EKE_cm+
+         s(resDEN, bs="cc", k=-1)+SD_SST
         , data = TabBinned_GroupedJ, family = tw, method = "REML")
-S = gam(JuvenileHoursNorm ~ s(Julian, bs="cc", k=-1)+EKE_cm+
-          mean_SST +s(resSSH, bs="cc", k=-1)+s(resDEN, bs="cc", k=-1)+SD_SST
+E = gam(JuvenileHoursNorm ~ s(Julian, bs="cc", k=-1)+s(resChlA, bs ="cc", k=-1)+
+         s(resDEN, bs="cc", k=-1)+SD_SST
         , data = TabBinned_GroupedJ, family = tw, method = "REML")
-MT = gam(JuvenileHoursNorm ~ s(Julian, bs="cc", k=-1)+EKE_cm+
-           s(resSAL, bs = "cc", k=-1) +s(resSSH, bs="cc", k=-1)+s(resDEN, bs="cc", k=-1)+SD_SST
-         , data = TabBinned_GroupedJ, family = tw, method = "REML")
-H = gam(JuvenileHoursNorm ~ s(Julian, bs="cc", k=-1)+EKE_cm+
-          s(resSAL, bs = "cc", k=-1) + mean_SST+s(resDEN, bs="cc", k=-1)+SD_SST
+D = gam(JuvenileHoursNorm ~ s(Julian, bs="cc", k=-1)+s(resChlA, bs ="cc", k=-1)+EKE_cm+
+         SD_SST
         , data = TabBinned_GroupedJ, family = tw, method = "REML")
-D = gam(JuvenileHoursNorm ~ s(Julian, bs="cc", k=-1)+EKE_cm+
-          s(resSAL, bs = "cc", k=-1) + mean_SST +s(resSSH, bs="cc", k=-1)+SD_SST
-        , data = TabBinned_GroupedJ, family = tw, method = "REML")
-SDT = gam(JuvenileHoursNorm ~ s(Julian, bs="cc", k=-1)+EKE_cm+
-            s(resSAL, bs = "cc", k=-1) + mean_SST +s(resSSH, bs="cc", k=-1)+s(resDEN, bs="cc", k=-1)
+SDT = gam(JuvenileHoursNorm ~ s(Julian, bs="cc", k=-1)+s(resChlA, bs ="cc", k=-1)+EKE_cm+
+            s(resDEN, bs="cc", k=-1)
           , data = TabBinned_GroupedJ, family = tw, method = "REML")
-modelR2 = c('Full2','J','E','S','MT','H','D','SDT')
-AICR2 = c(AIC(Full2),AIC(J),AIC(E),AIC(S),AIC(MT),AIC(H),AIC(D),AIC(SDT))
+modelR2 = c('Full2','J','C','E','D','SDT')
+AICR2 = c(AIC(Full2),AIC(J),AIC(C),AIC(E),AIC(D),AIC(SDT))
 data.frame(rbind(modelR2,AICR2))
 #Tinian
+#X1               X2               X3              X4
+#modelR2             Full2                J                C               E
+#AICR2   36071837382065848 16056975396192.2 549.803244455042 264196795820521
+#X5               X6
+#modelR2                D              SDT
+#AICR2   554.265177339523 1865.90590152847
+#Keep remaining round 2 variables
 
-#Round 3
-Full3 = gam(JuvenileHoursNorm ~ s(Julian, bs="cc", k=-1)+EKE_cm+
-              s(resSAL, bs = "cc", k=-1) + mean_SST +s(resSSH, bs="cc", k=-1)+s(resDEN, bs="cc", k=-1)
-            , data = TabBinned_GroupedJ, family = tw, method = "REML")
-J = gam(JuvenileHoursNorm ~ EKE_cm+
-          s(resSAL, bs = "cc", k=-1) + mean_SST +s(resSSH, bs="cc", k=-1)+s(resDEN, bs="cc", k=-1)
-        , data = TabBinned_GroupedJ, family = tw, method = "REML")
-E = gam(JuvenileHoursNorm ~ s(Julian, bs="cc", k=-1)+
-          s(resSAL, bs = "cc", k=-1) + mean_SST +s(resSSH, bs="cc", k=-1)+s(resDEN, bs="cc", k=-1)
-        , data = TabBinned_GroupedJ, family = tw, method = "REML")
-S = gam(JuvenileHoursNorm ~ s(Julian, bs="cc", k=-1)+EKE_cm+
-          mean_SST +s(resSSH, bs="cc", k=-1)+s(resDEN, bs="cc", k=-1)
-        , data = TabBinned_GroupedJ, family = tw, method = "REML")
-MT = gam(JuvenileHoursNorm ~ s(Julian, bs="cc", k=-1)+EKE_cm+
-           s(resSAL, bs = "cc", k=-1) +s(resSSH, bs="cc", k=-1)+s(resDEN, bs="cc", k=-1)
-         , data = TabBinned_GroupedJ, family = tw, method = "REML")
-H = gam(JuvenileHoursNorm ~ s(Julian, bs="cc", k=-1)+EKE_cm+
-          s(resSAL, bs = "cc", k=-1) + mean_SST+s(resDEN, bs="cc", k=-1)
-        , data = TabBinned_GroupedJ, family = tw, method = "REML")
-D = gam(JuvenileHoursNorm ~ s(Julian, bs="cc", k=-1)+EKE_cm+
-          s(resSAL, bs = "cc", k=-1) + mean_SST +s(resSSH, bs="cc", k=-1)
-        , data = TabBinned_GroupedJ, family = tw, method = "REML")
-modelR3 = c('Full3','J','E','S','MT','H','D')
-AICR3 = c(AIC(Full3),AIC(J),AIC(E),AIC(S),AIC(MT),AIC(H),AIC(D))
-data.frame(rbind(modelR3,AICR3))
-#Tinian
-
-#Final Male Sex Specific full model
-FinalMaleGAM = gam(JuvenileHoursNorm ~ s(Julian, bs="cc", k=-1)+EKE_cm+
-                     s(resSAL, bs = "cc", k=-1) + mean_SST +s(resSSH, bs="cc", k=-1)+s(resDEN, bs="cc", k=-1)
+#Final Juvenile Sex Specific full model
+FinalJuvenileGAM = gam(JuvenileHoursNorm ~ s(Julian, bs="cc", k=-1)+s(resChlA, bs ="cc", k=-1)+EKE_cm+
+                     s(resDEN, bs="cc", k=-1)+SD_SST
                    , data = TabBinned_GroupedJ, family = tw, method = "REML")
 summary(FinalJuvenileGAM)
 viz = getViz(FinalJuvenileGAM)
