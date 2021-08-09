@@ -53,7 +53,45 @@ DEN_lon=v1$dim[[1]]$vals
 DEN_lat=v1$dim[[2]]$vals
 DEN_dates=as.POSIXlt(v1$dim[[3]]$vals*60*60,origin='1950-01-01') #extract the date/time
 DEN_dates = as.Date(DEN_dates, format = "%m/%d/%y") #get rid of the time
+
+#plotting time series SAPTIN 
+I=which(DEN_lon>=min(df1$long) & DEN_lon<= max(df1$long)) #only extract the region we care about
+if (length(I) == 1){ #if the longitude only has 1 value, add a second
+  II = I:(I+1)
+}else{
+  II = I
 }
+J=which(DEN_lat>=min(df1$lat) & DEN_lat<=max(df1$lat)) #only extract the region we care about
+if (length(J) == 1){ #if the latitude only has 1 value, add a second
+  JJ = J:(I+1)
+}else{
+  JJ = J
+}
+K=which(DEN_dates>= startTime & DEN_dates<= endTime) #extract only the dates we care about
+DEN2=DENvar[II,JJ,K] #index the original data frame to extract the lat, long, dates we care about
+
+n=dim(DEN2)[3] #find the length of time
+
+#take the mean
+resDEN=rep(NA,n) 
+for (i in 1:n) 
+  resDEN[i]=mean(DEN2[,,i],na.rm=TRUE) 
+
+DEN_ddf <- as.data.frame(DEN_dates[K])
+DEN_ddf = DEN_ddf %>% 
+  rename(
+    time = 'DEN_dates[K]',
+  )
+
+DENdf<<- bind_cols(DEN_ddf,as.data.frame(resDEN))
+
+#plot the time series
+plot(1:n,resDEN,axes=FALSE,type='o',pch=20,xlab='',ylab='Density',las = 3) 
+axis(2) 
+axis(1,1:n,format(DEN_dates[K]),las = 3) 
+box()
+}
+
 #so - salinity
 v2=AVISO$var[[5]]
 SALvar=ncvar_get(AVISO,v2)
@@ -178,52 +216,6 @@ EKE <<- bind_cols(SSH_ddf,as.data.frame(EKE_cm))
 }
 
 
-
-#Density ocean mixed layer thickness
-#Plotting in ggplot
-r = raster(t(DENvar[,,1]),xmn = min(DEN_lon),xmx = max(DEN_lon),ymn=min(DEN_lat),ymx=max(DEN_lat))
-points = rasterToPoints(r, spatial = TRUE)
-df = data.frame(points)
-names(df)[names(df)=="layer"]="DEN"
-mid = mean(df$DEN)
-ggplot(data=world) +  geom_sf()+coord_sf(xlim= c(min(df1$long),max(df1$long)),ylim= c(min(df1$lat),max(df1$lat)),expand=FALSE)+
-  geom_raster(data = df , aes(x = x, y = y, fill = DEN)) + 
-  ggtitle(paste("Daily Density Ocean Mized Layer Thickness on", dates[1]))+geom_point(x = 145.46, y = 15.3186, color = "black",size=3)+
-  xlab("Latitude")+ylab("Longitude")+
-  scale_fill_gradient2(midpoint = mid, low="yellow", mid = "orange",high="red")
-
-#plotting time series SAPTIN 
-I=which(DEN_lon>=min(df1$long) & DEN_lon<= max(df1$long)) #only extract the region we care about
-if (length(I) == 1){ #if the longitude only has 1 value, add a second
-  II = I:(I+1)
-}else{
-  II = I
-}
-J=which(DEN_lat>=min(df1$lat) & DEN_lat<=max(df1$lat)) #only extract the region we care about
-if (length(J) == 1){ #if the latitude only has 1 value, add a second
-  JJ = J:(I+1)
-}else{
-  JJ = J
-}
-K=which(DEN_dates>= startTime & DEN_dates<= endTime) #extract only the dates we care about
-DEN2=DENvar[II,JJ,K] #index the original data frame to extract the lat, long, dates we care about
-
-n=dim(DEN2)[3] #find the length of time
-
-#take the mean
-resDEN=rep(NA,n) 
-for (i in 1:n) 
-  resDEN[i]=mean(DEN2[,,i],na.rm=TRUE) 
-
-#plot the time series
-plot(1:n,resDEN,axes=FALSE,type='o',pch=20,xlab='',ylab='Density',las = 3) 
-axis(2) 
-axis(1,1:n,format(DEN_dates[K]),las = 3) 
-box()
-
-#remove unnecessary variables
-rm("DENvar","DEN2", "DEN_lon","DEN_lat")
-
 #Salinity
 #Plotting in ggplot
 r = raster(t(SALvar[,,1]),xmn = min(SAL_lon),xmx = max(SAL_lon),ymn=min(SAL_lat),ymx=max(SAL_lat))
@@ -311,62 +303,10 @@ axis(2)
 axis(1,1:n,format(TEMP_dates[K]),las = 3) 
 box()
 
-#remove unnecessary variables
-rm("TEMPvar","TEMP2", "TEMP_lon","TEMP_lat")
-
-#Eastward Velocity
-#Plotting in ggplot
-r = raster(t(EASTVvar[,,1]),xmn = min(EASTV_lon),xmx = max(EASTV_lon),ymn=min(EASTV_lat),ymx=max(EASTV_lat))
-points = rasterToPoints(r, spatial = TRUE)
-df = data.frame(points)
-names(df)[names(df)=="layer"]="EASTV"
-mid = mean(df$EASTV)
-ggplot(data=world) +  geom_sf()+coord_sf(xlim= c(min(df1$long),max(df1$long)),ylim= c(min(df1$lat),max(df1$lat)),expand=FALSE)+
-  geom_raster(data = df , aes(x = x, y = y, fill = EASTV)) + 
-  ggtitle(paste("Daily Eastward Velocity on", dates[1]))+geom_point(x = 145.46, y = 15.3186, color = "black",size=3)+
-  xlab("Latitude")+ylab("Longitude")+
-  scale_fill_gradient2(midpoint = mid, low="yellow", mid = "orange",high="red")
-
-#plotting time series SAPTIN 
-I=which(EASTV_lon>=min(df1$long) & EASTV_lon<= max(df1$long)) #only extract the region we care about
-if (length(I) == 1){ #if the longitude only has 1 value, add a second
-  II = I:(I+1)
-}else{
-  II = I
-}
-J=which(EASTV_lat>=min(df1$lat) & EASTV_lat<=max(df1$lat)) #only extract the region we care about
-if (length(J) == 1){ #if the latitude only has 1 value, add a second
-  JJ = J:(I+1)
-}else{
-  JJ = J
-}
-K=which(EAST_dates>= startTime & EAST_dates<= endTime) #extract only the dates we care about
-EASTV2=EASTVvar[II,JJ,K] #index the original data frame to extract the lat, long, dates we care about
-
-n=dim(EASTV2)[3] #find the length of time
-
-#take the mean
-resEV=rep(NA,n) 
-for (i in 1:n) 
-  resEV[i]=mean(EASTV2[,,i],na.rm=TRUE) 
-
-#plot the time series
-plot(1:n,resEV,axes=FALSE,type='o',pch=20,xlab='',ylab='Eastward Velocity',las = 3) 
-axis(2) 
-axis(1,1:n,format(EAST_dates[K]),las = 3) 
-box()
-
-#remove unnecessary variables
-rm("EASTVvar","EASTV2", "EASTV_lon","EASTV_lat")
-
 
 #converting _dates to data frames and renaming column to 'time'
 
-DEN_ddf <- as.data.frame(DEN_dates[K])
-DEN_ddf = DEN_ddf %>% 
-  rename(
-    time = 'DEN_dates[K]',
-  )
+
 SAL_ddf <- as.data.frame(SAL_dates[K])
 SAL_ddf = SAL_ddf %>% 
   rename(
@@ -377,33 +317,10 @@ TEMP_ddf = TEMP_ddf %>%
   rename(
     time = 'TEMP_dates[K]',
   )
-EV_ddf <- as.data.frame(EAST_dates[K])
-EV_ddf = EV_ddf %>% 
-  rename(
-    time = 'EAST_dates[K]',
-  )
-NV_ddf <- as.data.frame(NOR_dates[K])
-NV_ddf = NV_ddf %>% 
-  rename(
-    time = 'NOR_dates[K]',
-  )
-ChlA_ddf <- as.data.frame(ChlA_dates[K])
-ChlA_ddf = ChlA_ddf %>% 
-  rename(
-    time = 'ChlA_dates[K]',
-  )
-ChlA_ddf$time=as.Date(ChlA_ddf$time)
 
 #merge res dataframes with dates
-DENdf<- bind_cols(DEN_ddf,as.data.frame(resDEN))
+
 SALdf<- bind_cols(SAL_ddf,as.data.frame(resSAL))
 TEMPdf<- bind_cols(TEMP_ddf,as.data.frame(resTEMP))
 EVdf<- bind_cols(EV_ddf,as.data.frame(resEV))
-NVdf<- bind_cols(NV_ddf,as.data.frame(resNV))
-EKE <- bind_cols(SSH_ddf,as.data.frame(EKE_cm))
-ChlAdf <- bind_cols(ChlA_ddf, as.data.frame(resChlA))
 
-#clear memory and increase memory limit size
-gc()
-rm("SSH_ddf","DEN_ddf","SAL_ddf","TEMP_ddf","EV_ddf","NV_ddf")
-rm("points","sp_poly")

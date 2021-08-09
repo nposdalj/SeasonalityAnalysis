@@ -1511,6 +1511,16 @@ modelR1 = c('Full1','J','C','E','S','MT','H','D','SDT')
 AICR1 = c(AIC(Full1),AIC(J),AIC(C),AIC(E),AIC(S),AIC(MT),AIC(H),AIC(D),AIC(SDT))
 data.frame(rbind(modelR1,AICR1))
 #Tinian
+#X1                 X2              X3               X4
+#modelR1            Full1                  J               C                E
+#AICR1   556.002006522775 248443579657369888 547.43976090429 560.686356053249
+#X5                X6                 X7               X8
+#modelR1                  S                MT                  H                D
+#AICR1   451132943017341184 88559305283334176 192247403355512256 556.014290438429
+#X9
+#modelR1              SDT
+#AICR1   1867.90060893137
+#remove SST, mean SST, and height
 
 #Round 2
 Full2 = gam(JuvenileHoursNorm ~ s(Julian, bs="cc", k=-1)+EKE_cm+
