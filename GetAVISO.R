@@ -92,6 +92,7 @@ axis(1,1:n,format(DEN_dates[K]),las = 3)
 box()
 }
 
+GetSAL <- function(AVISO){
 #so - salinity
 v2=AVISO$var[[5]]
 SALvar=ncvar_get(AVISO,v2)
@@ -99,6 +100,44 @@ SAL_lon=v2$dim[[1]]$vals
 SAL_lat=v2$dim[[2]]$vals
 SAL_dates=as.POSIXlt(v2$dim[[4]]$vals*60*60,origin='1950-01-01') #extract the date/time
 SAL_dates = as.Date(SAL_dates, format = "%m/%d/%y") #get rid of the time
+
+#plotting time series SAPTIN 
+I=which(SAL_lon>=min(df1$long) & SAL_lon<= max(df1$long)) #only extract the region we care about
+if (length(I) == 1){ #if the longitude only has 1 value, add a second
+  II = I:(I+1)
+}else{
+  II = I
+}
+J=which(SAL_lat>=min(df1$lat) & SAL_lat<=max(df1$lat)) #only extract the region we care about
+if (length(J) == 1){ #if the latitude only has 1 value, add a second
+  JJ = J:(I+1)
+}else{
+  JJ = J
+}
+K=which(SAL_dates>= startTime & SAL_dates<= endTime) #extract only the dates we care about
+SAL2=SALvar[II,JJ,K] #index the original data frame to extract the lat, long, dates we care about
+
+n=dim(SAL2)[3] #find the length of time
+
+#take the mean
+resSAL=rep(NA,n) 
+for (i in 1:n) 
+  resSAL[i]=mean(SAL2[,,i],na.rm=TRUE)
+
+SAL_ddf <- as.data.frame(SAL_dates[K])
+SAL_ddf = SAL_ddf %>% 
+  rename(
+    time = 'SAL_dates[K]',
+  )
+
+SALdf<<- bind_cols(SAL_ddf,as.data.frame(resSAL))
+
+#plot the time series
+plot(1:n,resSAL,axes=FALSE,type='o',pch=20,xlab='',ylab='Salinity',las = 3) 
+axis(2) 
+axis(1,1:n,format(SAL_dates[K]),las = 3) 
+box()
+}
 
 #thetao - temperature
 v3=AVISO$var[[3]]
@@ -216,50 +255,6 @@ EKE <<- bind_cols(SSH_ddf,as.data.frame(EKE_cm))
 }
 
 
-#Salinity
-#Plotting in ggplot
-r = raster(t(SALvar[,,1]),xmn = min(SAL_lon),xmx = max(SAL_lon),ymn=min(SAL_lat),ymx=max(SAL_lat))
-points = rasterToPoints(r, spatial = TRUE)
-df = data.frame(points)
-names(df)[names(df)=="layer"]="SAL"
-mid = mean(df$SAL)
-ggplot(data=world) +  geom_sf()+coord_sf(xlim= c(min(df1$long),max(df1$long)),ylim= c(min(df1$lat),max(df1$lat)),expand=FALSE)+
-  geom_raster(data = df , aes(x = x, y = y, fill = SAL)) + 
-  ggtitle(paste("Daily Salinity on", dates[1]))+geom_point(x = 145.46, y = 15.3186, color = "black",size=3)+
-  xlab("Latitude")+ylab("Longitude")+
-  scale_fill_gradient2(midpoint = mid, low="yellow", mid = "orange",high="red")
-
-#plotting time series SAPTIN 
-I=which(SAL_lon>=min(df1$long) & SAL_lon<= max(df1$long)) #only extract the region we care about
-if (length(I) == 1){ #if the longitude only has 1 value, add a second
-  II = I:(I+1)
-}else{
-  II = I
-}
-J=which(SAL_lat>=min(df1$lat) & SAL_lat<=max(df1$lat)) #only extract the region we care about
-if (length(J) == 1){ #if the latitude only has 1 value, add a second
-  JJ = J:(I+1)
-}else{
-  JJ = J
-}
-K=which(SAL_dates>= startTime & SAL_dates<= endTime) #extract only the dates we care about
-SAL2=SALvar[II,JJ,K] #index the original data frame to extract the lat, long, dates we care about
-
-n=dim(SAL2)[3] #find the length of time
-
-#take the mean
-resSAL=rep(NA,n) 
-for (i in 1:n) 
-  resSAL[i]=mean(SAL2[,,i],na.rm=TRUE) 
-
-#plot the time series
-plot(1:n,resSAL,axes=FALSE,type='o',pch=20,xlab='',ylab='Salinity',las = 3) 
-axis(2) 
-axis(1,1:n,format(SAL_dates[K]),las = 3) 
-box()
-
-#remove unnecessary variables
-rm("SALvar","SAL2", "SAL_lon","SAL_lat")
 
 #Temperature
 #Plotting in ggplot
@@ -306,12 +301,6 @@ box()
 
 #converting _dates to data frames and renaming column to 'time'
 
-
-SAL_ddf <- as.data.frame(SAL_dates[K])
-SAL_ddf = SAL_ddf %>% 
-  rename(
-    time = 'SAL_dates[K]',
-  )
 TEMP_ddf <- as.data.frame(TEMP_dates[K])
 TEMP_ddf = TEMP_ddf %>% 
   rename(
@@ -319,8 +308,6 @@ TEMP_ddf = TEMP_ddf %>%
   )
 
 #merge res dataframes with dates
-
-SALdf<- bind_cols(SAL_ddf,as.data.frame(resSAL))
 TEMPdf<- bind_cols(TEMP_ddf,as.data.frame(resTEMP))
 EVdf<- bind_cols(EV_ddf,as.data.frame(resEV))
 
