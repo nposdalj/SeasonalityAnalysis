@@ -139,6 +139,7 @@ axis(1,1:n,format(SAL_dates[K]),las = 3)
 box()
 }
 
+GetTEMP <- function(AVISO){
 #thetao - temperature
 v3=AVISO$var[[3]]
 TEMPvar=ncvar_get(AVISO,v3)
@@ -146,6 +147,44 @@ TEMP_lon=v3$dim[[1]]$vals
 TEMP_lat=v3$dim[[2]]$vals
 TEMP_dates=as.POSIXlt(v3$dim[[4]]$vals*60*60,origin='1950-01-01') #extract the date/time
 TEMP_dates = as.Date(TEMP_dates, format = "%m/%d/%y") #get rid of the time
+
+#plotting time series SAPTIN 
+I=which(TEMP_lon>=min(df1$long) & TEMP_lon<= max(df1$long)) #only extract the region we care about
+if (length(I) == 1){ #if the longitude only has 1 value, add a second
+  II = I:(I+1)
+}else{
+  II = I
+}
+J=which(TEMP_lat>=min(df1$lat) & TEMP_lat<=max(df1$lat)) #only extract the region we care about
+if (length(J) == 1){ #if the latitude only has 1 value, add a second
+  JJ = J:(I+1)
+}else{
+  JJ = J
+}
+K=which(TEMP_dates>= startTime & TEMP_dates<= endTime) #extract only the dates we care about
+TEMP2=TEMPvar[II,JJ,K] #index the original data frame to extract the lat, long, dates we care about
+
+n=dim(TEMP2)[3] #find the length of time
+
+#take the mean
+resTEMP=rep(NA,n) 
+for (i in 1:n) 
+  resTEMP[i]=mean(TEMP2[,,i],na.rm=TRUE)
+
+TEMP_ddf <- as.data.frame(TEMP_dates[K])
+TEMP_ddf = TEMP_ddf %>% 
+  rename(
+    time = 'TEMP_dates[K]',
+  )
+
+TEMPdf<<- bind_cols(TEMP_ddf,as.data.frame(resTEMP))
+
+#plot the time series
+plot(1:n,resTEMP,axes=FALSE,type='o',pch=20,xlab='',ylab='Temperature',las = 3) 
+axis(2) 
+axis(1,1:n,format(TEMP_dates[K]),las = 3) 
+box()
+}
 
 GetEKE <- function(AVISO){
 #uo - eastward velocity
@@ -253,61 +292,4 @@ EKE_cm = EKE_meters * 10000
 
 EKE <<- bind_cols(SSH_ddf,as.data.frame(EKE_cm))
 }
-
-
-
-#Temperature
-#Plotting in ggplot
-r = raster(t(TEMPvar[,,1]),xmn = min(TEMP_lon),xmx = max(TEMP_lon),ymn=min(TEMP_lat),ymx=max(TEMP_lat))
-points = rasterToPoints(r, spatial = TRUE)
-df = data.frame(points)
-names(df)[names(df)=="layer"]="TEMP"
-mid = mean(df$TEMP)
-ggplot(data=world) +  geom_sf()+coord_sf(xlim= c(min(df1$long),max(df1$long)),ylim= c(min(df1$lat),max(df1$lat)),expand=FALSE)+
-  geom_raster(data = df , aes(x = x, y = y, fill = TEMP)) + 
-  ggtitle(paste("Daily Temperature on", dates[1]))+geom_point(x = 145.46, y = 15.3186, color = "black",size=3)+
-  xlab("Latitude")+ylab("Longitude")+
-  scale_fill_gradient2(midpoint = mid, low="yellow", mid = "orange",high="red")
-
-#plotting time series SAPTIN 
-I=which(TEMP_lon>=min(df1$long) & TEMP_lon<= max(df1$long)) #only extract the region we care about
-if (length(I) == 1){ #if the longitude only has 1 value, add a second
-  II = I:(I+1)
-}else{
-  II = I
-}
-J=which(TEMP_lat>=min(df1$lat) & TEMP_lat<=max(df1$lat)) #only extract the region we care about
-if (length(J) == 1){ #if the latitude only has 1 value, add a second
-  JJ = J:(I+1)
-}else{
-  JJ = J
-}
-K=which(TEMP_dates>= startTime & TEMP_dates<= endTime) #extract only the dates we care about
-TEMP2=TEMPvar[II,JJ,K] #index the original data frame to extract the lat, long, dates we care about
-
-n=dim(TEMP2)[3] #find the length of time
-
-#take the mean
-resTEMP=rep(NA,n) 
-for (i in 1:n) 
-  resTEMP[i]=mean(TEMP2[,,i],na.rm=TRUE)
-
-#plot the time series
-plot(1:n,resTEMP,axes=FALSE,type='o',pch=20,xlab='',ylab='Temperature',las = 3) 
-axis(2) 
-axis(1,1:n,format(TEMP_dates[K]),las = 3) 
-box()
-
-
-#converting _dates to data frames and renaming column to 'time'
-
-TEMP_ddf <- as.data.frame(TEMP_dates[K])
-TEMP_ddf = TEMP_ddf %>% 
-  rename(
-    time = 'TEMP_dates[K]',
-  )
-
-#merge res dataframes with dates
-TEMPdf<- bind_cols(TEMP_ddf,as.data.frame(resTEMP))
-EVdf<- bind_cols(EV_ddf,as.data.frame(resEV))
 
