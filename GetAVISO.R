@@ -45,6 +45,7 @@ axis(1,1:n,format(SSH_dates[K]),las = 3)
 box()
 }
 
+GetDEN <- function(AVISO){
 #mlotst - density ocean mixed layer thickness
 v1=AVISO$var[[1]]
 DENvar=ncvar_get(AVISO,v1)
@@ -52,7 +53,7 @@ DEN_lon=v1$dim[[1]]$vals
 DEN_lat=v1$dim[[2]]$vals
 DEN_dates=as.POSIXlt(v1$dim[[3]]$vals*60*60,origin='1950-01-01') #extract the date/time
 DEN_dates = as.Date(DEN_dates, format = "%m/%d/%y") #get rid of the time
-
+}
 #so - salinity
 v2=AVISO$var[[5]]
 SALvar=ncvar_get(AVISO,v2)
@@ -81,12 +82,19 @@ EASTdf <- as.data.frame(EASTVvar)
 
 #plotting time series SAPTIN 
 I=which(EASTV_lon>=min(df1$long) & EASTV_lon<= max(df1$long)) #only extract the region we care about
+if (length(I) == 1){ #if the longitude only has 1 value, add a second
+  II = I:(I+1)
+}else{
+  II = I
+}
 J=which(EASTV_lat>=min(df1$lat) & EASTV_lat<=max(df1$lat)) #only extract the region we care about
 if (length(J) == 1){ #if the latitude only has 1 value, add a second
-  JJ = J:(J+1)
+  JJ = J:(I+1)
+}else{
+  JJ = J
 }
 K=which(EAST_dates>= startTime & EAST_dates<= endTime) #extract only the dates we care about
-EASTV2=EASTVvar[I,JJ,K] #index the original data frame to extract the lat, long, dates we care about
+EASTV2=EASTVvar[II,JJ,K] #index the original data frame to extract the lat, long, dates we care about
 
 n=dim(EASTV2)[3] #find the length of time
 
@@ -120,12 +128,19 @@ NORdf <- as.data.frame(NORVvar)
 
 #plotting time series SAPTIN 
 I=which(NORV_lon>=min(df1$long) & NORV_lon<= max(df1$long)) #only extract the region we care about
+if (length(I) == 1){ #if the longitude only has 1 value, add a second
+  II = I:(I+1)
+}else{
+  II = I
+}
 J=which(NORV_lat>=min(df1$lat) & NORV_lat<=max(df1$lat)) #only extract the region we care about
 if (length(J) == 1){ #if the latitude only has 1 value, add a second
-  JJ = J:(J+1)
+  JJ = J:(I+1)
+}else{
+  JJ = J
 }
 K=which(NOR_dates>= startTime & NOR_dates<= endTime) #extract only the dates we care about
-NORV2=NORVvar[I,JJ,K] #index the original data frame to extract the lat, long, dates we care about
+NORV2=NORVvar[II,JJ,K] #index the original data frame to extract the lat, long, dates we care about
 
 n=dim(NORV2)[3] #find the length of time
 
@@ -148,6 +163,8 @@ axis(2)
 axis(1,1:n,format(NOR_dates[K]),las = 3) 
 box()
 
+
+
 ####
 
 #Calculate EKE
@@ -161,9 +178,6 @@ EKE <<- bind_cols(SSH_ddf,as.data.frame(EKE_cm))
 }
 
 
-
-#remove unnecessary variables
-rm("SSHvar","SSH2", "SSH_lon","SSH_lat")
 
 #Density ocean mixed layer thickness
 #Plotting in ggplot
@@ -180,12 +194,19 @@ ggplot(data=world) +  geom_sf()+coord_sf(xlim= c(min(df1$long),max(df1$long)),yl
 
 #plotting time series SAPTIN 
 I=which(DEN_lon>=min(df1$long) & DEN_lon<= max(df1$long)) #only extract the region we care about
+if (length(I) == 1){ #if the longitude only has 1 value, add a second
+  II = I:(I+1)
+}else{
+  II = I
+}
 J=which(DEN_lat>=min(df1$lat) & DEN_lat<=max(df1$lat)) #only extract the region we care about
 if (length(J) == 1){ #if the latitude only has 1 value, add a second
-  JJ = J:(J+1)
+  JJ = J:(I+1)
+}else{
+  JJ = J
 }
 K=which(DEN_dates>= startTime & DEN_dates<= endTime) #extract only the dates we care about
-DEN2=DENvar[I,JJ,K] #index the original data frame to extract the lat, long, dates we care about
+DEN2=DENvar[II,JJ,K] #index the original data frame to extract the lat, long, dates we care about
 
 n=dim(DEN2)[3] #find the length of time
 
@@ -218,12 +239,19 @@ ggplot(data=world) +  geom_sf()+coord_sf(xlim= c(min(df1$long),max(df1$long)),yl
 
 #plotting time series SAPTIN 
 I=which(SAL_lon>=min(df1$long) & SAL_lon<= max(df1$long)) #only extract the region we care about
+if (length(I) == 1){ #if the longitude only has 1 value, add a second
+  II = I:(I+1)
+}else{
+  II = I
+}
 J=which(SAL_lat>=min(df1$lat) & SAL_lat<=max(df1$lat)) #only extract the region we care about
 if (length(J) == 1){ #if the latitude only has 1 value, add a second
-  JJ = J:(J+1)
+  JJ = J:(I+1)
+}else{
+  JJ = J
 }
 K=which(SAL_dates>= startTime & SAL_dates<= endTime) #extract only the dates we care about
-SAL2=SALvar[I,JJ,K] #index the original data frame to extract the lat, long, dates we care about
+SAL2=SALvar[II,JJ,K] #index the original data frame to extract the lat, long, dates we care about
 
 n=dim(SAL2)[3] #find the length of time
 
@@ -256,12 +284,19 @@ ggplot(data=world) +  geom_sf()+coord_sf(xlim= c(min(df1$long),max(df1$long)),yl
 
 #plotting time series SAPTIN 
 I=which(TEMP_lon>=min(df1$long) & TEMP_lon<= max(df1$long)) #only extract the region we care about
+if (length(I) == 1){ #if the longitude only has 1 value, add a second
+  II = I:(I+1)
+}else{
+  II = I
+}
 J=which(TEMP_lat>=min(df1$lat) & TEMP_lat<=max(df1$lat)) #only extract the region we care about
 if (length(J) == 1){ #if the latitude only has 1 value, add a second
-  JJ = J:(J+1)
+  JJ = J:(I+1)
+}else{
+  JJ = J
 }
 K=which(TEMP_dates>= startTime & TEMP_dates<= endTime) #extract only the dates we care about
-TEMP2=TEMPvar[I,JJ,K] #index the original data frame to extract the lat, long, dates we care about
+TEMP2=TEMPvar[II,JJ,K] #index the original data frame to extract the lat, long, dates we care about
 
 n=dim(TEMP2)[3] #find the length of time
 
@@ -278,6 +313,52 @@ box()
 
 #remove unnecessary variables
 rm("TEMPvar","TEMP2", "TEMP_lon","TEMP_lat")
+
+#Eastward Velocity
+#Plotting in ggplot
+r = raster(t(EASTVvar[,,1]),xmn = min(EASTV_lon),xmx = max(EASTV_lon),ymn=min(EASTV_lat),ymx=max(EASTV_lat))
+points = rasterToPoints(r, spatial = TRUE)
+df = data.frame(points)
+names(df)[names(df)=="layer"]="EASTV"
+mid = mean(df$EASTV)
+ggplot(data=world) +  geom_sf()+coord_sf(xlim= c(min(df1$long),max(df1$long)),ylim= c(min(df1$lat),max(df1$lat)),expand=FALSE)+
+  geom_raster(data = df , aes(x = x, y = y, fill = EASTV)) + 
+  ggtitle(paste("Daily Eastward Velocity on", dates[1]))+geom_point(x = 145.46, y = 15.3186, color = "black",size=3)+
+  xlab("Latitude")+ylab("Longitude")+
+  scale_fill_gradient2(midpoint = mid, low="yellow", mid = "orange",high="red")
+
+#plotting time series SAPTIN 
+I=which(EASTV_lon>=min(df1$long) & EASTV_lon<= max(df1$long)) #only extract the region we care about
+if (length(I) == 1){ #if the longitude only has 1 value, add a second
+  II = I:(I+1)
+}else{
+  II = I
+}
+J=which(EASTV_lat>=min(df1$lat) & EASTV_lat<=max(df1$lat)) #only extract the region we care about
+if (length(J) == 1){ #if the latitude only has 1 value, add a second
+  JJ = J:(I+1)
+}else{
+  JJ = J
+}
+K=which(EAST_dates>= startTime & EAST_dates<= endTime) #extract only the dates we care about
+EASTV2=EASTVvar[II,JJ,K] #index the original data frame to extract the lat, long, dates we care about
+
+n=dim(EASTV2)[3] #find the length of time
+
+#take the mean
+resEV=rep(NA,n) 
+for (i in 1:n) 
+  resEV[i]=mean(EASTV2[,,i],na.rm=TRUE) 
+
+#plot the time series
+plot(1:n,resEV,axes=FALSE,type='o',pch=20,xlab='',ylab='Eastward Velocity',las = 3) 
+axis(2) 
+axis(1,1:n,format(EAST_dates[K]),las = 3) 
+box()
+
+#remove unnecessary variables
+rm("EASTVvar","EASTV2", "EASTV_lon","EASTV_lat")
+
 
 #converting _dates to data frames and renaming column to 'time'
 
