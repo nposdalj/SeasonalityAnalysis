@@ -1,82 +1,14 @@
-#load libraries
-library(ncdf4)
-library(sp)
-library(rgdal)
-library(httr)
-library(sf)
-library(dplyr)
-library(lubridate)
-library(raster)
-library(rgeos)
-library(ggplot2)
-library("rnaturalearth")
-library("rnaturalearthdata")
-library(tidyverse)
-library(mgcv)
-library(tweedie)
-library(anytime)
-library(mgcViz)
+GetSST <- function(envDir){
+  
+startTime = as.Date(startTime) #this should be formatted like this: 2010-03-05
+endTime = as.Date(endTime) 
 
-#increasing memory limit
-memory.limit(size=300000)
-
-# User Defined sections
-#define the lat and long of interest
-#df1 = data.frame("lat" = c(19.29, 19.2, 19.2467, 19.2467), "long" = c(-166.69, -166.69, -166.74, -166.64)) #Wake
-df1 = data.frame("lat" = c(15.36, 15.27, 15.3186, 15.3186), "long" = c(145.46, 145.46, 145.51, 145.41)) #Saipan
-#df1 = data.frame("lat" = c(15.08, 14.99, 15.0387, 15.0387), "long" = C(145.75, 145.75, 145.8, 145.7))#Tinian
-#df1 = data.frame("lat" = c(29.185, 29.1, 29.1410, 29.1410), "long" = C(-118.26, -118.26, -118.31, -118.21))#GI
-#df1 = data.frame("lat" = c(31.79, 31.7, 31.747, 31.747), "long" = C(-121.38, -121.38, -121.43, -121.33))#CORC
-#df1 = data.frame("lat" = c(52.4, 52.31, 52.3547, 52.3547), "long" = C(-175.635, -175.635, -175.71, -175.56))#BD
-#df1 = data.frame("lat" = c(47.54, 47.45, 47.4936, 47.4936), "long" = C(-125.378, -125.378, -125.44, -125.31))#QC
-#df1 = data.frame("lat" = c(56.385, 56.295, 56.34, 56.34), "long" = C(-145.182, -145.182, -145.26, -145.1))#QN
-#df1 = data.frame("lat" = c(56.29, 56.2, 56.2434, 56.2434), "long" = C(-142.75, -142.75, -142.83, -142.67))#PT
-#df1 = data.frame("lat" = c(58.71, 58.62, 58.6668, 58.6668), "long" = C(-148.0034, -148.0034, -148.12, -147.94))#CB
-
-#define the start and end of the datame 
-startTime = "2010-03-05" #this should be formatted like this: 2010-03-05
-endTime = "2019-02-02" 
-
-#ITS
-ITS = 4
-
-#loading the environmental data
-envDir = paste("O:/My Drive/Gaia_EnvironmentalData/CentralPac/")#setting the directory)
-
+#SST data
 #spatial polygon for area of interest
 ch <- chull(df1$long, df1$lat)
 coords <- df1[c(ch, ch[1]), ]#creating convex hull
 sp_poly <- SpatialPolygons(list(Polygons(list(Polygon(coords)), ID = 1)))#converting convex hull to spatial polygon
 
-#loading sperm whale data
-site = 'SAP'
-saveDir = paste("O:/My Drive/CentralPac_TPWS_metadataReduced/Saipan/Seasonality/")#setting the directory
-
-#load data from StatisicalAnalysis_All
-filenameStatAll = paste(saveDir,site,"_Day.csv",sep="")
-DayData = read.csv(filenameStatAll) #load files as data frame
-DayTable = DayData %>%
-  dplyr::select(tbin, Count_Click, Count_Bin, HoursProp, HoursNorm)
-names(DayTable)[1] = "time"
-DayTable$time = as.Date(DayTable$time)#converting time from character to date
-
-#load sex specific data
-filename_sex = paste(saveDir,site,"_binPresence.csv",sep="")
-SexDayData = read.csv(filename_sex) #load files as data frame
-SexDayData = SexDayData %>%
-  dplyr::select(tbin, FemaleHoursNorm, MaleHoursNorm, JuvenileHoursNorm)
-names(SexDayData)[1] = "time"
-
-SexDayData$time = anytime(as.factor(SexDayData$time))
-SexDayData$time = as.Date(SexDayData$time)
-
-#removing unnecessary variables
-rm("DayData")
-
-#clear memory 
-gc()
-
-#SST data
 filenameStatAll = paste(envDir,"AQUASST_SAPTIN.csv",sep="")#load files as data frame
 SST = read.csv(filenameStatAll)
 SST = SST[-1,] #delete first row
@@ -98,6 +30,8 @@ SST4 = SST3 %>%
   group_by(time) %>%
   summarize(mean_SST = mean(sstMasked), SD_SST = sd(sstMasked)) #finding daily mean
 
+SST4 <<- SST4
+
 #data exploration
 mean(SST2$sstMasked, na.rm = TRUE)#finding overall mean
 #save standard deviation
@@ -113,7 +47,4 @@ ggplot(SST4, aes(x=time,y=mean_SST))+
   labs(y="Mean SST (C)",x="Time (days)")+
   geom_line()+
   geom_point()
-
-rm(SST)
-rm(SST2)
-rm(SST3)
+}
