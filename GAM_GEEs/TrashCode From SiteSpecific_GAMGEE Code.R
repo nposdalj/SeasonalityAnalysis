@@ -1,201 +1,119 @@
-### Modelling habitat preference of sperm whales using Generalized Additive Models with Generalized Estimating Equations ###
-### Script adapted from Pirotta et al. (2011) and Benjamins ###  
-### Example from the GofAK + BSAI ###
-### 7 Models total:
-        #Site specific models: CB, PT, QN, BD (more than 270 d of recording)
-        #Region specific models: BSAI + GOA
-        #Big model: all 7 sites
+##Trash code from SiteSpecific_GAMGEE.R code
 
-## STEP 1: require the libraries needed ##
+#Calculating Block Size the Merkens Way
+startDate = SiteDayTable$tbin[1]
+endDate = SiteDayTable$tbin[nrow(SiteDayTable)]
+timeseries = data.frame(date=seq(startDate, endDate, by="days"))
+timeseries$one = 1:nrow(timeseries)
+oneday = left_join(SiteHourTable,timeseries,by="date")
+onedaygrouped = aggregate(oneday[, c(2,8)], list(oneday$one), mean)
+onedaygrouped$Group.1 = as.factor(onedaygrouped$Group.1)
+onedaygrouped = onedaygrouped %>% mutate_if(is.numeric, ~1 * (. != 0))
 
-# All the libraries have to be installed prior to their utilization (see R help on library installation)
+timeseries$two = rep(1:(nrow(timeseries)/2), times=1, each=2)
+twoday = left_join(SiteHourTable,timeseries,by="date")
+twodaygrouped = aggregate(twoday[, c(2,8)], list(twoday$two), mean)
+twodaygrouped$Group.1 = as.factor(twodaygrouped$Group.1)
+twodaygrouped = twodaygrouped %>% mutate_if(is.numeric, ~1 * (. != 0))
+acf(twodaygrouped$PreAbs, plot = FALSE)
+acf(twodaygrouped$PreAbs)
+timeseries$two = NULL
+#autocorrelated
 
-library(geepack)         # for the GEEs (Wald's hypothesis tests allowed)
-library(splines)         # to construct the B-splines within a GEE-GLM
-library(tidyverse)       # because it literally does everything
-library(rjags)           # replacement for geeglm which is out of date
-library(ROCR)            # to build the ROC curve
-library(PresenceAbsence) # to build the confusion matrix
-library(ggplot2)         # to build the partial residual plots
-library(mvtnorm)         # to build the partial residual plots
-library(gridExtra)       # to build the partial residual plots
-library(SimDesign)
-library(lubridate)
-library(regclass)
-library(mgcv)
+three = rep(1:(floor(nrow(timeseries)/3)), times=1, each=3)
+timeseries$three = c(three,three[3402]+1,three[3402]+1)
+threeday = left_join(HourTable,timeseries,by="date")
+threedaygrouped = aggregate(threeday[, c(2,8)], list(threeday$three), mean)
+threedaygrouped$Group.1 = as.factor(threedaygrouped$Group.1)
+threedaygrouped = threedaygrouped %>% mutate_if(is.numeric, ~1 * (. != 0))
+acf(threedaygrouped$PreAbs, plot = FALSE)
+acf(threedaygrouped$PreAbs)
+timeseries$three = NULL
+#autocorrelated
 
-## STEP 1: the data ##
-#Hourly data
-site = 'CB'
-dir = paste("I:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites")
-fileName = paste("I:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites/AllSitesGrouped_Binary_GAMGEE_ROW.csv",sep="") #setting the directory
-HourTable = read.csv(fileName)
-HourTable = na.omit(HourTable)
-HourTable$date = as.Date(HourTable$tbin)
-HourTable$tbin = as.POSIXct(HourTable$tbin)
-HourTable = HourTable[ order(HourTable$tbin , decreasing = FALSE ),]
-SiteHourTable = dplyr::filter(HourTable, grepl(site,Site))
-SiteHourTable$Hour = hour(SiteHourTable$tbin)
-SiteHourTable$Effort_Bin[SiteHourTable$Effort_Bin > 12] = 12
-SiteHourTable = subset(SiteHourTable, Site == site)#subset the table for the site only
+timeseries$four = rep(1:(floor(nrow(timeseries)/4)), times=1, each=4)
+fourday = left_join(HourTable,timeseries,by="date")
+fourdaygrouped = aggregate(fourday[, c(2,8)], list(fourday$four), mean)
+fourdaygrouped$Group.1 = as.factor(fourdaygrouped$Group.1)
+fourdaygrouped = fourdaygrouped %>% mutate_if(is.numeric, ~1 * (. != 0))
+acf(fourdaygrouped$PreAbs, plot = FALSE)
+acf(fourdaygrouped$PreAbs)
+timeseries$four = NULL
+#autocorrelated
 
-#Daily data - for block calculations
-fileName2 = paste("I:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites/AllSitesGrouped_GAMGEE_ROW.csv")#setting the directory
-DayTable = read.csv(fileName2) #no effort days deleted
-DayTable = na.omit(DayTable)
-DayTable$tbin = as.Date(DayTable$tbin)
-SiteDayTable = dplyr::filter(DayTable,grepl(site,Site))
-SiteDayTable$Effort_Bin[SiteDayTable$Effort_Bin > 12] = 12
-SiteDayTable = subset(SiteDayTable, Site == site)#subset the table for the site only
+five = rep(1:(floor(nrow(timeseries)/5)), times=1, each=5)
+timeseries$five = c(five,five[3400]+1,five[3400]+1,five[3400]+1,five[3400]+1)
+fiveday = left_join(HourTable,timeseries,by="date")
+fivedaygrouped = aggregate(fiveday[, c(2,8)], list(fiveday$five), mean)
+fivedaygrouped$Group.1 = as.factor(fivedaygrouped$Group.1)
+fivedaygrouped = fivedaygrouped %>% mutate_if(is.numeric, ~1 * (. != 0))
+acf(fivedaygrouped$PreAbs, plot = FALSE)
+acf(fivedaygrouped$PreAbs)
+timeseries$five = NULL
+#autocorrelated
 
-#Time lost variable
-SiteHourTable$TimeLost = max(SiteHourTable$Effort_Bin) - SiteHourTable$Effort_Bin
-SiteDayTable$TimeLost = max(SiteDayTable$Effort_Bin) - SiteDayTable$Effort_Bin
+six = rep(1:(floor(nrow(timeseries)/6)), times=1, each=6)
+timeseries$six = c(six,six[3402]+1,six[3402]+1)
+sixday = left_join(HourTable,timeseries,by="date")
+sixdaygrouped = aggregate(sixday[, c(2,8)], list(sixday$six), mean)
+sixdaygrouped$Group.1 = as.factor(sixdaygrouped$Group.1)
+sixdaygrouped = sixdaygrouped %>% mutate_if(is.numeric, ~1 * (. != 0))
+acf(sixdaygrouped$PreAbs, plot = FALSE)
+acf(sixdaygrouped$PreAbs)
+timeseries$six = NULL
+#autocorrelated
 
-# Each record in the dataset corresponds to an hour of recording, which constitutes the unit of analysis. 
-# The column "PreAbs" represents the binary response variable (0: no animal in acoustic contact; 1: acoustic contact).
-# The column "Site" corresponds to the recording site.
-# The column "Region" corresponds to the recording region (GOA or BSAI).
-# The column Julian represents the day of the year and the column year represents the year of recording.
+seven = rep(1:(floor(nrow(timeseries)/7)), times=1, each=7)
+timeseries$seven = c(seven,seven[3402]+1,seven[3402]+1)
+sevenday = left_join(HourTable,timeseries,by="date")
+sevendaygrouped = aggregate(sevenday[, c(2,8)], list(sevenday$seven), mean)
+sevendaygrouped$Group.1 = as.factor(sevendaygrouped$Group.1)
+sevendaygrouped = sevendaygrouped %>% mutate_if(is.numeric, ~1 * (. != 0))
+acf(sevendaygrouped$PreAbs, plot = FALSE)
+acf(sevendaygrouped$PreAbs)
+timeseries$seven = NULL
+#autocorrelated
 
-## Step 3: identify the best blocking structure
-#NOT ON MODEL RESIDUALS
-#Day Table
-#acf on the 1 day binned data
-acf(SiteDayTable$PreAbs, lag.max = 35)
-#CB - at day 30 it gets close enough to the CI intervals
+eight = rep(1:(floor(nrow(timeseries)/8)), times=1, each=8)
+timeseries$eight = c(eight,eight[3400]+1,eight[3400]+1,eight[3400]+1,eight[3400]+1)
+eightday = left_join(HourTable,timeseries,by="date")
+eightdaygrouped = aggregate(eightday[, c(2,8)], list(eightday$eight), mean)
+eightdaygrouped$Group.1 = as.factor(eightdaygrouped$Group.1)
+eightdaygrouped = eightdaygrouped %>% mutate_if(is.numeric, ~1 * (. != 0))
+acf(eightdaygrouped$PreAbs, plot = FALSE)
+acf(eightdaygrouped$PreAbs)
+timeseries$eight = NULL
+#no autocorrrelation at this point
 
-#Hour Table
-#acf on the 1 hour binned data
-acf(SiteHourTable$PreAbs, lag.max = 2000)
-acf(SiteHourTable$PreAbs, lag.max = 2000, ylim=c(0,0.1), xlim =c(1100,1150)) 
-#CB - at hour 1135 it goes below the CI intervals (approximately 47 days)
+nine = rep(1:(floor(nrow(timeseries)/9)), times=1, each=9)
+timeseries$nine = c(nine,nine[3402]+1,nine[3402]+1)
 
-#ON MODEL RESIDUALS
-#CB ONLY
-BlockMod<-glm(PreAbs~
-               bs(Julian)+
-               bs(TimeLost)+
-               as.factor(Year)
-             ,data=SiteHourTable,family=binomial)
+ten = rep(1:(floor(nrow(timeseries)/10)), times=1, each=10)
+timeseries$ten = c(ten,ten[3400]+1,ten[3400]+1,ten[3400]+1,ten[3400]+1)
 
-summary(BlockMod)
-acf(residuals(BlockMod), lag.max = 1000, ylim=c(0,0.1))
-acf(residuals(BlockMod), lag.max = 1000, ylim=c(0,0.1), xlim =c(500,600)) 
-ACFval = 602
-#CB - at hour 602 it drops below the CI intervals (approximately 25 days)
+eleven = rep(1:(floor(nrow(timeseries)/11)), times=1, each=11)
+timeseries$eleven = c(eleven,eleven[3399]+1,eleven[3399]+1,eleven[3399]+1,eleven[3399]+1,eleven[3399]+1)
 
-#create the blocks based on the full timesereies
-startDate = SiteHourTable$tbin[1]
-endDate = SiteHourTable$tbin[nrow(SiteHourTable)]
-timeseries = data.frame(date=seq(startDate, endDate, by="hours"))
-preBlock = rep(1:(floor(nrow(timeseries)/ACFval)), times=1, each=ACFval)
-divdiff = nrow(timeseries) - length(preBlock)
-last = tail(preBlock, n = 1)
-lastVec = rep(last,each = divdiff)
-timeseries$block = c(preBlock,lastVec)
-SiteHourTableB = left_join(SiteHourTable,timeseries,by="date")
+twelve = rep(1:(floor(nrow(timeseries)/12)), times=1, each=12)
+timeseries$twelve = c(twelve,twelve[3396]+1,twelve[3396]+1,twelve[3396]+1,twelve[3396]+1,twelve[3396]+1,twelve[3396]+1,twelve[3396]+1,twelve[3396]+1)
 
-## Step 4: Data exploration and initial analysis ##
-# Follow data exploration protocols suggested by Zuur et al. (2010), Zuur (2012), to generate pair plots, box plots, and assess collinearity between covariates in the dataset using Varinace Inflation Factors (vif).
-# Basic model for VIF analysis:
-GLM1_CB = glm(PreAbs ~ Julian + TimeLost + Year, family = binomial, data = SiteHourTableB)
-#VIF scores in GLM to work out collinearity:
-VIF(GLM1_CB)
-#CB
-#Julian TimeLost     Year 
-#1.070380 1.006304 1.076902 
+thirteen = rep(1:(floor(nrow(timeseries)/13)), times=1, each=13)
+timeseries$thirteen = c(thirteen,thirteen[3393]+1,thirteen[3393]+1,thirteen[3393]+1,thirteen[3393]+1,thirteen[3393]+1,thirteen[3393]+1,thirteen[3393]+1,thirteen[3393]+1,thirteen[3393]+1,thirteen[3393]+1,thirteen[3393]+1)
 
-## STEP 4: Model selection - covariate preparation ##
-# Construct variance-covariance matrices for cyclic covariates:
-AvgDayBasis <- gam(PreAbs~s(Julian, bs ="cc", k=-1), fit=F, data = SiteHourTableB, family =binomial, knots = list(HOUR=seq(0,23,length=6)))$X[,2:5]
-AvgDayMat = as.matrix(AvgDayBasis)
+fourteen = rep(1:(floor(nrow(timeseries)/14)), times=1, each=14)
+timeseries$fourteen = c(fourteen, fourteen[3402]+1, fourteen[3402]+1)
 
-# Selection of the correct form (linear or smooth) for the covariates available at a single scale.
-# A series of models is fitted where each of these covariate is tested as a linear term vs. a smoother and compared against an empty model.
-# Extract the QIC scores from the geeglm object to compare the empty model with the others and select how to treat the covariate.
-POD0<-geeglm(PreAbs ~ 1, family = binomial, corstr="ar1", id=block, data=SiteHourTableB)
+fifteen = rep(1:(floor(nrow(timeseries)/15)), times=1, each=15)
+timeseries$fifteen = c(fifteen, fifteen[3390]+1,fifteen[3390]+1,fifteen[3390]+1,fifteen[3390]+1,fifteen[3390]+1,fifteen[3390]+1,fifteen[3390]+1,fifteen[3390]+1,fifteen[3390]+1,fifteen[3390]+1,fifteen[3390]+1,fifteen[3390]+1,fifteen[3390]+1,fifteen[3390]+1)
 
-#Julian Day
-POD0a = geeglm(PreAbs ~ bs(Julian, knots=10), family = binomial, corstr="ar1", id=block, data=SiteHourTableB)
-POD0b = geeglm(PreAbs ~ AvgDayMat, family = binomial, corstr="ar1", id=block, data=SiteHourTableB)
-model0A<-c("POD0", "POD0a", "POD0b")
-QIC0A<-c(QIC(POD0)[1],QIC(POD0a)[1],QIC(POD0b)[1])
-QICmod0A<-data.frame(rbind(model0A,QIC0A))
-QICmod0A
-#CB
-#QIC          QIC.1            QIC.2
-#model0A            POD0          POD0a            POD0b
-#QIC0A   62462.927331586 60290.76893056 59731.5595042787
-#Julian day as a variance covariance matrix
-
-#Year
-POD1a = geeglm(PreAbs ~ as.factor(Year), family = binomial, corstr="ar1", id=block, data=SiteHourTableB)
-POD1b = geeglm(PreAbs ~ Year, family = binomial, corstr="ar1", id=block, data=SiteHourTableB)
-POD1c = geeglm(PreAbs ~ bs(Year), family = binomial, corstr="ar1", id=block, data=SiteHourTableB)
-model1A<-c("POD0", "POD1a", "POD1b","POD1c")
-QIC1A<-c(QIC(POD0)[1],QIC(POD1a)[1],QIC(POD1b)[1],QIC(POD1c)[1])
-QICmod1A<-data.frame(rbind(model1A,QIC1A))
-QICmod1A
-#CB
-#QIC            QIC.1           QIC.2            QIC.3
-#model1A            POD0            POD1a           POD1b            POD1c
-#QIC1A   62707.622017871 62454.9622741072 62966.989935442 61587.2259674017
-#Year as smooth
-
-#TimeLost
-POD2a = geeglm(PreAbs ~ as.factor(TimeLost), family = binomial, corstr="ar1", id=block, data=SiteHourTableB)
-POD2b = geeglm(PreAbs ~ TimeLost, family = binomial, corstr="ar1", id=block, data=SiteHourTableB)
-POD2c = geeglm(PreAbs ~ bs(TimeLost), family = binomial, corstr="ar1", id=block, data=SiteHourTableB)
-model2A<-c("POD0", "POD2a", "POD2b","POD2c")
-QIC2A<-c(QIC(POD0)[1],QIC(POD2a)[1],QIC(POD2b)[1],QIC(POD2c)[1])
-QICmod2A<-data.frame(rbind(model2A,QIC2A))
-QICmod12
-
-## STEP 5: Determine which covariates are most relevant, and which can be removed (on the basis of previous collinearity work).         
-#The initial full model is:
-POD2a = geeglm(PreAbs ~ AvgDayMat+bs(Year),family = binomial, corstr="ar1", id=thirtyfour, data=HourTableBinned)
-#without AvgDayMat
-POD2b = geeglm(PreAbs ~ bs(Year),family = binomial, corstr="ar1", id=thirtyfour, data=HourTableBinned)
-#without Year
-POD2c = geeglm(PreAbs ~ AvgDayMat,family = binomial, corstr="ar1", id=thirtyfour, data=HourTableBinned)
-model2A = c("POD0","POD2a","POD2b","POD2c")
-QIC2A = c(QIC(POD0)[1],QIC(POD2a)[1],QIC(POD2b)[1],QIC(POD2c)[1])
-QICmod2A<-data.frame(rbind(model2A,QIC2A))
-QICmod2A
-#CB
-#corstr = independence
-#QIC            QIC.1            QIC.2            QIC.3
-#model2A            POD0            POD2a            POD2b            POD2c
-#QIC2A   62707.622017871 59362.4453354621 61587.2259674017 60383.6808219463
-
-# STEP 6: Testing covariate significance.
-# At this point, the resulting model is fitted using the library geeglm. The order in which the covariates enter the model is determined by the QIC score
-# (the ones that, if removed, determine the biggest increase in QIC enter the model first).
-
-#In descending order:
-#AvgDayMat
-#Year
-
-POD3 = geeglm(PreAbs ~ AvgDayMat+bs(Year),family = binomial, corstr="independence", id=thirtyfour, data=HourTableBinned)
-anova(POD3)
-#CB
-#Analysis of 'Wald statistic' Table
-#Model: binomial, link: logit
-#Response: PreAbs
-#Terms added sequentially (first to last)
-
-#Df     X2 P(>|Chi|)    
-#AvgDayMat  4 37.059 1.752e-07 ***
-  #bs(Year)   3 21.683 7.594e-05 ***
-  #---
-  #Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-# Retain all covariates. This is the final model.
+# Group everything in blocks from 1d to 15d (15 different data sets)
+HourTableBinned = left_join(HourTable,timeseries,by = "date")
+HourTableBinned = HourTableBinned[ order(HourTableBinned$tbin , decreasing = FALSE ),]
 
 #Step 7: Construction of the ROC curve
 # STEP 6: Construction of the ROC curve     
-pr <- predict(POD3, type="response")  
-pred <- prediction(pr,SiteHourTable$PreAbs) 
+pr <- predict(POD2c, type="response")  
+pred <- prediction(pr,SiteHourTableB$PreAbs) 
 perf <- performance(pred, measure="tpr", x.measure="fpr")   
 plot(perf, colorize=TRUE, print.cutoffs.at=c(0.1,0.2,0.3,0.4,0.5))
 #This creates a ROC plot
@@ -220,18 +138,18 @@ alpha[999,]                                                       # to identify 
 # This value can now be used to build the confusion matrix:
 
 DATA<-matrix(0,45354 ,9)                                             # to build a matrix with 3 columns and n rows, where n is the dimension of the data set (here 4973 - the number of rows can be checked with dim())
-dim(SiteHourTable)
+dim(SiteHourTableB)
 #CB
 #[1] 45354     9
 DATA<-as.data.frame(DATA)
 names(DATA)<-c("plotID","Observed","Predicted")
 DATA$plotID<-1:45354                                    # the first column is filled with an ID value that is unique for each row
-DATA$Observed<-SiteHourTable$PreAbs                                           # the second column reports the observed response (0s and 1s)
+DATA$Observed<-SiteHourTableB$PreAbs                                           # the second column reports the observed response (0s and 1s)
 DATA$Predicted<-predict(POD3,type="response")                 # the third column reports the predictions
 cmx(DATA, threshold = 0.4422233)                                   # the identified cut-off must be used here
 
 #Confusion matrix:
-          #observed
+#observed
 #predicted     1     0
 #1          13115 10693
 #0           7387 14159
@@ -243,12 +161,12 @@ auc <- performance(pred, measure="auc")
 #auc = 0.6623965
 
 #Step 8: visualise the contribution of the explanatory variables by means of the partial residual plots, which plot the relationship between the response (on the response scale) and each predictor ##
-POD3 = geeglm(PreAbs ~ AvgDayMat+bs(Year),family = binomial, corstr="independence", id=thirtyfour, data=HourTableBinned)
+POD3 = geeglm(PreAbs ~ AvgDayMat,family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
 dimnames(AvgDayMat)<-list(NULL,c("AHBM1", "AHBM2", "AHBM3", "AHBM4"))
 
 #Probability of covariate #1: AvgDayMat:
 BootstrapParameters1<-rmvnorm(10000, coef(POD3),summary(POD3)$cov.unscaled, method="chol")
-start=2; finish=5; Variable=AvgDayMat; xlabel="Julian Day"; ylabel="Probability"  
+fstart=2; finish=5; Variable=AvgDayMat; xlabel="Julian Day"; ylabel="Probability"  
 PlottingVar1<-seq(min(Variable), max(Variable), length=5000)
 CenterVar1<-model.matrix(POD3)[,start:finish]*coef(POD3)[c(start:finish)]
 BootstrapCoefs1<-BootstrapParameters1[,c(start:finish)]
@@ -264,49 +182,6 @@ plot(PlottingVar1,(RealFitCenter1a), type="l", col=1,ylim=c(0, 1),xlab=xlabel, y
 segments(PlottingVar1,(cis1a[1,]),PlottingVar1,(cis1a[2,]), col="grey", main = "Influence of DATENO")
 lines(PlottingVar1,(RealFitCenter1a),lwd=2, col=1)
 rug(PlottingVar1)
-
-
-
-
-#Probability of covariate #2: TideBasisMat:  
-BootstrapParameters2<-rmvnorm(10000, coef(POD8),summary(POD8)$cov.unscaled, method="chol")
-start=6; finish=9; Variable=MINUTE; xlabel="Tidal cycle (0 = 1 = Low Tide at Oban)"; ylabel="Probability"   
-PlottingVar2<-seq(min(Variable), max(Variable), length=5000)
-CenterVar2<-model.matrix(POD8)[,start:finish]*coef(POD8)[c(start:finish)]
-BootstrapCoefs2<-BootstrapParameters2[,c(start:finish)]
-Basis2<-gam(rbinom(5000,1,0.5)~s(PlottingVar2, bs="cc", k=6), fit=F, family=binomial, knots=list(PlottingVar2=seq(0,1,length=6)))$X[,2:5]
-RealFit2<-Basis2%*%coef(POD8)[c(start:finish)]
-RealFitCenter2<-RealFit2-mean(CenterVar2)
-RealFitCenter2a<-inv.logit(RealFitCenter2)
-BootstrapFits2<-Basis2%*%t(BootstrapCoefs2)
-quant.func2<-function(x){quantile(x,probs=c(0.025, 0.975))}
-cis2<-apply(BootstrapFits2, 1, quant.func2)-mean(CenterVar2)
-cis2a<-inv.logit(cis2)
-plot(PlottingVar2,(RealFitCenter2a), type="l", col=1,ylim=c(0, 1),xlab=xlabel, ylab=ylabel, xlim=c(0,1),main ="M7 covariate 2: Tidal cycle" , cex.lab = 1.5, cex.axis=1.5)
-segments(PlottingVar2,(cis2a[1,]),PlottingVar2,(cis2a[2,]), col="grey")
-lines(PlottingVar2,(RealFitCenter2a),lwd=2, col=1)
-rug(PlottingVar2)
-
-
-
-#Probability of covariate #3: AvgHrBasisMat:
-BootstrapParameters3<-rmvnorm(10000, coef(POD8),summary(POD8)$cov.unscaled, method="chol")
-start=10; finish=13; Variable=HOUR; xlabel="Diel Hour"; ylabel="Probability"  
-PlottingVar3<-seq(min(Variable), max(Variable), length=5000)
-CenterVar3<-model.matrix(POD8)[,start:finish]*coef(POD8)[c(start:finish)]
-BootstrapCoefs3<-BootstrapParameters3[,c(start:finish)]
-Basis3<-gam(rbinom(5000,1,0.5)~s(PlottingVar3, bs="cc", k=6), fit=F, family=binomial, knots=list(PlottingVar2=seq(0,23,length=6)))$X[,2:5]
-RealFit3<-Basis3%*%coef(POD8)[c(start:finish)]
-RealFitCenter3<-RealFit3-mean(CenterVar3)
-RealFitCenter3a<-inv.logit(RealFitCenter3)
-BootstrapFits3<-Basis3%*%t(BootstrapCoefs3)
-quant.func3<-function(x){quantile(x,probs=c(0.025, 0.975))}
-cis3<-apply(BootstrapFits3, 1, quant.func3)-mean(CenterVar3)
-cis3a<-inv.logit(cis3)
-plot(PlottingVar3,(RealFitCenter3a), type="l", col=1,ylim=c(0, 1),xlab=xlabel, ylab=ylabel, xlim=c(0,23), main ="M7 covariate 3: Diel Hour" , cex.lab = 1.5, cex.axis=1.5)    
-segments(PlottingVar3,(cis3a[1,]),PlottingVar3,(cis3a[2,]), col="grey")
-lines(PlottingVar3,(RealFitCenter3a),lwd=2, col=1)
-rug(PlottingVar3)
 
 
 ## STEP 4: fit the full model ##
