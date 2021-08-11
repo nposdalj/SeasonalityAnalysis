@@ -6,43 +6,55 @@ names(AVISO$var)
 }
 
 GetSSH <- function(AVISO){
-#zos - SSH
-v6=AVISO$var[[6]]
-SSHvar=ncvar_get(AVISO,v6)
-SSH_lon=v6$dim[[1]]$vals
-SSH_lat=v6$dim[[2]]$vals
-SSH_dates=as.POSIXlt(v6$dim[[3]]$vals*60*60,origin='1950-01-01') #extract the date/time
-SSH_dates = as.Date(SSH_dates, format = "%m/%d/%y") #get rid of the time
+  #zos - SSH
+  v6=AVISO$var[[6]]
+  SSHvar=ncvar_get(AVISO,v6)
+  SSH_lon=v6$dim[[1]]$vals
+  SSH_lat=v6$dim[[2]]$vals
+  SSH_dates=as.POSIXlt(v6$dim[[3]]$vals*60*60,origin='1950-01-01') #extract the date/time
+  SSH_dates <<- as.Date(SSH_dates, format = "%m/%d/%y") #get rid of the time
+  
+  #plotting timeseries
+  I=which(SSH_lon>=min(df1$long) & SSH_lon<= max(df1$long)) #only extract the region we care about
+  if (length(I) == 1){ #if the longitude only has 1 value, add a second
+    II = I:(I+1)
+  }else{
+    II = I
+  }
+  J=which(SSH_lat>=min(df1$lat) & SSH_lat<=max(df1$lat)) #only extract the region we care about
+  if (length(J) == 1){ #if the latitude only has 1 value, add a second
+    JJ = J:(I+1)
+  }else{
+    JJ = J
+  }
+  Ka = which(SSH_dates<startTime)
+  Kb = which(SSH_dates>endTime)
+  Kb = Kb[2:length(Kb)]
+  #K=which(SSH_dates>= startTime & SSH_dates<= endTime) #extract only the dates we care about
+  SSH2=SSHvar[II,JJ,-c(Ka,Kb)] #index the original data frame to extract the lat, long, dates we care about
+  
+  n=dim(SSH2)[3] #find the length of time
+  
+  #take the mean
+  resSSH=rep(NA,n) 
+  for (i in 1:n) 
+    resSSH[i]=mean(SSH2[,,i],na.rm=TRUE)
+  
+  SSH_ddf <<- as.data.frame(SSH_dates[-c(Ka,Kb)])
 
-SSH_ddf <- as.data.frame(SSH_dates[K])
-SSH_ddf = SSH_ddf %>% 
-  rename(
-    time = 'SSH_dates[K]',
-  )
-
-#plotting timeseries
-I=which(SSH_lon>=min(df1$long) & SSH_lon<= max(df1$long)) #only extract the region we care about
-J=which(SSH_lat>=min(df1$lat) & SSH_lat<=max(df1$lat)) #only extract the region we care about
-if (length(J) == 1){ #if the latitude only has 1 value, add a second
-  JJ = J:(J+1)
-}
-K=which(SSH_dates>= startTime & SSH_dates<= endTime) #extract only the dates we care about
-SSH2=SSHvar[I,JJ,K] #index the original data frame to extract the lat, long, dates we care about
-
-n=dim(SSH2)[3] #find the length of time
-
-#take the mean
-resSSH=rep(NA,n) 
-for (i in 1:n) 
-  resSSH[i]=mean(SSH2[,,i],na.rm=TRUE)
-
-SSHdf<<- bind_cols(SSH_ddf,as.data.frame(resSSH))
-
-#plot the time series
-plot(1:n,resSSH,axes=FALSE,type='o',pch=20,xlab='',ylab='SSH',las = 3) 
-axis(2) 
-axis(1,1:n,format(SSH_dates[K]),las = 3) 
-box()
+  SSH_ddf <- SSH_ddf %>% 
+    rename(
+      time = 'SSH_dates[-c(Ka, Kb)]',
+    )
+  
+  SSH_ddf$time=as.Date(SSH_ddf$time)
+  SSHdf<<- bind_cols(SSH_ddf,as.data.frame(resSSH))
+  
+  #plot the time series
+  plot(1:n,resSSH,axes=FALSE,type='o',pch=20,xlab='',ylab='SSH',las = 3) 
+  axis(2) 
+  axis(1,1:n,format(SSH_dates[-c(Ka,Kb)]),las = 3) 
+  box()
 }
 
 GetDEN <- function(AVISO){
@@ -279,8 +291,6 @@ axis(2)
 axis(1,1:n,format(NOR_dates[K]),las = 3) 
 box()
 
-
-
 ####
 
 #Calculate EKE
@@ -290,6 +300,9 @@ velocity = u + v
 EKE_meters = 0.5 * velocity
 EKE_cm = EKE_meters * 10000 
 
-EKE <<- bind_cols(SSH_ddf,as.data.frame(EKE_cm))
+EKE <- bind_cols(SSH_ddf,as.data.frame(EKE_cm))
+colnames(EKE)[1] <- "time"
+EKE$time=as.Date(EKE$time)
+EKE <<- EKE
 }
 

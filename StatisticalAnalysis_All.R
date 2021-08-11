@@ -25,8 +25,8 @@ library(lubridate)
 library(survival)
 
 #load data
-site = 'TIN'
-saveDir = paste("O:/My Drive/CentralPac_TPWS_metadataReduced/Tinian/Seasonality/")
+site = 'WAKE'
+saveDir = paste("O:/My Drive/CentralPac_TPWS_metadataReduced/Wake/Seasonality/")
 filename = paste(saveDir,site,"_dayData_forGLMR125.csv",sep="")
 dayBinTAB = read.csv(filename) #no effort days deleted
 head(dayBinTAB)
