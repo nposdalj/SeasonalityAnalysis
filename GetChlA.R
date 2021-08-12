@@ -22,7 +22,7 @@ if (length(I) == 1){ #if the longitude only has 1 value, add a second
 }
 J=which(ChlA_lat>=min(df1$lat) & ChlA_lat<=max(df1$lat)) #only extract the region we care about
 if (length(J) == 1){ #if the latitude only has 1 value, add a second
-  JJ = J:(I+1)
+  JJ = J:(J+1)
 }else{
   JJ = J
 }

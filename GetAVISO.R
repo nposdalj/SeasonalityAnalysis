@@ -23,7 +23,7 @@ GetSSH <- function(AVISO){
   }
   J=which(SSH_lat>=min(df1$lat) & SSH_lat<=max(df1$lat)) #only extract the region we care about
   if (length(J) == 1){ #if the latitude only has 1 value, add a second
-    JJ = J:(I+1)
+    JJ = J:(J+1)
   }else{
     JJ = J
   }
@@ -75,7 +75,7 @@ if (length(I) == 1){ #if the longitude only has 1 value, add a second
 }
 J=which(DEN_lat>=min(df1$lat) & DEN_lat<=max(df1$lat)) #only extract the region we care about
 if (length(J) == 1){ #if the latitude only has 1 value, add a second
-  JJ = J:(I+1)
+  JJ = J:(J+1)
 }else{
   JJ = J
 }
@@ -122,7 +122,7 @@ if (length(I) == 1){ #if the longitude only has 1 value, add a second
 }
 J=which(SAL_lat>=min(df1$lat) & SAL_lat<=max(df1$lat)) #only extract the region we care about
 if (length(J) == 1){ #if the latitude only has 1 value, add a second
-  JJ = J:(I+1)
+  JJ = J:(J+1)
 }else{
   JJ = J
 }
@@ -169,7 +169,7 @@ if (length(I) == 1){ #if the longitude only has 1 value, add a second
 }
 J=which(TEMP_lat>=min(df1$lat) & TEMP_lat<=max(df1$lat)) #only extract the region we care about
 if (length(J) == 1){ #if the latitude only has 1 value, add a second
-  JJ = J:(I+1)
+  JJ = J:(J+1)
 }else{
   JJ = J
 }
@@ -217,7 +217,7 @@ if (length(I) == 1){ #if the longitude only has 1 value, add a second
 }
 J=which(EASTV_lat>=min(df1$lat) & EASTV_lat<=max(df1$lat)) #only extract the region we care about
 if (length(J) == 1){ #if the latitude only has 1 value, add a second
-  JJ = J:(I+1)
+  JJ = J:(J+1)
 }else{
   JJ = J
 }
@@ -263,7 +263,7 @@ if (length(I) == 1){ #if the longitude only has 1 value, add a second
 }
 J=which(NORV_lat>=min(df1$lat) & NORV_lat<=max(df1$lat)) #only extract the region we care about
 if (length(J) == 1){ #if the latitude only has 1 value, add a second
-  JJ = J:(I+1)
+  JJ = J:(J+1)
 }else{
   JJ = J
 }

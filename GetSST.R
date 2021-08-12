@@ -25,10 +25,11 @@ SST2$time = as.Date(SST2$time)#converting time from character to date
 SST3 = as.data.frame(SST2)#converting SPDF back to DF
 
 #average the environmental variable based on the ITS over the area of interest
+library(dplyr)
 SST4 = SST3 %>%
-  mutate(time = floor_date(time)) %>%
+  mutate(time = floor_date(time, "day")) %>%
   group_by(time) %>%
-  summarize(mean_SST = mean(sstMasked), SD_SST = sd(sstMasked)) #finding daily mean
+  summarize(mean_SST = mean(sstMasked, na.rm = TRUE), SD_SST = sd(sstMasked, na.rm = TRUE)) #finding daily mean
 
 SST4 <<- SST4
 
