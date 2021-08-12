@@ -184,64 +184,18 @@ QICmod2A
 #TimeLost as linear
 
 ## STEP 5: Determine which covariates are most relevant, and which can be removed (on the basis of previous collinearity work).
-#CB (with Year)
 #The initial full model is:
-POD3a = geeglm(PreAbs ~ AvgDayMat+as.factor(Year)+TimeLost,family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
+POD3a = geeglm(PreAbs ~ AvgDayMat+as.factor(Region)+TimeLost,family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
 #without AvgDayMat
-POD3b = geeglm(PreAbs ~ as.factor(Year)+TimeLost,family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
-#without Year
+POD3b = geeglm(PreAbs ~ as.factor(Region)+TimeLost,family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
+#without Region
 POD3c = geeglm(PreAbs ~ AvgDayMat +TimeLost,family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
 #without Timelost
-POD3d = geeglm(PreAbs ~ AvgDayMat+as.factor(Year),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
+POD3d = geeglm(PreAbs ~ AvgDayMat+as.factor(Region),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
 model3A = c("POD0","POD3a","POD3b","POD3c","POD3d")
 QIC3A = c(QIC(POD0)[1],QIC(POD3a)[1],QIC(POD3b)[1],QIC(POD3c)[1],QIC(POD3d)[1])
 QICmod3A<-data.frame(rbind(model3A,QIC3A))
 QICmod3A
-#CB
-#QIC            QIC.1            QIC.2            QIC.3            QIC.4
-#model3A             POD0            POD3a            POD3b            POD3c            POD3d
-#QIC3A   62461.7399063735 58529.9166816421 60981.3235686168 59792.9947933176 58489.4165947094
-#Remove TimeLost
-
-#The  full model without TimeLost is:
-POD3e = geeglm(PreAbs ~ AvgDayMat+bs(Year),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
-#without AvgDayMat
-POD3f = geeglm(PreAbs ~ bs(Year),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
-#without Year
-POD3g = geeglm(PreAbs ~ AvgDayMat,family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
-model3B = c("POD0","POD3e","POD3f","POD3g")
-QIC3B = c(QIC(POD0)[1],QIC(POD3e)[1],QIC(POD3f)[1],QIC(POD3g)[1])
-QICmod3B<-data.frame(rbind(model3B,QIC3B))
-QICmod3B
-#CB
-#QIC            QIC.1           QIC.2            QIC.3
-#model3B             POD0            POD3e           POD3f            POD3g
-#QIC3B   62461.7399063735 58489.4165947094 60931.500813237 59735.0202180173
-#Full model is the best
-
-#Other sites (without year, timeLost as linear)
-#The initial full model is:
-POD3a = geeglm(PreAbs ~ AvgDayMat+TimeLost,family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
-#without AvgDayMat
-POD3b = geeglm(PreAbs ~ TimeLost,family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
-#without TimeLost
-POD3c = geeglm(PreAbs ~ AvgDayMat,family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
-model3A = c("POD0","POD3a","POD3b","POD3c")
-QIC3A = c(QIC(POD0)[1],QIC(POD3a)[1],QIC(POD3b)[1],QIC(POD3c)[1])
-QICmod3A<-data.frame(rbind(model3A,QIC3A))
-QICmod3A
-#QN
-#QIC            QIC.1           QIC.2            QIC.3
-#model3A             POD0            POD3a           POD3b            POD3c
-#QIC3A   12308.4810495205 12135.2016697477 12313.076207006 12131.6772312595
-#Remove Time Lost as a variable. Final model is POD3C.
-
-#BD
-#QIC            QIC.1            QIC.2            QIC.3
-#model2A             POD0            POD2a            POD2b            POD2c
-#QIC2A   24170.2243879127 23128.3155446675 24184.1694914502 23115.5325908096
-#Remove Time Lost as a variable. Final model is POD3C.
-
 #BSAI
 #QIC            QIC.1            QIC.2            QIC.3
 #model3A             POD0            POD3a            POD3b            POD3c

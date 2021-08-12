@@ -455,7 +455,7 @@ rug(PlottingVar3)
 
 #Probability of covariate #2: as.factor(Year):
 BootstrapParameters1<-rmvnorm(10000, coef(PODFinal),summary(PODFinal)$cov.unscaled)
-start=6; finish=12; Variable=SiteHourTable$Year; xlabel="Year"; ylabel="Probability"  
+start=6; finish=12; Variable=SiteHourTableB$Year; xlabel="Year"; ylabel="Probability"  
 PlottingVar1<-seq(min(Variable), max(Variable), length=5000)
 CenterVar1<-model.matrix(PODFinal)[,start:finish]*coef(PODFinal)[c(start:finish)]
 BootstrapCoefs1<-BootstrapParameters1[,c(start:finish)]
