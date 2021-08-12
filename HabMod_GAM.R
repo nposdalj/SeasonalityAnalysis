@@ -29,9 +29,9 @@ memory.limit(size=300000)
 
 # User Defined sections
 #define the lat and long of interest
-#df1 = data.frame("lat" = c(19.29, 19.2, 19.2467, 19.2467), "long" = c(-166.69, -166.69, -166.74, -166.64)) #Wake
+df1 = data.frame("lat" = c(19.29, 19.2, 19.2467, 19.2467), "long" = c(166.69, 166.69, 166.74, 166.64)) #Wake
 #df1 = data.frame("lat" = c(15.36, 15.27, 15.3186, 15.3186), "long" = c(145.46, 145.46, 145.51, 145.41)) #Saipan
-df1 = data.frame("lat" = c(15.08, 14.99, 15.0387, 15.0387), "long" = c(145.75, 145.75, 145.8, 145.7))#Tinian
+#df1 = data.frame("lat" = c(15.08, 14.99, 15.0387, 15.0387), "long" = c(145.75, 145.75, 145.8, 145.7))#Tinian
 #df1 = data.frame("lat" = c(29.185, 29.1, 29.1410, 29.1410), "long" = c(-118.26, -118.26, -118.31, -118.21))#GI
 #df1 = data.frame("lat" = c(31.79, 31.7, 31.747, 31.747), "long" = c(-121.38, -121.38, -121.43, -121.33))#CORC
 #df1 = data.frame("lat" = c(52.4, 52.31, 52.3547, 52.3547), "long" = c(-175.635, -175.635, -175.71, -175.56))#BD
@@ -41,23 +41,26 @@ df1 = data.frame("lat" = c(15.08, 14.99, 15.0387, 15.0387), "long" = c(145.75, 1
 #df1 = data.frame("lat" = c(58.71, 58.62, 58.6668, 58.6668), "long" = c(-148.0034, -148.0034, -148.12, -147.94))#CB
 
 #define the start and end of the data 
-startTime = "2011-04-13" #this should be formatted like this: 2010-03-05
-endTime = "2019-05-12"
+startTime = "2010-01-31" #this should be formatted like this: 2010-03-05
+endTime = "2017-10-28"
 
 #ITS
+ITS = 22 #Wake
+ITSF = 9 #Wake Females
+ITSJ = 1 #Wake Juveniles
 #ITS = 4 #Saipan
 #ITSF = 6 #Saipan Females
 #ITSM = 1 #Saipan Males
-ITS = 2 #Tinian
-ITSJ = 1 #Tinian Juveniles
-ITSM = 1 #Tinian Males
+#ITS = 2 #Tinian
+#ITSJ = 1 #Tinian Juveniles
+#ITSM = 1 #Tinian Males
 
 #loading the environmental data
 envDir = paste("O:/My Drive/Gaia_EnvironmentalData/CentralPac/")#setting the directory
 
 #loading sperm whale data
 site = 'TIN'
-saveDir = paste("O:/My Drive/CentralPac_TPWS_metadataReduced/Tinian/Seasonality/")#setting the directory
+saveDir = paste("O:/My Drive/CentralPac_TPWS_metadataReduced/Wake/Seasonality")#setting the directory
 
 #load data from StatisicalAnalysis_All
 filenameStatAll = paste(saveDir,site,"_Day.csv",sep="")#_Day.csv created from StatisticalAnalysis_All.R
