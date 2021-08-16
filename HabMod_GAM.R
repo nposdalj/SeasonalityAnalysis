@@ -47,7 +47,7 @@ endTime = "2017-10-28"
 #ITS
 ITS = 22 #Wake
 ITSF = 9 #Wake Females
-ITSJ = 1 #Wake Juveniles
+ITSJ = 7 #Wake Juveniles
 #ITS = 4 #Saipan
 #ITSF = 6 #Saipan Females
 #ITSM = 1 #Saipan Males
@@ -1171,12 +1171,16 @@ data.frame(rbind(model01,AIC01))
 #AIC01   1860.496588857 1863.16815196655 1863.96680521664
 #julian as a smooth
 
+#Wake
+#Julian is always a cc smooth
+
 #Chlorophyll
 GAM_02a = gam(JuvenileHoursNorm ~ resChlA, data = TabBinned_GroupedJ, family = tw, method = "REML")
-GAM_02b = gam(JuvenileHoursNorm ~ s(resChlA, bs = "cc", k =-1), data = TabBinned_GroupedJ, family = tw, method = "REML")
+GAM_02b = gam(JuvenileHoursNorm ~ s(resChlA, bs = "cr", k =-1), data = TabBinned_GroupedJ, family = tw, method = "REML")
+GAM_02c = gam(JuvenileHoursNorm ~ s(resChlA, k =-1), data = TabBinned_GroupedJ, family = tw, method = "REML")
 
-model02 = c('empty','02a','02b')
-AIC02 = c(AIC(GAM_empty),AIC(GAM_02a),AIC(GAM_02b))
+model02 = c('empty','02a','02b','02c')
+AIC02 = c(AIC(GAM_empty),AIC(GAM_02a),AIC(GAM_02b),AIC(GAM_02c))
 data.frame(rbind(model02,AIC02))
 #Tinian
 #X1               X2               X3
@@ -1184,25 +1188,39 @@ data.frame(rbind(model02,AIC02))
 #AIC02   1860.496588857 1858.48285246082 1858.62656809591
 #Chlorophyll as linear
 
+#Wake
+#X1               X2               X3               X4
+#model02            empty              02a              02b              02c
+#AIC02   342.418503970956 362.517349918233 366.213503411699 365.488549830909
+#Chlorophyll as linear
+
 #EKE
 GAM_03a = gam(JuvenileHoursNorm ~ EKE_cm, data = TabBinned_GroupedJ, family = tw, method = "REML")
-GAM_03b = gam(JuvenileHoursNorm ~ s(EKE_cm, bs = "cc", k =-1), data = TabBinned_GroupedJ, family = tw, method = "REML")
+GAM_03b = gam(JuvenileHoursNorm ~ s(EKE_cm, bs = "cr", k =-1), data = TabBinned_GroupedJ, family = tw, method = "REML")
+GAM_03c = gam(JuvenileHoursNorm ~ s(EKE_cm, k =-1), data = TabBinned_GroupedJ, family = tw, method = "REML")
 
-model03 = c('empty','03a','03b')
-AIC03 = c(AIC(GAM_empty),AIC(GAM_03a),AIC(GAM_03b))
+model03 = c('empty','03a','03b','03c')
+AIC03 = c(AIC(GAM_empty),AIC(GAM_03a),AIC(GAM_03b),AIC(GAM_03c))
 data.frame(rbind(model03,AIC03))
 #Tinian
 #X1               X2               X3
 #model03          empty              03a              03b
 #AIC03   1860.496588857 1861.09944212707 1861.69790127254
-#EKE as a linear
+#EKE as linear
+
+#Wake
+#X1               X2               X3               X4
+#model03            empty              03a              03b              03c
+#AIC03   342.418503970956 1817.27695909936 1817.27832551855 1817.27699248743
+#EKE as linear
 
 #Salinity
 GAM_04a = gam(JuvenileHoursNorm ~ resSAL, data = TabBinned_GroupedJ, family = tw, method = "REML")
-GAM_04b = gam(JuvenileHoursNorm ~ s(resSAL, bs = "cc", k =-1), data = TabBinned_GroupedJ, family = tw, method = "REML")
+GAM_04b = gam(JuvenileHoursNorm ~ s(resSAL, bs = "cr", k =-1), data = TabBinned_GroupedJ, family = tw, method = "REML")
+GAM_04c = gam(JuvenileHoursNorm ~ s(resSAL, k =-1), data = TabBinned_GroupedJ, family = tw, method = "REML")
 
-model04 = c('empty','04a','04b')
-AIC04 = c(AIC(GAM_empty),AIC(GAM_04a),AIC(GAM_04b))
+model04 = c('empty','04a','04b','04c')
+AIC04 = c(AIC(GAM_empty),AIC(GAM_04a),AIC(GAM_04b),AIC(GAM_04c))
 data.frame(rbind(model04,AIC04))
 #Tinian
 #X1               X2               X3
@@ -1210,12 +1228,19 @@ data.frame(rbind(model04,AIC04))
 #AIC04   1860.496588857 1862.80589168262 1860.49705888035
 #salinity as a smooth
 
+#Wake
+#X1               X2               X3               X4
+#model04            empty              04a              04b              04c
+#AIC04   342.418503970956 1819.82363864342 1819.82493569296 1819.82384791739
+#salinity as a normal smooth
+
 #Mean SST
 GAM_05a = gam(JuvenileHoursNorm ~ mean_SST, data = TabBinned_GroupedJ, family = tw, method = "REML")
-GAM_05b = gam(JuvenileHoursNorm ~ s(mean_SST, bs = "cc", k =-1), data = TabBinned_GroupedJ, family = tw, method = "REML")
+GAM_05b = gam(JuvenileHoursNorm ~ s(mean_SST, bs = "cr", k =-1), data = TabBinned_GroupedJ, family = tw, method = "REML")
+GAM_05c = gam(JuvenileHoursNorm ~ s(mean_SST,  k =-1), data = TabBinned_GroupedJ, family = tw, method = "REML")
 
-model05 = c('empty','05a','05b')
-AIC05 = c(AIC(GAM_empty),AIC(GAM_05a),AIC(GAM_05b))
+model05 = c('empty','05a','05b','05c')
+AIC05 = c(AIC(GAM_empty),AIC(GAM_05a),AIC(GAM_05b),AIC(GAM_05c))
 data.frame(rbind(model05,AIC05))
 #Tinian
 #X1               X2               X3
@@ -1223,12 +1248,19 @@ data.frame(rbind(model05,AIC05))
 #AIC05   1860.496588857 1860.83706100686 1861.81304624638
 #Mean SST as linear
 
+#Wake
+#X1               X2               X3               X4
+#model05            empty              05a              05b              05c
+#AIC05   342.418503970956 1819.14886738336 1819.14967892526 1819.15022461166
+#Mean SST as a normal smooth
+
 #SSH
 GAM_06a = gam(JuvenileHoursNorm ~ resSSH, data = TabBinned_GroupedJ, family = tw, method = "REML")
-GAM_06b = gam(JuvenileHoursNorm ~ s(resSSH, bs = "cc", k =-1), data = TabBinned_GroupedJ, family = tw, method = "REML")
+GAM_06b = gam(JuvenileHoursNorm ~ s(resSSH, bs = "cr", k =-1), data = TabBinned_GroupedJ, family = tw, method = "REML")
+GAM_06c = gam(JuvenileHoursNorm ~ s(resSSH, k =-1), data = TabBinned_GroupedJ, family = tw, method = "REML")
 
-model06 = c('empty','06a','06b')
-AIC06 = c(AIC(GAM_empty),AIC(GAM_06a),AIC(GAM_06b))
+model06 = c('empty','06a','06b','06c')
+AIC06 = c(AIC(GAM_empty),AIC(GAM_06a),AIC(GAM_06b),AIC(GAM_06c))
 data.frame(rbind(model06,AIC06))
 #Tinian
 #X1               X2               X3
@@ -1236,12 +1268,19 @@ data.frame(rbind(model06,AIC06))
 #AIC06   1860.496588857 1862.12823718054 1860.49754352883
 #SSH as a smooth
 
+#Wake
+#X1               X2               X3               X4
+#model06            empty              06a              06b              06c
+#AIC06   342.418503970956 1820.63298939036 1823.09958711937 1823.15456634509
+#SSH as a smooth
+
 #Density
 GAM_07a = gam(JuvenileHoursNorm ~ resDEN, data = TabBinned_GroupedJ, family = tw, method = "REML")
-GAM_07b = gam(JuvenileHoursNorm ~ s(resDEN, bs = "cc", k =-1), data = TabBinned_GroupedJ, family = tw, method = "REML")
+GAM_07b = gam(JuvenileHoursNorm ~ s(resDEN, bs = "cr", k =-1), data = TabBinned_GroupedJ, family = tw, method = "REML")
+GAM_07c = gam(JuvenileHoursNorm ~ s(resDEN, k =-1), data = TabBinned_GroupedJ, family = tw, method = "REML")
 
-model07 = c('empty','07a','07b')
-AIC07 = c(AIC(GAM_empty),AIC(GAM_07a),AIC(GAM_07b))
+model07 = c('empty','07a','07b','07c')
+AIC07 = c(AIC(GAM_empty),AIC(GAM_07a),AIC(GAM_07b),AIC(GAM_07c))
 data.frame(rbind(model07,AIC07))
 #Tinian
 #X1               X2               X3
@@ -1249,12 +1288,19 @@ data.frame(rbind(model07,AIC07))
 #AIC07   1860.496588857 1863.13868586802 1860.49695741758
 #density as a smooth
 
+#Wake
+#X1               X2              X3              X4
+#model07            empty              07a             07b             07c
+#AIC07   342.418503970956 1820.51669375678 1823.5649468905 1823.7214779085
+#density as linear
+
 #Standard deviation of SST
 GAM_08a = gam(JuvenileHoursNorm ~ SD_SST, data = TabBinned_GroupedJ, family = tw, method = "REML")
-GAM_08b = gam(JuvenileHoursNorm ~ s(SD_SST, bs = "cc", k =-1), data = TabBinned_GroupedJ, family = tw, method = "REML")
+GAM_08b = gam(JuvenileHoursNorm ~ s(SD_SST, bs = "cr", k =-1), data = TabBinned_GroupedJ, family = tw, method = "REML")
+GAM_08c = gam(JuvenileHoursNorm ~ s(SD_SST, k =-1), data = TabBinned_GroupedJ, family = tw, method = "REML")
 
-model08 = c('empty','08a','08b')
-AIC08 = c(AIC(GAM_empty),AIC(GAM_08a),AIC(GAM_08b))
+model08 = c('empty','08a','08b','08c')
+AIC08 = c(AIC(GAM_empty),AIC(GAM_08a),AIC(GAM_08b),AIC(GAM_08c))
 data.frame(rbind(model08,AIC08))
 #Tinian
 #X1               X2               X3
@@ -1262,35 +1308,41 @@ data.frame(rbind(model08,AIC08))
 #AIC08   1860.496588857 545.818162842231 546.913816480417
 #std dev SST as linear
 
+#Wake
+#X1               X2               X3               X4
+#model08            empty              08a              08b              08c
+#AIC08   342.418503970956 833.437434329325 833.437719248008 833.438109830244
+#std dev SST as normal smooth
+
 #Test which covariates we should keep for Juvenile Specific GAM
 #Round 1
 #Initial model
-Full1 = gam(JuvenileHoursNorm ~ s(Julian, bs="cc", k=-1)+s(resChlA, bs="cr",k=-1)+EKE_cm+
-              s(resSAL,bs="cr",k=-1) + mean_SST +s(resSSH,bs="cr",k=-1)+s(resDEN,bs="cr",k=-1)+SD_SST
+Full1 = gam(JuvenileHoursNorm ~ s(Julian, bs="cc", k=-1)+resChlA+EKE_cm+
+              s(resSAL,k=-1) + s(mean_SST,k=-1) +s(resSSH,k=-1)+resDEN+s(SD_SST,k=-1)
             , data = TabBinned_GroupedJ, family = tw, method = "REML")
-J = gam(JuvenileHoursNorm ~ s(resChlA, bs ="cc", k=-1)+EKE_cm+
-          s(resSAL, bs = "cc", k=-1) + mean_SST +s(resSSH, bs="cc", k=-1)+s(resDEN, bs="cc", k=-1)+SD_SST
+J = gam(JuvenileHoursNorm ~ resChlA+EKE_cm+
+          s(resSAL,k=-1) + s(mean_SST,k=-1) +s(resSSH,k=-1)+resDEN+s(SD_SST,k=-1)
         , data = TabBinned_GroupedJ, family = tw, method = "REML")
 C = gam(JuvenileHoursNorm ~ s(Julian, bs="cc", k=-1)+EKE_cm+
-          s(resSAL, bs = "cc", k=-1) + mean_SST +s(resSSH, bs="cc", k=-1)+s(resDEN, bs="cc", k=-1)+SD_SST
+          s(resSAL,k=-1) + s(mean_SST,k=-1) +s(resSSH,k=-1)+resDEN+s(SD_SST,k=-1)
         , data = TabBinned_GroupedJ, family = tw, method = "REML")
-E = gam(JuvenileHoursNorm ~ s(Julian, bs="cc", k=-1)+s(resChlA, bs ="cc", k=-1)+
-          s(resSAL, bs = "cc", k=-1) + mean_SST +s(resSSH, bs="cc", k=-1)+s(resDEN, bs="cc", k=-1)+SD_SST
+E = gam(JuvenileHoursNorm ~ s(Julian, bs="cc", k=-1)+resChlA+
+          s(resSAL,k=-1) + s(mean_SST,k=-1) +s(resSSH,k=-1)+resDEN+s(SD_SST,k=-1)
         , data = TabBinned_GroupedJ, family = tw, method = "REML")
-S = gam(JuvenileHoursNorm ~ s(Julian, bs="cc", k=-1)+s(resChlA, bs ="cc", k=-1)+EKE_cm+
-          mean_SST +s(resSSH, bs="cc", k=-1)+s(resDEN, bs="cc", k=-1)+SD_SST
+S = gam(JuvenileHoursNorm ~ s(Julian, bs="cc", k=-1)+resChlA+EKE_cm+
+           s(mean_SST,k=-1) +s(resSSH,k=-1)+resDEN+s(SD_SST,k=-1)
         , data = TabBinned_GroupedJ, family = tw, method = "REML")
-MT = gam(JuvenileHoursNorm ~ s(Julian, bs="cc", k=-1)+s(resChlA, bs ="cc", k=-1)+EKE_cm+
-           s(resSAL, bs = "cc", k=-1) +s(resSSH, bs="cc", k=-1)+s(resDEN, bs="cc", k=-1)+SD_SST
+MT = gam(JuvenileHoursNorm ~ s(Julian, bs="cc", k=-1)+resChlA+EKE_cm+
+           s(resSAL,k=-1) + s(resSSH,k=-1)+resDEN+s(SD_SST,k=-1)
          , data = TabBinned_GroupedJ, family = tw, method = "REML")
-H = gam(JuvenileHoursNorm ~ s(Julian, bs="cc", k=-1)+s(resChlA, bs ="cc", k=-1)+EKE_cm+
-          s(resSAL, bs = "cc", k=-1) + mean_SST+s(resDEN, bs="cc", k=-1)+SD_SST
+H = gam(JuvenileHoursNorm ~ s(Julian, bs="cc", k=-1)+resChlA+EKE_cm+
+          s(resSAL,k=-1) + s(mean_SST,k=-1) +resDEN+s(SD_SST,k=-1)
         , data = TabBinned_GroupedJ, family = tw, method = "REML")
-D = gam(JuvenileHoursNorm ~ s(Julian, bs="cc", k=-1)+s(resChlA, bs ="cc", k=-1)+EKE_cm+
-          s(resSAL, bs = "cc", k=-1) + mean_SST +s(resSSH, bs="cc", k=-1)+SD_SST
-        , data = TabBinned_GroupedJ, family = tw, method = "REML")
-SDT = gam(JuvenileHoursNorm ~ s(Julian, bs="cc", k=-1)+s(resChlA, bs ="cc", k=-1)+EKE_cm+
-            s(resSAL, bs = "cc", k=-1) + mean_SST +s(resSSH, bs="cc", k=-1)+s(resDEN, bs="cc", k=-1)
+D = gam(JuvenileHoursNorm ~ s(Julian, bs="cc", k=-1)+resChlA+EKE_cm+
+         s(resSAL,k=-1) + s(mean_SST,k=-1) +s(resSSH,k=-1)+s(SD_SST,k=-1)
+       , data = TabBinned_GroupedJ, family = tw, method = "REML")
+SDT = gam(JuvenileHoursNorm ~ s(Julian, bs="cc", k=-1)+resChlA+EKE_cm+
+            s(resSAL,k=-1) + s(mean_SST,k=-1) +s(resSSH,k=-1)+resDEN
           , data = TabBinned_GroupedJ, family = tw, method = "REML")
 modelR1 = c('Full1','J','C','E','S','MT','H','D','SDT')
 AICR1 = c(AIC(Full1),AIC(J),AIC(C),AIC(E),AIC(S),AIC(MT),AIC(H),AIC(D),AIC(SDT))
@@ -1307,27 +1359,45 @@ data.frame(rbind(modelR1,AICR1))
 #AICR1   1867.90060893137
 #remove SST, mean SST, and height
 
+#Wake
+#X1               X2               X3               X4
+#modelR1           Full1                J                C                E
+#AICR1   227.85489372494 227.855281539179 278.551753705583 226.395177598489
+#X5               X6               X7               X8
+#modelR1                S               MT                H                D
+#AICR1   226.759249276606 225.767507088368 223.235356678859 225.561289355681
+#X9
+#modelR1              SDT
+#AICR1   266.865821200058
+#remove chlorophyll
+
 #Round 2
-Full2 = gam(JuvenileHoursNorm ~ s(Julian, bs="cc", k=-1)+s(resChlA, bs ="cc", k=-1)+EKE_cm+
-              s(resDEN, bs="cc", k=-1)+SD_SST
+Full2 = gam(JuvenileHoursNorm ~ s(Julian, bs="cc", k=-1)+EKE_cm+
+              s(resSAL,k=-1) + s(mean_SST,k=-1) +s(resSSH,k=-1)+resDEN+s(SD_SST,k=-1)
             , data = TabBinned_GroupedJ, family = tw, method = "REML")
-J = gam(JuvenileHoursNorm ~ s(resChlA, bs ="cc", k=-1)+EKE_cm+
-         s(resDEN, bs="cc", k=-1)+SD_SST
+J = gam(JuvenileHoursNorm ~ EKE_cm+
+          s(resSAL,k=-1) + s(mean_SST,k=-1) +s(resSSH,k=-1)+resDEN+s(SD_SST,k=-1)
         , data = TabBinned_GroupedJ, family = tw, method = "REML")
-C = gam(JuvenileHoursNorm ~ s(Julian, bs="cc", k=-1)+EKE_cm+
-         s(resDEN, bs="cc", k=-1)+SD_SST
+E = gam(JuvenileHoursNorm ~ s(Julian, bs="cc", k=-1)+
+          s(resSAL,k=-1) + s(mean_SST,k=-1) +s(resSSH,k=-1)+resDEN+s(SD_SST,k=-1)
         , data = TabBinned_GroupedJ, family = tw, method = "REML")
-E = gam(JuvenileHoursNorm ~ s(Julian, bs="cc", k=-1)+s(resChlA, bs ="cc", k=-1)+
-         s(resDEN, bs="cc", k=-1)+SD_SST
+S = gam(JuvenileHoursNorm ~ s(Julian, bs="cc", k=-1)+EKE_cm+
+          s(mean_SST,k=-1) +s(resSSH,k=-1)+resDEN+s(SD_SST,k=-1)
         , data = TabBinned_GroupedJ, family = tw, method = "REML")
-D = gam(JuvenileHoursNorm ~ s(Julian, bs="cc", k=-1)+s(resChlA, bs ="cc", k=-1)+EKE_cm+
-         SD_SST
+MT = gam(JuvenileHoursNorm ~ s(Julian, bs="cc", k=-1)+EKE_cm+
+           s(resSAL,k=-1) + s(resSSH,k=-1)+resDEN+s(SD_SST,k=-1)
+         , data = TabBinned_GroupedJ, family = tw, method = "REML")
+H = gam(JuvenileHoursNorm ~ s(Julian, bs="cc", k=-1)+EKE_cm+
+          s(resSAL,k=-1) + s(mean_SST,k=-1) +resDEN+s(SD_SST,k=-1)
         , data = TabBinned_GroupedJ, family = tw, method = "REML")
-SDT = gam(JuvenileHoursNorm ~ s(Julian, bs="cc", k=-1)+s(resChlA, bs ="cc", k=-1)+EKE_cm+
-            s(resDEN, bs="cc", k=-1)
+D = gam(JuvenileHoursNorm ~ s(Julian, bs="cc", k=-1)+EKE_cm+
+          s(resSAL,k=-1) + s(mean_SST,k=-1) +s(resSSH,k=-1)+s(SD_SST,k=-1)
+        , data = TabBinned_GroupedJ, family = tw, method = "REML")
+SDT = gam(JuvenileHoursNorm ~ s(Julian, bs="cc", k=-1)+EKE_cm+
+            s(resSAL,k=-1) + s(mean_SST,k=-1) +s(resSSH,k=-1)+resDEN
           , data = TabBinned_GroupedJ, family = tw, method = "REML")
-modelR2 = c('Full2','J','C','E','D','SDT')
-AICR2 = c(AIC(Full2),AIC(J),AIC(C),AIC(E),AIC(D),AIC(SDT))
+modelR2 = c('Full2','J','E','S','MT','H','D','SDT')
+AICR2 = c(AIC(Full2),AIC(J),AIC(E),AIC(S),AIC(MT),AIC(H),AIC(D),AIC(SDT))
 data.frame(rbind(modelR2,AICR2))
 #Tinian
 #X1               X2               X3              X4
@@ -1338,10 +1408,53 @@ data.frame(rbind(modelR2,AICR2))
 #AICR2   554.265177339523 1865.90590152847
 #Keep remaining round 2 variables
 
+#Wake
+#X1               X2               X3               X4
+#modelR2            Full2                J                E                S
+#AICR2   278.551753705583 278.552387495673 279.869689617303 276.793229635488
+#X5               X6               X7               X8
+#modelR2               MT                H                D              SDT
+#AICR2   276.183619254203 274.243219909598 276.166098128741 346.272736933212
+#remove std dev of SST
+
+#Round 3
+Full3 = gam(JuvenileHoursNorm ~ s(Julian, bs="cc", k=-1)+EKE_cm+
+              s(resSAL,k=-1) + s(mean_SST,k=-1) +s(resSSH,k=-1)+resDEN
+            , data = TabBinned_GroupedJ, family = tw, method = "REML")
+J = gam(JuvenileHoursNorm ~ EKE_cm+
+          s(resSAL,k=-1) + s(mean_SST,k=-1) +s(resSSH,k=-1)+resDEN
+        , data = TabBinned_GroupedJ, family = tw, method = "REML")
+E = gam(JuvenileHoursNorm ~ s(Julian, bs="cc", k=-1)+
+          s(resSAL,k=-1) + s(mean_SST,k=-1) +s(resSSH,k=-1)+resDEN
+        , data = TabBinned_GroupedJ, family = tw, method = "REML")
+S = gam(JuvenileHoursNorm ~ s(Julian, bs="cc", k=-1)+EKE_cm+
+          s(mean_SST,k=-1) +s(resSSH,k=-1)+resDEN
+        , data = TabBinned_GroupedJ, family = tw, method = "REML")
+MT = gam(JuvenileHoursNorm ~ s(Julian, bs="cc", k=-1)+EKE_cm+
+           s(resSAL,k=-1) + s(resSSH,k=-1)+resDEN
+         , data = TabBinned_GroupedJ, family = tw, method = "REML")
+H = gam(JuvenileHoursNorm ~ s(Julian, bs="cc", k=-1)+EKE_cm+
+          s(resSAL,k=-1) + s(mean_SST,k=-1) +resDEN
+        , data = TabBinned_GroupedJ, family = tw, method = "REML")
+D = gam(JuvenileHoursNorm ~ s(Julian, bs="cc", k=-1)+EKE_cm+
+          s(resSAL,k=-1) + s(mean_SST,k=-1) +s(resSSH,k=-1)
+        , data = TabBinned_GroupedJ, family = tw, method = "REML")
+modelR3 = c('Full3','J','E','S','MT','H','D')
+AICR3 = c(AIC(Full3),AIC(J),AIC(E),AIC(S),AIC(MT),AIC(H),AIC(D))
+data.frame(rbind(modelR3,AICR3))
+#Wake
+#X1               X2               X3               X4
+#modelR3            Full3                J                E                S
+#AICR3   346.272736933212 345.910184358419 350.152489489062 343.464873754557
+#X5              X6               X7
+#modelR3               MT               H                D
+#AICR3   347.011165230058 341.19088573123 343.817152989437
+#keep remaining variables
+
 #Final Juvenile Sex Specific full model
-FinalJuvenileGAM = gam(JuvenileHoursNorm ~ s(Julian, bs="cc", k=-1)+s(resChlA, bs ="cc", k=-1)+EKE_cm+
-                     s(resDEN, bs="cc", k=-1)+SD_SST
-                   , data = TabBinned_GroupedJ, family = tw, method = "REML")
+FinalJuvenileGAM = gam(JuvenileHoursNorm ~ s(Julian, bs="cc", k=-1)+EKE_cm+
+                         s(resSAL,k=-1) + s(mean_SST,k=-1) +s(resSSH,k=-1)+resDEN
+                       , data = TabBinned_GroupedJ, family = tw, method = "REML")
 summary(FinalJuvenileGAM)
 viz = getViz(FinalJuvenileGAM)
 vizGG = plot(viz,allTerms = T) +
