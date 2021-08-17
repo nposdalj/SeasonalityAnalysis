@@ -9,7 +9,7 @@ ch <- chull(df1$long, df1$lat)
 coords <- df1[c(ch, ch[1]), ]#creating convex hull
 sp_poly <- SpatialPolygons(list(Polygons(list(Polygon(coords)), ID = 1)))#converting convex hull to spatial polygon
 
-filenameStatAll = paste(envDir,"AQUASST_WAKE.csv",sep="")#load files as data frame
+filenameStatAll = paste(envDir,"AQUASST_SAPTIN.csv",sep="")#load files as data frame
 SST = read.csv(filenameStatAll)
 SST = SST[-1,] #delete first row
 SST$latitude = as.numeric(SST$latitude)
