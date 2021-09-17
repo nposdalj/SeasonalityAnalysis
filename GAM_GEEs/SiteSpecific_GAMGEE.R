@@ -362,12 +362,49 @@ PODFinal = POD3f
 
 #For PT,QN,BD only AvgDayMat was a significant variable, so the order doesn't matter...
 
-# STEP 6: Construction of the ROC curve     
+# STEP 6: Interpretting the summary of the model
+summary(PODFinal)
+
+# How to intepret model results
+# Standard error - robust estimate - provides reasonable variance estimates even when the specified correlation model is in correct
+# Wald - square of the z-statistic reproted by the gee function
+# P - values are the upper tailed probabilities from the chi-squared random variable with 1 degree of freedom...
+# distribution and test whether the true parameter value is different from zero
+
+#BD
+#Call:
+  #geeglm(formula = PreAbs ~ AvgDayMat, family = binomial, data = SiteHourTableB, 
+         #id = Blocks, corstr = "ar1")
+
+#Coefficients:
+                  #Estimate    Std.err   Wald Pr(>|W|)    
+#(Intercept)    -0.0449943  0.1274943  0.125    0.724    
+#AvgDayMatADBM1 -0.4819010  0.4119330  1.369    0.242    
+#AvgDayMatADBM2 -1.4412808  0.2567866 31.503 1.99e-08 ***
+#AvgDayMatADBM3  0.0008533  0.2456801  0.000    0.997    
+#AvgDayMatADBM4  0.3095881  0.3239536  0.913    0.339    
+#---
+  #Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+#Correlation structure = ar1 
+#Estimated Scale Parameters:
+  
+  #Estimate Std.err
+#(Intercept)   0.9954 0.01964
+#Link = identity 
+
+#Estimated Correlation Parameters:
+  #Estimate Std.err
+#alpha   0.9203 0.01182
+#Number of clusters:   26  Maximum cluster size: 683 
+
+# STEP 7: Construction of the ROC curve     
 pr <- predict(PODFinal, type="response")  
 pred <- prediction(pr,SiteHourTableB$PreAbs) 
 perf <- performance(pred, measure="tpr", x.measure="fpr")   
 plot(perf, colorize=TRUE, print.cutoffs.at=c(0.1,0.2,0.3,0.4,0.5))
 #This creates a ROC plot
+#Interpretting ROC curves -- 
 
 # Choice of the best cut-off probability
 
@@ -429,7 +466,7 @@ auc <- performance(pred, measure="auc")
 # STEP 7: visualise the contribution of the explanatory variables by means of the partial residual plots, which plot the relationship between the response (on the response scale) and each predictor ##
 dimnames(AvgDayMat)<-list(NULL,c("ADBM1", "ADBM2", "ADBM3", "ADBM4"))
 
-PODFinal = geeglm(PreAbs ~ AvgDayMat + as.factor(Year),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
+PODFinal = geeglm(PreAbs ~ AvgDayMat + as.factor(Year),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB) #CB only
 PODFinal = geeglm(PreAbs ~ AvgDayMat ,family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
 
 library(boot)
