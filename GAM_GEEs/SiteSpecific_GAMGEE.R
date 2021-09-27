@@ -227,6 +227,7 @@ QICmod1A
 #model1A             POD0            POD1a            POD1b           POD1c
 #QIC1A   62461.7399063735 61014.3232753975 62441.7567814493 60931.500813237
 #Year as a smooth has the lower QIC but it should really be a factor, right?
+#Kept it as a smooth
 
 #TimeLost
 POD2a = geeglm(PreAbs ~ as.factor(TimeLost), family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
@@ -260,16 +261,17 @@ QICmod2A
 #QIC2A   24170.2243879127 24446.4762123491 24184.1694914502 24255.3050259412
 #TimeLost as linear
 
-## STEP 5: Determine which covariates are most relevant, and which can be removed (on the basis of previous collinearity work).
+## STEP 5: Determine which covariates are most relevant, and which can be removed (on the basis of previous collinearity work). 
+#The reduced model with the lowest QIC is the one to use in the following step.
 #CB (with Year)
 #The initial full model is:
-POD3a = geeglm(PreAbs ~ AvgDayMat+as.factor(Year)+TimeLost,family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
+POD3a = geeglm(PreAbs ~ AvgDayMat+bs(Year)+TimeLost,family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
 #without AvgDayMat
-POD3b = geeglm(PreAbs ~ as.factor(Year)+TimeLost,family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
+POD3b = geeglm(PreAbs ~ bs(Year)+TimeLost,family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
 #without Year
 POD3c = geeglm(PreAbs ~ AvgDayMat +TimeLost,family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
 #without Timelost
-POD3d = geeglm(PreAbs ~ AvgDayMat+as.factor(Year),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
+POD3d = geeglm(PreAbs ~ AvgDayMat+bs(Year),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
 model3A = c("POD0","POD3a","POD3b","POD3c","POD3d")
 QIC3A = c(QIC(POD0)[1],QIC(POD3a)[1],QIC(POD3b)[1],QIC(POD3c)[1],QIC(POD3d)[1])
 QICmod3A<-data.frame(rbind(model3A,QIC3A))
@@ -281,9 +283,9 @@ QICmod3A
 #Remove TimeLost
 
 #The  full model without TimeLost is:
-POD3e = geeglm(PreAbs ~ AvgDayMat+as.factor(Year),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
+POD3e = geeglm(PreAbs ~ AvgDayMat+bs(Year),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
 #without AvgDayMat
-POD3f = geeglm(PreAbs ~ as.factor(Year),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
+POD3f = geeglm(PreAbs ~ bs(Year),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
 #without Year
 POD3g = geeglm(PreAbs ~ AvgDayMat,family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
 model3B = c("POD0","POD3e","POD3f","POD3g")
@@ -291,9 +293,9 @@ QIC3B = c(QIC(POD0)[1],QIC(POD3e)[1],QIC(POD3f)[1],QIC(POD3g)[1])
 QICmod3B<-data.frame(rbind(model3B,QIC3B))
 QICmod3B
 #CB
-#QIC            QIC.1            QIC.2            QIC.3
-#model3B             POD0            POD3e            POD3f            POD3g
-#QIC3B   62461.7399063735 58487.3199823025 61014.3232753975 59735.0202180173
+#QIC            QIC.1           QIC.2            QIC.3
+#model3B             POD0            POD3e           POD3f            POD3g
+#QIC3B   62461.7399063735 58489.4165947094 60931.500813237 59735.0202180173
 #Full model is the best
 
 #Other sites (without year, timeLost as linear)
@@ -358,7 +360,7 @@ anova(POD3e)
 #bs(Year)   3 27.305 5.081e-06 ***
 # Retain all covariates. This is the final model.
 
-PODFinal = POD3f
+PODFinal = POD3e
 
 #For PT,QN,BD only AvgDayMat was a significant variable, so the order doesn't matter...
 
@@ -398,6 +400,36 @@ summary(PODFinal)
 #alpha   0.9203 0.01182
 #Number of clusters:   26  Maximum cluster size: 683 
 
+#CB
+#Call:
+  #geeglm(formula = PreAbs ~ AvgDayMat + bs(Year), family = binomial, 
+         data = SiteHourTableB, id = Blocks, corstr = "ar1")
+
+#Coefficients:
+  #Estimate  Std.err   Wald Pr(>|W|)    
+#(Intercept)     0.53584  0.20753  6.666  0.00982 ** 
+  #AvgDayMatADBM1 -1.59313  0.35059 20.649 5.52e-06 ***
+  #AvgDayMatADBM2 -0.02759  0.24912  0.012  0.91181    
+  #AvgDayMatADBM3  0.73204  0.23716  9.528  0.00202 ** 
+  #AvgDayMatADBM4  0.26564  0.21202  1.570  0.21024    
+#bs(Year)1      -1.50856  0.71353  4.470  0.03450 *  
+  #bs(Year)2      -1.53597  0.56262  7.453  0.00633 ** 
+  #bs(Year)3      -0.30310  0.30937  0.960  0.32722    
+---
+  #Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+#Correlation structure = ar1 
+#Estimated Scale Parameters:
+  
+  #Estimate Std.err
+#(Intercept)    1.004 0.05726
+#Link = identity 
+
+#Estimated Correlation Parameters:
+  #Estimate  Std.err
+#alpha   0.9152 0.007868
+#Number of clusters:   80  Maximum cluster size: 603 
+
 # STEP 7: Construction of the ROC curve     
 pr <- predict(PODFinal, type="response")  
 pred <- prediction(pr,SiteHourTableB$PreAbs) 
@@ -416,7 +448,7 @@ d <- L*sin(fi)                                                     # to calculat
 
 #Find max and position of max
 max = max(d,na.rm=TRUE)
-position = which.max(d$c.0..0.0614437469821342..0.119467246096894..0.251529051987768..)
+position = which.max(d$c.0..0.000321905681635281..0.00112666988572348..0.00116690809592789..)
 
 
 alpha<-as.data.frame(perf@alpha.values)                            # the alpha values represent the corresponding cut-offs
@@ -437,8 +469,8 @@ cmx(DATA, threshold = cutoff)                                   # the identified
 #CB
 #observed
 #predicted     1     0
-#1 10941  9690
-#0  9561 15162
+#1 16406 13711
+#0  4096 11141
 
 #PT
 #observed
@@ -466,10 +498,8 @@ auc <- performance(pred, measure="auc")
 # STEP 7: visualise the contribution of the explanatory variables by means of the partial residual plots, which plot the relationship between the response (on the response scale) and each predictor ##
 dimnames(AvgDayMat)<-list(NULL,c("ADBM1", "ADBM2", "ADBM3", "ADBM4"))
 
-PODFinal = geeglm(PreAbs ~ AvgDayMat + as.factor(Year),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB) #CB only
-PODFinal = geeglm(PreAbs ~ AvgDayMat ,family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
-
 library(boot)
+library(pracma)
 
 #Probability of covariate #1: AvgDayBasisMat:
 BootstrapParameters3<-rmvnorm(10000, coef(PODFinal),summary(PODFinal)$cov.unscaled)
@@ -477,7 +507,7 @@ start=2; finish=5; Variable=SiteHourTableB$Julian; xlabel="Julian Day"; ylabel="
 PlottingVar3<-seq(min(Variable), max(Variable), length=5000)
 CenterVar3<-model.matrix(PODFinal)[,start:finish]*coef(PODFinal)[c(start:finish)]
 BootstrapCoefs3<-BootstrapParameters3[,c(start:finish)]
-Basis3<-gam(rbinom(5000,1,0.5)~s(PlottingVar3, bs="cc", k=6), fit=F, family=binomial, knots=list(PlottingVar2=seq(1,365,length=6)))$X[,2:5]
+Basis3<-gam(rbinom(5000,1,0.5)~s(PlottingVar3, bs="cc", k=6), fit=F, family=binomial, knots=list(PlottingVar2=seq(1,365,length=4)))$X[,2:5]
 RealFit3<-Basis3%*%coef(PODFinal)[c(start:finish)]
 RealFitCenter3<-RealFit3-mean(CenterVar3)
 RealFitCenter3a<-inv.logit(RealFitCenter3)
@@ -490,13 +520,13 @@ segments(PlottingVar3,(cis3a[1,]),PlottingVar3,(cis3a[2,]), col="grey")
 lines(PlottingVar3,(RealFitCenter3a),lwd=2, col=1)
 rug(PlottingVar3)
 
-#Probability of covariate #2: as.factor(Year):
+#Probability of covariate #2: as.smooth(Year):
 BootstrapParameters1<-rmvnorm(10000, coef(PODFinal),summary(PODFinal)$cov.unscaled)
-start=6; finish=12; Variable=SiteHourTableB$Year; xlabel="Year"; ylabel="Probability"  
+start=6; finish=8; Variable=SiteHourTableB$Year; xlabel="Year"; ylabel="Probability"  
 PlottingVar1<-seq(min(Variable), max(Variable), length=5000)
 CenterVar1<-model.matrix(PODFinal)[,start:finish]*coef(PODFinal)[c(start:finish)]
 BootstrapCoefs1<-BootstrapParameters1[,c(start:finish)]
-Basis1<-gam(rbinom(5000,1,0.5)~as.factor(PlottingVar1), fit=F, family=binomial, knots=list(PlottingVar1=seq(2012,2019,length=6)))$X[,2:5]
+Basis1<-gam(rbinom(5000,1,0.5)~s(PlottingVar1), fit=F, family=binomial, knots=list(PlottingVar1=seq(2011,2019,length=4)))$X[,6:8]
 RealFit1<-Basis1%*%coef(PODFinal)[c(start:finish)]
 RealFitCenter1<-RealFit1-mean(CenterVar1)
 RealFitCenter1a<-inv.logit(RealFitCenter1)
@@ -504,7 +534,7 @@ BootstrapFits1<-Basis1%*%t(BootstrapCoefs1)
 quant.func1<-function(x){quantile(x,probs=c(0.025, 0.975))}
 cis1<-apply(BootstrapFits1, 1, quant.func1)-mean(CenterVar1)
 cis1a<-inv.logit(cis1)
-plot(PlottingVar1,(RealFitCenter1a), type="l", col=1,ylim=c(0, 1),xlab=xlabel, ylab=ylabel, xlim=c(2011,2019), main ="M7 covariate 1: # Days since deployment" , cex.lab = 1.5, cex.axis=1.5)
-segments(PlottingVar1,(cis1a[1,]),PlottingVar1,(cis1a[2,]), col="grey", main = "Influence of DATENO")
+plot(PlottingVar1,(RealFitCenter1a), type="l", col=1,ylim=c(0, 1),xlab=xlabel, ylab=ylabel, xlim=c(2011,2019), main ="Year" , cex.lab = 1.5, cex.axis=1.5)
+segments(PlottingVar1,(cis1a[1,]),PlottingVar1,(cis1a[2,]), col="grey")
 lines(PlottingVar1,(RealFitCenter1a),lwd=2, col=1)
 rug(PlottingVar1)

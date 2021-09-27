@@ -28,7 +28,7 @@ library(car) #for ANOVA
 
 ## STEP 1: the data ##
 #Hourly data
-region = 'BSAI'
+region = 'GOA'
 dir = paste("I:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites")
 fileName = paste("I:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites/AllSitesGrouped_Binary_GAMGEE_ROW.csv",sep="") #setting the directory
 HourTable = read.csv(fileName)
@@ -64,32 +64,48 @@ SiteDayTable$TimeLost = max(SiteDayTable$Effort_Bin) - SiteDayTable$Effort_Bin
 #acf on the 1 day binned data
 acf(SiteDayTable$PreAbs, lag.max = 50)
 #BSAI - at day 41
+#BSAI - at day 6
 
 #Hour Table
 #acf on the 1 hour binned data
 acf(SiteHourTable$PreAbs, lag.max = 2000)
-acf(SiteHourTable$PreAbs, lag.max = 2000, ylim=c(0,0.1), xlim =c(600,800)) 
+acf(SiteHourTable$PreAbs, lag.max = 2000, ylim=c(0,0.1), xlim =c(300,400)) 
 #BSAI - at hour 746
+#GOA - at hour 349
 
 #ON MODEL RESIDUALS
 #Region Specific
+#BSAI
 BlockMod<-glm(PreAbs~
                 bs(Julian)+
                 TimeLost + as.factor(Site), data=SiteHourTable,family=binomial)
+
+#GOA
+BlockMod<-glm(PreAbs~
+                bs(Julian)+
+                TimeLost +
+                bs(Year) + as.factor(Site), data=SiteHourTable,family=binomial)
 
 #Quick ANOVA to check for significance of variables - using the car package
 Anova(BlockMod)
 
 #BSAI
-#s(Julian)        453.19  3  < 2.2e-16 ***
+#bs(Julian)        453.19  3  < 2.2e-16 ***
 #TimeLost            1.49  1     0.2218    
 #as.factor(Site)    37.71  1  8.213e-10 ***
 
+#GOA
+#bs(Julian)        1754.5  3    < 2e-16 ***
+#TimeLost             4.1  1    0.04179 *  
+#bs(Year)          1003.7  3    < 2e-16 ***
+#as.factor(Site)   6314.6  4    < 2e-16 ***
+
 summary(BlockMod)
 acf(residuals(BlockMod), lag.max = 1000, ylim=c(0,0.1))
-acf(residuals(BlockMod), lag.max = 1000, ylim=c(0,0.1), xlim =c(600,700)) 
-ACFval = 653
+acf(residuals(BlockMod), lag.max = 1000, ylim=c(-0.1,0.1), xlim =c(500,600)) 
+ACFval = 519
 #BSAI - at hour 653
+#GOA - at hour 519
 
 #create the blocks based on the full timesereies
 startDate = SiteHourTable$tbin[1]
@@ -124,12 +140,18 @@ for (i in 1:nrow(gapsCont)){
 # Follow data exploration protocols suggested by Zuur et al. (2010), Zuur (2012), to generate pair plots, box plots, and assess collinearity between covariates in the dataset using Varinace Inflation Factors (vif).
 # Basic model for VIF analysis:
 #Region Specific
-GLM1 = glm(PreAbs~Julian+TimeLost+Site,family=binomial,data=SiteHourTableB)
+GLM1 = glm(PreAbs~Julian+TimeLost+Site+Year,family=binomial,data=SiteHourTableB)
 #VIF scores in GLM to work out collinearity:
 VIF(GLM1)
 #BSAI
 #Julian TimeLost     Site 
 #1.000441 1.001597 1.001921 
+#GOA
+#Julian   1.081902  1        1.040145
+#TimeLost 1.006228  1        1.003109
+#Site     1.345288  4        1.037772
+#Year     1.430608  1        1.196080
+
 
 ## STEP 4: Model selection - covariate preparation ##
 # Construct variance-covariance matrices for cyclic covariates:
@@ -148,12 +170,11 @@ model0A<-c("POD0", "POD0a", "POD0b")
 QIC0A<-c(QIC(POD0)[1],QIC(POD0a)[1],QIC(POD0b)[1])
 QICmod0A<-data.frame(rbind(model0A,QIC0A))
 QICmod0A
-
 #BSAI
 #QIC            QIC.1            QIC.2
 #model0A             POD0            POD0a            POD0b
 #QIC0A   26598.7716063937 26221.8264368644 25615.2847735921
-#Julian day as a variance-covariance matrix.
+#Julian day as a covariance matrix
 
 #Year
 POD1a = geeglm(PreAbs ~ as.factor(Year), family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
@@ -163,11 +184,7 @@ model1A<-c("POD0", "POD1a", "POD1b","POD1c")
 QIC1A<-c(QIC(POD0)[1],QIC(POD1a)[1],QIC(POD1b)[1],QIC(POD1c)[1])
 QICmod1A<-data.frame(rbind(model1A,QIC1A))
 QICmod1A
-#CB
-#QIC            QIC.1            QIC.2           QIC.3
-#model1A             POD0            POD1a            POD1b           POD1c
-#QIC1A   62461.7399063735 61014.3232753975 62441.7567814493 60931.500813237
-#Year as a smooth has the lower QIC but it should really be a factor, right?
+#Not enough years for BSAI
 
 #TimeLost
 POD2a = geeglm(PreAbs ~ as.factor(TimeLost), family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
@@ -185,65 +202,61 @@ QICmod2A
 
 ## STEP 5: Determine which covariates are most relevant, and which can be removed (on the basis of previous collinearity work).
 #The initial full model is:
-POD3a = geeglm(PreAbs ~ AvgDayMat+as.factor(Region)+TimeLost,family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
+POD3a = geeglm(PreAbs ~ AvgDayMat+as.factor(Site)+TimeLost,family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
 #without AvgDayMat
-POD3b = geeglm(PreAbs ~ as.factor(Region)+TimeLost,family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
-#without Region
+POD3b = geeglm(PreAbs ~ as.factor(Site)+TimeLost,family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
+#without Site
 POD3c = geeglm(PreAbs ~ AvgDayMat +TimeLost,family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
 #without Timelost
-POD3d = geeglm(PreAbs ~ AvgDayMat+as.factor(Region),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
+POD3d = geeglm(PreAbs ~ AvgDayMat+as.factor(Site),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
 model3A = c("POD0","POD3a","POD3b","POD3c","POD3d")
 QIC3A = c(QIC(POD0)[1],QIC(POD3a)[1],QIC(POD3b)[1],QIC(POD3c)[1],QIC(POD3d)[1])
 QICmod3A<-data.frame(rbind(model3A,QIC3A))
 QICmod3A
 #BSAI
-#QIC            QIC.1            QIC.2            QIC.3
-#model3A             POD0            POD3a            POD3b            POD3c
-#QIC3A   26597.8329324986 25626.9604402446 26619.7642943871 25610.2275289493
-#Remove Time Lost as a variable. Final model is POD3C.
+#QIC          QIC.1            QIC.2            QIC.3            QIC.4
+#model3A             POD0          POD3a            POD3b            POD3c            POD3d
+#QIC3A   26598.7716063937 25552.50349009 26599.4583801071 25624.2308193703 25543.2040816703
+#Remove timelost as variable.
 
-#Other sites (without year, timeLost as factor) for PT
+#Second round of model testing without timelost
 #The initial full model is:
-POD3a = geeglm(PreAbs ~ AvgDayMat+as.factor(TimeLost),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
+POD3e = geeglm(PreAbs ~ AvgDayMat+as.factor(Site),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
 #without AvgDayMat
-POD3b = geeglm(PreAbs ~ as.factor(TimeLost),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
-#without TimeLost
-POD3c = geeglm(PreAbs ~ AvgDayMat,family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
-model3A = c("POD0","POD3a","POD3b","POD3c")
-QIC3A = c(QIC(POD0)[1],QIC(POD3a)[1],QIC(POD3b)[1],QIC(POD3c)[1])
-QICmod3A<-data.frame(rbind(model3A,QIC3A))
-QICmod3A
-#PT
-#QIC          QIC.1          QIC.2            QIC.3
-#model2A             POD0          POD2a          POD2b            POD2c
-#QIC2A   10602.0472061315 234782.6515914 10613.44085275 10340.9814184713
-#Remove TimeLost as a variable. Final model is POD2C.
+POD3f = geeglm(PreAbs ~ as.factor(Site),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
+#without Site
+POD3g = geeglm(PreAbs ~ AvgDayMat,family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
+model3B = c("POD0","POD3e","POD3f","POD3g")
+QIC3B = c(QIC(POD0)[1],QIC(POD3e)[1],QIC(POD3f)[1],QIC(POD3g)[1])
+QICmod3B<-data.frame(rbind(model3B,QIC3B))
+QICmod3B
+#BSAI
+#QIC            QIC.1            QIC.2            QIC.3
+#model3B             POD0            POD3e            POD3f            POD3g
+#QIC3B   26598.7716063937 25543.2040816703 26587.3271097547 25615.2847735921
+#The full model has the lowest QIC.
 
 # STEP 6: Testing covariate significance.3
 # At this point, the resulting model is fitted using the library geeglm. The order in which the covariates enter the model is determined by the QIC score
 # (the ones that, if removed, determine the biggest increase in QIC enter the model first).
 
 #In descending order:
-#CB
 #AvgDayMat
-#Year
+#as.factor(Site)
 
 anova(POD3e)
-
-#CB
 #Analysis of 'Wald statistic' Table
 #Model: binomial, link: logit
 #Response: PreAbs
 #Terms added sequentially (first to last)
 
 #Df     X2 P(>|Chi|)    
-#AvgDayMat  4 40.046 4.235e-08 ***
-#bs(Year)   3 27.305 5.081e-06 ***
-# Retain all covariates. This is the final model.
+#AvgDayMat        4 38.370   9.4e-08 ***
+  #as.factor(Site)  1  6.576   0.01033 *  
+  ---
+  #Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
-PODFinal = POD3c
-
-#For PT,QN,BD only AvgDayMat was a significant variable, so the order doesn't matter...
+PODFinal = POD3e
 
 # STEP 6: Construction of the ROC curve     
 pr <- predict(PODFinal, type="response")  
@@ -280,35 +293,11 @@ DATA$Predicted<-predict(PODFinal,type="response")                 # the third co
 cmx(DATA, threshold = cutoff)                                   # the identified cut-off must be used here
 
 #Confusion matrix:
-
-#observed
-#predicted     1     0
-#1 13031 10776
-#0  7471 14076
-
-#PT
-#observed
-#predicted     1     0
-#1   617  2359
-#0  1115 10360
-
-#QN
-#observed
-#predicted    1    0
-#1 1449 5605
-#0  871 5335
-
-#BD
-#observed
-#predicted    1    0
-#1 7092 5008
-#0 1582 3746
-
 #BSAI
 #observed
 #predicted    1    0
-#1 7885 5971
-#0 1581 3747
+#1 6922 4890
+#0 2544 4828
 
   
 # The area under the curve (auc) can also be used as an rough indication of model performance:
@@ -318,9 +307,10 @@ auc <- performance(pred, measure="auc")
 # STEP 7: visualise the contribution of the explanatory variables by means of the partial residual plots, which plot the relationship between the response (on the response scale) and each predictor ##
 dimnames(AvgDayMat)<-list(NULL,c("ADBM1", "ADBM2", "ADBM3", "ADBM4"))
 
-PODFinal = geeglm(PreAbs ~ AvgDayMat,family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
+PODFinal = geeglm(PreAbs ~ AvgDayMat+as.factor(Site),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
 
 library(boot)
+library(pracma)
 
 #Probability of covariate #1: AvgDayBasisMat:
 BootstrapParameters3<-rmvnorm(10000, coef(PODFinal),summary(PODFinal)$cov.unscaled)
@@ -341,21 +331,7 @@ segments(PlottingVar3,(cis3a[1,]),PlottingVar3,(cis3a[2,]), col="grey")
 lines(PlottingVar3,(RealFitCenter3a),lwd=2, col=1)
 rug(PlottingVar3)
 
-#Probability of covariate #2: bs(Year):
-BootstrapParameters1<-rmvnorm(10000, coef(PODFinal),summary(PODFinal)$cov.unscaled)
-start=6; finish=8; Variable=SiteHourTable$Year; xlabel="Year"; ylabel="Probability"  
-PlottingVar1<-seq(min(Variable), max(Variable), length=5000)
-CenterVar1<-model.matrix(PODFinal)[,start:finish]*coef(PODFinal)[c(start:finish)]
-BootstrapCoefs1<-BootstrapParameters1[,c(start:finish)]
-Basis1<-gam(rbinom(5000,1,0.5)~s(PlottingVar1), fit=F, family=binomial, knots=list(PlottingVar1=seq(2011,2019,length=6)))$X[,2:4]
-RealFit1<-Basis1%*%coef(PODFinal)[c(start:finish)]
-RealFitCenter1<-RealFit1-mean(CenterVar1)
-RealFitCenter1a<-inv.logit(RealFitCenter1)
-BootstrapFits1<-Basis1%*%t(BootstrapCoefs1)
-quant.func1<-function(x){quantile(x,probs=c(0.025, 0.975))}
-cis1<-apply(BootstrapFits1, 1, quant.func1)-mean(CenterVar1)
-cis1a<-inv.logit(cis1)
-plot(PlottingVar1,(RealFitCenter1a), type="l", col=1,ylim=c(0, 1),xlab=xlabel, ylab=ylabel, xlim=c(2011,2019), main ="M7 covariate 1: # Days since deployment" , cex.lab = 1.5, cex.axis=1.5)
-segments(PlottingVar1,(cis1a[1,]),PlottingVar1,(cis1a[2,]), col="grey", main = "Influence of DATENO")
-lines(PlottingVar1,(RealFitCenter1a),lwd=2, col=1)
-rug(PlottingVar1)
+#Probability of covariate #2: as.factor(Site)
+SiteHourTableB$pr = pr
+ggplot(SiteHourTableB, aes(x = Site, y = pr)) +
+  geom_boxplot(aes(fill = factor(Site)), alpha = .2)
