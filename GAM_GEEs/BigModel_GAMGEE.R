@@ -229,7 +229,60 @@ QICmod2A
 
 ## STEP 5: Determine which covariates are most relevant, and which can be removed (on the basis of previous collinearity work). 
 #The reduced model with the lowest QIC is the one to use in the following step.
-#The initial full model is:
+#The initial full model (with year as a factor) is:
+POD3aa = geeglm(PreAbs ~ AvgDayMat+as.factor(Year)+bs(TimeLost)+as.factor(Site),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
+#without AvgDayMat
+POD3bb = geeglm(PreAbs ~ as.factor(Year)+bs(TimeLost)+as.factor(Site),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
+#without Year
+POD3cc = geeglm(PreAbs ~ AvgDayMat +bs(TimeLost)+as.factor(Site),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
+#without Timelost
+POD3dd = geeglm(PreAbs ~ AvgDayMat+as.factor(Year)+as.factor(Site),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
+#without Site
+POD3ee = geeglm(PreAbs ~ AvgDayMat+as.factor(Year)+bs(TimeLost),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
+model3AA = c("POD0","POD3aa","POD3bb","POD3cc","POD3dd","POD3ee")
+QIC3AA = c(QIC(POD0)[1],QIC(POD3aa)[1],QIC(POD3bb)[1],QIC(POD3cc)[1],QIC(POD3dd)[1],QIC(POD3ee)[1][1])
+QICmod3AA<-data.frame(rbind(model3AA,QIC3AA))
+QICmod3AA
+#QIC            QIC.1            QIC.2            QIC.3            QIC.4            QIC.5
+#model3AA             POD0           POD3aa           POD3bb           POD3cc           POD3dd           POD3ee
+#QIC3AA   130217.029932687 2629570.87540136 2654690.83506322 119153.902424341 2708976.49373487 121589.401307196
+#Remove year
+
+#The  full model without Year is:
+POD3ff = geeglm(PreAbs ~ AvgDayMat +bs(TimeLost)+as.factor(Site),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
+#without AvgDayMat
+POD3gg = geeglm(PreAbs ~ bs(TimeLost)+as.factor(Site),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
+#without TimeLost
+POD3hh = geeglm(PreAbs ~ AvgDayMat + as.factor(Site),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
+#without Site
+POD3ii = geeglm(PreAbs ~ AvgDayMat +bs(TimeLost),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
+model3BB = c("POD0","POD3ff","POD3gg",'POD3hh',"POD3ii")
+QIC3BB = c(QIC(POD0)[1],QIC(POD3ff)[1],QIC(POD3gg)[1],QIC(POD3hh)[1],QIC(POD3ii)[1])
+QICmod3BB<-data.frame(rbind(model3BB,QIC3BB))
+QICmod3BB
+#QIC            QIC.1            QIC.2            QIC.3           QIC.4
+#model3BB             POD0           POD3ff           POD3gg           POD3hh          POD3ii
+#QIC3BB   130217.029932687 119153.902424341 121591.489964346 119083.872722853 127406.07596043
+#Remove timelost.
+
+#The full model without time lost is:
+POD3jj = geeglm(PreAbs ~ AvgDayMat + as.factor(Site),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
+#without AvgDayMat
+POD3kk = geeglm(PreAbs ~ as.factor(Site),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
+#Without Site
+POD3ll = geeglm(PreAbs ~ AvgDayMat ,family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
+model3CC = c("POD0","POD3jj","POD3kk",'POD3ll')
+QIC3CC = c(QIC(POD0)[1],QIC(POD3jj)[1],QIC(POD3kk)[1],QIC(POD3ll)[1])
+QICmod3CC<-data.frame(rbind(model3CC,QIC3CC))
+QICmod3CC
+#QIC            QIC.1            QIC.2            QIC.3
+#model3CC             POD0           POD3jj           POD3kk           POD3ll
+#QIC3CC   130217.029932687 119083.872722853 121548.427290765 127396.454394609
+#full model is the best.
+
+## STEP 5: Determine which covariates are most relevant, and which can be removed (on the basis of previous collinearity work). 
+#The reduced model with the lowest QIC is the one to use in the following step.
+#The initial full model (with year as a smooth) is:
 POD3a = geeglm(PreAbs ~ AvgDayMat+bs(Year)+bs(TimeLost)+as.factor(Site),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
 #without AvgDayMat
 POD3b = geeglm(PreAbs ~ bs(Year)+bs(TimeLost)+as.factor(Site),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
@@ -286,7 +339,6 @@ QICmod3C
 # (the ones that, if removed, determine the biggest increase in QIC enter the model first).
 
 #In descending order:
-#CB
 #AvgDayMat
 #Site
 

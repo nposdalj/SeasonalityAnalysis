@@ -10,8 +10,8 @@ Regions = c("GOA","BSAI") #GOA AND BSAI Region
 
 fileDir = paste("I:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",Sites, sep="")#setting the directory
 saveDir = paste("I:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites/")
-filename = paste(fileDir,"/",Sites,"_dayDataforGLMR125.csv",sep="")
-filename2 = paste(fileDir,"/",Sites,"_binData_forGAMGEE.csv",sep="")
+filename = paste(fileDir,"/",Sites,"_binPresence.csv",sep="")
+filename2 = paste(fileDir,"/",Sites,"_binData_forGAMGEE_sexClasses.csv",sep="")
 
 #### Day Data
 #Day table with each column a different site
@@ -20,9 +20,9 @@ DayTab = data.frame(matrix(ncol = 0, nrow=0))
 for (i in 1:length(Sites)){
   dayBinTAB = read.csv(filename[i])
   modDayBinTAB = dayBinTAB %>%
-    dplyr::select(tbin, HoursNorm)
+    dplyr::select(tbin, FemaleHoursNorm,JuvenileHoursNorm, MaleHoursNorm)
   name = Sites[i]
-  names(modDayBinTAB)[names(modDayBinTAB) == "HoursNorm"] = name
+  #names(modDayBinTAB)[names(modDayBinTAB) == "HoursNorm"] = name
   if (i == 1){
     DayTab = modDayBinTAB
   }
@@ -38,7 +38,7 @@ DayTab$Julian = format(DayTab$tbin,"%j")
 DayTab$Year = format(DayTab$tbin,"%Y")
 
 #Export grouped table as .csv
-fileName = paste(saveDir,"AllSitesGrouped_GAMGEE_COL.csv",sep="")
+fileName = paste(saveDir,"AllSitesGrouped_GAMGEE_COL_sexClasses.csv",sep="")
 write.csv(DayTab,fileName, row.names = FALSE)
 
 #Day table with each row that has a site name
@@ -47,7 +47,7 @@ DayTab = data.frame(matrix(ncol = 0, nrow=0))
 for (i in 1:length(Sites)){
   dayBinTAB = read.csv(filename[i])
   modDayBinTAB = dayBinTAB %>%
-    dplyr::select(tbin, HoursNorm, Effort_Bin, Effort_Sec)
+    dplyr::select(tbin, FemaleHoursNorm,JuvenileHoursNorm, MaleHoursNorm, Effort_Bin, Effort_Sec)
   name = Sites[i]
   modDayBinTAB$Site = name
   modDayBinTAB$ID = i
@@ -70,11 +70,13 @@ DayTab$Julian = format(DayTab$tbin,"%j")
 DayTab$Year = format(DayTab$tbin,"%Y")
 
 #PreAbs
-DayTab$HoursNorm %>% mutate_if(is.numeric, ~1 * (. > 0)) #replaces NA values with 0
-DayTab$PreAbs = ifelse(DayTab$HoursNorm>0,1,0)
+#DayTab$FemaleHoursNorm %>% mutate_if(is.numeric, ~1 * (. > 0)) #replaces NA values with 0
+DayTab$PreAbsF = ifelse(DayTab$FemaleHoursNorm>0,1,0)
+DayTab$PreAbsJ = ifelse(DayTab$JuvenileHoursNorm>0,1,0)
+DayTab$PreAbsM = ifelse(DayTab$MaleHoursNorm>0,1,0)
 
 #Export grouped table as .csv
-fileName = paste(saveDir,"AllSitesGrouped_GAMGEE_ROW.csv",sep="")
+fileName = paste(saveDir,"AllSitesGrouped_GAMGEE_ROW_sexClasses.csv",sep="")
 write.csv(DayTab,fileName, row.names = FALSE)
 
 #### Hourly Data
@@ -84,9 +86,9 @@ HourTab = data.frame(matrix(ncol = 0, nrow=0))
 for (i in 1:length(Sites)){
   HourBinTab = read.csv(filename2[i])
   modHourBinTAB = HourBinTab %>%
-    dplyr::select(tbin, PreAbs, Effort_Bin, Effort_Sec)
+    dplyr::select(tbin, FemaleHoursNorm,JuvenileHoursNorm, MaleHoursNorm, Effort_Bin, Effort_Sec)
   name = Sites[i]
-  names(modHourBinTAB)[names(modHourBinTAB) == "PreAbs"] = name
+  #names(modHourBinTAB)[names(modHourBinTAB) == "PreAbs"] = name
   if (i == 1){
     HourTab = modHourBinTAB
   }
@@ -99,7 +101,7 @@ HourTab$Julian = format(HourTab$tbin,"%j")
 HourTab$Year = format(HourTab$tbin,"%Y")
 
 #Export grouped table as .csv
-fileName = paste(saveDir,"AllSitesGrouped_Binary_GAMGEE_COL.csv",sep="")
+fileName = paste(saveDir,"AllSitesGrouped_Binary_GAMGEE_COL_sexClasses.csv",sep="")
 write.csv(HourTab,fileName, row.names = FALSE)
 
 #Hourly table with each row that has a site name
@@ -108,7 +110,7 @@ HourTab = data.frame(matrix(ncol = 0, nrow=0))
 for (i in 1:length(Sites)){
   HourBinTab = read.csv(filename2[i])
   modHourBinTAB = HourBinTab %>%
-    dplyr::select(tbin, PreAbs, Effort_Bin, Effort_Sec)
+    dplyr::select(tbin, PreAbsF, PreAbsJ, PreAbsM, Effort_Bin, Effort_Sec)
   name = Sites[i]
   modHourBinTAB$Site = name
   modHourBinTAB$ID = i
@@ -128,6 +130,6 @@ HourTab$Julian = format(HourTab$tbin,"%j")
 HourTab$Year = format(HourTab$tbin,"%Y")
 
 #Export grouped table as .csv
-fileName = paste(saveDir,"AllSitesGrouped_Binary_GAMGEE_ROW.csv",sep="")
+fileName = paste(saveDir,"AllSitesGrouped_Binary_GAMGEE_ROW_sexClasses.csv",sep="")
 write.csv(HourTab,fileName, row.names = FALSE)
 

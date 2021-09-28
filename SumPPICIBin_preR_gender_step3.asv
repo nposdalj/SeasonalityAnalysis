@@ -303,14 +303,14 @@ binidx_hourlyF = (hourlyTab.Female >= 1);
 hourlyTab.PreAbsF = zeros(y,1);
 hourlyTab.PreAbsF(binidx_hourlyF) = 1; %table with 0 for no presence in 5min bin and 1 with presence in 1 hour bin
 
-%Juveniles
-binidx_hourlyJ = (hourlyTab.Juvenile >= 1);
-hourlyTab.PreAbsJ = zeros(y,1);
-hourlyTab.PreAbsJ(binidx_hourlyJ) = 1; %table with 0 for no presence in 5min bin and 1 with presence in 1 hour bin
+%Females
+binidx_hourlyF = (hourlyTab.Female >= 1);
+[y,~]=size(hourlyTab);
+hourlyTab.PreAbsF = zeros(y,1);
+hourlyTab.PreAbsF(binidx_hourlyF) = 1; %table with 0 for no presence in 5min bin and 1 with presence in 1 hour bin
 
-%Males
-binidx_hourlyM = (hourlyTab.Male >= 1);
-hourlyTab.PreAbsM = zeros(y,1);
-hourlyTab.PreAbsM(binidx_hourlyM) = 1; %table with 0 for no presence in 5min bin and 1 with presence in 1 hour bin
-
-writetable(timetable2table(hourlyTab),[saveDir,'\',siteabrev,'_binData_forGAMGEE_sexClasses.csv']); %save table to .csv to continue stats in R F:\Seasonality\Kruskal_RankSumSTATS.R
+%Females
+binidx_hourlyF = (hourlyTab.Female >= 1);
+[y,~]=size(hourlyTab);
+hourlyTab.PreAbsF = zeros(y,1);
+hourlyTab.PreAbsF(binidx_hourlyF) = 1; %table with 0 for no presence in 5min bin and 1 with presence in 1 hour bin
