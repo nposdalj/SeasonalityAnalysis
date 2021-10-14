@@ -10,7 +10,7 @@ Regions = c("GOA","BSAI") #GOA AND BSAI Region
 
 fileDir = paste("I:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",Sites, sep="")#setting the directory
 saveDir = paste("I:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites/")
-filename = paste(fileDir,"/",Sites,"_dayDataforGLMR125.csv",sep="")
+filename = paste(fileDir,"/",Sites,"_dayData_forGLMR125.csv",sep="")
 filename2 = paste(fileDir,"/",Sites,"_binData_forGAMGEE.csv",sep="")
 
 #### Day Data

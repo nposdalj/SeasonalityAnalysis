@@ -153,15 +153,20 @@ for (i in 1:nrow(gapsCont)){
 ## Step 4: Data exploration and initial analysis ##
 # Follow data exploration protocols suggested by Zuur et al. (2010), Zuur (2012), to generate pair plots, box plots, and assess collinearity between covariates in the dataset using Varinace Inflation Factors (vif).
 # Basic model for VIF analysis:
+#CB ONLY
 GLM1_CB = glm(PreAbs ~ Julian + TimeLost + as.factor(Year), family = binomial, data = SiteHourTableB)
-GLM1 = glm(PreAbs~Julian+TimeLost,family=binomial,data=SiteHourTableB)
 #VIF scores in GLM to work out collinearity:
-VIF(GLM1)
+VIF(GLM1_CB)
 #CB
 #GVIF Df GVIF^(1/(2*Df))
 #Julian          1.388517  1        1.178353
 #TimeLost        1.008421  1        1.004202
 #as.factor(Year) 1.399990  7        1.024324
+
+#Other sites
+GLM1 = glm(PreAbs~Julian+TimeLost,family=binomial,data=SiteHourTableB)
+#VIF scores in GLM to work out collinearity:
+VIF(GLM1)
 #PT
 #Julian TimeLost 
 #1.000027 1.000027
@@ -226,8 +231,7 @@ QICmod1A
 #QIC            QIC.1            QIC.2           QIC.3
 #model1A             POD0            POD1a            POD1b           POD1c
 #QIC1A   62461.7399063735 61014.3232753975 62441.7567814493 60931.500813237
-#Year as a smooth has the lower QIC but it should really be a factor, right?
-#Kept it as a smooth
+#Year as a smooth.
 
 #TimeLost
 POD2a = geeglm(PreAbs ~ as.factor(TimeLost), family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
@@ -292,6 +296,7 @@ model3B = c("POD0","POD3e","POD3f","POD3g")
 QIC3B = c(QIC(POD0)[1],QIC(POD3e)[1],QIC(POD3f)[1],QIC(POD3g)[1])
 QICmod3B<-data.frame(rbind(model3B,QIC3B))
 QICmod3B
+PODFinal = POD3e
 #CB
 #QIC            QIC.1           QIC.2            QIC.3
 #model3B             POD0            POD3e           POD3f            POD3g
@@ -338,6 +343,9 @@ QICmod3A
 #QIC2A   10602.0472061315 234782.6515914 10613.44085275 10340.9814184713
 #Remove TimeLost as a variable. Final model is POD2C.
 
+#Final model for other sites
+PODFinal = POD3c
+
 # STEP 6: Testing covariate significance.3
 # At this point, the resulting model is fitted using the library geeglm. The order in which the covariates enter the model is determined by the QIC score
 # (the ones that, if removed, determine the biggest increase in QIC enter the model first).
@@ -347,7 +355,7 @@ QICmod3A
 #AvgDayMat
 #Year
 
-anova(POD3e)
+anova(PODFinal)
 
 #CB
 #Analysis of 'Wald statistic' Table
@@ -360,11 +368,11 @@ anova(POD3e)
 #bs(Year)   3 27.305 5.081e-06 ***
 # Retain all covariates. This is the final model.
 
-PODFinal = POD3e
-
 #For PT,QN,BD only AvgDayMat was a significant variable, so the order doesn't matter...
 
 # STEP 6: Interpretting the summary of the model
+dimnames(AvgDayMat)<-list(NULL,c("ADBM1", "ADBM2", "ADBM3", "ADBM4"))
+PODFinal = geeglm(PreAbs ~ AvgDayMat,family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
 summary(PODFinal)
 
 # How to intepret model results
@@ -403,7 +411,7 @@ summary(PODFinal)
 #CB
 #Call:
   #geeglm(formula = PreAbs ~ AvgDayMat + bs(Year), family = binomial, 
-         data = SiteHourTableB, id = Blocks, corstr = "ar1")
+         #data = SiteHourTableB, id = Blocks, corstr = "ar1")
 
 #Coefficients:
   #Estimate  Std.err   Wald Pr(>|W|)    
@@ -490,14 +498,11 @@ cmx(DATA, threshold = cutoff)                                   # the identified
 #1 7092 5008
 #0 1582 3746
 
-  
 # The area under the curve (auc) can also be used as an rough indication of model performance:
   
 auc <- performance(pred, measure="auc")
 
 # STEP 7: visualise the contribution of the explanatory variables by means of the partial residual plots, which plot the relationship between the response (on the response scale) and each predictor ##
-dimnames(AvgDayMat)<-list(NULL,c("ADBM1", "ADBM2", "ADBM3", "ADBM4"))
-
 library(boot)
 library(pracma)
 
@@ -520,6 +525,7 @@ segments(PlottingVar3,(cis3a[1,]),PlottingVar3,(cis3a[2,]), col="grey")
 lines(PlottingVar3,(RealFitCenter3a),lwd=2, col=1)
 rug(PlottingVar3)
 
+#FOR CB ONLY
 #Probability of covariate #2: as.smooth(Year):
 BootstrapParameters1<-rmvnorm(10000, coef(PODFinal),summary(PODFinal)$cov.unscaled)
 start=6; finish=8; Variable=SiteHourTableB$Year; xlabel="Year"; ylabel="Probability"  

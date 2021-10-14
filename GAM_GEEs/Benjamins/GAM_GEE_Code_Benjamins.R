@@ -289,9 +289,6 @@ segments(PlottingVar1,(cis1a[1,]),PlottingVar1,(cis1a[2,]), col="grey", main = "
 lines(PlottingVar1,(RealFitCenter1a),lwd=2, col=1)
 rug(PlottingVar1)
 
-
-
-
 #Probability of covariate #2: TideBasisMat:  
 BootstrapParameters2<-rmvnorm(10000, coef(POD8),summary(POD8)$cov.unscaled, method="chol")
 start=6; finish=9; Variable=MINUTE; xlabel="Tidal cycle (0 = 1 = Low Tide at Oban)"; ylabel="Probability"   

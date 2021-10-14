@@ -64,7 +64,7 @@ SiteDayTable$TimeLost = max(SiteDayTable$Effort_Bin) - SiteDayTable$Effort_Bin
 #acf on the 1 day binned data
 acf(SiteDayTable$PreAbs, lag.max = 50)
 #BSAI - at day 41
-#BSAI - at day 6
+#GOA - at day 6
 
 #Hour Table
 #acf on the 1 hour binned data
@@ -78,13 +78,15 @@ acf(SiteHourTable$PreAbs, lag.max = 2000, ylim=c(0,0.1), xlim =c(300,400))
 #BSAI
 BlockMod<-glm(PreAbs~
                 bs(Julian)+
-                TimeLost + as.factor(Site), data=SiteHourTable,family=binomial)
+                TimeLost + 
+                as.factor(Site), data=SiteHourTable,family=binomial)
 
 #GOA
 BlockMod<-glm(PreAbs~
                 bs(Julian)+
                 TimeLost +
-                bs(Year) + as.factor(Site), data=SiteHourTable,family=binomial)
+                bs(Year) + 
+                as.factor(Site), data=SiteHourTable,family=binomial)
 
 #Quick ANOVA to check for significance of variables - using the car package
 Anova(BlockMod)
@@ -101,8 +103,8 @@ Anova(BlockMod)
 #as.factor(Site)   6314.6  4    < 2e-16 ***
 
 summary(BlockMod)
-acf(residuals(BlockMod), lag.max = 1000, ylim=c(0,0.1))
-acf(residuals(BlockMod), lag.max = 1000, ylim=c(-0.1,0.1), xlim =c(500,600)) 
+acf(residuals(BlockMod), lag.max = 600, ylim=c(0,0.1))
+acf(residuals(BlockMod), lag.max = 1000, ylim=c(-0.1,0.1), xlim =c(500,520)) 
 ACFval = 519
 #BSAI - at hour 653
 #GOA - at hour 519
@@ -152,7 +154,6 @@ VIF(GLM1)
 #Site     1.345288  4        1.037772
 #Year     1.430608  1        1.196080
 
-
 ## STEP 4: Model selection - covariate preparation ##
 # Construct variance-covariance matrices for cyclic covariates:
 AvgDayBasis <- gam(PreAbs~s(Julian, bs ="cc", k=-1), fit=F, data = SiteHourTableB, family =binomial, knots = list(HOUR=seq(1,366,length=6)))$X[,2:5]
@@ -174,6 +175,12 @@ QICmod0A
 #QIC            QIC.1            QIC.2
 #model0A             POD0            POD0a            POD0b
 #QIC0A   26598.7716063937 26221.8264368644 25615.2847735921
+#Julian day as a covariance matrix
+
+#GOA
+#QIC            QIC.1            QIC.2
+#model0A             POD0            POD0a            POD0b
+#QIC0A   101941.659918885 99560.1332277305 99133.0064315274
 #Julian day as a covariance matrix
 
 #Year
