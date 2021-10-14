@@ -142,12 +142,16 @@ for (i in 1:nrow(gapsCont)){
 # Follow data exploration protocols suggested by Zuur et al. (2010), Zuur (2012), to generate pair plots, box plots, and assess collinearity between covariates in the dataset using Varinace Inflation Factors (vif).
 # Basic model for VIF analysis:
 #Region Specific
-GLM1 = glm(PreAbs~Julian+TimeLost+Site+Year,family=binomial,data=SiteHourTableB)
+GLM_BD = glm(PreAbs~Julian+TimeLost+Site,family=binomial,data=SiteHourTableB)
 #VIF scores in GLM to work out collinearity:
-VIF(GLM1)
+VIF(GLM_BD)
 #BSAI
 #Julian TimeLost     Site 
 #1.000441 1.001597 1.001921 
+
+GLM_GOA = glm(PreAbs~Julian+TimeLost+Site+Year,family=binomial,data=SiteHourTableB)
+#VIF scores in GLM to work out collinearity:
+VIF(GLM_GOA)
 #GOA
 #Julian   1.081902  1        1.040145
 #TimeLost 1.006228  1        1.003109
