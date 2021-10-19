@@ -3,14 +3,14 @@ close all
 
 %% Parameters defined by user
 filePrefix = 'BD'; % File name to match. 
-genderFileName = 'BD'; %File name to match gender file
+genderFileName = 'ALEUT'; %File name to match gender file
 siteabrev = 'BD'; %abbreviation of site
 sp = 'Pm'; % your species code
 srate = 200; % sample rate
-tpwsPath = 'G:\My Drive\CentralPac_TPWS_metadataReduced\Wake\TPWS_125\TPWS2\TPWS3\'; %directory of TPWS files
-effortXls = 'G:\My Drive\CentralPac_TPWS_metadataReduced\Wake\Pm_Effort.xlsx'; % specify excel file with effort times
-saveDir = 'G:\My Drive\CentralPac_TPWS_metadataReduced\Wake\Seasonality'; %specify directory to save files
-dayBinCSV= 'G:\My Drive\CentralPac_TPWS_metadataReduced\Wake\Seasonality\KR_dayData_forGLMR125.csv'; % specify csv document with general PM information
+tpwsPath = 'I:\My Drive\GofAK_TPWS_metadataReduced\ICIgrams\'; %directory of TPWS files
+effortXls = 'I:\My Drive\GofAK_TPWS_metadataReduced\ICIgrams\Pm_Effort_BD.xlsx'; % specify excel file with effort times
+saveDir = 'I:\My Drive\GofAK_TPWS_metadataReduced\SeasonalityAnalysis'; %specify directory to save files
+dayBinCSV= 'I:\My Drive\GofAK_TPWS_metadataReduced\SeasonalityAnalysis\BD_dayData_forGLMR125.csv'; % specify csv document with general PM information
 %% Get effort times matching prefix file
 %when multiple sites in the effort table
 allEfforts = readtable(effortXls); %read effort table

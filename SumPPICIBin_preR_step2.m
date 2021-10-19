@@ -2,16 +2,16 @@ clearvars
 close all
 
 %% Parameters defined by user
-filePrefix = 'ALEUT'; % File name to match. 
-siteabrev = 'KS'; %abbreviation of site.
+filePrefix = 'BD'; % File name to match. 
+siteabrev = 'BD'; %abbreviation of site.
 sp = 'Pm'; % your species code
 srate = 200; % sample rate
-effortXls = 'I:\My Drive\GofAK_TPWS_metadataReduced\SeasonalityAnalysis\KS\Pm_Effort.xlsx'; % specify excel file with effort times
-saveDir = 'I:\My Drive\GofAK_TPWS_metadataReduced\SeasonalityAnalysis\KS'; %specify directory to save files
+effortXls = 'I:\My Drive\GofAK_TPWS_metadataReduced\SeasonalityAnalysis\BD\Pm_Effort.xlsx'; % specify excel file with effort times
+saveDir = 'I:\My Drive\GofAK_TPWS_metadataReduced\SeasonalityAnalysis\BD'; %specify directory to save files
 %% load workspace
 load([saveDir,'\',siteabrev,'_workspace125.mat']);
-effortXls = 'I:\My Drive\GofAK_TPWS_metadataReduced\SeasonalityAnalysis\KS\Pm_Effort.xlsx'; % specify excel file with effort times
-saveDir = 'I:\My Drive\GofAK_TPWS_metadataReduced\SeasonalityAnalysis\KS'; %specify directory to save files
+effortXls = 'I:\My Drive\GofAK_TPWS_metadataReduced\SeasonalityAnalysis\BD\Pm_Effort.xlsx'; % specify excel file with effort times
+saveDir = 'I:\My Drive\GofAK_TPWS_metadataReduced\SeasonalityAnalysis\BD'; %specify directory to save files
 %% group data by 5min bins, hourly, days, weeks, and seasons 
 %group data by 5 minute bins
 binTable = synchronize(binData,binEffort);

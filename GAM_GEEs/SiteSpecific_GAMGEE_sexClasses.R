@@ -104,8 +104,8 @@ BlockModM<-glm(PreAbsM~
 Anova(BlockModF)
 #BD
 #LR Chisq Df Pr(>Chisq)    
-#bs(Julian)   926.19  3     <2e-16 ***
-  #TimeLost       0.80  1     0.3708   
+#bs(Julian)  1053.54  3     <2e-16 ***
+  #TimeLost       0.86  1     0.3537  
 
 #PT
 #bs(Julian)      410  3     <2e-16 ***
@@ -122,8 +122,8 @@ Anova(BlockModF)
 
 Anova(BlockModJ)
 #BD
-#bs(Julian)  227.746  3     <2e-16 ***
-  #TimeLost      0.004  1     0.9496 
+#bs(Julian)  207.040  3     <2e-16 ***
+#TimeLost      0.503  1      0.478 
 
 #PT
 #bs(Julian)    307.8  3     <2e-16 ***
@@ -140,8 +140,8 @@ Anova(BlockModJ)
 
 Anova(BlockModM)
 #BD
-#bs(Julian)   455.22  3     <2e-16 ***
-  #TimeLost       0.04  1     0.8337 
+#bs(Julian)   319.38  3     <2e-16 ***
+#TimeLost       0.07  1     0.7882  
 
 #PT
 #bs(Julian)     76.6  3     <2e-16 ***
@@ -158,27 +158,27 @@ Anova(BlockModM)
 
 #Females
 acf(residuals(BlockModF), lag.max = 2000, ylim=c(0,0.1))
-acf(residuals(BlockModF), lag.max = 1000, ylim=c(0,0.1), xlim =c(0,50)) 
-ACFvalF = 34
-#BD Females - 207
+acf(residuals(BlockModF), lag.max = 1000, ylim=c(0,0.1), xlim =c(200,300)) 
+ACFvalF = 226
+#BD Females - 226
 #PT Females - 34
 #QN Females - 23
 #CB Females - 34
 
 #Juveniles
 acf(residuals(BlockModJ), lag.max = 1000, ylim=c(0,0.1))
-acf(residuals(BlockModJ), lag.max = 1000, ylim=c(0,0.1), xlim =c(500,600)) 
-ACFvalJ = 584
-#BD Juveniles - ??
+acf(residuals(BlockModJ), lag.max = 1000, ylim=c(0,0.1), xlim =c(260,280)) 
+ACFvalJ = 272
+#BD Juveniles - 272
 #PT Juveniles - 110
 #QN Juveniles - 30
 #CB Juveniles - 584
 
 #Males
 acf(residuals(BlockModM), lag.max = 1000, ylim=c(0,0.1))
-acf(residuals(BlockModM), lag.max = 1000, ylim=c(0,0.1), xlim =c(400,500))
-ACFvalM = 276
-#BD Males - 143
+acf(residuals(BlockModM), lag.max = 1000, ylim=c(0,0.1), xlim =c(100,150))
+ACFvalM = 139
+#BD Males - 139
 #PT Males - 221
 #QN Males - 379
 #CB Males - 276 (Got close enough); 422 (got close enough when Year was a smooth instead of a factor)
@@ -295,13 +295,13 @@ VIF(GLMM)
 #BD
 #VIF(GLMF)
 #Julian TimeLost 
-#1.000109 1.000109 
+#1.000118 1.000118 
 #VIF(GLMJ)
 #Julian TimeLost 
-#1.000081 1.000081 
+#1.000128 1.000128 
 #VIF(GLMM)
 #Julian TimeLost 
-#1.000133 1.000133 
+#1.000119 1.000119 
 
 #PT/QN
 #VIF(GLMF)
@@ -362,7 +362,7 @@ QICmod0fA
 #BD
 #QIC            QIC.1            QIC.2
 #model0fA            POD0f           POD0fa           POD0fb
-#QIC0fA   3124.96557501026 2178.50992322419 2137.61197218677
+#QIC0fA   3344.50244232974 2252.53294008571 2234.0221551908
 #Julian day as a covariance matrix
 
 #PT
@@ -409,8 +409,8 @@ QICmod2fA
 #BD
 #QIC           QIC.1            QIC.2            QIC.3
 #model2fA            POD0f          POD2fa           POD2fb           POD2fc
-#QIC2fA   3124.96557501026 3124.3042051176 3124.95351379776 22193.2887665125
-#TimeLost as linear. (Even though as.factor had lowest QIC)
+#QIC2fA   3344.50244232974 24362.7152164628 3344.49647341016 24531.7725534563
+#TimeLost as linear.
 
 #PT
 #QIC            QIC.1            QIC.2            QIC.3
@@ -443,7 +443,7 @@ QICmod0jA
 #BD
 #QIC            QIC.1            QIC.2
 #model0jA            POD0j           POD0ja           POD0jb
-#QIC0jA   13212.5443149178 12996.1539988939 12711.4222500691
+#QIC0jA   13025.0450626805 12797.3182476176 12578.8138401894
 #Julian day as covariance matrix
 
 #PT
@@ -489,7 +489,7 @@ QICmod2jA
 #BD
 #QIC           QIC.1            QIC.2            QIC.3
 #model2jA            POD0j           POD2ja           POD2jb           POD2jc
-#QIC2jA   13212.5443149178 158647.006516794 13223.1141241812 13237.9776447194
+#QIC2jA   13025.0450626805 156315.980205119 13043.8050485186 13074.6655418734
 #TimeLost as linear.
 
 #PT
@@ -523,7 +523,7 @@ QICmod0mA
 #BD
 #QIC            QIC.1            QIC.2
 #model0mA            POD0m           POD0ma           POD0mb
-#QIC0mA   14995.1532685815 14565.7063029356 14512.7636741952
+#QIC0mA   14925.7545361902 14638.8964876502 14464.0713236508
 #Julian Day as covariance matrix
 
 #PT
@@ -570,7 +570,7 @@ QICmod2mA
 #BD
 #QIC           QIC.1            QIC.2            QIC.3
 #model2mA            POD0m          POD2ma           POD2mb           POD2mc
-#QIC2jA   13212.5443149178 3124.3042051176 3124.95351379776 22193.2887665125
+#QIC2jA   13025.0450626805 156315.980205119 13043.8050485186 13074.6655418734
 #TimeLost as factor.
 
 #PT
@@ -702,6 +702,115 @@ PODFinalm = POD3me
 #QIC3mB   40421.7085304264 37778.0580942321 39564.2836988386 38586.8059227603
 #Full model is the best.
 
+#CB (with Year as smooth)
+#Females
+#The initial full model is:
+POD3fa = geeglm(PreAbsF ~ AvgDayMatF+bs(Year)+TimeLost,family = binomial, corstr="ar1", id=BlocksF, data=SiteHourTableB)
+#without AvgDayMat
+POD3fb = geeglm(PreAbsF ~ bs(Year)+TimeLost,family = binomial, corstr="ar1", id=BlocksF, data=SiteHourTableB)
+#without Year
+POD3fc = geeglm(PreAbsF ~ AvgDayMatF +TimeLost,family = binomial, corstr="ar1", id=BlocksF, data=SiteHourTableB)
+#without Timelost
+POD3fd = geeglm(PreAbsF ~ AvgDayMatF+bs(Year),family = binomial, corstr="ar1", id=BlocksF, data=SiteHourTableB)
+model3fA = c("POD0f","POD3fa","POD3fb","POD3fc","POD3fd")
+QIC3fA = c(QIC(POD0f)[1],QIC(POD3fa)[1],QIC(POD3fb)[1],QIC(POD3fc)[1],QIC(POD3fd)[1])
+QICmod3fA<-data.frame(rbind(model3fA,QIC3fA))
+QICmod3fA
+#CB
+#QIC            QIC.1            QIC.2            QIC.3            QIC.4
+#model3fA            POD0f           POD3fa           POD3fb           POD3fc           POD3fd
+#QIC3fA   2329.98680269474 2236.91997288269 2298.00492186197 2309.00848851999 2229.10419514264
+#Remove TimeLost
+
+#The  full model without TimeLost is:
+POD3fe = geeglm(PreAbsF ~ AvgDayMatF+bs(Year),family = binomial, corstr="ar1", id=BlocksF, data=SiteHourTableB)
+#without AvgDayMat
+POD3ff = geeglm(PreAbsF ~ bs(Year),family = binomial, corstr="ar1", id=BlocksF, data=SiteHourTableB)
+#without Year
+POD3fg = geeglm(PreAbsF ~ AvgDayMatF,family = binomial, corstr="ar1", id=BlocksF, data=SiteHourTableB)
+model3fB = c("POD0f","POD3fe","POD3ff","POD3fg")
+QIC3fB = c(QIC(POD0f)[1],QIC(POD3fe)[1],QIC(POD3ff)[1],QIC(POD3fg)[1])
+QICmod3fB<-data.frame(rbind(model3fB,QIC3fB))
+QICmod3fB
+PODFinalf = POD3fe
+#CB
+#QIC            QIC.1            QIC.2            QIC.3
+#model3fB            POD0f           POD3fe           POD3ff           POD3fg
+#QIC3fB   2329.98680269474 2229.10419514264 2285.18592339013 2303.18308193766
+#Full model is the best.
+
+#Juveniles
+#The initial full model is:
+POD3ja = geeglm(PreAbsJ ~ AvgDayMatJ+bs(Year)+TimeLost,family = binomial, corstr="ar1", id=BlocksJ, data=SiteHourTableB)
+#without AvgDayMat
+POD3jb = geeglm(PreAbsJ ~ bs(Year)+TimeLost,family = binomial, corstr="ar1", id=BlocksJ, data=SiteHourTableB)
+#without Year
+POD3jc = geeglm(PreAbsJ ~ AvgDayMatJ +TimeLost,family = binomial, corstr="ar1", id=BlocksJ, data=SiteHourTableB)
+#without Timelost
+POD3jd = geeglm(PreAbsJ ~ AvgDayMatJ+bs(Year),family = binomial, corstr="ar1", id=BlocksJ, data=SiteHourTableB)
+model3jA = c("POD0j","POD3ja","POD3jb","POD3jc","POD3jd")
+QIC3jA = c(QIC(POD0j)[1],QIC(POD3ja)[1],QIC(POD3jb)[1],QIC(POD3jc)[1],QIC(POD3jd)[1])
+QICmod3jA<-data.frame(rbind(model3jA,QIC3jA))
+QICmod3jA
+#CB
+#QIC            QIC.1            QIC.2            QIC.3            QIC.4
+#model3jA            POD0j           POD3ja           POD3jb           POD3jc           POD3jd
+#QIC3jA   46282.9243919683 45161.7305048944 45831.3847182987 45466.8386199378 45128.6191087935
+#Remove TimeLost
+
+#The  full model without TimeLost is:
+POD3je = geeglm(PreAbsJ ~ AvgDayMatJ+bs(Year),family = binomial, corstr="ar1", id=BlocksJ, data=SiteHourTableB)
+#without AvgDayMat
+POD3jf = geeglm(PreAbsJ ~ bs(Year),family = binomial, corstr="ar1", id=BlocksJ, data=SiteHourTableB)
+#without Year
+POD3jg = geeglm(PreAbsJ ~ AvgDayMatJ,family = binomial, corstr="ar1", id=BlocksJ, data=SiteHourTableB)
+model3jB = c("POD0j","POD3je","POD3jf","POD3jg")
+QIC3jB = c(QIC(POD0j)[1],QIC(POD3je)[1],QIC(POD3jf)[1],QIC(POD3jg)[1])
+QICmod3jB<-data.frame(rbind(model3jB,QIC3jB))
+QICmod3jB
+PODFinalj = POD3je
+#CB
+#QIC            QIC.1            QIC.2            QIC.3
+#model3jB            POD0j           POD3je           POD3jf           POD3jg
+#QIC3jB   46282.9243919683 45128.6191087935 45804.8895179568 45438.1446277905
+#Full model is the best.
+
+#Males
+#The initial full model is:
+POD3ma = geeglm(PreAbsM ~ AvgDayMatM+bs(Year)+TimeLost,family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB)
+#without AvgDayMat
+POD3mb = geeglm(PreAbsM ~ bs(Year)+TimeLost,family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB)
+#without Year
+POD3mc = geeglm(PreAbsM ~ AvgDayMatM +TimeLost,family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB)
+#without Timelost
+POD3md = geeglm(PreAbsM ~ AvgDayMatM+bs(Year),family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB)
+model3mA = c("POD0m","POD3ma","POD3mb","POD3mc","POD3md")
+QIC3mA = c(QIC(POD0m)[1],QIC(POD3ma)[1],QIC(POD3mb)[1],QIC(POD3mc)[1],QIC(POD3md)[1])
+QICmod3mA<-data.frame(rbind(model3mA,QIC3mA))
+QICmod3mA
+#CB
+#QIC            QIC.1            QIC.2            QIC.3           QIC.4
+#model3mA            POD0m           POD3ma           POD3mb           POD3mc          POD3md
+#QIC3mA   
+#Remove TimeLost.
+
+#The  full model without TimeLost is:
+POD3me = geeglm(PreAbsM ~ AvgDayMatM+bs(Year),family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB)
+#without AvgDayMat
+POD3mf = geeglm(PreAbsM ~ bs(Year),family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB)
+#without Year
+POD3mg = geeglm(PreAbsM ~ AvgDayMatM,family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB)
+model3mB = c("POD0m","POD3me","POD3mf","POD3mg")
+QIC3mB = c(QIC(POD0m)[1],QIC(POD3me)[1],QIC(POD3mf)[1],QIC(POD3mg)[1])
+QICmod3mB<-data.frame(rbind(model3mB,QIC3mB))
+QICmod3mB
+PODFinalm = POD3me
+#CB
+#QIC           QIC.1            QIC.2            QIC.3
+#model3mB            POD0m          POD3me           POD3mf           POD3mg
+#QIC3mB   40421.7085304264 38014.3681731602 39648.2399971516 38585.9961341015 38021.988662637
+#Full model is the best.
+
 #Other sites (without year)
 #Females - TimeLost as linear (BD, PT)
 #The initial full model is:
@@ -718,7 +827,7 @@ PODFinalf = POD3fc
 #BD
 #QIC            QIC.1           QIC.2            QIC.3
 #model3fA            PODf0           POD3fa           POD3fb           POD3fc
-#QIC3fA   3124.96557501026 2137.60559920481 3124.95351379776 2137.61197218677
+#QIC3fA   3344.50244232974 2234.00018665068 3344.49647341016 2234.0221551908
 #Remove TimeLost. POD3fc is final model.
 
 #PT
@@ -749,7 +858,7 @@ PODFinalj = POD3jc
 #BD
 #QIC            QIC.1           QIC.2            QIC.3
 #model3jA            POD0j           POD3ja           POD3fb           POD3fc
-#QIC3jA   13212.5443149178 12723.1480150494 13223.1141241812 12711.4222500691
+#QIC3jA   13025.0450626805 12596.3873961207 13043.8050485186 12578.8138401894
 #Remove TimeLost. POD3jc
 
 #PT
@@ -779,7 +888,7 @@ PODFinalm = POD3mc
 #BD
 #QIC            QIC.1            QIC.2            QIC.3
 #model3mA            POD0m           POD3ma           POD3mb           POD3mc
-#QIC3mA   14995.1532685815 14528.2397167441 15027.6497125557 14512.7636741952
+#QIC3mA   14925.7545361902 14485.3626400531 14961.5206171963 14464.0713236508
 #Remove TimeLost. POD3mc
 
 #Males - TimeLost as linear (PT, QN)
@@ -812,7 +921,7 @@ PODFinalm = POD3mc
 
 anova(PODFinalf)
 #BD
-#AvgDayMatF  4 33.200 1.087e-06 ***
+#AvgDayMatF  4 20.181 0.0004599 ***
 #PT
 #AvgDayMatF  4 71.2   1.2e-14 ***
 #QN
@@ -821,9 +930,13 @@ anova(PODFinalf)
 #AvgDayMatF  4  9.7109   0.04559 *  
 #as.factor(Year)  7 39799   < 2e-16 ***
 
+#CB
+#AvgDayMatF  4  9.71     0.046 *  
+  #bs(Year)    3 28.65   2.6e-06 ***
+
 anova(PODFinalj)
 #BD
-#AvgDayMatJ  4 9.177   0.05682 .
+#AvgDayMatJ  4 12.431   0.01442 *
 #PT
 #AvgDayMatJ  4 11.4     0.022 *
 #QN
@@ -832,9 +945,13 @@ anova(PODFinalj)
 #AvgDayMatJ       4 15.782  0.003326 **
   #as.factor(Year)  7 19.843  0.005918 **
 
+#CB
+#AvgDayMatJ  4 15.78    0.0033 **
+  #bs(Year)    3  5.33    0.1489   
+
 anova(PODFinalm)
 #BD
-#AvgDayMatM  4 26.788 2.194e-05 ***
+#AvgDayMatM  4 20.11 0.0004751 ***
 #PT
 #AvgDayMatM  4 1.43      0.84
 #QN
@@ -843,11 +960,19 @@ anova(PODFinalm)
 #AvgDayMatM       4 61.331 1.523e-12 ***
   #as.factor(Year)  7 39.957 1.283e-06 ***
 
+#CB
+#AvgDayMatM       4 61.3   1.5e-12 ***
+  #as.factor(Year)  7 40.0   1.3e-06 ***
+
 # STEP 6: Interpretting the summary of the model
 #CB ONLY
 #Females
 dimnames(AvgDayMatF)<-list(NULL,c("ADBM1", "ADBM2", "ADBM3", "ADBM4"))
 PODFinalf = geeglm(PreAbsF ~ AvgDayMatF+as.factor(Year),family = binomial, corstr="ar1", id=BlocksF, data=SiteHourTableB)
+summary(PODFinalf)
+
+dimnames(AvgDayMatF)<-list(NULL,c("ADBM1", "ADBM2", "ADBM3", "ADBM4"))
+PODFinalf = geeglm(PreAbsF ~ AvgDayMatF+bs(Year),family = binomial, corstr="ar1", id=BlocksF, data=SiteHourTableB)
 summary(PODFinalf)
 #(Intercept)          -5.0055   0.4208  141.480   <2e-16 ***
   #AvgDayMatFADBM1      -0.9295   0.9992    0.865   0.3523    
@@ -873,9 +998,30 @@ summary(PODFinalf)
 #alpha   0.7566    1.25
 #Number of clusters:   1344  Maximum cluster size: 35 
 
+#(Intercept)       -4.376   0.279 246.36  < 2e-16 ***
+  #AvgDayMatFADBM1   -0.861   0.950   0.82    0.365    
+#AvgDayMatFADBM2    0.738   0.856   0.74    0.389    
+#AvgDayMatFADBM3    1.190   0.788   2.28    0.131    
+#AvgDayMatFADBM4    1.109   0.481   5.30    0.021 *  
+  #bs(Year)1         -3.061   1.342   5.20    0.023 *  
+  #bs(Year)2         -0.925   1.923   0.23    0.630    
+#bs(Year)3         -2.276   0.500  20.73  5.3e-06 ***
+#Estimate Std.err
+#(Intercept)    0.938    6.51
+#Link = identity 
+
+#Estimated Correlation Parameters:
+  #Estimate Std.err
+#alpha    0.774    1.41
+#Number of clusters:   1344  Maximum cluster size: 35 
+
 #Juveniles
 dimnames(AvgDayMatJ)<-list(NULL,c("ADBM1", "ADBM2", "ADBM3", "ADBM4"))
 PODFinalj = geeglm(PreAbsJ ~ AvgDayMatJ+as.factor(Year),family = binomial, corstr="ar1", id=BlocksJ, data=SiteHourTableB)
+summary(PODFinalj)
+
+dimnames(AvgDayMatJ)<-list(NULL,c("ADBM1", "ADBM2", "ADBM3", "ADBM4"))
+PODFinalj = geeglm(PreAbsJ ~ AvgDayMatJ+bs(Year),family = binomial, corstr="ar1", id=BlocksJ, data=SiteHourTableB)
 summary(PODFinalj)
 #(Intercept)           -0.734   0.260  7.98  0.00472 ** 
   #AvgDayMatJADBM1       -0.808   0.297  7.40  0.00653 ** 
@@ -901,9 +1047,30 @@ summary(PODFinalj)
 #alpha    0.931  0.0108
 #Number of clusters:   83  Maximum cluster size: 585 
 
+#(Intercept)      -0.8249  0.2524 10.68   0.0011 **
+  #AvgDayMatJADBM1  -0.9843  0.3176  9.60   0.0019 **
+  #AvgDayMatJADBM2   0.0217  0.2946  0.01   0.9412   
+#AvgDayMatJADBM3   0.1182  0.2195  0.29   0.5902   
+#AvgDayMatJADBM4  -0.4015  0.2200  3.33   0.0679 . 
+#bs(Year)1        -1.6966  0.8462  4.02   0.0450 * 
+  #bs(Year)2         0.1231  0.6786  0.03   0.8561   
+#bs(Year)3        -0.7059  0.3271  4.66   0.0309 * 
+#Estimate Std.err
+#(Intercept)     0.99   0.112
+#Link = identity 
+
+#Estimated Correlation Parameters:
+  #Estimate Std.err
+#alpha    0.937  0.0107
+#Number of clusters:   83  Maximum cluster size: 585 
+
 #Males
 dimnames(AvgDayMatM)<-list(NULL,c("ADBM1", "ADBM2", "ADBM3", "ADBM4"))
 PODFinalm = geeglm(PreAbsM ~ AvgDayMatM+as.factor(Year),family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB)
+summary(PODFinalm)
+
+dimnames(AvgDayMatM)<-list(NULL,c("ADBM1", "ADBM2", "ADBM3", "ADBM4"))
+PODFinalm = geeglm(PreAbsM ~ AvgDayMatM+bs(Year),family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB)
 summary(PODFinalm)
 #(Intercept)           -1.414   0.141 100.09  < 2e-16 ***
   #AvgDayMatMADBM1       -2.276   0.414  30.26  3.8e-08 ***
@@ -929,6 +1096,23 @@ summary(PODFinalm)
 #alpha    0.806  0.0955
 #Number of clusters:   170  Maximum cluster size: 277 
 
+#(Intercept)       -1.361   0.134 103.03  < 2e-16 ***
+  #AvgDayMatMADBM1   -2.104   0.388  29.48  5.6e-08 ***
+  #AvgDayMatMADBM2   -0.479   0.271   3.11  0.07783 .  
+#AvgDayMatMADBM3    0.762   0.209  13.31  0.00026 ***
+  #AvgDayMatMADBM4    0.656   0.190  11.93  0.00055 ***
+  #bs(Year)1         -0.655   0.497   1.74  0.18740    
+#bs(Year)2         -1.587   0.535   8.81  0.00299 ** 
+  #bs(Year)3          0.159   0.319   0.25  0.61752    
+#Estimate Std.err
+#(Intercept)     1.02   0.383
+#Link = identity 
+
+#Estimated Correlation Parameters:
+  #Estimate Std.err
+#alpha    0.811  0.0638
+#Number of clusters:   170  Maximum cluster size: 277 
+
 #Other sites
 #Females
 dimnames(AvgDayMatF)<-list(NULL,c("ADBM1", "ADBM2", "ADBM3", "ADBM4"))
@@ -936,22 +1120,19 @@ PODFinalf = geeglm(PreAbsF ~ AvgDayMatF,family = binomial, corstr="ar1", id=Bloc
 summary(PODFinalf)
 #BD
 #Estimate Std.err   Wald Pr(>|W|)    
-#(Intercept)      -6.8317  0.9493 51.792 6.17e-13 ***
-  #AvgDayMatFADBM1   3.8403  0.7203 28.421 9.76e-08 ***
-  #AvgDayMatFADBM2  -7.6374  6.5473  1.361    0.243    
-#AvgDayMatFADBM3   0.9036  0.7042  1.647    0.199    
-#AvgDayMatFADBM4  -5.3541  7.8051  0.471    0.493    
-#Correlation structure = ar1 
-#Estimated Scale Parameters:
-  
-  #Estimate Std.err
-#(Intercept)    482.3 2360897
+#(Intercept)       -7.486   2.458 9.273  0.00233 **
+  #AvgDayMatFADBM1    4.509   1.833 6.051  0.01390 * 
+  #AvgDayMatFADBM2   -2.572   5.814 0.196  0.65821   
+#AvgDayMatFADBM3    1.651   1.389 1.413  0.23450   
+#AvgDayMatFADBM4  -15.240  14.822 1.057  0.30386   
+#Estimate Std.err
+#(Intercept)    15.43   14102
 #Link = identity 
 
 #Estimated Correlation Parameters:
   #Estimate Std.err
-#alpha   0.8862   531.9
-#Number of clusters:   85  Maximum cluster size: 208 
+#alpha    0.808   156.1
+#Number of clusters:   78  Maximum cluster size: 227 
 
 #PT
 #(Intercept)       -5.401   0.463 136.30  < 2e-16 ***
@@ -993,23 +1174,19 @@ dimnames(AvgDayMatJ)<-list(NULL,c("ADBM1", "ADBM2", "ADBM3", "ADBM4"))
 PODFinalj = geeglm(PreAbsJ ~ AvgDayMatJ,family = binomial, corstr="ar1", id=BlocksJ, data=SiteHourTableB)
 summary(PODFinalj)
 #BD
-#Estimate Std.err   Wald Pr(>|W|)    
-#(Intercept)       -2.005   0.147 185.58   <2e-16 ***
-  #AvgDayMatJADBM1    0.500   0.461   1.18    0.278    
-#AvgDayMatJADBM2   -0.519   0.437   1.41    0.235    
-#AvgDayMatJADBM3    0.568   0.388   2.15    0.143    
-#AvgDayMatJADBM4    1.119   0.443   6.38    0.012 *  
-#Correlation structure = ar1 
-#Estimated Scale Parameters:
-  
-  #Estimate Std.err
-#(Intercept)        1   0.347
+#(Intercept)       -2.025   0.135 224.71   <2e-16 ***
+  #AvgDayMatJADBM1    0.401   0.447   0.81   0.3692    
+#AvgDayMatJADBM2   -0.565   0.428   1.74   0.1866    
+#AvgDayMatJADBM3    0.333   0.420   0.63   0.4277    
+#AvgDayMatJADBM4    1.149   0.392   8.61   0.0034 ** 
+#Estimate Std.err
+#(Intercept)        1   0.285
 #Link = identity 
 
 #Estimated Correlation Parameters:
   #Estimate Std.err
-#alpha    0.922  0.0317
-#Number of clusters:   53  Maximum cluster size: 332 
+#alpha    0.911  0.0274
+#Number of clusters:   65  Maximum cluster size: 273 
 
 #PT
 #(Intercept)       -2.841   0.157 326.46   <2e-16 ***
@@ -1051,23 +1228,19 @@ dimnames(AvgDayMatM)<-list(NULL,c("ADBM1", "ADBM2", "ADBM3", "ADBM4"))
 PODFinalm = geeglm(PreAbsM ~ AvgDayMatM,family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB)
 summary(PODFinalm)
 #BD
-#Estimate Std.err   Wald Pr(>|W|)    
-#(Intercept)      -1.7937  0.0859 436.22  < 2e-16 ***
-  #AvgDayMatMADBM1  -0.8917  0.3423   6.79  0.00919 ** 
-  #AvgDayMatMADBM2  -1.2530  0.3493  12.87  0.00033 ***
-  #AvgDayMatMADBM3  -0.3113  0.2173   2.05  0.15193    
-#AvgDayMatMADBM4  -0.2153  0.2279   0.89  0.34483    
-#Correlation structure = ar1 
-#Estimated Scale Parameters:
-  
-  #Estimate Std.err
-#(Intercept)    0.987   0.132
+#(Intercept)      -1.7951  0.0967 344.30   <2e-16 ***
+  #AvgDayMatMADBM1  -0.8719  0.4052   4.63    0.031 *  
+  #AvgDayMatMADBM2  -1.3875  0.4487   9.56    0.002 ** 
+  #AvgDayMatMADBM3  -0.1879  0.2144   0.77    0.381    
+#AvgDayMatMADBM4  -0.1698  0.3120   0.30    0.586    
+#Estimate Std.err
+#(Intercept)    0.992   0.179
 #Link = identity 
 
 #Estimated Correlation Parameters:
   #Estimate Std.err
-#alpha    0.794  0.0293
-#Number of clusters:   123  Maximum cluster size: 144 
+#alpha    0.781  0.0375
+#Number of clusters:   65  Maximum cluster size: 273 
 
 #PT
 #(Intercept)      -3.8319  0.2821 184.49   <2e-16 ***
@@ -1151,8 +1324,8 @@ cmx(DATA, threshold = cutoff)                                   # the identified
 #BD - Female
 #observed
 #predicted     1     0
-#1   266  1701
-#0    45 15416
+#1   298  1765
+#0    40 15325
 
 #PT - Female
 #observed
@@ -1209,8 +1382,8 @@ cmx(DATA, threshold = cutoff)                                   # the identified
 #BD - Juvenile
 #observed
 #predicted     1     0
-#1  2198 15230
-#0     0     0
+#1   830  2899
+#0  1320 12379
 
 #PT - Juvenile
 #observed
@@ -1267,7 +1440,7 @@ cmx(DATA, threshold = cutoff)                                   # the identified
 #BD - Males
 #observed
 #predicted     1     0
-#1  2689 14739
+#1  2668 14760
 #0     0     0
 
 #PT - Males
@@ -1361,25 +1534,62 @@ SiteHourTableB$prm = prm
 ggplot(SiteHourTableB, aes(x = Year, y = prm)) +
   geom_boxplot(aes(fill = factor(Year)), alpha = .2)
 
-### IGNORE BELOW THIS LINE
+#Probability of covariate #1: AvgDayBasisMat:
+#Female
+BootstrapParameters3<-rmvnorm(10000, coef(PODFinalf),summary(PODFinalf)$cov.unscaled)
+start=6; finish=8; Variable=SiteHourTableB$Year; xlabel="Year"; ylabel="Probability"  
+PlottingVar3<-seq(min(Variable), max(Variable), length=5000)
+CenterVar3<-model.matrix(PODFinalf)[,start:finish]*coef(PODFinalf)[c(start:finish)]
+BootstrapCoefs3<-BootstrapParameters3[,c(start:finish)]
+Basis3<-gam(rbinom(5000,1,0.5)~s(PlottingVar3), fit=F, family=binomial, knots=list(PlottingVar3=seq(2011,2019,length=4)))$X[,6:8]
+RealFit3<-Basis3%*%coef(PODFinalf)[c(start:finish)]
+RealFitCenter3<-RealFit3-mean(CenterVar3)
+RealFitCenter3a<-inv.logit(RealFitCenter3)
+BootstrapFits3<-Basis3%*%t(BootstrapCoefs3)
+quant.func3<-function(x){quantile(x,probs=c(0.025, 0.975))}
+cis3<-apply(BootstrapFits3, 1, quant.func3)-mean(CenterVar3)
+cis3a<-inv.logit(cis3)
+plot(PlottingVar3,(RealFitCenter3a), type="l", col=1,ylim=c(0, 1),xlab=xlabel, ylab=ylabel, xlim=c(2011,2019), main ="Year" , cex.lab = 1.5, cex.axis=1.5)    
+segments(PlottingVar3,(cis3a[1,]),PlottingVar3,(cis3a[2,]), col="grey")
+lines(PlottingVar3,(RealFitCenter3a),lwd=2, col=1)
+rug(PlottingVar3)
 
-#Probability of covariate #2: TimeLost:
-BootstrapParameters1<-rmvnorm(10000, coef(PODFinalf),summary(PODFinalf)$cov.unscaled)
-val = 6; Variable=SiteHourTableB$TimeLost; xlabel="Time Lost"; ylabel="Probability"  
-PlottingVar1<-seq(min(Variable), max(Variable), length=5000)
-CenterVar1<-model.matrix(PODFinalf)[,val]*coef(PODFinalf)[val]
-BootstrapCoefs1<-BootstrapParameters1[,c(start:finish)]
-#Basis1<-gam(rbinom(5000,1,0.5)~PlottingVar1, fit=F, family=binomial)
-#Basis1<-glm(rbinom(5000,1,0.5)~PlottingVar1, family=binomial)
-Basis1<-gam(rbinom(5000,1,0.5)~PlottingVar1, fit=F, family=binomial)$X[,2]
-RealFit1<-Basis1*coef(PODFinalf)[c(start:finish)]
-RealFitCenter1<-RealFit1-mean(CenterVar1)
-RealFitCenter1a<-inv.logit(RealFitCenter1)
-BootstrapFits1<-Basis1%*%t(BootstrapCoefs1)
-quant.func1<-function(x){quantile(x,probs=c(0.025, 0.975))}
-cis1<-apply(BootstrapFits1, 1, quant.func1)-mean(CenterVar1)
-cis1a<-inv.logit(cis1)
-plot(PlottingVar1,(RealFitCenter1a), type="l", col=1,ylim=c(0, 1),xlab=xlabel, ylab=ylabel, xlim=c(0,10), main ="Time Lost" , cex.lab = 1.5, cex.axis=1.5)
-segments(PlottingVar1,(cis1a[1,]),PlottingVar1,(cis1a[2,]), col="grey")
-lines(PlottingVar1,(RealFitCenter1a),lwd=2, col=1)
-rug(PlottingVar1)
+#Juvenile
+BootstrapParameters3<-rmvnorm(10000, coef(PODFinalj),summary(PODFinalj)$cov.unscaled)
+start=6; finish=8; Variable=SiteHourTableB$Year; xlabel="Year"; ylabel="Probability"  
+PlottingVar3<-seq(min(Variable), max(Variable), length=5000)
+CenterVar3<-model.matrix(PODFinalj)[,start:finish]*coef(PODFinalj)[c(start:finish)]
+BootstrapCoefs3<-BootstrapParameters3[,c(start:finish)]
+Basis3<-gam(rbinom(5000,1,0.5)~s(PlottingVar3), fit=F, family=binomial, knots=list(PlottingVar3=seq(2011,2019,length=4)))$X[,6:8]
+RealFit3<-Basis3%*%coef(PODFinalj)[c(start:finish)]
+RealFitCenter3<-RealFit3-mean(CenterVar3)
+RealFitCenter3a<-inv.logit(RealFitCenter3)
+BootstrapFits3<-Basis3%*%t(BootstrapCoefs3)
+quant.func3<-function(x){quantile(x,probs=c(0.025, 0.975))}
+cis3<-apply(BootstrapFits3, 1, quant.func3)-mean(CenterVar3)
+cis3a<-inv.logit(cis3)
+plot(PlottingVar3,(RealFitCenter3a), type="l", col=1,ylim=c(0, 1),xlab=xlabel, ylab=ylabel, xlim=c(2011,2019), main ="Year" , cex.lab = 1.5, cex.axis=1.5)    
+segments(PlottingVar3,(cis3a[1,]),PlottingVar3,(cis3a[2,]), col="grey")
+lines(PlottingVar3,(RealFitCenter3a),lwd=2, col=1)
+rug(PlottingVar3)
+
+#Male
+BootstrapParameters3<-rmvnorm(10000, coef(PODFinalm),summary(PODFinalm)$cov.unscaled)
+start=6; finish=8; Variable=SiteHourTableB$Year; xlabel="Year"; ylabel="Probability"  
+PlottingVar3<-seq(min(Variable), max(Variable), length=5000)
+CenterVar3<-model.matrix(PODFinalm)[,start:finish]*coef(PODFinalm)[c(start:finish)]
+BootstrapCoefs3<-BootstrapParameters3[,c(start:finish)]
+Basis3<-gam(rbinom(5000,1,0.5)~s(PlottingVar3), fit=F, family=binomial, knots=list(PlottingVar3=seq(2011,2019,length=4)))$X[,6:8]
+RealFit3<-Basis3%*%coef(PODFinalm)[c(start:finish)]
+RealFitCenter3<-RealFit3-mean(CenterVar3)
+RealFitCenter3a<-inv.logit(RealFitCenter3)
+BootstrapFits3<-Basis3%*%t(BootstrapCoefs3)
+quant.func3<-function(x){quantile(x,probs=c(0.025, 0.975))}
+cis3<-apply(BootstrapFits3, 1, quant.func3)-mean(CenterVar3)
+cis3a<-inv.logit(cis3)
+plot(PlottingVar3,(RealFitCenter3a), type="l", col=1,ylim=c(0, 1),xlab=xlabel, ylab=ylabel, xlim=c(2011,2019), main ="Year" , cex.lab = 1.5, cex.axis=1.5)    
+segments(PlottingVar3,(cis3a[1,]),PlottingVar3,(cis3a[2,]), col="grey")
+lines(PlottingVar3,(RealFitCenter3a),lwd=2, col=1)
+rug(PlottingVar3)
+
+### IGNORE BELOW THIS LINE
