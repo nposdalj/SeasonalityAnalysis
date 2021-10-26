@@ -59,50 +59,38 @@ SiteDayTable$TimeLost = max(SiteDayTable$Effort_Bin) - SiteDayTable$Effort_Bin
 # The column Julian represents the day of the year and the column year represents the year of recording.
 
 ## Step 3: identify the best blocking structure
-#NOT ON MODEL RESIDUALS
-#Day Table
-#acf on the 1 day binned data
-acf(SiteDayTable$PreAbs, lag.max = 50)
-#AllSites = 11
-
-#Hour Table
-#acf on the 1 hour binned data
-acf(SiteHourTable$PreAbs, lag.max = 2000)
-acf(SiteHourTable$PreAbs, lag.max = 2000, ylim=c(0,0.1), xlim =c(400,500)) 
-#AllSites = 457
-
 #ON MODEL RESIDUALS
 BlockMod<-glm(PreAbs~
                bs(Julian)+
-               TimeLost+
-               as.factor(Year)+
-               as.factor(Site)
+               bs(Year)+
+               as.factor(Site)+
+                TimeLost
              ,data=SiteHourTable,family=binomial)
 
 #Quick ANOVA to check for significance of variables - using the car package
 Anova(BlockMod)
+summary(BlockMod)
+acf(residuals(BlockMod),lag.max = 1000, ylim=c(-0.1,0.1))
+acf(residuals(BlockMod),lag.max = 1000, ylim=c(-0.1,0.1), xlim=c(0,20))
+ACFval = 17
+
 #bs(Julian)            1901  3     <2e-16 ***
-  #TimeLost                 8  1     0.0041 ** 
-  #bs(Year)               656  3     <2e-16 ***
-  #as.factor(Site)       7336  5     <2e-16 ***
-  #as.factor(Region)           0               
+#TimeLost                 8  1     0.0041 ** 
+#bs(Year)               656  3     <2e-16 ***
+#as.factor(Site)       7336  5     <2e-16 ***
+#as.factor(Region)           0               
 
 #Without region
 #bs(Julian)        1901.3  3  < 2.2e-16 ***
-  #TimeLost             8.2  1   0.004077 ** 
-  #bs(Year)           655.8  3  < 2.2e-16 ***
-  #as.factor(Site)   7712.7  6  < 2.2e-16 ***
+#TimeLost             8.2  1   0.004077 ** 
+#bs(Year)           655.8  3  < 2.2e-16 ***
+#as.factor(Site)   7712.7  6  < 2.2e-16 ***
 
 #without site
 #bs(Julian)         1487.43  3  < 2.2e-16 ***
-  #TimeLost             36.70  1   1.38e-09 ***
-  #bs(Year)           1596.37  3  < 2.2e-16 ***
-  #as.factor(Region)   376.34  1  < 2.2e-16 ***
-  
-summary(BlockMod)
-
-acf(residuals(BlockMod),lag.max = 1000, ylim=c(-0.1,0.1), xlim=c(150,200))
-ACFval = 201
+#TimeLost             36.70  1   1.38e-09 ***
+#bs(Year)           1596.37  3  < 2.2e-16 ***
+#as.factor(Region)   376.34  1  < 2.2e-16 ***
 
 #create the blocks based on the full timesereies
 startDate = SiteHourTable$tbin[1]
@@ -139,10 +127,10 @@ for (i in 1:nrow(gapsCont)){
 GLM1 = glm(PreAbs ~ Julian + TimeLost + Year + as.factor(Site), family = binomial, data = SiteHourTableB)
 #VIF scores in GLM to work out collinearity:
 VIF(GLM1)
-#Julian          1.086205  1        1.042212
-#TimeLost        1.006933  1        1.003460
-#Year            2.155001  1        1.467992
-#as.factor(Site) 2.102828  6        1.063899
+#Julian          1.09  1            1.04
+#TimeLost        1.01  1            1.00
+#Year            2.16  1            1.47
+#as.factor(Site) 2.10  6            1.06
 
 ## STEP 4: Model selection - covariate preparation ##
 # Construct variance-covariance matrices for cyclic covariates:
@@ -161,9 +149,9 @@ model0A<-c("POD0", "POD0a", "POD0b")
 QIC0A<-c(QIC(POD0)[1],QIC(POD0a)[1],QIC(POD0b)[1])
 QICmod0A<-data.frame(rbind(model0A,QIC0A))
 QICmod0A
-#QIC           QIC.1            QIC.2
+#QIC            QIC.1            QIC.2
 #model0A             POD0            POD0a            POD0b
-#QIC0A   130208.628548537 128133.454018702 127412.917559816
+#QIC0A   130222.387183502 128122.315690403 127402.382736781
 #Julian day as a covariance matrix
 
 #Year
@@ -176,7 +164,7 @@ QICmod1A<-data.frame(rbind(model1A,QIC1A))
 QICmod1A
 #QIC            QIC.1            QIC.2            QIC.3
 #model1A             POD0            POD1a            POD1b            POD1c
-#QIC1A   130208.628548537 124086.053095533 130119.682760728 126230.816432547
+#QIC1A   130222.387183502 124067.379854311 130129.233073581 126225.320432525
 #Year as factor.
 
 #TimeLost
