@@ -235,6 +235,42 @@ QICmod3CC
 #QIC3CC   130222.387183502 121615.81017731 124067.379854311 127402.382736781
 #full model is the best.
 
+#The initial full model (with year as a smooth) is:
+POD3aa = geeglm(PreAbs ~ AvgDayMat+bs(Year)+bs(TimeLost)+as.factor(Region),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
+#without AvgDayMat
+POD3bb = geeglm(PreAbs ~ bs(Year)+bs(TimeLost)+as.factor(Region),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
+#without Year
+POD3cc = geeglm(PreAbs ~ AvgDayMat +bs(TimeLost)+as.factor(Region),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
+#without Timelost
+POD3dd = geeglm(PreAbs ~ AvgDayMat+bs(Year)+as.factor(Region),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
+#without Region
+POD3ee = geeglm(PreAbs ~ AvgDayMat+bs(Year)+bs(TimeLost),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
+model3AA = c("POD0","POD3aa","POD3bb","POD3cc","POD3dd","POD3ee")
+QIC3AA = c(QIC(POD0)[1],QIC(POD3aa)[1],QIC(POD3bb)[1],QIC(POD3cc)[1],QIC(POD3dd)[1],QIC(POD3ee)[1][1])
+QICmod3AA<-data.frame(rbind(model3AA,QIC3AA))
+QICmod3AA
+#QIC            QIC.1            QIC.2            QIC.3            QIC.4            QIC.5
+#model3AA             POD0           POD3aa           POD3bb           POD3cc           POD3dd           POD3ee
+#QIC3AA   130222.387183502 124057.706684998 126242.619639652 126808.950916833 124079.816109347 124045.237123099
+#Remove Timlost
+
+#The  full model without TimeLost is:
+POD3ff = geeglm(PreAbs ~ AvgDayMat+bs(Year)+as.factor(Region),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
+#without AvgDayMat
+POD3gg = geeglm(PreAbs ~ bs(Year)+as.factor(Region),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
+#without Year
+POD3hh = geeglm(PreAbs ~ AvgDayMat+as.factor(Region),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
+#without Region
+POD3ii = geeglm(PreAbs ~ AvgDayMat+bs(Year),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
+model3BB = c("POD0","POD3ff","POD3gg",'POD3hh',"POD3ii")
+QIC3BB = c(QIC(POD0)[1],QIC(POD3ff)[1],QIC(POD3gg)[1],QIC(POD3hh)[1],QIC(POD3ii)[1])
+QICmod3BB<-data.frame(rbind(model3BB,QIC3BB))
+QICmod3BB
+#QIC            QIC.1            QIC.2            QIC.3           QIC.4
+#model3BB             POD0           POD3ff           POD3gg           POD3hh          POD3ii
+#QIC3BB   130222.387183502 124079.816109347 126279.662155278 126814.070624723 124071.325165137
+#Sticking with the full model.
+
 # STEP 6: Testing covariate significance.3
 # At this point, the resulting model is fitted using the library geeglm. The order in which the covariates enter the model is determined by the QIC score
 # (the ones that, if removed, determine the biggest increase in QIC enter the model first).
@@ -242,19 +278,17 @@ QICmod3CC
 #Decided to still include Region since I'm curious if the two regions are different or not
 
 #In descending order:
-#as.factor(Year)
+#bs(Year)
 #AvgDayMat
 #as.factor(Region)
 
 dimnames(AvgDayMat)<-list(NULL,c("ADBM1", "ADBM2", "ADBM3", "ADBM4"))
-PODFinal = geeglm(PreAbs ~ as.factor(Year)+AvgDayMat+as.factor(Region),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
+PODFinal = geeglm(PreAbs ~ bs(Year)+AvgDayMat+as.factor(Region),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
 
 anova(PODFinal)
-#as.factor(Year)    8 719.53    <2e-16 ***
-  #AvgDayMat          4 307.63    <2e-16 ***
-  #as.factor(Region)  1   3.53    0.0602 .
-
-
+#bs(Year)           3 401    <2e-16 ***
+#AvgDayMat          4 279    <2e-16 ***
+#as.factor(Region)  1   4     0.061 .  
 
 # STEP 7: Construction of the ROC curve     
 pr <- predict(PODFinal, type="response")  
@@ -292,18 +326,14 @@ cmx(DATA, threshold = cutoff)                                   # the identified
 
 #observed
 #predicted     1     0
-#1 26914 25513
-#0  9211 37668
+#1 19510 19440
+#0 16615 43741
   
 # The area under the curve (auc) can also be used as an rough indication of model performance:
   
 auc <- performance(pred, measure="auc")
 
 # STEP 7: visualise the contribution of the explanatory variables by means of the partial residual plots, which plot the relationship between the response (on the response scale) and each predictor ##
-dimnames(AvgDayMat)<-list(NULL,c("ADBM1", "ADBM2", "ADBM3", "ADBM4"))
-
-PODFinal = geeglm(PreAbs ~ AvgDayMat + as.factor(Site),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
-
 library(boot)
 library(pracma)
 
@@ -326,11 +356,30 @@ segments(PlottingVar3,(cis3a[1,]),PlottingVar3,(cis3a[2,]), col="grey")
 lines(PlottingVar3,(RealFitCenter3a),lwd=2, col=1)
 rug(PlottingVar3)
 
-#Probability of covariate #2: as.factor(Site)
+#Probability of covariate #2: Year:
+BootstrapParameters1<-rmvnorm(10000, coef(PODFinal),summary(PODFinal)$cov.unscaled)
+start=6; finish=8; Variable=SiteHourTableB$Year; xlabel="Year"; ylabel="Probability"  
+PlottingVar1<-seq(min(Variable), max(Variable), length=5000)
+CenterVar1<-model.matrix(PODFinal)[,start:finish]*coef(PODFinal)[c(start:finish)]
+BootstrapCoefs1<-BootstrapParameters1[,c(start:finish)]
+Basis1<-gam(rbinom(5000,1,0.5)~s(PlottingVar1), fit=F, family=binomial, knots=list(PlottingVar1=seq(2011,2019,length=4)))$X[,6:8]
+RealFit1<-Basis1%*%coef(PODFinal)[c(start:finish)]
+RealFitCenter1<-RealFit1-mean(CenterVar1)
+RealFitCenter1a<-inv.logit(RealFitCenter1)
+BootstrapFits1<-Basis1%*%t(BootstrapCoefs1)
+quant.func1<-function(x){quantile(x,probs=c(0.025, 0.975))}
+cis1<-apply(BootstrapFits1, 1, quant.func1)-mean(CenterVar1)
+cis1a<-inv.logit(cis1)
+plot(PlottingVar1,(RealFitCenter1a), type="l", col=1,ylim=c(0, 1),xlab=xlabel, ylab=ylabel, xlim=c(2011,2019), main ="Year" , cex.lab = 1.5, cex.axis=1.5)
+segments(PlottingVar1,(cis1a[1,]),PlottingVar1,(cis1a[2,]), col="grey")
+lines(PlottingVar1,(RealFitCenter1a),lwd=2, col=1)
+rug(PlottingVar1)
+
+#Probability of covariate #2: as.factor(Region)
 #https://stackoverflow.com/questions/41518638/graph-glm-in-ggplot2-where-x-variable-is-categorical
 SiteHourTableB$pr = pr
-ggplot(SiteHourTableB, aes(x = Site, y = pr)) +
-     geom_boxplot(aes(fill = factor(Site)), alpha = .2)
+ggplot(SiteHourTableB, aes(x = Region, y = pr)) +
+     geom_boxplot(aes(fill = factor(Region)), alpha = .2)
 
 
 
