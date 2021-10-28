@@ -547,27 +547,18 @@ PODFinalm = POD3mgg
 
 #Females
 dimnames(AvgDayMatF)<-list(NULL,c("ADBM1", "ADBM2", "ADBM3", "ADBM4"))
-PODFinalf = geeglm(PreAbsF ~ AvgDayMatF+bs(Year)+as.factor(Region),family = binomial, corstr="ar1", id=BlocksF, data=SiteHourTableB)
+PODFinalf = geeglm(PreAbsF ~ AvgDayMatF+bs(Year),family = binomial, corstr="ar1", id=BlocksF, data=SiteHourTableB)
 anova(PODFinalf)
-#bs(Year)           3    16.3 0.0009613 ***
-#AvgDayMatF         4    31.3 2.621e-06 ***
-#as.factor(Region)  1 14597.6 < 2.2e-16 ***
 
 #Juveniles
 dimnames(AvgDayMatJ)<-list(NULL,c("ADBM1", "ADBM2", "ADBM3", "ADBM4"))
-PODFinalj = geeglm(PreAbsJ ~ AvgDayMatJ+bs(Year)+as.factor(Region),family = binomial, corstr="ar1", id=BlocksJ, data=SiteHourTableB)
+PODFinalj = geeglm(PreAbsJ ~ AvgDayMatJ+bs(Year),family = binomial, corstr="ar1", id=BlocksJ, data=SiteHourTableB)
 anova(PODFinalj)
-#(Year)           3 18.952 0.0002798 ***
-#AvgDayMatJ         4 70.797 1.543e-14 ***
-#as.factor(Region)  1 11.121 0.0008534 ***
 
 #Males
 dimnames(AvgDayMatM)<-list(NULL,c("ADBM1", "ADBM2", "ADBM3", "ADBM4"))
-PODFinalm = geeglm(PreAbsM ~ AvgDayMatM+bs(Year)+as.factor(Region),family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB)
+PODFinalm = geeglm(PreAbsM ~ AvgDayMatM+bs(Year),family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB)
 anova(PODFinalm)
-#bs(Year)           3 146.279   < 2e-16 ***
-#AvgDayMatM         4 104.560   < 2e-16 ***
-#as.factor(Region)  1   3.738   0.05317 . 
 
 # STEP 7: Construction of the ROC curve  
 #Females
@@ -694,7 +685,7 @@ library(pracma)
 #Probability of covariate #1: AvgDayBasisMat:
 #Female
 BootstrapParameters3<-rmvnorm(10000, coef(PODFinalf),summary(PODFinalf)$cov.unscaled)
-start=5; finish=8; Variable=SiteHourTableB$Julian; xlabel="Julian Day"; ylabel="Probability"  
+start=2; finish=5; Variable=SiteHourTableB$Julian; xlabel="Julian Day"; ylabel="Probability"  
 PlottingVar3<-seq(min(Variable), max(Variable), length=5000)
 CenterVar3<-model.matrix(PODFinalf)[,start:finish]*coef(PODFinalf)[c(start:finish)]
 BootstrapCoefs3<-BootstrapParameters3[,c(start:finish)]
@@ -713,7 +704,7 @@ rug(PlottingVar3)
 
 #Juvenile
 BootstrapParameters3<-rmvnorm(10000, coef(PODFinalj),summary(PODFinalj)$cov.unscaled)
-start=5; finish=8; Variable=SiteHourTableB$Julian; xlabel="Julian Day"; ylabel="Probability"  
+start=2; finish=5; Variable=SiteHourTableB$Julian; xlabel="Julian Day"; ylabel="Probability"  
 PlottingVar3<-seq(min(Variable), max(Variable), length=5000)
 CenterVar3<-model.matrix(PODFinalj)[,start:finish]*coef(PODFinalj)[c(start:finish)]
 BootstrapCoefs3<-BootstrapParameters3[,c(start:finish)]
@@ -732,7 +723,7 @@ rug(PlottingVar3)
 
 #Male
 BootstrapParameters3<-rmvnorm(10000, coef(PODFinalm),summary(PODFinalm)$cov.unscaled)
-start=5; finish=8; Variable=SiteHourTableB$Julian; xlabel="Julian Day"; ylabel="Probability"  
+start=2; finish=5; Variable=SiteHourTableB$Julian; xlabel="Julian Day"; ylabel="Probability"  
 PlottingVar3<-seq(min(Variable), max(Variable), length=5000)
 CenterVar3<-model.matrix(PODFinalm)[,start:finish]*coef(PODFinalm)[c(start:finish)]
 BootstrapCoefs3<-BootstrapParameters3[,c(start:finish)]
@@ -752,26 +743,26 @@ rug(PlottingVar3)
 #Year (smooth)
 #Females
 BootstrapParameters1<-rmvnorm(10000, coef(PODFinalf),summary(PODFinalf)$cov.unscaled)
-start=2; finish=4; Variable=SiteHourTableB$Year; xlabel="Year"; ylabel="Probability"  
+start=6; finish=8; Variable=SiteHourTableB$Year; xlabel="Year"; ylabel="Probability"  
 PlottingVar1<-seq(min(Variable), max(Variable), length=5000)
-CenterVar1<-model.matrix(PODFinalF)[,start:finish]*coef(PODFinalF)[c(start:finish)]
+CenterVar1<-model.matrix(PODFinalf)[,start:finish]*coef(PODFinalf)[c(start:finish)]
 BootstrapCoefs1<-BootstrapParameters1[,c(start:finish)]
-Basis1<-gam(rbinom(5000,1,0.5)~bs(PlottingVar1), fit=F, family=binomial, knots=list(PlottingVar1=seq(2010,2019,length=4)))$X[,2:4]
-RealFit1<-Basis1%*%coef(PODFinalF)[c(start:finish)]
+Basis1<-gam(rbinom(5000,1,0.5)~bs(PlottingVar1), fit=F, family=binomial, knots=list(PlottingVar1=seq(2011,2019,length=4)))$X[,2:4]
+RealFit1<-Basis1%*%coef(PODFinalf)[c(start:finish)]
 RealFitCenter1<-RealFit1-mean(CenterVar1)
 RealFitCenter1a<-inv.logit(RealFitCenter1)
 BootstrapFits1<-Basis1%*%t(BootstrapCoefs1)
 quant.func1<-function(x){quantile(x,probs=c(0.025, 0.975))}
 cis1<-apply(BootstrapFits1, 1, quant.func1)-mean(CenterVar1)
 cis1a<-inv.logit(cis1)
-plot(PlottingVar1,(RealFitCenter1a), type="l", col=1,ylim=c(0, 1),xlab=xlabel, ylab=ylabel, xlim=c(2010,2019), main ="Year" , cex.lab = 1.5, cex.axis=1.5)
+plot(PlottingVar1,(RealFitCenter1a), type="l", col=1,ylim=c(0, 1),xlab=xlabel, ylab=ylabel, xlim=c(2011,2019), main ="Year" , cex.lab = 1.5, cex.axis=1.5)
 segments(PlottingVar1,(cis1a[1,]),PlottingVar1,(cis1a[2,]), col="grey")
 lines(PlottingVar1,(RealFitCenter1a),lwd=2, col=1)
 rug(PlottingVar1)
 
 #Juvenile
 BootstrapParameters1<-rmvnorm(10000, coef(PODFinalj),summary(PODFinalj)$cov.unscaled)
-start=2; finish=4; Variable=SiteHourTableB$Year; xlabel="Year"; ylabel="Probability"  
+start=6; finish=8; Variable=SiteHourTableB$Year; xlabel="Year"; ylabel="Probability"  
 PlottingVar1<-seq(min(Variable), max(Variable), length=5000)
 CenterVar1<-model.matrix(PODFinalj)[,start:finish]*coef(PODFinalj)[c(start:finish)]
 BootstrapCoefs1<-BootstrapParameters1[,c(start:finish)]
@@ -790,7 +781,7 @@ rug(PlottingVar1)
 
 #Male
 BootstrapParameters1<-rmvnorm(10000, coef(PODFinalm),summary(PODFinalm)$cov.unscaled)
-start=2; finish=4; Variable=SiteHourTableB$Year; xlabel="Year"; ylabel="Probability"  
+start=6; finish=8; Variable=SiteHourTableB$Year; xlabel="Year"; ylabel="Probability"  
 PlottingVar1<-seq(min(Variable), max(Variable), length=5000)
 CenterVar1<-model.matrix(PODFinalm)[,start:finish]*coef(PODFinalm)[c(start:finish)]
 BootstrapCoefs1<-BootstrapParameters1[,c(start:finish)]
