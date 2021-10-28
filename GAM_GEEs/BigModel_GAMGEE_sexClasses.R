@@ -547,7 +547,7 @@ PODFinalm = POD3mgg
 
 #Females
 dimnames(AvgDayMatF)<-list(NULL,c("ADBM1", "ADBM2", "ADBM3", "ADBM4"))
-PODFinalf = geeglm(PreAbsF ~ bs(Year)+AvgDayMatF+as.factor(Region),family = binomial, corstr="ar1", id=BlocksF, data=SiteHourTableB)
+PODFinalf = geeglm(PreAbsF ~ AvgDayMatF+bs(Year)+as.factor(Region),family = binomial, corstr="ar1", id=BlocksF, data=SiteHourTableB)
 anova(PODFinalf)
 #bs(Year)           3    16.3 0.0009613 ***
 #AvgDayMatF         4    31.3 2.621e-06 ***
@@ -555,7 +555,7 @@ anova(PODFinalf)
 
 #Juveniles
 dimnames(AvgDayMatJ)<-list(NULL,c("ADBM1", "ADBM2", "ADBM3", "ADBM4"))
-PODFinalj = geeglm(PreAbsJ ~ bs(Year)+AvgDayMatJ+as.factor(Region),family = binomial, corstr="ar1", id=BlocksJ, data=SiteHourTableB)
+PODFinalj = geeglm(PreAbsJ ~ AvgDayMatJ+bs(Year)+as.factor(Region),family = binomial, corstr="ar1", id=BlocksJ, data=SiteHourTableB)
 anova(PODFinalj)
 #(Year)           3 18.952 0.0002798 ***
 #AvgDayMatJ         4 70.797 1.543e-14 ***
@@ -563,7 +563,7 @@ anova(PODFinalj)
 
 #Males
 dimnames(AvgDayMatM)<-list(NULL,c("ADBM1", "ADBM2", "ADBM3", "ADBM4"))
-PODFinalm = geeglm(PreAbsM ~ bs(Year)+AvgDayMatM+as.factor(Region),family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB)
+PODFinalm = geeglm(PreAbsM ~ AvgDayMatM+bs(Year)+as.factor(Region),family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB)
 anova(PODFinalm)
 #bs(Year)           3 146.279   < 2e-16 ***
 #AvgDayMatM         4 104.560   < 2e-16 ***
@@ -717,7 +717,7 @@ start=5; finish=8; Variable=SiteHourTableB$Julian; xlabel="Julian Day"; ylabel="
 PlottingVar3<-seq(min(Variable), max(Variable), length=5000)
 CenterVar3<-model.matrix(PODFinalj)[,start:finish]*coef(PODFinalj)[c(start:finish)]
 BootstrapCoefs3<-BootstrapParameters3[,c(start:finish)]
-Basis3<-gam(rbinom(5000,1,0.5)~s(PlottingVar3, bs="cc",k=6), fit=F, family=binomial, knots=list(PlottingVar3=seq(1,366,length=4)))$X[,2:5]
+Basis3<-gam(rbinom(5000,1,0.5)~s(PlottingVar3, bs="cc",k=6), fit=F, family=binomial, knots=list(PlottingVar3=seq(1,366,length=6)))$X[,2:5]
 RealFit3<-Basis3%*%coef(PODFinalj)[c(start:finish)]
 RealFitCenter3<-RealFit3-mean(CenterVar3)
 RealFitCenter3a<-inv.logit(RealFitCenter3)

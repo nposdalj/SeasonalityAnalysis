@@ -1541,7 +1541,7 @@ start=6; finish=8; Variable=SiteHourTableB$Year; xlabel="Year"; ylabel="Probabil
 PlottingVar3<-seq(min(Variable), max(Variable), length=5000)
 CenterVar3<-model.matrix(PODFinalf)[,start:finish]*coef(PODFinalf)[c(start:finish)]
 BootstrapCoefs3<-BootstrapParameters3[,c(start:finish)]
-Basis3<-gam(rbinom(5000,1,0.5)~s(PlottingVar3), fit=F, family=binomial, knots=list(PlottingVar3=seq(2011,2019,length=4)))$X[,6:8]
+Basis3<-gam(rbinom(5000,1,0.5)~bs(PlottingVar3), fit=F, family=binomial, knots=list(PlottingVar3=seq(2011,2019,length=4)))$X[,2:4]
 RealFit3<-Basis3%*%coef(PODFinalf)[c(start:finish)]
 RealFitCenter3<-RealFit3-mean(CenterVar3)
 RealFitCenter3a<-inv.logit(RealFitCenter3)
@@ -1560,7 +1560,7 @@ start=6; finish=8; Variable=SiteHourTableB$Year; xlabel="Year"; ylabel="Probabil
 PlottingVar3<-seq(min(Variable), max(Variable), length=5000)
 CenterVar3<-model.matrix(PODFinalj)[,start:finish]*coef(PODFinalj)[c(start:finish)]
 BootstrapCoefs3<-BootstrapParameters3[,c(start:finish)]
-Basis3<-gam(rbinom(5000,1,0.5)~s(PlottingVar3), fit=F, family=binomial, knots=list(PlottingVar3=seq(2011,2019,length=4)))$X[,6:8]
+Basis3<-gam(rbinom(5000,1,0.5)~bs(PlottingVar3), fit=F, family=binomial, knots=list(PlottingVar3=seq(2011,2019,length=4)))$X[,2:4]
 RealFit3<-Basis3%*%coef(PODFinalj)[c(start:finish)]
 RealFitCenter3<-RealFit3-mean(CenterVar3)
 RealFitCenter3a<-inv.logit(RealFitCenter3)
@@ -1579,7 +1579,7 @@ start=6; finish=8; Variable=SiteHourTableB$Year; xlabel="Year"; ylabel="Probabil
 PlottingVar3<-seq(min(Variable), max(Variable), length=5000)
 CenterVar3<-model.matrix(PODFinalm)[,start:finish]*coef(PODFinalm)[c(start:finish)]
 BootstrapCoefs3<-BootstrapParameters3[,c(start:finish)]
-Basis3<-gam(rbinom(5000,1,0.5)~s(PlottingVar3), fit=F, family=binomial, knots=list(PlottingVar3=seq(2011,2019,length=4)))$X[,6:8]
+Basis3<-gam(rbinom(5000,1,0.5)~bs(PlottingVar3), fit=F, family=binomial, knots=list(PlottingVar3=seq(2011,2019,length=4)))$X[,2:4]
 RealFit3<-Basis3%*%coef(PODFinalm)[c(start:finish)]
 RealFitCenter3<-RealFit3-mean(CenterVar3)
 RealFitCenter3a<-inv.logit(RealFitCenter3)
