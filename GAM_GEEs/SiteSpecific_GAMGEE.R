@@ -532,7 +532,7 @@ start=6; finish=8; Variable=SiteHourTableB$Year; xlabel="Year"; ylabel="Probabil
 PlottingVar1<-seq(min(Variable), max(Variable), length=5000)
 CenterVar1<-model.matrix(PODFinal)[,start:finish]*coef(PODFinal)[c(start:finish)]
 BootstrapCoefs1<-BootstrapParameters1[,c(start:finish)]
-Basis1<-gam(rbinom(5000,1,0.5)~s(PlottingVar1), fit=F, family=binomial, knots=list(PlottingVar1=seq(2011,2019,length=4)))$X[,6:8]
+Basis1<-gam(rbinom(5000,1,0.5)~bs(PlottingVar1), fit=F, family=binomial, knots=list(PlottingVar1=seq(2011,2019,length=4)))$X[,2:4]
 RealFit1<-Basis1%*%coef(PODFinal)[c(start:finish)]
 RealFitCenter1<-RealFit1-mean(CenterVar1)
 RealFitCenter1a<-inv.logit(RealFitCenter1)

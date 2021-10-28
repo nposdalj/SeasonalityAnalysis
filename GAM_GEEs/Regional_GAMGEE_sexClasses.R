@@ -739,7 +739,7 @@ QICmod3jA
 #QIC3jA   66581.7159280241 2135636.3721179 1902888.03677668 2152683.45570096 1857714.68363474 64158.4767610496
 #Remove Site
 
-#The  full model without TimeLost is:
+#The  full model without Site is:
 POD3je = geeglm(PreAbsJ ~ AvgDayMatJ+as.factor(Year)+TimeLost,family = binomial, corstr="ar1", id=BlocksJ, data=SiteHourTableB)
 #without AvgDayMat
 POD3jf = geeglm(PreAbsJ ~ as.factor(Year)+TimeLost,family = binomial, corstr="ar1", id=BlocksJ, data=SiteHourTableB)
@@ -1368,7 +1368,7 @@ start=6; finish=8; Variable=SiteHourTableB$Year; xlabel="Year"; ylabel="Probabil
 PlottingVar1<-seq(min(Variable), max(Variable), length=5000)
 CenterVar1<-model.matrix(PODFinalf_smooth)[,start:finish]*coef(PODFinalf_smooth)[c(start:finish)]
 BootstrapCoefs1<-BootstrapParameters1[,c(start:finish)]
-Basis1<-gam(rbinom(5000,1,0.5)~s(PlottingVar1), fit=F, family=binomial, knots=list(PlottingVar1=seq(2011,2019,length=4)))$X[,6:8]
+Basis1<-gam(rbinom(5000,1,0.5)~bs(PlottingVar1), fit=F, family=binomial, knots=list(PlottingVar1=seq(2011,2019,length=4)))$X[,2:4]
 RealFit1<-Basis1%*%coef(PODFinalf_smooth)[c(start:finish)]
 RealFitCenter1<-RealFit1-mean(CenterVar1)
 RealFitCenter1a<-inv.logit(RealFitCenter1)
@@ -1387,7 +1387,7 @@ start=6; finish=8; Variable=SiteHourTableB$Year; xlabel="Year"; ylabel="Probabil
 PlottingVar1<-seq(min(Variable), max(Variable), length=5000)
 CenterVar1<-model.matrix(PODFinalj_smooth)[,start:finish]*coef(PODFinalj_smooth)[c(start:finish)]
 BootstrapCoefs1<-BootstrapParameters1[,c(start:finish)]
-Basis1<-gam(rbinom(5000,1,0.5)~s(PlottingVar1), fit=F, family=binomial, knots=list(PlottingVar1=seq(2011,2019,length=4)))$X[,6:8]
+Basis1<-gam(rbinom(5000,1,0.5)~bs(PlottingVar1), fit=F, family=binomial, knots=list(PlottingVar1=seq(2011,2019,length=4)))$X[,2:4]
 RealFit1<-Basis1%*%coef(PODFinalj_smooth)[c(start:finish)]
 RealFitCenter1<-RealFit1-mean(CenterVar1)
 RealFitCenter1a<-inv.logit(RealFitCenter1)
@@ -1406,7 +1406,7 @@ start=6; finish=8; Variable=SiteHourTableB$Year; xlabel="Year"; ylabel="Probabil
 PlottingVar1<-seq(min(Variable), max(Variable), length=5000)
 CenterVar1<-model.matrix(PODFinalm_smooth)[,start:finish]*coef(PODFinalm_smooth)[c(start:finish)]
 BootstrapCoefs1<-BootstrapParameters1[,c(start:finish)]
-Basis1<-gam(rbinom(5000,1,0.5)~s(PlottingVar1), fit=F, family=binomial, knots=list(PlottingVar1=seq(2011,2019,length=4)))$X[,6:8]
+Basis1<-gam(rbinom(5000,1,0.5)~bs(PlottingVar1), fit=F, family=binomial, knots=list(PlottingVar1=seq(2011,2019,length=4)))$X[,2:4]
 RealFit1<-Basis1%*%coef(PODFinalm_smooth)[c(start:finish)]
 RealFitCenter1<-RealFit1-mean(CenterVar1)
 RealFitCenter1a<-inv.logit(RealFitCenter1)

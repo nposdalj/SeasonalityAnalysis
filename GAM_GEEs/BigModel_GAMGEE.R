@@ -339,11 +339,11 @@ library(pracma)
 
 #Probability of covariate #1: AvgDayBasisMat:
 BootstrapParameters3<-rmvnorm(10000, coef(PODFinal),summary(PODFinal)$cov.unscaled)
-start=2; finish=5; Variable=SiteHourTableB$Julian; xlabel="Julian Day"; ylabel="Probability"  
+start=5; finish=8; Variable=SiteHourTableB$Julian; xlabel="Julian Day"; ylabel="Probability"  
 PlottingVar3<-seq(min(Variable), max(Variable), length=5000)
 CenterVar3<-model.matrix(PODFinal)[,start:finish]*coef(PODFinal)[c(start:finish)]
 BootstrapCoefs3<-BootstrapParameters3[,c(start:finish)]
-Basis3<-gam(rbinom(5000,1,0.5)~s(PlottingVar3, bs="cc", k=6), fit=F, family=binomial, knots=list(PlottingVar2=seq(1,365,length=4)))$X[,2:5]
+Basis3<-gam(rbinom(5000,1,0.5)~s(PlottingVar3, bs="cc", k=6), fit=F, family=binomial, knots=list(PlottingVar2=seq(1,366,length=4)))$X[,2:5]
 RealFit3<-Basis3%*%coef(PODFinal)[c(start:finish)]
 RealFitCenter3<-RealFit3-mean(CenterVar3)
 RealFitCenter3a<-inv.logit(RealFitCenter3)
@@ -358,11 +358,11 @@ rug(PlottingVar3)
 
 #Probability of covariate #2: Year:
 BootstrapParameters1<-rmvnorm(10000, coef(PODFinal),summary(PODFinal)$cov.unscaled)
-start=6; finish=8; Variable=SiteHourTableB$Year; xlabel="Year"; ylabel="Probability"  
+start=2; finish=4; Variable=SiteHourTableB$Year; xlabel="Year"; ylabel="Probability"  
 PlottingVar1<-seq(min(Variable), max(Variable), length=5000)
 CenterVar1<-model.matrix(PODFinal)[,start:finish]*coef(PODFinal)[c(start:finish)]
 BootstrapCoefs1<-BootstrapParameters1[,c(start:finish)]
-Basis1<-gam(rbinom(5000,1,0.5)~s(PlottingVar1), fit=F, family=binomial, knots=list(PlottingVar1=seq(2011,2019,length=4)))$X[,6:8]
+Basis1<-gam(rbinom(5000,1,0.5)~s(PlottingVar1), fit=F, family=binomial, knots=list(PlottingVar1=seq(2010,2019,length=4)))$X[,2:4]
 RealFit1<-Basis1%*%coef(PODFinal)[c(start:finish)]
 RealFitCenter1<-RealFit1-mean(CenterVar1)
 RealFitCenter1a<-inv.logit(RealFitCenter1)
@@ -370,7 +370,7 @@ BootstrapFits1<-Basis1%*%t(BootstrapCoefs1)
 quant.func1<-function(x){quantile(x,probs=c(0.025, 0.975))}
 cis1<-apply(BootstrapFits1, 1, quant.func1)-mean(CenterVar1)
 cis1a<-inv.logit(cis1)
-plot(PlottingVar1,(RealFitCenter1a), type="l", col=1,ylim=c(0, 1),xlab=xlabel, ylab=ylabel, xlim=c(2011,2019), main ="Year" , cex.lab = 1.5, cex.axis=1.5)
+plot(PlottingVar1,(RealFitCenter1a), type="l", col=1,ylim=c(0, 1),xlab=xlabel, ylab=ylabel, xlim=c(2010,2019), main ="Year" , cex.lab = 1.5, cex.axis=1.5)
 segments(PlottingVar1,(cis1a[1,]),PlottingVar1,(cis1a[2,]), col="grey")
 lines(PlottingVar1,(RealFitCenter1a),lwd=2, col=1)
 rug(PlottingVar1)
