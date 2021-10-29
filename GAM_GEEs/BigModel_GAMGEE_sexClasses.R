@@ -708,7 +708,7 @@ start=2; finish=5; Variable=SiteHourTableB$Julian; xlabel="Julian Day"; ylabel="
 PlottingVar3<-seq(min(Variable), max(Variable), length=5000)
 CenterVar3<-model.matrix(PODFinalj)[,start:finish]*coef(PODFinalj)[c(start:finish)]
 BootstrapCoefs3<-BootstrapParameters3[,c(start:finish)]
-Basis3<-gam(rbinom(5000,1,0.5)~s(PlottingVar3, bs="cc",k=6), fit=F, family=binomial, knots=list(PlottingVar3=seq(1,366,length=6)))$X[,2:5]
+Basis3<-gam(rbinom(5000,1,0.5)~s(PlottingVar3, bs="cc",k=4), fit=F, family=binomial, knots=list(PlottingVar3=seq(1,366,length=6)))$X[,2:5]
 RealFit3<-Basis3%*%coef(PODFinalj)[c(start:finish)]
 RealFitCenter3<-RealFit3-mean(CenterVar3)
 RealFitCenter3a<-inv.logit(RealFitCenter3)
