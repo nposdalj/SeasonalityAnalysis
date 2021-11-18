@@ -182,9 +182,6 @@ VIF(GLM1)
 AvgDayBasis <- gam(PreAbs~s(Julian, bs ="cc", k=6), fit=F, data = SiteHourTableB, family =binomial, knots = list(HOUR=seq(1,366,length=6)))$X[,2:5]
 AvgDayMat = as.matrix(AvgDayBasis)
 
-AvgDayBasis <- gam(PreAbs~s(Julian, bs ="cc", k=4), fit=F, data = SiteHourTableB, family =binomial, knots = list(HOUR=seq(1,366,length=4)))$X[,2:3]
-AvgDayMat = as.matrix(AvgDayBasis)
-
 # Selection of the correct form (linear or smooth) for the covariates available at a single scale.
 # A series of models is fitted where each of these covariate is tested as a linear term vs. a smoother and compared against an empty model.
 # Extract the QIC scores from the geeglm object to compare the empty model with the others and select how to treat the covariate.
@@ -375,12 +372,7 @@ anova(PODFinal)
 
 # STEP 6: Interpretting the summary of the model
 dimnames(AvgDayMat)<-list(NULL,c("ADBM1", "ADBM2", "ADBM3", "ADBM4"))
-dimnames(AvgDayMat)<-list(NULL,c("ADBM1", "ADBM2"))
 PODFinal = geeglm(PreAbs ~ AvgDayMat,family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
-PODFinal = geeglm(PreAbs ~ mSpline(Julian,
-        knots=quantile(Julian, probs=c(0.333,0.666)),
-        Boundary.knots=c(1,366),
-        periodic=T),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
 summary(PODFinal)
 
 # How to intepret model results
@@ -464,7 +456,7 @@ d <- L*sin(fi)                                                     # to calculat
 
 #Find max and position of max
 max = max(d,na.rm=TRUE)
-position = which.max(d$c.0..0.00502742230347349..0.00941499085923217..0.0129798903107861..)
+position = which.max(d$c.0..0.00297007082476582..0.00594014164953164..0.00742517706191455..)
 
 
 alpha<-as.data.frame(perf@alpha.values)                            # the alpha values represent the corresponding cut-offs
@@ -516,12 +508,11 @@ library(pracma)
 
 #Probability of covariate #1: AvgDayBasisMat:
 BootstrapParameters3<-rmvnorm(10000, coef(PODFinal),summary(PODFinal)$cov.unscaled)
-start=2; finish=3; Variable=SiteHourTableB$Julian; xlabel="Julian Day"; ylabel="Probability"  
+start=2; finish=5; Variable=SiteHourTableB$Julian; xlabel="Julian Day"; ylabel="Probability"  
 PlottingVar3<-seq(min(Variable), max(Variable), length=5000)
 CenterVar3<-model.matrix(PODFinal)[,start:finish]*coef(PODFinal)[c(start:finish)]
 BootstrapCoefs3<-BootstrapParameters3[,c(start:finish)]
-#Basis3<-gam(rbinom(5000,1,0.5)~s(PlottingVar3, bs="cc", k=6), fit=F, family=binomial, knots=list(PlottingVar2=seq(1,366,length=6)))$X[,2:5]
-Basis3<-gam(rbinom(5000,1,0.5)~s(PlottingVar3, bs="cc", k=4), fit=F, family=binomial, knots=list(PlottingVar2=seq(1,366,length=4)))$X[,2:3]
+Basis3<-gam(rbinom(5000,1,0.5)~s(PlottingVar3, bs="cc", k=6), fit=F, family=binomial, knots=list(PlottingVar2=seq(1,366,length=6)))$X[,2:5]
 RealFit3<-Basis3%*%coef(PODFinal)[c(start:finish)]
 RealFitCenter3<-RealFit3-mean(CenterVar3)
 RealFitCenter3a<-inv.logit(RealFitCenter3)

@@ -179,9 +179,6 @@ VIF(GLM1)
 
 ## STEP 4: Model selection - covariate preparation ##
 # Construct variance-covariance matrices for cyclic covariates:
-AvgDayBasis <- gam(PreAbs~s(Julian, bs ="cc", k=6), fit=F, data = SiteHourTableB, family =binomial, knots = list(HOUR=seq(1,366,length=6)))$X[,2:5]
-AvgDayMat = as.matrix(AvgDayBasis)
-
 AvgDayBasis <- gam(PreAbs~s(Julian, bs ="cc", k=4), fit=F, data = SiteHourTableB, family =binomial, knots = list(HOUR=seq(1,366,length=4)))$X[,2:3]
 AvgDayMat = as.matrix(AvgDayBasis)
 
@@ -374,13 +371,8 @@ anova(PODFinal)
 #For PT,QN,BD only AvgDayMat was a significant variable, so the order doesn't matter...
 
 # STEP 6: Interpretting the summary of the model
-dimnames(AvgDayMat)<-list(NULL,c("ADBM1", "ADBM2", "ADBM3", "ADBM4"))
 dimnames(AvgDayMat)<-list(NULL,c("ADBM1", "ADBM2"))
 PODFinal = geeglm(PreAbs ~ AvgDayMat,family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
-PODFinal = geeglm(PreAbs ~ mSpline(Julian,
-        knots=quantile(Julian, probs=c(0.333,0.666)),
-        Boundary.knots=c(1,366),
-        periodic=T),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
 summary(PODFinal)
 
 # How to intepret model results
@@ -464,7 +456,7 @@ d <- L*sin(fi)                                                     # to calculat
 
 #Find max and position of max
 max = max(d,na.rm=TRUE)
-position = which.max(d$c.0..0.00502742230347349..0.00941499085923217..0.0129798903107861..)
+position = which.max(d$c.0..0.00137080191912269..0.00468357322366918..0.00742517706191455..)
 
 
 alpha<-as.data.frame(perf@alpha.values)                            # the alpha values represent the corresponding cut-offs
@@ -520,7 +512,6 @@ start=2; finish=3; Variable=SiteHourTableB$Julian; xlabel="Julian Day"; ylabel="
 PlottingVar3<-seq(min(Variable), max(Variable), length=5000)
 CenterVar3<-model.matrix(PODFinal)[,start:finish]*coef(PODFinal)[c(start:finish)]
 BootstrapCoefs3<-BootstrapParameters3[,c(start:finish)]
-#Basis3<-gam(rbinom(5000,1,0.5)~s(PlottingVar3, bs="cc", k=6), fit=F, family=binomial, knots=list(PlottingVar2=seq(1,366,length=6)))$X[,2:5]
 Basis3<-gam(rbinom(5000,1,0.5)~s(PlottingVar3, bs="cc", k=4), fit=F, family=binomial, knots=list(PlottingVar2=seq(1,366,length=4)))$X[,2:3]
 RealFit3<-Basis3%*%coef(PODFinal)[c(start:finish)]
 RealFitCenter3<-RealFit3-mean(CenterVar3)

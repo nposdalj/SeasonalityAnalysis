@@ -374,9 +374,6 @@ anova(PODFinal)
 #For PT,QN,BD only AvgDayMat was a significant variable, so the order doesn't matter...
 
 # STEP 6: Interpretting the summary of the model
-dimnames(AvgDayMat)<-list(NULL,c("ADBM1", "ADBM2", "ADBM3", "ADBM4"))
-dimnames(AvgDayMat)<-list(NULL,c("ADBM1", "ADBM2"))
-PODFinal = geeglm(PreAbs ~ AvgDayMat,family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
 PODFinal = geeglm(PreAbs ~ mSpline(Julian,
         knots=quantile(Julian, probs=c(0.333,0.666)),
         Boundary.knots=c(1,366),
@@ -464,7 +461,7 @@ d <- L*sin(fi)                                                     # to calculat
 
 #Find max and position of max
 max = max(d,na.rm=TRUE)
-position = which.max(d$c.0..0.00502742230347349..0.00941499085923217..0.0129798903107861..)
+position = which.max(d$c.0..0.00137080191912269..0.00468357322366918..0.00742517706191455..)
 
 
 alpha<-as.data.frame(perf@alpha.values)                            # the alpha values represent the corresponding cut-offs
@@ -515,12 +512,76 @@ library(boot)
 library(pracma)
 
 #Probability of covariate #1: AvgDayBasisMat:
+BootstrapParameters <-
+  rmvnorm(10000, coef(PODFinal), summary(PODFinal)$cov.unscaled)
+JDayBootstrapCoefs <- BootstrapParameters[, 2:3]
+
+# Predict presence at each X value based on one covariate (I think; not sure why we need this)
+Jx1 <- model.matrix(PODFinal)[, 2:3] %*% coef(PODFinal)[c(2:3)]
+Variable=SiteHourTableB$Julian
+
+# PLOT GEEGLM PARTIAL RESIDUALS
+# Julian Day
+JDayForPlotting <- seq(min(Variable), max(Variable), length = 5000)
+# get basis functions for smooth of Julian day
+Basis <-
+  mSpline(
+    JDayForPlotting,
+    knots = c(120, 250),
+    Boundary.knots = c(1, 365),
+    periodic = T
+  )
+# multiply basis functions by model coefficients to get values of spline at each X
+RealFit <- Basis %*% coef(PODFinal)[c(2:3)]
+# adjust offset
+RealFitCenterJ <- RealFit - mean(Jx1) - coef(PODFinal)[1] # again, not sure why the Jx1 adjustment is needed
+# create data frame for plotting
+plotDF = data.frame(JDayForPlotting, RealFitCenterJ)
+colnames(plotDF) = c("Jday", "Fit")
+
+# get spread of spline values based on distributions of each coefficient
+JDayBootstrapFits <- Basis %*% t(JDayBootstrapCoefs)
+# get quantiles for confidence interval of smooth function estimate
+quant.func <- function(x) {
+  quantile(x, probs = c(0.025, 0.975))
+}
+cisJ <- apply(JDayBootstrapFits, 1, quant.func)
+Jcil <- cisJ[1, ] - mean(Jx1) - coef(PODFinal)[1] # upper CI bound
+Jciu <- cisJ[2, ] - mean(Jx1) - coef(PODFinal)[1] # lower CI bound
+
+# Calculate kernel density of Jday observations
+dJday = stats::density(Variable,na.rm = TRUE,n=5000,from=1,to=365)
+dens = data.frame(c(dJday$x, rev(dJday$x)), c(dJday$y, rep(0, length(dJday$y))))
+colnames(dens) = c("Day", "Density")
+dens$Density = dens$Density / max(dens$Density) # normalize kernel density
+if (min(Jcil)<0){ # set kernel density at bottom of y axis
+  dens$Density = dens$Density - abs(min(Jcil)) 
+} else {
+  dens$Density = dens$Density + min(Jcil)
+}
+
+saveName = paste(seasDir,'/',CTname,'/',sites[j],"_",int,"_GEEGLM_JDayPlot.png",sep="")
+ggplot(plotDF, aes(Jday, Fit),
+) + geom_polygon(data=dens,
+                 aes(Day,Density),
+                 fill=4,
+                 alpha=0.2
+) + geom_smooth(fill = "grey",
+                colour = "black",
+                aes(ymin=Jcil, ymax=Jciu),
+                stat ="identity"
+) + labs(x = "Julian Day",
+         y = "s(Julian Day)",
+) + theme(axis.line = element_line(),
+          panel.background = element_blank()
+)
+
+#Probability of covariate #1: AvgDayBasisMat:
 BootstrapParameters3<-rmvnorm(10000, coef(PODFinal),summary(PODFinal)$cov.unscaled)
 start=2; finish=3; Variable=SiteHourTableB$Julian; xlabel="Julian Day"; ylabel="Probability"  
 PlottingVar3<-seq(min(Variable), max(Variable), length=5000)
 CenterVar3<-model.matrix(PODFinal)[,start:finish]*coef(PODFinal)[c(start:finish)]
 BootstrapCoefs3<-BootstrapParameters3[,c(start:finish)]
-#Basis3<-gam(rbinom(5000,1,0.5)~s(PlottingVar3, bs="cc", k=6), fit=F, family=binomial, knots=list(PlottingVar2=seq(1,366,length=6)))$X[,2:5]
 Basis3<-gam(rbinom(5000,1,0.5)~s(PlottingVar3, bs="cc", k=4), fit=F, family=binomial, knots=list(PlottingVar2=seq(1,366,length=4)))$X[,2:3]
 RealFit3<-Basis3%*%coef(PODFinal)[c(start:finish)]
 RealFitCenter3<-RealFit3-mean(CenterVar3)
@@ -533,23 +594,3 @@ plot(PlottingVar3,(RealFitCenter3a), type="l", col=1,ylim=c(0, 1),xlab=xlabel, y
 segments(PlottingVar3,(cis3a[1,]),PlottingVar3,(cis3a[2,]), col="grey")
 lines(PlottingVar3,(RealFitCenter3a),lwd=2, col=1)
 rug(PlottingVar3)
-
-#FOR CB ONLY
-#Probability of covariate #2: as.smooth(Year):
-BootstrapParameters1<-rmvnorm(10000, coef(PODFinal),summary(PODFinal)$cov.unscaled)
-start=6; finish=8; Variable=SiteHourTableB$Year; xlabel="Year"; ylabel="Probability"  
-PlottingVar1<-seq(min(Variable), max(Variable), length=5000)
-CenterVar1<-model.matrix(PODFinal)[,start:finish]*coef(PODFinal)[c(start:finish)]
-BootstrapCoefs1<-BootstrapParameters1[,c(start:finish)]
-Basis1<-gam(rbinom(5000,1,0.5)~bs(PlottingVar1), fit=F, family=binomial, knots=list(PlottingVar1=seq(2011,2019,length=4)))$X[,2:4]
-RealFit1<-Basis1%*%coef(PODFinal)[c(start:finish)]
-RealFitCenter1<-RealFit1-mean(CenterVar1)
-RealFitCenter1a<-inv.logit(RealFitCenter1)
-BootstrapFits1<-Basis1%*%t(BootstrapCoefs1)
-quant.func1<-function(x){quantile(x,probs=c(0.025, 0.975))}
-cis1<-apply(BootstrapFits1, 1, quant.func1)-mean(CenterVar1)
-cis1a<-inv.logit(cis1)
-plot(PlottingVar1,(RealFitCenter1a), type="l", col=1,ylim=c(0, 1),xlab=xlabel, ylab=ylabel, xlim=c(2011,2019), main ="Year" , cex.lab = 1.5, cex.axis=1.5)
-segments(PlottingVar1,(cis1a[1,]),PlottingVar1,(cis1a[2,]), col="grey")
-lines(PlottingVar1,(RealFitCenter1a),lwd=2, col=1)
-rug(PlottingVar1)
