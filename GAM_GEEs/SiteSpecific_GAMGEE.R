@@ -521,12 +521,18 @@ PlottingVar3<-seq(min(Variable), max(Variable), length=5000)
 CenterVar3<-model.matrix(PODFinal)[,start:finish]*coef(PODFinal)[c(start:finish)]
 BootstrapCoefs3<-BootstrapParameters3[,c(start:finish)]
 #Basis3<-gam(rbinom(5000,1,0.5)~s(PlottingVar3, bs="cc", k=6), fit=F, family=binomial, knots=list(PlottingVar2=seq(1,366,length=6)))$X[,2:5]
+
 Basis3<-gam(rbinom(5000,1,0.5)~s(PlottingVar3, bs="cc", k=4), fit=F, family=binomial, knots=list(PlottingVar2=seq(1,366,length=4)))$X[,2:3]
+
 RealFit3<-Basis3%*%coef(PODFinal)[c(start:finish)]
+
 RealFitCenter3<-RealFit3-mean(CenterVar3)
+
 RealFitCenter3a<-inv.logit(RealFitCenter3)
+
 BootstrapFits3<-Basis3%*%t(BootstrapCoefs3)
 quant.func3<-function(x){quantile(x,probs=c(0.025, 0.975))}
+
 cis3<-apply(BootstrapFits3, 1, quant.func3)-mean(CenterVar3)
 cis3a<-inv.logit(cis3)
 plot(PlottingVar3,(RealFitCenter3a), type="l", col=1,ylim=c(0, 1),xlab=xlabel, ylab=ylabel, xlim=c(1,366), main ="Julian Day" , cex.lab = 1.5, cex.axis=1.5)    

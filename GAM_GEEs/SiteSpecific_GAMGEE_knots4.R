@@ -30,6 +30,7 @@ library(car) #for ANOVA
 #Hourly data
 site = 'BD'
 dir = paste("I:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites")
+saveDir = paste("I:/My Drive/GofAK_TPWS_metadataReduced/Plots/",site, sep="")
 fileName = paste("I:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites/AllSitesGrouped_Binary_GAMGEE_ROW.csv",sep="") #setting the directory
 HourTable = read.csv(fileName)
 HourTable = na.omit(HourTable)
@@ -375,67 +376,102 @@ dimnames(AvgDayMat)<-list(NULL,c("ADBM1", "ADBM2"))
 PODFinal = geeglm(PreAbs ~ AvgDayMat,family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
 summary(PODFinal)
 
+#CB
+dimnames(AvgDayMat)<-list(NULL,c("ADBM1", "ADBM2"))
+PODFinal = geeglm(PreAbs ~ AvgDayMat + as.factor(Year),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
+summary(PODFinal)
+
 # How to intepret model results
 # Standard error - robust estimate - provides reasonable variance estimates even when the specified correlation model is in correct
 # Wald - square of the z-statistic reproted by the gee function
 # P - values are the upper tailed probabilities from the chi-squared random variable with 1 degree of freedom...
 # distribution and test whether the true parameter value is different from zero
 
-#BD
+#QN
 #Call:
-  #geeglm(formula = PreAbs ~ AvgDayMat, family = binomial, data = SiteHourTableB, 
+ # geeglm(formula = PreAbs ~ AvgDayMat, family = binomial, data = SiteHourTableB, 
          #id = Blocks, corstr = "ar1")
 
 #Coefficients:
-                  #Estimate    Std.err   Wald Pr(>|W|)    
-#(Intercept)    -0.0449943  0.1274943  0.125    0.724    
-#AvgDayMatADBM1 -0.4819010  0.4119330  1.369    0.242    
-#AvgDayMatADBM2 -1.4412808  0.2567866 31.503 1.99e-08 ***
-#AvgDayMatADBM3  0.0008533  0.2456801  0.000    0.997    
-#AvgDayMatADBM4  0.3095881  0.3239536  0.913    0.339    
-#---
-  #Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-
-#Correlation structure = ar1 
-#Estimated Scale Parameters:
-  
-  #Estimate Std.err
-#(Intercept)   0.9954 0.01964
+#  Estimate Std.err  Wald Pr(>|W|)    
+#(Intercept)      -1.592   0.182 76.28   <2e-16 ***
+#  AvgDayMatADBM1    0.411   0.245  2.82    0.093 .  
+#AvgDayMatADBM2    0.457   0.362  1.60    0.206    
+#Estimate Std.err
+#(Intercept)     1.01   0.173
 #Link = identity 
 
 #Estimated Correlation Parameters:
   #Estimate Std.err
-#alpha   0.9203 0.01182
+#alpha     0.86  0.0223
+#Number of clusters:   18  Maximum cluster size: 868
+
+#PT
+#Call:
+ # geeglm(formula = PreAbs ~ AvgDayMat, family = binomial, data = SiteHourTableB, 
+         #id = Blocks, corstr = "ar1")
+
+#Coefficients:
+ # Estimate Std.err   Wald Pr(>|W|)    
+#(Intercept)      -2.068   0.125 273.33   <2e-16 ***
+ # AvgDayMatADBM1    0.451   0.223   4.10   0.0428 *  
+#  AvgDayMatADBM2    0.770   0.296   6.75   0.0094 ** 
+#  Estimate Std.err
+#(Intercept)    0.997   0.216
+#Link = identity 
+
+#Estimated Correlation Parameters:
+#  Estimate Std.err
+#alpha    0.847  0.0337
+#Number of clusters:   52  Maximum cluster size: 287 
+
+#BD
+#Call:
+  #geeglm(formula = PreAbs ~ AvgDayMat, family = binomial, data = SiteHourTableB, 
+   #      id = Blocks, corstr = "ar1")
+
+#Coefficients:
+ # Estimate Std.err Wald Pr(>|W|)  
+#(Intercept)     -0.0374  0.1436 0.07    0.795  
+#AvgDayMatADBM1  -0.1108  0.2761 0.16    0.688  
+#AvgDayMatADBM2   0.6156  0.2531 5.92    0.015 *
+#Estimate Std.err
+#(Intercept)        1  0.0293
+#Link = identity 
+
+#Estimated Correlation Parameters:
+  #Estimate Std.err
+#alpha     0.94  0.0106
 #Number of clusters:   26  Maximum cluster size: 683 
 
 #CB
 #Call:
-  #geeglm(formula = PreAbs ~ AvgDayMat + bs(Year), family = binomial, 
+ # geeglm(formula = PreAbs ~ AvgDayMat + as.factor(Year), family = binomial, 
          #data = SiteHourTableB, id = Blocks, corstr = "ar1")
 
 #Coefficients:
-  #Estimate  Std.err   Wald Pr(>|W|)    
-#(Intercept)     0.53584  0.20753  6.666  0.00982 ** 
-  #AvgDayMatADBM1 -1.59313  0.35059 20.649 5.52e-06 ***
-  #AvgDayMatADBM2 -0.02759  0.24912  0.012  0.91181    
-  #AvgDayMatADBM3  0.73204  0.23716  9.528  0.00202 ** 
-  #AvgDayMatADBM4  0.26564  0.21202  1.570  0.21024    
-#bs(Year)1      -1.50856  0.71353  4.470  0.03450 *  
-  #bs(Year)2      -1.53597  0.56262  7.453  0.00633 ** 
-  #bs(Year)3      -0.30310  0.30937  0.960  0.32722    
----
-  #Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+ # Estimate Std.err Wald Pr(>|W|)   
+#(Intercept)           0.7046  0.4057 3.02   0.0824 . 
+#AvgDayMatADBM1        0.0163  0.1902 0.01   0.9316   
+#AvgDayMatADBM2        0.3098  0.1785 3.01   0.0827 . 
+#as.factor(Year)2012  -0.8651  0.4799 3.25   0.0714 . 
+#as.factor(Year)2013  -0.8953  0.4552 3.87   0.0492 * 
+  #as.factor(Year)2014  -1.2585  0.4488 7.86   0.0050 **
+  #as.factor(Year)2015  -1.4030  0.4836 8.42   0.0037 **
+  #as.factor(Year)2017  -0.8823  0.4725 3.49   0.0619 . 
+#as.factor(Year)2018  -1.0036  0.7794 1.66   0.1979   
+#as.factor(Year)2019  -0.3235  0.4257 0.58   0.4474   
 
 #Correlation structure = ar1 
 #Estimated Scale Parameters:
   
   #Estimate Std.err
-#(Intercept)    1.004 0.05726
+#(Intercept)     1.01  0.0448
 #Link = identity 
 
 #Estimated Correlation Parameters:
-  #Estimate  Std.err
-#alpha   0.9152 0.007868
+  #Estimate Std.err
+#alpha    0.939 0.00471
 #Number of clusters:   80  Maximum cluster size: 603 
 
 # STEP 7: Construction of the ROC curve     
@@ -456,8 +492,16 @@ d <- L*sin(fi)                                                     # to calculat
 
 #Find max and position of max
 max = max(d,na.rm=TRUE)
-position = which.max(d$c.0..0.00137080191912269..0.00468357322366918..0.00742517706191455..)
 
+if (site == 'BD') {
+position = which.max(d$c.0..0.00137080191912269..0.00468357322366918..0.00742517706191455..)
+} else if (site == 'CB'){
+  position = which.max(d$c.0..0.000523096732657331..0.000845002414292612..0.00116690809592789..)
+} else if (site == 'PT'){
+  position = which.max(d$c.0..0.00188694079723249..0.00377388159446497..0.00550357732526142..)
+} else if (site == 'QN'){
+  position = which.max(d$c.0..0.00438756855575868..0.00941499085923217..0.0144424131627057..)
+}
 
 alpha<-as.data.frame(perf@alpha.values)                            # the alpha values represent the corresponding cut-offs
 cutoff = alpha[position,]                                                       # to identify the alpha value (i.e. the cut-off) that corresponds to the maximum distance between the 45° line and the curve
@@ -477,26 +521,26 @@ cmx(DATA, threshold = cutoff)                                   # the identified
 #CB
 #observed
 #predicted     1     0
-#1 16406 13711
-#0  4096 11141
+#1 13494 10046
+#0  7008 14806
 
 #PT
 #observed
 #predicted     1     0
-#1   617  2359
-#0  1115 10360
+#1 1124 5334
+#0  608 7385
 
 #QN
 #observed
 #predicted    1    0
-#1 1449 5605
-#0  871 5335
+#1 2055 8253
+#0  265 2687
 
 #BD
 #observed
 #predicted    1    0
-#1 7092 5008
-#0 1582 3746
+#1 6755 5538
+#0 1919 3216
 
 # The area under the curve (auc) can also be used as an rough indication of model performance:
   
@@ -520,19 +564,65 @@ BootstrapFits3<-Basis3%*%t(BootstrapCoefs3)
 quant.func3<-function(x){quantile(x,probs=c(0.025, 0.975))}
 cis3<-apply(BootstrapFits3, 1, quant.func3)-mean(CenterVar3)
 cis3a<-inv.logit(cis3)
-plot(PlottingVar3,(RealFitCenter3a), type="l", col=1,ylim=c(0, 1),xlab=xlabel, ylab=ylabel, xlim=c(1,366), main ="Julian Day" , cex.lab = 1.5, cex.axis=1.5)    
+
+#Base R Plotting
+title = paste(saveDir,"/BaseR_Julian Day - ", site,".png",sep="")
+png(title)
+plot(PlottingVar3,(RealFitCenter3a), type="l", col=1,ylim=c(0, 1),xlab=xlabel, ylab=ylabel, xlim=c(1,366), main = title , cex.lab = 1.5, cex.axis=1.5)    
 segments(PlottingVar3,(cis3a[1,]),PlottingVar3,(cis3a[2,]), col="grey")
 lines(PlottingVar3,(RealFitCenter3a),lwd=2, col=1)
 rug(PlottingVar3)
+dev.off()
+
+
+#ggplot
+# Calculate kernel density of Jday observations
+dJday = stats::density(Variable,na.rm = TRUE,n=5000,from=1,to=366)
+dens = data.frame(c(dJday$x, rev(dJday$x)), c(dJday$y, rep(0, length(dJday$y))))
+colnames(dens) = c("Day", "Density")
+dens$Density = dens$Density / 0.15 #max(dens$Density) # normalize kernel density
+if (min(cis3a[1,])<0){ # set kernel density at bottom of y axis
+  dens$Density = dens$Density - abs(min(cis3a[1,])) 
+} else {
+  dens$Density = dens$Density + min(cis3a[1,])
+}
+
+plotDF = data.frame(PlottingVar3, RealFitCenter3a)
+colnames(plotDF) = c("Jday", "Fit")
+
+ggplot(plotDF, aes(Jday, Fit),
+) + geom_polygon(data=dens,
+                 aes(Day,Density),
+                 fill=4,
+                 alpha=0.2
+) + geom_smooth(fill = "grey",
+                colour = "black",
+                aes(ymin=cis3a[1,], ymax=cis3a[2,]),
+                stat ="identity"
+) + labs(x = "Julian Day",
+         y = "Probability",
+         title = paste('Julian Day at',site),
+) + theme(axis.line = element_line(),
+          panel.background = element_blank()
+)
+
+ggtitle = paste(saveDir,"/Julian Day - ", site,".png",sep="")
+
+ggsave(
+  ggtitle,
+  device = "png") # save figure
+while (dev.cur() > 1) {
+  dev.off()
+} # close graphics device
 
 #FOR CB ONLY
 #Probability of covariate #2: as.smooth(Year):
 BootstrapParameters1<-rmvnorm(10000, coef(PODFinal),summary(PODFinal)$cov.unscaled)
-start=6; finish=8; Variable=SiteHourTableB$Year; xlabel="Year"; ylabel="Probability"  
+start=4; finish=10; Variable=SiteHourTableB$Year; xlabel="Year"; ylabel="Probability"  
 PlottingVar1<-seq(min(Variable), max(Variable), length=5000)
 CenterVar1<-model.matrix(PODFinal)[,start:finish]*coef(PODFinal)[c(start:finish)]
 BootstrapCoefs1<-BootstrapParameters1[,c(start:finish)]
-Basis1<-gam(rbinom(5000,1,0.5)~bs(PlottingVar1), fit=F, family=binomial, knots=list(PlottingVar1=seq(2011,2019,length=4)))$X[,2:4]
+Basis1<-gam(rbinom(5000,1,0.5)~as.factor(PlottingVar1), fit=F, family=binomial, knots=list(PlottingVar1=seq(2011,2019,length=3)))$X[,4:10]
 RealFit1<-Basis1%*%coef(PODFinal)[c(start:finish)]
 RealFitCenter1<-RealFit1-mean(CenterVar1)
 RealFitCenter1a<-inv.logit(RealFitCenter1)
@@ -540,7 +630,52 @@ BootstrapFits1<-Basis1%*%t(BootstrapCoefs1)
 quant.func1<-function(x){quantile(x,probs=c(0.025, 0.975))}
 cis1<-apply(BootstrapFits1, 1, quant.func1)-mean(CenterVar1)
 cis1a<-inv.logit(cis1)
-plot(PlottingVar1,(RealFitCenter1a), type="l", col=1,ylim=c(0, 1),xlab=xlabel, ylab=ylabel, xlim=c(2011,2019), main ="Year" , cex.lab = 1.5, cex.axis=1.5)
-segments(PlottingVar1,(cis1a[1,]),PlottingVar1,(cis1a[2,]), col="grey")
-lines(PlottingVar1,(RealFitCenter1a),lwd=2, col=1)
-rug(PlottingVar1)
+#plot(PlottingVar1,(RealFitCenter1a), type="l", col=1,ylim=c(0, 1),xlab=xlabel, ylab=ylabel, xlim=c(2011,2019), main ="Year" , cex.lab = 1.5, cex.axis=1.5)
+#segments(PlottingVar1,(cis1a[1,]),PlottingVar1,(cis1a[2,]), col="grey")
+#lines(PlottingVar1,(RealFitCenter1a),lwd=2, col=1)
+#rug(PlottingVar1)
+
+#Year as factor
+ggtitle = paste(saveDir,"/Probability of Year - ", site,".png",sep="")
+SiteHourTableB$pr = pr
+ggplot(SiteHourTableB, aes(x = Year, y = pr)) +
+  geom_boxplot(aes(fill = factor(Year)), alpha = .2)
+
+ggsave(
+  ggtitle,
+  device = "png") # save figure
+while (dev.cur() > 1) {
+  dev.off()
+} # close graphics device
+
+# Year
+# Center intercept (1st level of year factor) at 0 and show other levels relative to it
+AdjustedYearCoefs = data.frame(
+  c(
+    BootstrapParameters1[, 1] - mean(BootstrapParameters1[, 1]),
+    BootstrapParameters1[, 2],
+    BootstrapParameters1[, 3],
+    BootstrapParameters1[, 4],
+    BootstrapParameters1[, 5],
+    BootstrapParameters1[, 6],
+    BootstrapParameters1[, 7],
+    BootstrapParameters1[, 8],
+    BootstrapParameters1[, 9]
+  ),
+  as.factor(rep(2011:2019, each = 10000))
+)
+colnames(AdjustedYearCoefs) = c("Coefficient", "Year")
+
+ggtitle = paste(saveDir,"/Year - ", site,".png",sep="")
+ggplot(AdjustedYearCoefs, aes(Year, Coefficient)
+) + geom_boxplot(
+) + theme(axis.line = element_line(),
+          panel.background = element_blank()
+) + labs(title = paste('Year at',site))
+
+ggsave(
+  ggtitle,
+  device = "png") # save figure
+while (dev.cur() > 1) {
+  dev.off()
+} # close graphics device

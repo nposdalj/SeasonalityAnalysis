@@ -380,6 +380,13 @@ PODFinal = geeglm(PreAbs ~ mSpline(Julian,
         periodic=T),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
 summary(PODFinal)
 
+#CB
+PODFinal = geeglm(PreAbs ~ mSpline(Julian,
+                                   knots=quantile(Julian, probs=c(0.333,0.666)),
+                                   Boundary.knots=c(1,366),
+                                   periodic=T)+bs(Year),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
+summary(PODFinal)
+
 # How to intepret model results
 # Standard error - robust estimate - provides reasonable variance estimates even when the specified correlation model is in correct
 # Wald - square of the z-statistic reproted by the gee function
@@ -512,35 +519,38 @@ library(boot)
 library(pracma)
 
 #Probability of covariate #1: AvgDayBasisMat:
-BootstrapParameters <-
-  rmvnorm(10000, coef(PODFinal), summary(PODFinal)$cov.unscaled)
-JDayBootstrapCoefs <- BootstrapParameters[, 2:3]
+BootstrapParameters <-rmvnorm(10000, coef(PODFinal), summary(PODFinal)$cov.unscaled)
+Variable=SiteHourTableB$Julian
+JDayForPlotting <- seq(min(Variable), max(Variable), length = 5000)
 
 # Predict presence at each X value based on one covariate (I think; not sure why we need this)
 Jx1 <- model.matrix(PODFinal)[, 2:3] %*% coef(PODFinal)[c(2:3)]
-Variable=SiteHourTableB$Julian
+JDayBootstrapCoefs <- BootstrapParameters[, 2:3]
 
 # PLOT GEEGLM PARTIAL RESIDUALS
 # Julian Day
 JDayForPlotting <- seq(min(Variable), max(Variable), length = 5000)
+
 # get basis functions for smooth of Julian day
 Basis <-
   mSpline(
     JDayForPlotting,
     knots = c(120, 250),
-    Boundary.knots = c(1, 365),
+    Boundary.knots = c(1, 366),
     periodic = T
   )
+
+
 # multiply basis functions by model coefficients to get values of spline at each X
 RealFit <- Basis %*% coef(PODFinal)[c(2:3)]
 # adjust offset
 RealFitCenterJ <- RealFit - mean(Jx1) - coef(PODFinal)[1] # again, not sure why the Jx1 adjustment is needed
+# get spread of spline values based on distributions of each coefficient
+JDayBootstrapFits <- Basis %*% t(JDayBootstrapCoefs)
 # create data frame for plotting
 plotDF = data.frame(JDayForPlotting, RealFitCenterJ)
 colnames(plotDF) = c("Jday", "Fit")
 
-# get spread of spline values based on distributions of each coefficient
-JDayBootstrapFits <- Basis %*% t(JDayBootstrapCoefs)
 # get quantiles for confidence interval of smooth function estimate
 quant.func <- function(x) {
   quantile(x, probs = c(0.025, 0.975))
@@ -576,21 +586,34 @@ ggplot(plotDF, aes(Jday, Fit),
           panel.background = element_blank()
 )
 
-#Probability of covariate #1: AvgDayBasisMat:
-BootstrapParameters3<-rmvnorm(10000, coef(PODFinal),summary(PODFinal)$cov.unscaled)
-start=2; finish=3; Variable=SiteHourTableB$Julian; xlabel="Julian Day"; ylabel="Probability"  
-PlottingVar3<-seq(min(Variable), max(Variable), length=5000)
-CenterVar3<-model.matrix(PODFinal)[,start:finish]*coef(PODFinal)[c(start:finish)]
-BootstrapCoefs3<-BootstrapParameters3[,c(start:finish)]
-Basis3<-gam(rbinom(5000,1,0.5)~s(PlottingVar3, bs="cc", k=4), fit=F, family=binomial, knots=list(PlottingVar2=seq(1,366,length=4)))$X[,2:3]
-RealFit3<-Basis3%*%coef(PODFinal)[c(start:finish)]
-RealFitCenter3<-RealFit3-mean(CenterVar3)
-RealFitCenter3a<-inv.logit(RealFitCenter3)
-BootstrapFits3<-Basis3%*%t(BootstrapCoefs3)
-quant.func3<-function(x){quantile(x,probs=c(0.025, 0.975))}
-cis3<-apply(BootstrapFits3, 1, quant.func3)-mean(CenterVar3)
-cis3a<-inv.logit(cis3)
-plot(PlottingVar3,(RealFitCenter3a), type="l", col=1,ylim=c(0, 1),xlab=xlabel, ylab=ylabel, xlim=c(1,366), main ="Julian Day" , cex.lab = 1.5, cex.axis=1.5)    
-segments(PlottingVar3,(cis3a[1,]),PlottingVar3,(cis3a[2,]), col="grey")
-lines(PlottingVar3,(RealFitCenter3a),lwd=2, col=1)
-rug(PlottingVar3)
+
+# Year
+YearBootstrapCoefs <- BootstrapParameters[, c(1, 4:6)]
+# Center intercept (1st level of year factor) at 0 and show other levels relative to it
+AdjustedYearCoefs = data.frame(
+  c(
+    YearBootstrapCoefs[, 1] - mean(YearBootstrapCoefs[, 1]),
+    YearBootstrapCoefs[, 2],
+    YearBootstrapCoefs[, 3],
+    YearBootstrapCoefs[, 4],
+    YearBootstrapCoefs[, 5],
+    YearBootstrapCoefs[, 6],
+    YearBootstrapCoefs[, 7],
+    YearBootstrapCoefs[, 8],
+    YearBootstrapCoefs[, 9]
+  ),
+  as.factor(rep(2011:2019, each = 10000))
+)
+colnames(AdjustedYearCoefs) = c("Coefficient", "Year")
+
+ggplot(AdjustedYearCoefs, aes(Year, Coefficient)
+) + geom_boxplot(
+) + theme(axis.line = element_line(),
+          panel.background = element_blank()
+) 
+ggsave(
+  saveName,
+  device = "png") # save figure
+while (dev.cur() > 1) {
+  dev.off()
+} # close graphics device
