@@ -246,13 +246,22 @@ VIF(GLMM)
 AvgDayBasisF <- gam(PreAbsF~s(Julian, bs ="cc", k=4), fit=F, data = SiteHourTableB, family =binomial, knots = list(HOUR=seq(1,366,length=4)))$X[,2:3]
 AvgDayMatF = as.matrix(AvgDayBasisF)
 
+AvgYrBasisF <- gam(PreAbsF~s(Year, bs ="cc", k=4), fit=F, data = SiteHourTableB, family =binomial, knots = list(HOUR=seq(2010,2019,length=4)))$X[,2:3]
+AvgYrMatF = as.matrix(AvgYrBasisF)
+
 #Juveniles
 AvgDayBasisJ <- gam(PreAbsJ~s(Julian, bs ="cc", k=4), fit=F, data = SiteHourTableB, family =binomial, knots = list(HOUR=seq(1,366,length=4)))$X[,2:3]
 AvgDayMatJ = as.matrix(AvgDayBasisJ)
 
+AvgYrBasisJ <- gam(PreAbsJ~s(Year, bs ="cc", k=4), fit=F, data = SiteHourTableB, family =binomial, knots = list(HOUR=seq(2010,2019,length=4)))$X[,2:3]
+AvgYrMatJ = as.matrix(AvgYrBasisJ)
+
 #Males
 AvgDayBasisM <- gam(PreAbsM~s(Julian, bs ="cc", k=4), fit=F, data = SiteHourTableB, family =binomial, knots = list(HOUR=seq(1,366,length=4)))$X[,2:3]
 AvgDayMatM = as.matrix(AvgDayBasisM)
+
+AvgYrBasisM <- gam(PreAbsM~s(Year, bs ="cc", k=4), fit=F, data = SiteHourTableB, family =binomial, knots = list(HOUR=seq(2010,2019,length=4)))$X[,2:3]
+AvgYrMatM = as.matrix(AvgYrBasisM)
 
 # Selection of the correct form (linear or smooth) for the covariates available at a single scale.
 # A series of models is fitted where each of these covariate is tested as a linear term vs. a smoother and compared against an empty model.
@@ -547,24 +556,21 @@ PODFinalm = POD3mgg
 
 #Females
 dimnames(AvgDayMatF)<-list(NULL,c("ADBM1", "ADBM2"))
+dimnames(AvgYrBasisF)<-list(NULL,c("AYBM1","AYBM2"))
 PODFinalf = geeglm(PreAbsF ~ AvgDayMatF+as.factor(Year),family = binomial, corstr="ar1", id=BlocksF, data=SiteHourTableB)
-summary(PODFinalf)
+PODFinalfY = geeglm(PreAbsF ~ AvgDayMatF+AvgYrBasisF,family = binomial, corstr="ar1", id=BlocksF, data=SiteHourTableB)
+summary(PODFinalfY)
 # Call:
-#   geeglm(formula = PreAbsF ~ AvgDayMatF + as.factor(Year), family = binomial, 
+#   geeglm(formula = PreAbsF ~ AvgDayMatF + AvgYrBasisF, family = binomial, 
 #          data = SiteHourTableB, id = BlocksF, corstr = "ar1")
 # 
 # Coefficients:
-#   Estimate Std.err    Wald Pr(>|W|)    
-# (Intercept)           -4.918   0.531   85.66   <2e-16 ***
-#   AvgDayMatFADBM1        0.893   0.405    4.87    0.027 *  
-#   AvgDayMatFADBM2       -0.372   0.395    0.89    0.347    
-# as.factor(Year)2012    0.456   0.611    0.56    0.455    
-# as.factor(Year)2013   -0.804   0.876    0.84    0.359    
-# as.factor(Year)2014  -13.776   1.162  140.54   <2e-16 ***
-#   as.factor(Year)2015   -2.323   1.156    4.04    0.044 *  
-#   as.factor(Year)2017   -0.183   0.695    0.07    0.792    
-# as.factor(Year)2018   -1.157   0.952    1.48    0.224    
-# as.factor(Year)2019  -41.847   0.501 6967.36   <2e-16 ***
+#   Estimate Std.err   Wald Pr(>|W|)    
+# (Intercept)        -4.804   0.171 790.28   <2e-16 ***
+#   AvgDayMatFADBM1     0.430   0.271   2.51   0.1131    
+# AvgDayMatFADBM2    -1.020   0.313  10.61   0.0011 ** 
+#   AvgYrBasisFAYBM1    0.668   0.338   3.90   0.0484 *  
+#   AvgYrBasisFAYBM2   -0.948   0.389   5.95   0.0147 *  
 #   ---
 #   Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 # 
@@ -572,34 +578,32 @@ summary(PODFinalf)
 # Estimated Scale Parameters:
 #   
 #   Estimate Std.err
-# (Intercept)     0.76    4.87
+# (Intercept)     1.12       5
 # Link = identity 
 # 
 # Estimated Correlation Parameters:
 #   Estimate Std.err
-# alpha    0.781    1.29
-# Number of clusters:   1344  Maximum cluster size: 35 
+# alpha    0.739   0.959
+# Number of clusters:   322  Maximum cluster size: 564
+
 
 #Juveniles
 dimnames(AvgDayMatJ)<-list(NULL,c("ADBM1", "ADBM2"))
+dimnames(AvgYrBasisJ)<-list(NULL,c("AYBM1","AYBM2"))
 PODFinalj = geeglm(PreAbsJ ~ AvgDayMatJ+as.factor(Year),family = binomial, corstr="ar1", id=BlocksJ, data=SiteHourTableB)
-summary(PODFinalj)
+PODFinaljY = geeglm(PreAbsJ ~ AvgDayMatJ+AvgYrBasisJ,family = binomial, corstr="ar1", id=BlocksJ, data=SiteHourTableB)
+summary(PODFinaljY)
 # Call:
-#   geeglm(formula = PreAbsJ ~ AvgDayMatJ + as.factor(Year), family = binomial, 
+#   geeglm(formula = PreAbsJ ~ AvgDayMatJ + AvgYrBasisJ, family = binomial, 
 #          data = SiteHourTableB, id = BlocksJ, corstr = "ar1")
 # 
 # Coefficients:
-#   Estimate Std.err  Wald Pr(>|W|)    
-# (Intercept)          -0.9974  0.2245 19.73  8.9e-06 ***
-#   AvgDayMatJADBM1      -0.8737  0.2288 14.58  0.00013 ***
-#   AvgDayMatJADBM2       0.0582  0.1754  0.11  0.73981    
-# as.factor(Year)2012  -0.5933  0.3192  3.45  0.06310 .  
-# as.factor(Year)2013  -0.5341  0.3537  2.28  0.13102    
-# as.factor(Year)2014  -0.5371  0.3631  2.19  0.13904    
-# as.factor(Year)2015  -0.6976  0.3505  3.96  0.04654 *  
-#   as.factor(Year)2017  -0.0936  0.2696  0.12  0.72831    
-# as.factor(Year)2018  -0.5175  0.4944  1.10  0.29520    
-# as.factor(Year)2019  -0.2402  0.3069  0.61  0.43385    
+#   Estimate Std.err    Wald Pr(>|W|)    
+# (Intercept)       -1.8008  0.0295 3727.30  < 2e-16 ***
+#   AvgDayMatJADBM1   -0.4933  0.0657   56.43  5.8e-14 ***
+#   AvgDayMatJADBM2    0.2018  0.0513   15.46  8.4e-05 ***
+#   AvgYrBasisJAYBM1  -0.2911  0.0506   33.14  8.6e-09 ***
+#   AvgYrBasisJAYBM2   0.0395  0.0697    0.32     0.57    
 # ---
 #   Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 # 
@@ -607,48 +611,45 @@ summary(PODFinalj)
 # Estimated Scale Parameters:
 #   
 #   Estimate Std.err
-# (Intercept)     1.03   0.172
+# (Intercept)     0.99  0.0491
 # Link = identity 
 # 
 # Estimated Correlation Parameters:
 #   Estimate Std.err
-# alpha    0.918  0.0145
-# Number of clusters:   83  Maximum cluster size: 585
+# alpha    0.809  0.0109
+# Number of clusters:   2583  Maximum cluster size: 72 
 
 #Males
 dimnames(AvgDayMatM)<-list(NULL,c("ADBM1", "ADBM2"))
+dimnames(AvgYrBasisM)<-list(NULL,c("AYBM1","AYBM2"))
 PODFinalm = geeglm(PreAbsM ~ AvgDayMatM+as.factor(Year),family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB)
-summary(PODFinalm)
+PODFinalmY = geeglm(PreAbsM ~ AvgDayMatM+AvgYrBasisM,family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB)
+summary(PODFinalmY)
 # Call:
-#   geeglm(formula = PreAbsM ~ AvgDayMatM + as.factor(Year), family = binomial, 
+#   geeglm(formula = PreAbsM ~ AvgDayMatM + AvgYrBasisM, family = binomial, 
 #          data = SiteHourTableB, id = BlocksM, corstr = "ar1")
 # 
 # Coefficients:
-#   Estimate Std.err  Wald Pr(>|W|)    
-# (Intercept)          -1.2269  0.2530 23.51  1.2e-06 ***
-#   AvgDayMatMADBM1       0.5282  0.1390 14.45  0.00014 ***
-#   AvgDayMatMADBM2       0.6184  0.1581 15.30  9.2e-05 ***
-#   as.factor(Year)2012  -0.2734  0.2834  0.93  0.33478    
-# as.factor(Year)2013  -0.5071  0.2550  3.96  0.04672 *  
-#   as.factor(Year)2014  -0.9062  0.2805 10.44  0.00124 ** 
-#   as.factor(Year)2015  -0.7251  0.3607  4.04  0.04440 *  
-#   as.factor(Year)2017  -0.9963  0.3536  7.94  0.00484 ** 
-#   as.factor(Year)2018  -0.0583  0.4050  0.02  0.88548    
-# as.factor(Year)2019  -0.0460  0.3425  0.02  0.89315    
-# ---
+#   Estimate Std.err   Wald Pr(>|W|)    
+# (Intercept)       -2.0772  0.0368 3184.4  < 2e-16 ***
+#   AvgDayMatMADBM1    0.2198  0.0699    9.9   0.0017 ** 
+#   AvgDayMatMADBM2    0.4873  0.0752   41.9  9.4e-11 ***
+#   AvgYrBasisMAYBM1  -0.4800  0.0592   65.8  4.4e-16 ***
+#   AvgYrBasisMAYBM2  -0.5665  0.0812   48.7  3.0e-12 ***
+#   ---
 #   Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 # 
 # Correlation structure = ar1 
 # Estimated Scale Parameters:
 #   
 #   Estimate Std.err
-# (Intercept)     1.02   0.168
+# (Intercept)    0.999  0.0781
 # Link = identity 
 # 
 # Estimated Correlation Parameters:
 #   Estimate Std.err
-# alpha     0.83  0.0285
-# Number of clusters:   170  Maximum cluster size: 277
+# alpha    0.727    0.02
+# Number of clusters:   1082  Maximum cluster size: 168 
 
 # STEP 7: Construction of the ROC curve  
 #Females
@@ -774,70 +775,76 @@ library(pracma)
 
 #Probability of covariate #1: AvgDayBasisMat:
 #Female
-BootstrapParameters3<-rmvnorm(10000, coef(PODFinalf),summary(PODFinalf)$cov.unscaled)
-start=2; finish=5; Variable=SiteHourTableB$Julian; xlabel="Julian Day"; ylabel="Probability"  
+BootstrapParameters3<-rmvnorm(10000, coef(PODFinalfY),summary(PODFinalfY)$cov.unscaled)
+start=2; finish=3; Variable=SiteHourTableB$Julian; xlabel="Julian Day"; ylabel="Probability"  
 PlottingVar3<-seq(min(Variable), max(Variable), length=5000)
-CenterVar3<-model.matrix(PODFinalf)[,start:finish]*coef(PODFinalf)[c(start:finish)]
+CenterVar3<-model.matrix(PODFinalfY)[,start:finish]*coef(PODFinalfY)[c(start:finish)]
 BootstrapCoefs3<-BootstrapParameters3[,c(start:finish)]
-Basis3<-gam(rbinom(5000,1,0.5)~s(PlottingVar3, bs="cc",k=6), fit=F, family=binomial, knots=list(PlottingVar3=seq(1,366,length=6)))$X[,2:5]
-RealFit3<-Basis3%*%coef(PODFinalf)[c(start:finish)]
+Basis3<-gam(rbinom(5000,1,0.5)~s(PlottingVar3, bs="cc", k=4), fit=F, family=binomial, knots=list(PlottingVar2=seq(1,366,length=4)))$X[,2:3]
+RealFit3<-Basis3%*%coef(PODFinalfY)[c(start:finish)]
 RealFitCenter3<-RealFit3-mean(CenterVar3)
 RealFitCenter3a<-inv.logit(RealFitCenter3)
 BootstrapFits3<-Basis3%*%t(BootstrapCoefs3)
 quant.func3<-function(x){quantile(x,probs=c(0.025, 0.975))}
 cis3<-apply(BootstrapFits3, 1, quant.func3)-mean(CenterVar3)
 cis3a<-inv.logit(cis3)
-plot(PlottingVar3,(RealFitCenter3a), type="l", col=1,ylim=c(0, 1),xlab=xlabel, ylab=ylabel, xlim=c(1,366), main ="Julian Day" , cex.lab = 1.5, cex.axis=1.5)    
+
+#Base R Plotting
+title = paste(saveDir,"/BaseR_Julian Day_SocialGroups.png",sep="")
+png(title)
+plot(PlottingVar3,(RealFitCenter3a), type="l", col=1,ylim=c(0, 1),xlab=xlabel, ylab=ylabel, xlim=c(2011,2019), main = title , cex.lab = 1.5, cex.axis=1.5)    
 segments(PlottingVar3,(cis3a[1,]),PlottingVar3,(cis3a[2,]), col="grey")
 lines(PlottingVar3,(RealFitCenter3a),lwd=2, col=1)
 rug(PlottingVar3)
+dev.off()
 
-#Juvenile
-BootstrapParameters3<-rmvnorm(10000, coef(PODFinalj),summary(PODFinalj)$cov.unscaled)
-start=2; finish=5; Variable=SiteHourTableB$Julian; xlabel="Julian Day"; ylabel="Probability"  
-PlottingVar3<-seq(min(Variable), max(Variable), length=5000)
-CenterVar3<-model.matrix(PODFinalj)[,start:finish]*coef(PODFinalj)[c(start:finish)]
-BootstrapCoefs3<-BootstrapParameters3[,c(start:finish)]
-Basis3<-gam(rbinom(5000,1,0.5)~s(PlottingVar3, bs="cc",k=4), fit=F, family=binomial, knots=list(PlottingVar3=seq(1,366,length=6)))$X[,2:5]
-RealFit3<-Basis3%*%coef(PODFinalj)[c(start:finish)]
-RealFitCenter3<-RealFit3-mean(CenterVar3)
-RealFitCenter3a<-inv.logit(RealFitCenter3)
-BootstrapFits3<-Basis3%*%t(BootstrapCoefs3)
-quant.func3<-function(x){quantile(x,probs=c(0.025, 0.975))}
-cis3<-apply(BootstrapFits3, 1, quant.func3)-mean(CenterVar3)
-cis3a<-inv.logit(cis3)
-plot(PlottingVar3,(RealFitCenter3a), type="l", col=1,ylim=c(0, 1),xlab=xlabel, ylab=ylabel, xlim=c(1,366), main ="Julian Day" , cex.lab = 1.5, cex.axis=1.5)    
-segments(PlottingVar3,(cis3a[1,]),PlottingVar3,(cis3a[2,]), col="grey")
-lines(PlottingVar3,(RealFitCenter3a),lwd=2, col=1)
-rug(PlottingVar3)
+#ggplot
+# Calculate kernel density of Jday observations
+dJday = stats::density(Variable,na.rm = TRUE,n=5000,from=1,to=366)
+dens = data.frame(c(dJday$x, rev(dJday$x)), c(dJday$y, rep(0, length(dJday$y))))
+colnames(dens) = c("Day", "Density")
+dens$Density = dens$Density / 0.15 #max(dens$Density) # normalize kernel density
+if (min(cis3a[1,])<0){ # set kernel density at bottom of y axis
+  dens$Density = dens$Density - abs(min(cis3a[1,])) 
+} else {
+  dens$Density = dens$Density + min(cis3a[1,])
+}
 
-#Male
-BootstrapParameters3<-rmvnorm(10000, coef(PODFinalm),summary(PODFinalm)$cov.unscaled)
-start=2; finish=5; Variable=SiteHourTableB$Julian; xlabel="Julian Day"; ylabel="Probability"  
-PlottingVar3<-seq(min(Variable), max(Variable), length=5000)
-CenterVar3<-model.matrix(PODFinalm)[,start:finish]*coef(PODFinalm)[c(start:finish)]
-BootstrapCoefs3<-BootstrapParameters3[,c(start:finish)]
-Basis3<-gam(rbinom(5000,1,0.5)~s(PlottingVar3, bs="cc",k=6), fit=F, family=binomial, knots=list(PlottingVar3=seq(1,366,length=6)))$X[,2:5]
-RealFit3<-Basis3%*%coef(PODFinalm)[c(start:finish)]
-RealFitCenter3<-RealFit3-mean(CenterVar3)
-RealFitCenter3a<-inv.logit(RealFitCenter3)
-BootstrapFits3<-Basis3%*%t(BootstrapCoefs3)
-quant.func3<-function(x){quantile(x,probs=c(0.025, 0.975))}
-cis3<-apply(BootstrapFits3, 1, quant.func3)-mean(CenterVar3)
-cis3a<-inv.logit(cis3)
-plot(PlottingVar3,(RealFitCenter3a), type="l", col=1,ylim=c(0, 1),xlab=xlabel, ylab=ylabel, xlim=c(1,366), main ="Julian Day" , cex.lab = 1.5, cex.axis=1.5)    
-segments(PlottingVar3,(cis3a[1,]),PlottingVar3,(cis3a[2,]), col="grey")
-lines(PlottingVar3,(RealFitCenter3a),lwd=2, col=1)
-rug(PlottingVar3)
+plotDF = data.frame(PlottingVar3, RealFitCenter3a)
+colnames(plotDF) = c("Jday", "Fit")
 
-#Year (smooth)
-#Females
+ggplot(plotDF, aes(Jday, Fit),
+) + geom_polygon(data=dens,
+                 aes(Day,Density),
+                 fill=4,
+                 alpha=0.2
+) + geom_smooth(fill = "grey",
+                colour = "black",
+                aes(ymin=cis3a[1,], ymax=cis3a[2,]),
+                stat ="identity"
+) + labs(x = "Julian Day",
+         y = "Probability",
+         title = paste('Julian Day'),
+) + theme(axis.line = element_line(),
+          panel.background = element_blank()
+)
+
+ggtitle = paste(saveDir,"/Julian Day_SocialGroups.png",sep="")
+
+ggsave(
+  ggtitle,
+  device = "png") # save figure
+while (dev.cur() > 1) {
+  dev.off()
+} # close graphics device
+
+# Year as factor
 BootstrapParameters1<-rmvnorm(10000, coef(PODFinalf),summary(PODFinalf)$cov.unscaled)
-start=6; finish=8; Variable=SiteHourTableB$Year; xlabel="Year"; ylabel="Probability"  
+start=4; finish=10; Variable=SiteHourTableB$Year; xlabel="Year"; ylabel="Probability"  
 PlottingVar1<-seq(min(Variable), max(Variable), length=5000)
 CenterVar1<-model.matrix(PODFinalf)[,start:finish]*coef(PODFinalf)[c(start:finish)]
 BootstrapCoefs1<-BootstrapParameters1[,c(start:finish)]
-Basis1<-gam(rbinom(5000,1,0.5)~bs(PlottingVar1), fit=F, family=binomial, knots=list(PlottingVar1=seq(2011,2019,length=4)))$X[,2:4]
+Basis1<-gam(rbinom(5000,1,0.5)~as.factor(PlottingVar1), fit=F, family=binomial, knots=list(PlottingVar1=seq(2011,2019,length=3)))$X[,4:10]
 RealFit1<-Basis1%*%coef(PODFinalf)[c(start:finish)]
 RealFitCenter1<-RealFit1-mean(CenterVar1)
 RealFitCenter1a<-inv.logit(RealFitCenter1)
@@ -845,18 +852,185 @@ BootstrapFits1<-Basis1%*%t(BootstrapCoefs1)
 quant.func1<-function(x){quantile(x,probs=c(0.025, 0.975))}
 cis1<-apply(BootstrapFits1, 1, quant.func1)-mean(CenterVar1)
 cis1a<-inv.logit(cis1)
-plot(PlottingVar1,(RealFitCenter1a), type="l", col=1,ylim=c(0, 1),xlab=xlabel, ylab=ylabel, xlim=c(2011,2019), main ="Year" , cex.lab = 1.5, cex.axis=1.5)
+
+ggtitle = paste(saveDir,"/Probability of Year (SocialGroups).png",sep="")
+SiteHourTableB$prf = prf
+ggplot(SiteHourTableB, aes(x = Year, y = prf)) +
+  geom_boxplot(aes(fill = factor(Year)), alpha = .2)
+
+ggsave(
+  ggtitle,
+  device = "png") # save figure
+while (dev.cur() > 1) {
+  dev.off()
+} # close graphics device
+
+# Center intercept (1st level of year factor) at 0 and show other levels relative to it
+AdjustedYearCoefs = data.frame(
+  c(
+    BootstrapParameters1[, 1] - mean(BootstrapParameters1[, 1]),
+    BootstrapParameters1[, 2],
+    BootstrapParameters1[, 3],
+    BootstrapParameters1[, 4],
+    BootstrapParameters1[, 5],
+    BootstrapParameters1[, 6],
+    BootstrapParameters1[, 7],
+    BootstrapParameters1[, 8],
+    BootstrapParameters1[, 9]
+  ),
+  as.factor(rep(2011:2019, each = 10000))
+)
+colnames(AdjustedYearCoefs) = c("Coefficient", "Year")
+
+ggtitle = paste(saveDir,"/Year_SocialGroups.png",sep="")
+ggplot(AdjustedYearCoefs, aes(Year, Coefficient)
+) + geom_boxplot(
+) + theme(axis.line = element_line(),
+          panel.background = element_blank()
+) + labs(title = paste('Year'))
+
+ggsave(
+  ggtitle,
+  device = "png") # save figure
+while (dev.cur() > 1) {
+  dev.off()
+} # close graphics device
+
+# Year as smooth
+BootstrapParameters1<-rmvnorm(10000, coef(PODFinalfY),summary(PODFinalfY)$cov.unscaled)
+start=4; finish=5; Variable=SiteHourTableB$Year; xlabel="Year"; ylabel="Probability"  
+PlottingVar1<-seq(min(Variable), max(Variable), length=5000)
+CenterVar1<-model.matrix(PODFinalfY)[,start:finish]*coef(PODFinalfY)[c(start:finish)]
+BootstrapCoefs1<-BootstrapParameters1[,c(start:finish)]
+Basis1<-gam(rbinom(5000,1,0.5)~s(PlottingVar1, bs="cc",k=4), fit=F, family=binomial, knots=list(PlottingVar1=seq(2010,2019,length=4)))$X[,2:3]
+RealFit1<-Basis1%*%coef(PODFinalfY)[c(start:finish)]
+RealFitCenter1<-RealFit1-mean(CenterVar1)
+RealFitCenter1a<-inv.logit(RealFitCenter1)
+BootstrapFits1<-Basis1%*%t(BootstrapCoefs1)
+quant.func1<-function(x){quantile(x,probs=c(0.025, 0.975))}
+cis1<-apply(BootstrapFits1, 1, quant.func1)-mean(CenterVar1)
+cis1a<-inv.logit(cis1)
+
+#Base R Plotting
+title = paste(saveDir,"/BaseR_YearSmooth_SocialGroups.png",sep="")
+png(title)
+plot(PlottingVar1,(RealFitCenter1a), type="l", col=1,ylim=c(0, 1),xlab=xlabel, ylab=ylabel, xlim=c(2010,2019), main = title , cex.lab = 1.5, cex.axis=1.5)    
 segments(PlottingVar1,(cis1a[1,]),PlottingVar1,(cis1a[2,]), col="grey")
 lines(PlottingVar1,(RealFitCenter1a),lwd=2, col=1)
 rug(PlottingVar1)
+dev.off()
+
+#ggplot
+# Calculate kernel density of Jday observations
+dYear = stats::density(Variable,na.rm = TRUE,n=5000,from=2010,to=2019)
+dens = data.frame(c(dYear$x, rev(dYear$x)), c(dYear$y, rep(0, length(dYear$y))))
+colnames(dens) = c("Year", "Density")
+dens$Density = dens$Density / 2 #max(dens$Density) # normalize kernel density
+if (min(cis1a[1,])<0){ # set kernel density at bottom of y axis
+  dens$Density = dens$Density - abs(min(cis1a[1,])) 
+} else {
+  dens$Density = dens$Density + min(cis1a[1,])
+}
+
+plotDF = data.frame(PlottingVar1, RealFitCenter1a)
+colnames(plotDF) = c("Year", "Fit")
+
+ggplot(plotDF, aes(Year, Fit),
+) + geom_polygon(data=dens,
+                 aes(Year,Density),
+                 fill=4,
+                 alpha=0.2
+) + geom_smooth(fill = "grey",
+                colour = "black",
+                aes(ymin=cis1a[1,], ymax=cis1a[2,]),
+                stat ="identity"
+) + labs(x = "Year",
+         y = "Probability",
+         title = paste('Year'),
+) + theme(axis.line = element_line(),
+          panel.background = element_blank()
+)
+
+ggtitle = paste(saveDir,"/Year_SocialGroups.png",sep="")
+
+ggsave(
+  ggtitle,
+  device = "png") # save figure
+while (dev.cur() > 1) {
+  dev.off()
+} # close graphics device
 
 #Juvenile
+BootstrapParameters3<-rmvnorm(10000, coef(PODFinalj),summary(PODFinalj)$cov.unscaled)
+start=2; finish=3; Variable=SiteHourTableB$Julian; xlabel="Julian Day"; ylabel="Probability"  
+PlottingVar3<-seq(min(Variable), max(Variable), length=5000)
+CenterVar3<-model.matrix(PODFinalj)[,start:finish]*coef(PODFinalj)[c(start:finish)]
+BootstrapCoefs3<-BootstrapParameters3[,c(start:finish)]
+Basis3<-gam(rbinom(5000,1,0.5)~s(PlottingVar3, bs="cc", k=4), fit=F, family=binomial, knots=list(PlottingVar2=seq(1,366,length=4)))$X[,2:3]
+RealFit3<-Basis3%*%coef(PODFinalj)[c(start:finish)]
+RealFitCenter3<-RealFit3-mean(CenterVar3)
+RealFitCenter3a<-inv.logit(RealFitCenter3)
+BootstrapFits3<-Basis3%*%t(BootstrapCoefs3)
+quant.func3<-function(x){quantile(x,probs=c(0.025, 0.975))}
+cis3<-apply(BootstrapFits3, 1, quant.func3)-mean(CenterVar3)
+cis3a<-inv.logit(cis3)
+
+#Base R Plotting
+title = paste(saveDir,"/BaseR_Julian Day_MidSize.png",sep="")
+png(title)
+plot(PlottingVar3,(RealFitCenter3a), type="l", col=1,ylim=c(0, 1),xlab=xlabel, ylab=ylabel, xlim=c(1,366), main = title , cex.lab = 1.5, cex.axis=1.5)    
+segments(PlottingVar3,(cis3a[1,]),PlottingVar3,(cis3a[2,]), col="grey")
+lines(PlottingVar3,(RealFitCenter3a),lwd=2, col=1)
+rug(PlottingVar3)
+dev.off()
+
+#ggplot
+# Calculate kernel density of Jday observations
+dJday = stats::density(Variable,na.rm = TRUE,n=5000,from=1,to=366)
+dens = data.frame(c(dJday$x, rev(dJday$x)), c(dJday$y, rep(0, length(dJday$y))))
+colnames(dens) = c("Day", "Density")
+dens$Density = dens$Density / 0.15 #max(dens$Density) # normalize kernel density
+if (min(cis3a[1,])<0){ # set kernel density at bottom of y axis
+  dens$Density = dens$Density - abs(min(cis3a[1,])) 
+} else {
+  dens$Density = dens$Density + min(cis3a[1,])
+}
+
+plotDF = data.frame(PlottingVar3, RealFitCenter3a)
+colnames(plotDF) = c("Jday", "Fit")
+
+ggplot(plotDF, aes(Jday, Fit),
+) + geom_polygon(data=dens,
+                 aes(Day,Density),
+                 fill=4,
+                 alpha=0.2
+) + geom_smooth(fill = "grey",
+                colour = "black",
+                aes(ymin=cis3a[1,], ymax=cis3a[2,]),
+                stat ="identity"
+) + labs(x = "Julian Day",
+         y = "Probability",
+         title = paste('Julian Day'),
+) + theme(axis.line = element_line(),
+          panel.background = element_blank()
+)
+
+ggtitle = paste(saveDir,"/Julian Day_MidSize.png",sep="")
+
+ggsave(
+  ggtitle,
+  device = "png") # save figure
+while (dev.cur() > 1) {
+  dev.off()
+} # close graphics device
+
+# Year
 BootstrapParameters1<-rmvnorm(10000, coef(PODFinalj),summary(PODFinalj)$cov.unscaled)
-start=6; finish=8; Variable=SiteHourTableB$Year; xlabel="Year"; ylabel="Probability"  
+start=4; finish=10; Variable=SiteHourTableB$Year; xlabel="Year"; ylabel="Probability"  
 PlottingVar1<-seq(min(Variable), max(Variable), length=5000)
 CenterVar1<-model.matrix(PODFinalj)[,start:finish]*coef(PODFinalj)[c(start:finish)]
 BootstrapCoefs1<-BootstrapParameters1[,c(start:finish)]
-Basis1<-gam(rbinom(5000,1,0.5)~s(PlottingVar1,k=4), fit=F, family=binomial, knots=list(PlottingVar1=seq(2010,2019,length=4)))$X[,2:4]
+Basis1<-gam(rbinom(5000,1,0.5)~as.factor(PlottingVar1), fit=F, family=binomial, knots=list(PlottingVar1=seq(2011,2019,length=3)))$X[,4:10]
 RealFit1<-Basis1%*%coef(PODFinalj)[c(start:finish)]
 RealFitCenter1<-RealFit1-mean(CenterVar1)
 RealFitCenter1a<-inv.logit(RealFitCenter1)
@@ -864,18 +1038,187 @@ BootstrapFits1<-Basis1%*%t(BootstrapCoefs1)
 quant.func1<-function(x){quantile(x,probs=c(0.025, 0.975))}
 cis1<-apply(BootstrapFits1, 1, quant.func1)-mean(CenterVar1)
 cis1a<-inv.logit(cis1)
-plot(PlottingVar1,(RealFitCenter1a), type="l", col=1,ylim=c(0, 1),xlab=xlabel, ylab=ylabel, xlim=c(2010,2019), main ="Year" , cex.lab = 1.5, cex.axis=1.5)
+
+#Year as factor
+ggtitle = paste(saveDir,"/Probability of Year (MidSize).png",sep="")
+SiteHourTableB$prj = prj
+ggplot(SiteHourTableB, aes(x = Year, y = prj)) +
+  geom_boxplot(aes(fill = factor(Year)), alpha = .2)
+
+ggsave(
+  ggtitle,
+  device = "png") # save figure
+while (dev.cur() > 1) {
+  dev.off()
+} # close graphics device
+
+# Center intercept (1st level of year factor) at 0 and show other levels relative to it
+AdjustedYearCoefs = data.frame(
+  c(
+    BootstrapParameters1[, 1] - mean(BootstrapParameters1[, 1]),
+    BootstrapParameters1[, 2],
+    BootstrapParameters1[, 3],
+    BootstrapParameters1[, 4],
+    BootstrapParameters1[, 5],
+    BootstrapParameters1[, 6],
+    BootstrapParameters1[, 7],
+    BootstrapParameters1[, 8],
+    BootstrapParameters1[, 9]
+  ),
+  as.factor(rep(2011:2019, each = 10000))
+)
+colnames(AdjustedYearCoefs) = c("Coefficient", "Year")
+
+ggtitle = paste(saveDir,"/Year_MidSize.png",sep="")
+ggplot(AdjustedYearCoefs, aes(Year, Coefficient)
+) + geom_boxplot(
+) + theme(axis.line = element_line(),
+          panel.background = element_blank()
+) + labs(title = paste('Year'))
+
+ggsave(
+  ggtitle,
+  device = "png") # save figure
+while (dev.cur() > 1) {
+  dev.off()
+} # close graphics device
+
+# Year as smooth
+BootstrapParameters1<-rmvnorm(10000, coef(PODFinaljY),summary(PODFinaljY)$cov.unscaled)
+start=4; finish=5; Variable=SiteHourTableB$Year; xlabel="Year"; ylabel="Probability"  
+PlottingVar1<-seq(min(Variable), max(Variable), length=5000)
+CenterVar1<-model.matrix(PODFinaljY)[,start:finish]*coef(PODFinaljY)[c(start:finish)]
+BootstrapCoefs1<-BootstrapParameters1[,c(start:finish)]
+Basis1<-gam(rbinom(5000,1,0.5)~s(PlottingVar1, bs="cc",k=4), fit=F, family=binomial, knots=list(PlottingVar1=seq(2010,2019,length=4)))$X[,2:3]
+RealFit1<-Basis1%*%coef(PODFinaljY)[c(start:finish)]
+RealFitCenter1<-RealFit1-mean(CenterVar1)
+RealFitCenter1a<-inv.logit(RealFitCenter1)
+BootstrapFits1<-Basis1%*%t(BootstrapCoefs1)
+quant.func1<-function(x){quantile(x,probs=c(0.025, 0.975))}
+cis1<-apply(BootstrapFits1, 1, quant.func1)-mean(CenterVar1)
+cis1a<-inv.logit(cis1)
+
+#Base R Plotting
+title = paste(saveDir,"/BaseR_YearSmooth_MidSize.png",sep="")
+png(title)
+plot(PlottingVar1,(RealFitCenter1a), type="l", col=1,ylim=c(0, 1),xlab=xlabel, ylab=ylabel, xlim=c(2010,2019), main = title , cex.lab = 1.5, cex.axis=1.5)    
 segments(PlottingVar1,(cis1a[1,]),PlottingVar1,(cis1a[2,]), col="grey")
 lines(PlottingVar1,(RealFitCenter1a),lwd=2, col=1)
 rug(PlottingVar1)
+dev.off()
+
+#ggplot
+# Calculate kernel density of Jday observations
+dYear = stats::density(Variable,na.rm = TRUE,n=5000,from=2010,to=2019)
+dens = data.frame(c(dYear$x, rev(dYear$x)), c(dYear$y, rep(0, length(dYear$y))))
+colnames(dens) = c("Year", "Density")
+dens$Density = dens$Density / 6 #max(dens$Density) # normalize kernel density
+if (min(cis1a[1,])<0){ # set kernel density at bottom of y axis
+  dens$Density = dens$Density - abs(min(cis1a[1,])) 
+} else {
+  dens$Density = dens$Density + min(cis1a[1,])
+}
+
+plotDF = data.frame(PlottingVar1, RealFitCenter1a)
+colnames(plotDF) = c("Year", "Fit")
+
+ggplot(plotDF, aes(Year, Fit),
+) + geom_polygon(data=dens,
+                 aes(Year,Density),
+                 fill=4,
+                 alpha=0.2
+) + geom_smooth(fill = "grey",
+                colour = "black",
+                aes(ymin=cis1a[1,], ymax=cis1a[2,]),
+                stat ="identity"
+) + labs(x = "Year",
+         y = "Probability",
+         title = paste('Year'),
+) + theme(axis.line = element_line(),
+          panel.background = element_blank()
+)
+
+ggtitle = paste(saveDir,"/YearSmooth_Midsize.png",sep="")
+
+ggsave(
+  ggtitle,
+  device = "png") # save figure
+while (dev.cur() > 1) {
+  dev.off()
+} # close graphics device
 
 #Male
+BootstrapParameters3<-rmvnorm(10000, coef(PODFinalm),summary(PODFinalm)$cov.unscaled)
+start=2; finish=3; Variable=SiteHourTableB$Julian; xlabel="Julian Day"; ylabel="Probability"  
+PlottingVar3<-seq(min(Variable), max(Variable), length=5000)
+CenterVar3<-model.matrix(PODFinalm)[,start:finish]*coef(PODFinalm)[c(start:finish)]
+BootstrapCoefs3<-BootstrapParameters3[,c(start:finish)]
+Basis3<-gam(rbinom(5000,1,0.5)~s(PlottingVar3, bs="cc", k=4), fit=F, family=binomial, knots=list(PlottingVar2=seq(1,366,length=4)))$X[,2:3]
+RealFit3<-Basis3%*%coef(PODFinalm)[c(start:finish)]
+RealFitCenter3<-RealFit3-mean(CenterVar3)
+RealFitCenter3a<-inv.logit(RealFitCenter3)
+BootstrapFits3<-Basis3%*%t(BootstrapCoefs3)
+quant.func3<-function(x){quantile(x,probs=c(0.025, 0.975))}
+cis3<-apply(BootstrapFits3, 1, quant.func3)-mean(CenterVar3)
+cis3a<-inv.logit(cis3)
+
+#Base R Plotting
+title = paste(saveDir,"/BaseR_Julian Day_Male.png",sep="")
+png(title)
+plot(PlottingVar3,(RealFitCenter3a), type="l", col=1,ylim=c(0, 1),xlab=xlabel, ylab=ylabel, xlim=c(1,366), main = title , cex.lab = 1.5, cex.axis=1.5)    
+segments(PlottingVar3,(cis3a[1,]),PlottingVar3,(cis3a[2,]), col="grey")
+lines(PlottingVar3,(RealFitCenter3a),lwd=2, col=1)
+rug(PlottingVar3)
+dev.off()
+
+#ggplot
+# Calculate kernel density of Jday observations
+dJday = stats::density(Variable,na.rm = TRUE,n=5000,from=1,to=366)
+dens = data.frame(c(dJday$x, rev(dJday$x)), c(dJday$y, rep(0, length(dJday$y))))
+colnames(dens) = c("Day", "Density")
+dens$Density = dens$Density / 0.15 #max(dens$Density) # normalize kernel density
+if (min(cis3a[1,])<0){ # set kernel density at bottom of y axis
+  dens$Density = dens$Density - abs(min(cis3a[1,])) 
+} else {
+  dens$Density = dens$Density + min(cis3a[1,])
+}
+
+plotDF = data.frame(PlottingVar3, RealFitCenter3a)
+colnames(plotDF) = c("Jday", "Fit")
+
+ggplot(plotDF, aes(Jday, Fit),
+) + geom_polygon(data=dens,
+                 aes(Day,Density),
+                 fill=4,
+                 alpha=0.2
+) + geom_smooth(fill = "grey",
+                colour = "black",
+                aes(ymin=cis3a[1,], ymax=cis3a[2,]),
+                stat ="identity"
+) + labs(x = "Julian Day",
+         y = "Probability",
+         title = paste('Julian Day'),
+) + theme(axis.line = element_line(),
+          panel.background = element_blank()
+)
+
+ggtitle = paste(saveDir,"/Julian Day_Males.png",sep="")
+
+ggsave(
+  ggtitle,
+  device = "png") # save figure
+while (dev.cur() > 1) {
+  dev.off()
+} # close graphics device
+
+
+# Year
 BootstrapParameters1<-rmvnorm(10000, coef(PODFinalm),summary(PODFinalm)$cov.unscaled)
-start=6; finish=8; Variable=SiteHourTableB$Year; xlabel="Year"; ylabel="Probability"  
+start=4; finish=10; Variable=SiteHourTableB$Year; xlabel="Year"; ylabel="Probability"  
 PlottingVar1<-seq(min(Variable), max(Variable), length=5000)
 CenterVar1<-model.matrix(PODFinalm)[,start:finish]*coef(PODFinalm)[c(start:finish)]
 BootstrapCoefs1<-BootstrapParameters1[,c(start:finish)]
-Basis1<-gam(rbinom(5000,1,0.5)~bs(PlottingVar1), fit=F, family=binomial, knots=list(PlottingVar1=seq(2010,2019,length=4)))$X[,2:4]
+Basis1<-gam(rbinom(5000,1,0.5)~as.factor(PlottingVar1), fit=F, family=binomial, knots=list(PlottingVar1=seq(2011,2019,length=3)))$X[,4:10]
 RealFit1<-Basis1%*%coef(PODFinalm)[c(start:finish)]
 RealFitCenter1<-RealFit1-mean(CenterVar1)
 RealFitCenter1a<-inv.logit(RealFitCenter1)
@@ -883,20 +1226,111 @@ BootstrapFits1<-Basis1%*%t(BootstrapCoefs1)
 quant.func1<-function(x){quantile(x,probs=c(0.025, 0.975))}
 cis1<-apply(BootstrapFits1, 1, quant.func1)-mean(CenterVar1)
 cis1a<-inv.logit(cis1)
-plot(PlottingVar1,(RealFitCenter1a), type="l", col=1,ylim=c(0, 1),xlab=xlabel, ylab=ylabel, xlim=c(2010,2019), main ="Year" , cex.lab = 1.5, cex.axis=1.5)
+
+#Year as factor
+ggtitle = paste(saveDir,"/Probability of Year (Male).png",sep="")
+SiteHourTableB$prm = prm
+ggplot(SiteHourTableB, aes(x = Year, y = prm)) +
+  geom_boxplot(aes(fill = factor(Year)), alpha = .2)
+
+ggsave(
+  ggtitle,
+  device = "png") # save figure
+while (dev.cur() > 1) {
+  dev.off()
+} # close graphics device
+
+# Center intercept (1st level of year factor) at 0 and show other levels relative to it
+AdjustedYearCoefs = data.frame(
+  c(
+    BootstrapParameters1[, 1] - mean(BootstrapParameters1[, 1]),
+    BootstrapParameters1[, 2],
+    BootstrapParameters1[, 3],
+    BootstrapParameters1[, 4],
+    BootstrapParameters1[, 5],
+    BootstrapParameters1[, 6],
+    BootstrapParameters1[, 7],
+    BootstrapParameters1[, 8],
+    BootstrapParameters1[, 9]
+  ),
+  as.factor(rep(2011:2019, each = 10000))
+)
+colnames(AdjustedYearCoefs) = c("Coefficient", "Year")
+
+ggtitle = paste(saveDir,"/Year_Male.png",sep="")
+ggplot(AdjustedYearCoefs, aes(Year, Coefficient)
+) + geom_boxplot(
+) + theme(axis.line = element_line(),
+          panel.background = element_blank()
+) + labs(title = paste('Year'))
+
+ggsave(
+  ggtitle,
+  device = "png") # save figure
+while (dev.cur() > 1) {
+  dev.off()
+} # close graphics device
+
+# Year as smooth
+BootstrapParameters1<-rmvnorm(10000, coef(PODFinalmY),summary(PODFinalmY)$cov.unscaled)
+start=4; finish=5; Variable=SiteHourTableB$Year; xlabel="Year"; ylabel="Probability"  
+PlottingVar1<-seq(min(Variable), max(Variable), length=5000)
+CenterVar1<-model.matrix(PODFinalmY)[,start:finish]*coef(PODFinalmY)[c(start:finish)]
+BootstrapCoefs1<-BootstrapParameters1[,c(start:finish)]
+Basis1<-gam(rbinom(5000,1,0.5)~s(PlottingVar1, bs="cc",k=4), fit=F, family=binomial, knots=list(PlottingVar1=seq(2010,2019,length=4)))$X[,2:3]
+RealFit1<-Basis1%*%coef(PODFinalmY)[c(start:finish)]
+RealFitCenter1<-RealFit1-mean(CenterVar1)
+RealFitCenter1a<-inv.logit(RealFitCenter1)
+BootstrapFits1<-Basis1%*%t(BootstrapCoefs1)
+quant.func1<-function(x){quantile(x,probs=c(0.025, 0.975))}
+cis1<-apply(BootstrapFits1, 1, quant.func1)-mean(CenterVar1)
+cis1a<-inv.logit(cis1)
+
+#Base R Plotting
+title = paste(saveDir,"/BaseR_YearSmooth_Male.png",sep="")
+png(title)
+plot(PlottingVar1,(RealFitCenter1a), type="l", col=1,ylim=c(0, 1),xlab=xlabel, ylab=ylabel, xlim=c(2010,2019), main = title , cex.lab = 1.5, cex.axis=1.5)    
 segments(PlottingVar1,(cis1a[1,]),PlottingVar1,(cis1a[2,]), col="grey")
 lines(PlottingVar1,(RealFitCenter1a),lwd=2, col=1)
 rug(PlottingVar1)
+dev.off()
 
-#as.factor(Region)
-SiteHourTableB$prf = prf
-ggplot(SiteHourTableB, aes(x = Region, y = prf)) +
-  geom_boxplot(aes(fill = factor(Region)), alpha = .2)
+#ggplot
+# Calculate kernel density of Jday observations
+dYear = stats::density(Variable,na.rm = TRUE,n=5000,from=2010,to=2019)
+dens = data.frame(c(dYear$x, rev(dYear$x)), c(dYear$y, rep(0, length(dYear$y))))
+colnames(dens) = c("Year", "Density")
+dens$Density = dens$Density / 6 #max(dens$Density) # normalize kernel density
+if (min(cis1a[1,])<0){ # set kernel density at bottom of y axis
+  dens$Density = dens$Density - abs(min(cis1a[1,])) 
+} else {
+  dens$Density = dens$Density + min(cis1a[1,])
+}
 
-SiteHourTableB$prj = prj
-ggplot(SiteHourTableB, aes(x = Region, y = prj)) +
-  geom_boxplot(aes(fill = factor(Region)), alpha = .2)
+plotDF = data.frame(PlottingVar1, RealFitCenter1a)
+colnames(plotDF) = c("Year", "Fit")
 
-SiteHourTableB$prm = prm
-ggplot(SiteHourTableB, aes(x = Region, y = prm)) +
-  geom_boxplot(aes(fill = factor(Region)), alpha = .2)
+ggplot(plotDF, aes(Year, Fit),
+) + geom_polygon(data=dens,
+                 aes(Year,Density),
+                 fill=4,
+                 alpha=0.2
+) + geom_smooth(fill = "grey",
+                colour = "black",
+                aes(ymin=cis1a[1,], ymax=cis1a[2,]),
+                stat ="identity"
+) + labs(x = "Year",
+         y = "Probability",
+         title = paste('Year'),
+) + theme(axis.line = element_line(),
+          panel.background = element_blank()
+)
+
+ggtitle = paste(saveDir,"/YearSmooth_Male.png",sep="")
+
+ggsave(
+  ggtitle,
+  device = "png") # save figure
+while (dev.cur() > 1) {
+  dev.off()
+} # close graphics device

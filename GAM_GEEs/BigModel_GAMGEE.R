@@ -29,6 +29,7 @@ library(car) #for ANOVA
 ## STEP 1: the data ##
 #Hourly data
 dir = paste("I:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites")
+saveDir = paste("I:/My Drive/GofAK_TPWS_metadataReduced/Plots/All_Sites", sep="")
 fileName = paste("I:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites/AllSitesGrouped_Binary_GAMGEE_ROW.csv",sep="") #setting the directory
 HourTable = read.csv(fileName)
 HourTable = na.omit(HourTable)
@@ -134,7 +135,7 @@ VIF(GLM1)
 
 ## STEP 4: Model selection - covariate preparation ##
 # Construct variance-covariance matrices for cyclic covariates:
-AvgDayBasis <- gam(PreAbs~s(Julian, bs ="cc", k=-1), fit=F, data = SiteHourTableB, family =binomial, knots = list(HOUR=seq(1,366,length=6)))$X[,2:5]
+AvgDayBasis <- gam(PreAbs~s(Julian, bs ="cc", k=4), fit=F, data = SiteHourTableB, family =binomial, knots = list(HOUR=seq(1,366,length=4)))$X[,2:3]
 AvgDayMat = as.matrix(AvgDayBasis)
 
 # Selection of the correct form (linear or smooth) for the covariates available at a single scale.
@@ -282,13 +283,41 @@ QICmod3BB
 #AvgDayMat
 #as.factor(Region)
 
-dimnames(AvgDayMat)<-list(NULL,c("ADBM1", "ADBM2", "ADBM3", "ADBM4"))
-PODFinal = geeglm(PreAbs ~ bs(Year)+AvgDayMat+as.factor(Region),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
-
-anova(PODFinal)
-#bs(Year)           3 401    <2e-16 ***
-#AvgDayMat          4 279    <2e-16 ***
-#as.factor(Region)  1   4     0.061 .  
+dimnames(AvgDayMat)<-list(NULL,c("ADBM1", "ADBM2"))
+PODFinal = geeglm(PreAbs ~ as.factor(Year)+AvgDayMat+as.factor(Region),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
+summary(PODFinal)
+# Call:
+#   geeglm(formula = PreAbs ~ as.factor(Year) + AvgDayMat + as.factor(Region), 
+#          family = binomial, data = SiteHourTableB, id = Blocks, corstr = "ar1")
+# 
+# Coefficients:
+#   Estimate Std.err   Wald Pr(>|W|)    
+# (Intercept)           -0.3878  0.0753  26.52  2.6e-07 ***
+#   as.factor(Year)2011    0.6502  0.0973  44.64  2.4e-11 ***
+#   as.factor(Year)2012    0.2981  0.1083   7.57  0.00593 ** 
+#   as.factor(Year)2013   -0.7764  0.1265  37.70  8.2e-10 ***
+#   as.factor(Year)2014   -0.3868  0.1337   8.37  0.00382 ** 
+#   as.factor(Year)2015   -0.2854  0.1451   3.87  0.04925 *  
+#   as.factor(Year)2017   -0.1276  0.1340   0.91  0.34090    
+# as.factor(Year)2018    0.5581  0.1695  10.84  0.00100 ***
+#   as.factor(Year)2019    0.4181  0.1391   9.04  0.00264 ** 
+#   AvgDayMatADBM1        -0.1682  0.0434  15.02  0.00011 ***
+#   AvgDayMatADBM2         0.4633  0.0401 133.32  < 2e-16 ***
+#   as.factor(Region)GOA  -0.1655  0.0907   3.33  0.06821 .  
+# ---
+#   Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+# 
+# Correlation structure = ar1 
+# Estimated Scale Parameters:
+#   
+#   Estimate Std.err
+# (Intercept)    0.989 0.00937
+# Link = identity 
+# 
+# Estimated Correlation Parameters:
+#   Estimate Std.err
+# alpha    0.762 0.00465
+# Number of clusters:   3492  Maximum cluster size: 54 
 
 # STEP 7: Construction of the ROC curve     
 pr <- predict(PODFinal, type="response")  
