@@ -24,7 +24,8 @@ library(lubridate)
 library(regclass)
 library(mgcv)
 library(ChemoSpecUtils)
-library(car) #for ANOVA
+library(car)            # to run an ANOVA
+library(splines2)       # to use mSpline for the GEEs
 
 ## STEP 1: the data ##
 #Hourly data

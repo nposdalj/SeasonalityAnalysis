@@ -27,10 +27,13 @@ fileName = paste(saveWorkspace,site,'_SiteSpecific_gamgeeOutput.RData',sep="")
 load(fileName)
 
 # Plot Julian Day ---------------------------------------------------------
+if (site == 'CB'){
+  BasePlot_JD_Year(PODFinal,SiteHourTableB)
+  ggPlot_JD_Year(PODFinal, SiteHourTableB)
+} else {
 BasePlot_JD(PODFinal,SiteHourTableB)
 ggPlot_JD(PODFinal,SiteHourTableB)
-
-
+}
 
 # Plot Year ---------------------------------------------------------------
 if (site == 'CB'){

@@ -73,14 +73,14 @@ BlockMod<-glm(PreAbs~
 }
 
 acf(residuals(BlockMod), lag.max = 1000, ylim=c(0,0.1))
-acf(residuals(BlockMod), lag.max = 1000, ylim=c(0,0.1), xlim =c(600,700)) 
-#CB - at hour 602 it drops below the CI intervals (approximately 25 days)
+acf(residuals(BlockMod), lag.max = 1000, ylim=c(0,0.1), xlim =c(600,640)) 
+#CB - at hour 628 it drops below the CI intervals (approximately 25 days)
 #PT - at hour 286
 #QN - at hour 867
 #BD - at hour 682
 
 if (site == 'CB'){
-  ACFval = 602
+  ACFval = 628
 } else if (site == 'PT'){
   ACFval = 286
 } else if (site == 'QN'){
@@ -126,9 +126,36 @@ Anova(BlockMod)
 summary(BlockMod)
 
 #CB
-# bs(Julian)          1682  3     <2e-16 ***
-#   TimeLost               1  1       0.22    
-# as.factor(Year)     1099  7     <2e-16 ***
+# Call:
+#   glm(formula = PreAbs ~ bs(Julian, k = 4) + TimeLost + bs(Year, 
+#                                                            k = 4), family = binomial, data = SiteHourTable)
+# 
+# Deviance Residuals: 
+#   Min      1Q  Median      3Q     Max  
+# -1.560  -1.087  -0.709   1.178   1.996  
+# 
+# Coefficients: (1 not defined because of singularities)
+# Estimate Std. Error z value Pr(>|z|)    
+# (Intercept)         -0.1060     0.1945   -0.55    0.586    
+# bs(Julian, k = 4)1  -0.7921     0.1994   -3.97  7.1e-05 ***
+#   bs(Julian, k = 4)2   1.1081     0.2100    5.28  1.3e-07 ***
+#   bs(Julian, k = 4)3   0.5918     0.2108    2.81    0.005 ** 
+#   bs(Julian, k = 4)4   0.9497     0.1957    4.85  1.2e-06 ***
+#   TimeLost             0.0223     0.0152    1.46    0.143    
+# bs(Year, k = 4)1    -0.1182     0.0474   -2.49    0.013 *  
+#   bs(Year, k = 4)2    -1.0626     0.0613  -17.34  < 2e-16 ***
+#   bs(Year, k = 4)3    -1.5080     0.0962  -15.67  < 2e-16 ***
+#   bs(Year, k = 4)4         NA         NA      NA       NA    
+# ---
+#   Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+# 
+# (Dispersion parameter for binomial family taken to be 1)
+# 
+# Null deviance: 62456  on 45353  degrees of freedom
+# Residual deviance: 59172  on 45345  degrees of freedom
+# AIC: 59190
+# 
+# Number of Fisher Scoring iterations: 4
 
 #PT 
 # bs(Julian)    289.0  3     <2e-16 ***
@@ -373,8 +400,8 @@ if (site == 'CB'){
   #CB
   dimnames(AvgDayMat)<-list(NULL,c("ADBM1", "ADBM2"))
   PODFinal = geeglm(PreAbs ~ mSpline(Year,
-                                    knots=quantile(Year, probs=c(0.333,0.666)),
-                                    Boundary.knots=c(2011,2019)) + AvgDayMat,family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
+                                     knots=quantile(Year, probs=c(0.333,0.666)),
+                                     Boundary.knots=c(2011,2019)) + AvgDayMat,family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
 } else {
   dimnames(AvgDayMat)<-list(NULL,c("ADBM1", "ADBM2"))
   PODFinal = geeglm(PreAbs ~ AvgDayMat,family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
@@ -399,8 +426,12 @@ if (site == 'CB'){
 anova(PODFinal)
 
 #CB
-#Df     X2 P(>|Chi|)    
-
+# Df      X2
+# mSpline(Year, knots = quantile(Year, probs = c(0.333, 0.666)), Boundary.knots = c(2011, 2019))  5 25.9462
+# AvgDayMat                                                                                       2  4.7955
+# P(>|Chi|)    
+# mSpline(Year, knots = quantile(Year, probs = c(0.333, 0.666)), Boundary.knots = c(2011, 2019)) 9.141e-05 ***
+#   AvgDayMat                                                                                        0.09092 .  
 
 #BD
 # Df     X2 P(>|Chi|)  
@@ -415,6 +446,74 @@ anova(PODFinal)
 # AvgDayMat  2 5.93     0.052 .
 
 summary(PODFinal)
+
+#CB
+# Call:
+#   geeglm(formula = PreAbs ~ mSpline(Year, knots = quantile(Year, 
+#                                                            probs = c(0.333, 0.666)), Boundary.knots = c(2011, 2019)) + 
+#            AvgDayMat, family = binomial, data = SiteHourTableB, id = Blocks, 
+#          corstr = "ar1")
+# 
+# Coefficients:
+#   Estimate
+# (Intercept)                                                                                       0.6553
+# mSpline(Year, knots = quantile(Year, probs = c(0.333, 0.666)), Boundary.knots = c(2011, 2019))1  -0.9283
+# mSpline(Year, knots = quantile(Year, probs = c(0.333, 0.666)), Boundary.knots = c(2011, 2019))2  -1.6183
+# mSpline(Year, knots = quantile(Year, probs = c(0.333, 0.666)), Boundary.knots = c(2011, 2019))3  -3.4238
+# mSpline(Year, knots = quantile(Year, probs = c(0.333, 0.666)), Boundary.knots = c(2011, 2019))4  -1.0889
+# mSpline(Year, knots = quantile(Year, probs = c(0.333, 0.666)), Boundary.knots = c(2011, 2019))5  -0.3674
+# AvgDayMatADBM1                                                                                   -0.0412
+# AvgDayMatADBM2                                                                                    0.3936
+# Std.err
+# (Intercept)                                                                                      0.4083
+# mSpline(Year, knots = quantile(Year, probs = c(0.333, 0.666)), Boundary.knots = c(2011, 2019))1  0.7045
+# mSpline(Year, knots = quantile(Year, probs = c(0.333, 0.666)), Boundary.knots = c(2011, 2019))2  1.1886
+# mSpline(Year, knots = quantile(Year, probs = c(0.333, 0.666)), Boundary.knots = c(2011, 2019))3  1.7208
+# mSpline(Year, knots = quantile(Year, probs = c(0.333, 0.666)), Boundary.knots = c(2011, 2019))4  1.1547
+# mSpline(Year, knots = quantile(Year, probs = c(0.333, 0.666)), Boundary.knots = c(2011, 2019))5  0.4491
+# AvgDayMatADBM1                                                                                   0.1753
+# AvgDayMatADBM2                                                                                   0.1805
+# Wald
+# (Intercept)                                                                                     2.58
+# mSpline(Year, knots = quantile(Year, probs = c(0.333, 0.666)), Boundary.knots = c(2011, 2019))1 1.74
+# mSpline(Year, knots = quantile(Year, probs = c(0.333, 0.666)), Boundary.knots = c(2011, 2019))2 1.85
+# mSpline(Year, knots = quantile(Year, probs = c(0.333, 0.666)), Boundary.knots = c(2011, 2019))3 3.96
+# mSpline(Year, knots = quantile(Year, probs = c(0.333, 0.666)), Boundary.knots = c(2011, 2019))4 0.89
+# mSpline(Year, knots = quantile(Year, probs = c(0.333, 0.666)), Boundary.knots = c(2011, 2019))5 0.67
+# AvgDayMatADBM1                                                                                  0.06
+# AvgDayMatADBM2                                                                                  4.75
+# Pr(>|W|)
+# (Intercept)                                                                                        0.108
+# mSpline(Year, knots = quantile(Year, probs = c(0.333, 0.666)), Boundary.knots = c(2011, 2019))1    0.188
+# mSpline(Year, knots = quantile(Year, probs = c(0.333, 0.666)), Boundary.knots = c(2011, 2019))2    0.173
+# mSpline(Year, knots = quantile(Year, probs = c(0.333, 0.666)), Boundary.knots = c(2011, 2019))3    0.047
+# mSpline(Year, knots = quantile(Year, probs = c(0.333, 0.666)), Boundary.knots = c(2011, 2019))4    0.346
+# mSpline(Year, knots = quantile(Year, probs = c(0.333, 0.666)), Boundary.knots = c(2011, 2019))5    0.413
+# AvgDayMatADBM1                                                                                     0.814
+# AvgDayMatADBM2                                                                                     0.029
+# 
+# (Intercept)                                                                                      
+# mSpline(Year, knots = quantile(Year, probs = c(0.333, 0.666)), Boundary.knots = c(2011, 2019))1  
+# mSpline(Year, knots = quantile(Year, probs = c(0.333, 0.666)), Boundary.knots = c(2011, 2019))2  
+# mSpline(Year, knots = quantile(Year, probs = c(0.333, 0.666)), Boundary.knots = c(2011, 2019))3 *
+#   mSpline(Year, knots = quantile(Year, probs = c(0.333, 0.666)), Boundary.knots = c(2011, 2019))4  
+# mSpline(Year, knots = quantile(Year, probs = c(0.333, 0.666)), Boundary.knots = c(2011, 2019))5  
+# AvgDayMatADBM1                                                                                   
+# AvgDayMatADBM2                                                                                  *
+#   ---
+#   Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+# 
+# Correlation structure = ar1 
+# Estimated Scale Parameters:
+#   
+#   Estimate Std.err
+# (Intercept)     1.01  0.0392
+# Link = identity 
+# 
+# Estimated Correlation Parameters:
+#   Estimate Std.err
+# alpha    0.938 0.00479
+# Number of clusters:   80  Maximum cluster size: 603 
 
 #QN
 # Call:
@@ -478,37 +577,6 @@ summary(PODFinal)
   #Estimate Std.err
 #alpha     0.94  0.0106
 #Number of clusters:   26  Maximum cluster size: 683 
-
-#CB
-#Call:
- # geeglm(formula = PreAbs ~ AvgDayMat + as.factor(Year), family = binomial, 
-         #data = SiteHourTableB, id = Blocks, corstr = "ar1")
-
-#Coefficients:
- # Estimate Std.err Wald Pr(>|W|)   
-#(Intercept)           0.7046  0.4057 3.02   0.0824 . 
-#AvgDayMatADBM1        0.0163  0.1902 0.01   0.9316   
-#AvgDayMatADBM2        0.3098  0.1785 3.01   0.0827 . 
-#as.factor(Year)2012  -0.8651  0.4799 3.25   0.0714 . 
-#as.factor(Year)2013  -0.8953  0.4552 3.87   0.0492 * 
-  #as.factor(Year)2014  -1.2585  0.4488 7.86   0.0050 **
-  #as.factor(Year)2015  -1.4030  0.4836 8.42   0.0037 **
-  #as.factor(Year)2017  -0.8823  0.4725 3.49   0.0619 . 
-#as.factor(Year)2018  -1.0036  0.7794 1.66   0.1979   
-#as.factor(Year)2019  -0.3235  0.4257 0.58   0.4474   
-
-#Correlation structure = ar1 
-#Estimated Scale Parameters:
-  
-  #Estimate Std.err
-#(Intercept)     1.01  0.0448
-#Link = identity 
-
-#Estimated Correlation Parameters:
-  #Estimate Std.err
-#alpha    0.939 0.00471
-#Number of clusters:   80  Maximum cluster size: 603 
-
 
 # Step 9: Construction of the ROC curve    --------------------------------
 pr <- predict(PODFinal, type="response")  
