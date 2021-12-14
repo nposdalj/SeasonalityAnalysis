@@ -1,15 +1,15 @@
 clearvars
 close all
 %% Parameters defined by user
-filePrefix = 'Wake'; % File name to match. 
-siteabrev = 'Wake'; %abbreviation of site.
-titleNAME = 'Wake';
+filePrefix = 'GofAK_CB'; % File name to match. 
+siteabrev = 'CB'; %abbreviation of site.
+titleNAME = 'Continental Slope';
 sp = 'Pm'; % your species code
-tpwsPath = ['I:\My Drive\CentralPac_TPWS_metadataReduced\',filePrefix,'\TPWS_125\TPWS2\TPWS3\']; %directory of TPWS files
+tpwsPath = ['I:\My Drive\GofAK_TPWS_metadataReduced\TPWS_125\',filePrefix,'\TPWS_125\TPWS2\TPWS3\']; %directory of TPWS files
 %% load data from step 3
-filename = ['I:\My Drive\CentralPac_TPWS_metadataReduced\Wake\Seasonality\',siteabrev,'_workspaceStep3'];
+filename = ['I:\My Drive\GofAK_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev,'\',siteabrev,'_workspaceStep3'];
 load(filename);
-saveDir = ['I:\My Drive\CentralPac_TPWS_metadataReduced\Wake\Seasonality']; %specify directory to save files
+saveDir = ['I:\My Drive\GofAK_TPWS_metadataReduced\Plots']; %specify directory to save files
 %% combine tables into one
 if strcmp(siteabrev,'KOA') == 1 || strcmp(siteabrev,'KS')
     meanTAB = array2table([meantab365.Day meantab365.HoursPropJU meantab365.HoursPropMA]);

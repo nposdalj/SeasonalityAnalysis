@@ -21,15 +21,23 @@ library(splines2)       # to use mSpline for the GEEs
 source('C:/Users/nposd/Documents/GitHub/SeasonalityAnalysis/GAM_GEEs/GAMGEE_Plotting_Functions.R')
 
 # Load Workspace --------------------------------------------------
-#site = 'BSAI'
-if (exists("site")){
+site = 'CB'
+sex = 'Social Groups'
 saveWorkspace = paste("I:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",site,'/',sep="")
-  fileName = paste(saveWorkspace,site,'_RegionSpecific_gamgeeOutput.RData',sep="")
+fileName = paste(saveWorkspace,site,'_SiteSpecific_gamgeeOutput_sexClasses.RData',sep="")
 load(fileName)
-}else{
-  saveWorkspace = paste("I:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites/")
-  fileName = paste(saveWorkspace,'BigModel_gamgeeOutput.RData',sep="")
-  load(fileName)
+
+# Set up Sex Classes --------------------------------------------------
+if (sex == 'Social Groups'){
+  PODFinal = PODFinalF
+}
+
+if (sex == 'Mid Size'){
+  PODFinal = PODFinalJ
+}
+
+if (sex == 'Male'){
+  PODFinal = PODFinalM
 }
 
 # Plot Julian Day ---------------------------------------------------------
@@ -37,15 +45,11 @@ if (site == 'CB'){
   BasePlot_JD_Year(PODFinal,SiteHourTableB)
   ggPlot_JD_Year(PODFinal, SiteHourTableB)
 } else {
-BasePlot_JD(PODFinal,SiteHourTableB)
-ggPlot_JD(PODFinal,SiteHourTableB)
+BasePlot_JD_sex(PODFinal,SiteHourTableB,sex)
+ggPlot_JD_sex(PODFinal,SiteHourTableB,sex)
 }
 
 # Plot Year ---------------------------------------------------------------
 if (site == 'CB'){
   ggPlot_Year(PODFinal,SiteHourTableB)
 }
-
-# Plot Site ---------------------------------------------------------------
-ggPlot_Site(PODFinal,SiteHourTableB,site)
-ggPlot_Site_asFactor(PODFinal,SiteHourTableB,site)

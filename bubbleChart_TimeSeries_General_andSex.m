@@ -2,9 +2,9 @@
 clear all;close all;clc;
 
 %% load data
-siteName = 'KS';
+siteName = 'PT';
 DataDir = 'I:\My Drive\GofAK_TPWS_metadataReduced\SeasonalityAnalysis';
-saveDirectory = 'I:\My Drive\GofAK_TPWS_metadataReduced\Plots';
+saveDirectory = 'I:\My Drive\Manuscripts\GOA\Figures';
 %% Retime data weekly
 load([DataDir,'\',siteName,'\',siteName,'_workspaceStep2.mat']);
 clear mean
@@ -81,8 +81,8 @@ blgd.NumBubbles = 3;
 set(gca,'ydir','reverse')
 bubblelim([1 round(max(WeekData.NormBin))]);
 xlim([0,53])
-% ylim([2016.75,2017.25])
 ylabel('General')
+set(gca,'xticklabel',[])
 
 subplot(3,1,2)
 years = unique(dataWeek.Year);
@@ -109,7 +109,7 @@ bubblelim([1 round(max(dataWeek.JuvenileNormBin))]);
 xlim([0,53])
 % ylim([2016.75,2017.25])
 ylabel('Mid-size')
-
+set(gca,'xticklabel',[])
 
 %fBubble3 = figure('Position',[411 1008 816 160]);
 subplot(3,1,3)
@@ -136,7 +136,7 @@ bubblelim([1 round(max(dataWeek.MaleNormBin))]);
 xlim([0,53])
 xlabel('Week of the year')
 % ylim([2016.75,2017.25])
-ylabel('Adult Male')
+ylabel('Adult Males')
 
 else
     
@@ -168,6 +168,7 @@ bubblelim([1 round(max(WeekData.NormBin))]);
 xlim([0,53])
 % ylim([2016.75,2017.25])
 ylabel('General')
+set(gca,'xticklabel',[])
 
 % Social Group
 subplot(4,1,2)
@@ -193,8 +194,8 @@ set(gca,'ydir','reverse')
 bubblelim([1 round(max(dataWeek.FemaleNormBin))]);
 xlim([0,53])
 % ylim([2016.75,2017.25])
-ylabel('Social Group')
-
+ylabel('Social Groups')
+set(gca,'xticklabel',[])
 
 subplot(4,1,3)
 blue = '#fc8d62';%'#349987';
@@ -220,7 +221,7 @@ bubblelim([1 round(max(dataWeek.JuvenileNormBin))]);
 xlim([0,53])
 % ylim([2016.75,2017.25])
 ylabel('Mid-size')
-
+set(gca,'xticklabel',[])
 
 %fBubble3 = figure('Position',[411 1008 816 160]);
 subplot(4,1,4)
@@ -247,9 +248,10 @@ bubblelim([1 round(max(dataWeek.MaleNormBin))]);
 xlim([0,53])
 xlabel('Week of the year')
 % ylim([2016.75,2017.25])
-ylabel('Adult Male')
+ylabel('Adult Males')
 end
 
 %% save plot
-weeklyfn = [saveDirectory,'\',siteName,'\',siteName,'_BubbleTimeSeries.png'];
-saveas(gcf,fullfile(weeklyfn),'png')
+set(gcf,'Position',[-1165         552         812         476])
+weeklyfn = [saveDirectory,'\',siteName,'_BubbleTimeSeries.pdf'];
+exportgraphics(gcf,weeklyfn,'ContentType','vector','Resolution',300);
