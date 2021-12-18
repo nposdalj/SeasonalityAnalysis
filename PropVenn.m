@@ -1,9 +1,9 @@
 clearvars
 close all
 %% Parameters defined by user
-filePrefix = 'GofAK_CB'; % File name to match. 
-siteabrev = 'CB'; %abbreviation of site.
-titleNAME = 'Continental Slope';
+filePrefix = 'ALEUT01KS'; % File name to match. 
+siteabrev = 'KS'; %abbreviation of site.
+titleNAME = 'Kiska Island';
 sp = 'Pm'; % your species code
 tpwsPath = ['I:\My Drive\GofAK_TPWS_metadataReduced\TPWS_125\',filePrefix,'\TPWS_125\TPWS2\TPWS3\']; %directory of TPWS files
 %% load data from step 3

@@ -399,6 +399,10 @@ if (region == 'BSAI'){
   PODFinal = geeglm(PreAbs ~ mSpline(Year,
                                                knots=quantile(Year, probs=c(0.333,0.666)),
                                                Boundary.knots=c(2011,2019))+AvgDayMat,family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
+  PODFinal_Site = geeglm(PreAbs ~ mSpline(Year,
+                                     knots=quantile(Year, probs=c(0.333,0.666)),
+                                     Boundary.knots=c(2011,2019))+AvgDayMat+as.factor(Site),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
+
 }
 
 # STEP 8: Interpreting the summary of the model --------------------------
@@ -429,6 +433,13 @@ anova(PODFinal)
 #Df     X2 P(>|Chi|)    
 # mSpline(Year, knots = quantile(Year, probs = c(0.333, 0.666)), Boundary.knots = c(2011, 2019))  5 462   < 2e-16 ***
 #   AvgDayMat                                                                                       2  50   1.2e-11 ***
+
+if (region == 'GOA'){
+anova(PODFinal_Site)
+# mSpline(Year, knots = quantile(Year, probs = c(0.333, 0.666)), Boundary.knots = c(2011, 2019))  5 461.55 < 2.2e-16 ***
+#   AvgDayMat                                                                                       2  50.27 1.212e-11 ***
+#   as.factor(Site)                                                                                 4 341.25 < 2.2e-16 ***
+}
 
 summary(PODFinal)
 

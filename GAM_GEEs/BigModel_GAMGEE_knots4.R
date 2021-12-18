@@ -265,6 +265,9 @@ QICmod3BB
 dimnames(AvgDayMat)<-list(NULL,c("ADBM1", "ADBM2"))
 PODFinal = geeglm(PreAbs ~ mSpline(Year,
                                    knots=quantile(Year, probs=c(0.333,0.666)),
+                                   Boundary.knots=c(2010,2019))+AvgDayMat,family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
+PODFinal_Region = geeglm(PreAbs ~ mSpline(Year,
+                                   knots=quantile(Year, probs=c(0.333,0.666)),
                                    Boundary.knots=c(2010,2019))+AvgDayMat+as.factor(Region),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
 
 # STEP 8: Interpreting the summary of the model --------------------------
@@ -274,6 +277,11 @@ PODFinal = geeglm(PreAbs ~ mSpline(Year,
 # P - values are the upper tailed probabilities from the chi-squared random variable with 1 degree of freedom...
 # distribution and test whether the true parameter value is different from zero
 anova(PODFinal)
+# Df     X2 P(>|Chi|)    
+# mSpline(Year, knots = quantile(Year, probs = c(0.333, 0.666)), Boundary.knots = c(2010, 2019))  5 475.70 < 2.2e-16 ***
+#   AvgDayMat                                                                                       2  91.76 < 2.2e-16 ***
+
+anova(PODFinal_Region)
 
 # Df  X2 P(>|Chi|)    
 # mSpline(Year, knots = quantile(Year, probs = c(0.333, 0.666)), Boundary.knots = c(2010, 2019))  5 476    <2e-16 ***
@@ -358,153 +366,3 @@ auc <- performance(pred, measure="auc")
 # Step 10: Save Workspace -------------------------------------------------
 fileName = paste(saveWorkspace,'/BigModel_gamgeeOutput.RData',sep="")
 save.image(file = fileName)
-
-#Probability of covariate #1: AvgDayBasisMat:
-BootstrapParameters3<-rmvnorm(10000, coef(PODFinal),summary(PODFinal)$cov.unscaled)
-start=10; finish=11; Variable=SiteHourTableB$Julian; xlabel="Julian Day"; ylabel="Probability"  
-PlottingVar3<-seq(min(Variable), max(Variable), length=5000)
-CenterVar3<-model.matrix(PODFinal)[,start:finish]*coef(PODFinal)[c(start:finish)]
-BootstrapCoefs3<-BootstrapParameters3[,c(start:finish)]
-Basis3<-gam(rbinom(5000,1,0.5)~s(PlottingVar3, bs="cc", k=4), fit=F, family=binomial, knots=list(PlottingVar2=seq(1,366,length=4)))$X[,2:3]
-RealFit3<-Basis3%*%coef(PODFinal)[c(start:finish)]
-RealFitCenter3<-RealFit3-mean(CenterVar3)
-RealFitCenter3a<-inv.logit(RealFitCenter3)
-BootstrapFits3<-Basis3%*%t(BootstrapCoefs3)
-quant.func3<-function(x){quantile(x,probs=c(0.025, 0.975))}
-cis3<-apply(BootstrapFits3, 1, quant.func3)-mean(CenterVar3)
-cis3a<-inv.logit(cis3)
-
-#Base R Plotting
-title = paste(saveDir,"/BaseR_Julian Day.png",sep="")
-png(title)
-plot(PlottingVar3,(RealFitCenter3a), type="l", col=1,ylim=c(0, 1),xlab=xlabel, ylab=ylabel, xlim=c(1,366), main = title , cex.lab = 1.5, cex.axis=1.5)    
-segments(PlottingVar3,(cis3a[1,]),PlottingVar3,(cis3a[2,]), col="grey")
-lines(PlottingVar3,(RealFitCenter3a),lwd=2, col=1)
-rug(PlottingVar3)
-dev.off()
-
-#ggplot
-# Calculate kernel density of Jday observations
-dJday = stats::density(Variable,na.rm = TRUE,n=5000,from=1,to=366)
-dens = data.frame(c(dJday$x, rev(dJday$x)), c(dJday$y, rep(0, length(dJday$y))))
-colnames(dens) = c("Day", "Density")
-dens$Density = dens$Density / 0.15 #max(dens$Density) # normalize kernel density
-if (min(cis3a[1,])<0){ # set kernel density at bottom of y axis
-  dens$Density = dens$Density - abs(min(cis3a[1,])) 
-} else {
-  dens$Density = dens$Density + min(cis3a[1,])
-}
-
-plotDF = data.frame(PlottingVar3, RealFitCenter3a)
-colnames(plotDF) = c("Jday", "Fit")
-
-ggplot(plotDF, aes(Jday, Fit),
-) + geom_polygon(data=dens,
-                 aes(Day,Density),
-                 fill=4,
-                 alpha=0.2
-) + geom_smooth(fill = "grey",
-                colour = "black",
-                aes(ymin=cis3a[1,], ymax=cis3a[2,]),
-                stat ="identity"
-) + labs(x = "Julian Day",
-         y = "Probability",
-         title = paste('Julian Day'),
-) + theme(axis.line = element_line(),
-          panel.background = element_blank()
-)
-
-ggtitle = paste(saveDir,"/Julian Day.png",sep="")
-
-ggsave(
-  ggtitle,
-  device = "png") # save figure
-while (dev.cur() > 1) {
-  dev.off()
-} # close graphics device
-
-#Probability of covariate #2: as.smooth(Year):
-BootstrapParameters1<-rmvnorm(10000, coef(PODFinal),summary(PODFinal)$cov.unscaled)
-start=2; finish=8; Variable=SiteHourTableB$Year; xlabel="Year"; ylabel="Probability"  
-BootstrapCoefs1<-BootstrapParameters1[,c(1,start:finish)]
-
-#Year as factor
-ggtitle = paste(saveDir,"/Probability of Year.png",sep="")
-SiteHourTableB$pr = pr
-ggplot(SiteHourTableB, aes(x = Year, y = pr)) +
-  geom_boxplot(aes(fill = factor(Year)), alpha = .2)
-
-ggsave(
-  ggtitle,
-  device = "png") # save figure
-while (dev.cur() > 1) {
-  dev.off()
-} # close graphics device
-
-# Year
-# Center intercept (1st level of year factor) at 0 and show other levels relative to it
-AdjustedYearCoefs = data.frame(
-  c(
-    BootstrapParameters1[, 1] - mean(BootstrapParameters1[, 1]),
-    BootstrapParameters1[, 2],
-    BootstrapParameters1[, 3],
-    BootstrapParameters1[, 4],
-    BootstrapParameters1[, 5],
-    BootstrapParameters1[, 6],
-    BootstrapParameters1[, 7],
-    BootstrapParameters1[, 8],
-    BootstrapParameters1[, 9]
-  ),
-  as.factor(rep(2011:2019, each = 10000))
-)
-colnames(AdjustedYearCoefs) = c("Coefficient", "Year")
-
-ggtitle = paste(saveDir,"/Year.png",sep="")
-ggplot(AdjustedYearCoefs, aes(Year, Coefficient)
-) + geom_boxplot(
-) + theme(axis.line = element_line(),
-          panel.background = element_blank()
-) + labs(title = paste('Year'))
-
-ggsave(
-  ggtitle,
-  device = "png") # save figure
-while (dev.cur() > 1) {
-  dev.off()
-} # close graphics device
-
-#Region as factor
-BootstrapParameters2<-rmvnorm(10000, coef(PODFinal),summary(PODFinal)$cov.unscaled)
-val=12; Variable=SiteHourTableB$Region; xlabel="Region"; ylabel="Probability"  
-BootstrapCoefs2<-BootstrapParameters2[, c(1, val)]
-
-ggtitle = paste(saveDir,"/Probability of Region.png",sep="")
-SiteHourTableB$pr = pr
-ggplot(SiteHourTableB, aes(x = Region, y = pr)) +
-  geom_boxplot(aes(fill = factor(Region)), alpha = .2)
-
-ggsave(
-  ggtitle,
-  device = "png") # save figure
-while (dev.cur() > 1) {
-  dev.off()
-} # close graphics device
-
-# Center intercept (1st level of year factor) at 0 and show other levels relative to it
-AdjustedSiteCoefs = data.frame(c(BootstrapCoefs2[, 1] - mean(BootstrapCoefs2[, 1]),BootstrapCoefs2[,2]),
-                               as.factor(strrep(c('BSAI','GOA'),times=1)))
-colnames(AdjustedSiteCoefs) = c("Coefficient", "Region")
-
-ggtitle = paste(saveDir,"/Region.png",sep="")
-ggplot(AdjustedSiteCoefs, aes(Region, Coefficient)
-) + geom_boxplot(
-) + theme(axis.line = element_line(),
-          panel.background = element_blank()
-) + labs(title = paste('Region'))
-
-ggsave(
-  ggtitle,
-  device = "png") # save figure
-while (dev.cur() > 1) {
-  dev.off()
-} # close graphics device
