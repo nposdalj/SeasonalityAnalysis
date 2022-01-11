@@ -10,7 +10,7 @@ saveDir = 'I:/My Drive/Manuscripts/GOA/Figures'
 PropPlot = Prop #replicate table
 PropPlot$Site <- NULL
 
-#Crate data frames
+#Create data frames
 CB <-  c(F = 1, J = 23, M = 14,"F&J" = 27, "J&M" = 313, "F&M" = 26, "F&J&M" = 26)
 PT <- c(F = 19, J = 54, M = 21,"F&J" = 22, "J&M" = 46, "F&M" = 11, "F&J&M" = 9)
 QN <- c(F = 16, J = 20, M = 38,"F&J" = 22, "J&M" = 65, "F&M" = 12, "F&J&M" = 9)
@@ -27,10 +27,98 @@ for (i in 1:length(SiteNames)){
   site = SiteNames[i]
   title = paste(saveDir,"/PropVenn", site,".pdf",sep="")
   pdf(title)
-  plot(euler(AllSites[[i]]),quantities = list(cex=1.5,type = "percent"),labels = list(labels= c("Social Groups", "Mid-Size", "Adult Males"),cex=1.5),
+  plot(euler(AllSites[[i]]),fills = c('#66c2a5','#fc8d62','#8da0cb'), labels = FALSE, quantities = list(cex=3),
        main = paste("Proportional Venn Diagram for ",site,sep = ""))
   print(paste('Plot for ',site,' Saved',sep=""))
   dev.off()
 }
 
+# #With percent sign
+# for (i in 1:length(SiteNames)){
+#   site = SiteNames[i]
+#   title = paste(saveDir,"/PropVenn", site,".pdf",sep="")
+#   pdf(title)
+#   plot(euler(AllSites[[i]]),fills = c('#66c2a5','#fc8d62','#8da0cb'), labels = FALSE, quantities = list(cex=1.5,type = "percent"),
+#        main = paste("Proportional Venn Diagram for ",site,sep = ""))
+#   print(paste('Plot for ',site,' Saved',sep=""))
+#   dev.off()
+# }
+
+# #With Labels
+# for (i in 1:length(SiteNames)){
+#   site = SiteNames[i]
+#   title = paste(saveDir,"/PropVenn", site,".pdf",sep="")
+#   pdf(title)
+#   plot(euler(AllSites[[i]]),quantities = list(cex=1.5,type = "percent"),labels = list(labels= c("Social Groups", "Mid-Size", "Adult Males"),cex=1.5),
+#        main = paste("Proportional Venn Diagram for ",site,sep = ""))
+#   print(paste('Plot for ',site,' Saved',sep=""))
+#   dev.off()
+# }
+
+
+# Relative Bars -----------------------------------------------------------
+#load data
+dir = paste("I:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites")
+fileName2 = paste("I:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites/AllSitesGrouped_GAMGEE_ROW.csv")#setting the directory
+DayTable = read.csv(fileName2) #no effort days deleted
+DayTable = na.omit(DayTable)
+DayTable$tbin = as.Date(DayTable$tbin)
+
+for (i in 1:length(SiteNames)){
+  site = SiteNames[i]
+  SiteDayTable = dplyr::filter(DayTable, grepl(site,Site))
+  TotalDays = nrow(SiteDayTable)
+  PresentDays = apply(SiteDayTable,2,function(x) sum(x > 0))
+  if (i == 1){
+  SumTable = data.frame("site" = site, "TotalDays" = TotalDays, "PresentDays" = PresentDays[10])
+  }else{
+    SumTableTemp = data.frame("site" = site, "TotalDays" = TotalDays, "PresentDays" = PresentDays[10])
+    SumTable = rbind(SumTable, SumTableTemp)
+  }
+}
+
+#Relative Effort
+MaxEffort = max(SumTable$TotalDays)
+SumTable$RelativeEffort = SumTable$TotalDays/MaxEffort
+
+#Relative Presence
+SumTable$RelativePresence = SumTable$PresentDays/SumTable$TotalDays
+
+#Stacked bar plot for relative effort
+title = paste(saveDir,"/RelativeEffort",".pdf",sep="")
+pdf(title)
+p = ggplot(SumTable, aes(x=site, y=RelativeEffort)) +
+  geom_bar(stat="identity", fill="lightgrey")+
+  theme_minimal()
+p+ theme(
+  # Remove panel border
+  panel.border = element_blank(),  
+  # Remove panel grid lines
+  panel.grid.major = element_blank(),
+  panel.grid.minor = element_blank(),
+  # Remove panel background
+  panel.background = element_blank(),
+  # Add axis line
+  axis.line = element_line(colour = "grey")
+)
+dev.off()
+
+#Stacked bar plot for relative presence
+title = paste(saveDir,"/RelativePresence",".pdf",sep="")
+pdf(title)
+p = ggplot(SumTable, aes(x=site, y=RelativePresence)) +
+  geom_bar(stat="identity", fill="darkgray")+
+  theme_minimal()
+p+ theme(
+  # Remove panel border
+  panel.border = element_blank(),  
+  # Remove panel grid lines
+  panel.grid.major = element_blank(),
+  panel.grid.minor = element_blank(),
+  # Remove panel background
+  panel.background = element_blank(),
+  # Add axis line
+  axis.line = element_line(colour = "grey")
+)
+dev.off()
 

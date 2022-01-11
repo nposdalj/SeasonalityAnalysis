@@ -21,8 +21,8 @@ library(splines2)       # to use mSpline for the GEEs
 source('C:/Users/nposd/Documents/GitHub/SeasonalityAnalysis/GAM_GEEs/GAMGEE_sexClasses_Plotting_Functions.R')
 
 # Load Workspace --------------------------------------------------
-site = 'Big'
-#region = 'GOA'
+#site = 'Big'
+region = 'GOA'
 sexGroups = c('Social Groups','Mid-Size','Males')
 
 if (exists("site")){
