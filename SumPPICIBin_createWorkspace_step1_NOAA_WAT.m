@@ -2,21 +2,19 @@ clearvars
 close all
 
 %% Parameters defined by user
-filePrefix = 'ALEUT'; % File name to match. 
-siteabrev = 'BD'; %abbreviation of site.
-region = 'GofAK'; %region
+filePrefix = 'WAT_GS'; % File name to match. 
+siteabrev = 'GS'; %abbreviation of site.
+region = 'WAT'; %region
+binDur = 1; %desired bin duration
 sp = 'Pm'; % your species code
 itnum = '2'; % which iteration you are looking for
 srate = 200; % sample rate
-
 tpwsPath = ['I:\My Drive\',region,'_TPWS_metadataReduced\TPWS_125\',siteabrev]; %directory of TPWS files
-% tpwsPath = ['I:\My Drive\',region,'_TPWS_metadataReduced\',siteabrev,'\TPWS_125']; %directory of TPWS files
-
 effortXls = ['I:\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev,'\Pm_Effort.xlsx']; % specify excel file with effort times
-% effortXls = ['I:\My Drive\',region,'_TPWS_metadataReduced\',siteabrev,'\SeasonalityAnalysis\Pm_Effort.xlsx']; % specify excel file with effort times
-
 saveDir = ['I:\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev]; %specify directory to save files
-% saveDir = ['I:\My Drive\',region,'_TPWS_metadataReduced\',siteabrev,'\SeasonalityAnalysis']; %specify directory to save files
+% tpwsPath = 'E:\OC\TPWS_125'; %directory of TPWS files
+% effortXls = 'E:\OC\SeasonalityAnalysis\Pm_Effort.xlsx'; % specify excel file with effort times
+% saveDir = 'E:\OC\SeasonalityAnalysis'; %specify directory to save files
 %% define subfolder that fit specified iteration
 if itnum > 1
    for id = 2: str2num(itnum) % iterate id times according to itnum
@@ -108,9 +106,9 @@ ICIall = ICIall(sorted);
 tbin = datetime(TTall,'ConvertFrom','datenum');
 clickData = timetable(tbin,PPall,ICIall);
 clear tbin
-%% Convert times to bin vector times in 5 min bins
+%% Convert times to bin vector times in 1 min bins
 vTT = datevec(TTall);
-tbin = datetime([vTT(:,1:4), floor(vTT(:,5)/p.binDur)*p.binDur, ...
+tbin = datetime([vTT(:,1:4), floor(vTT(:,5))...
     zeros(length(vTT),1)]);
 %% create table and get click counts and max pp per bin
 data = timetable(tbin,TTall,PPall);
@@ -122,8 +120,8 @@ positiveCounts = sum(binData.Count);
 positiveBins = length(binData.Count);
 %% group effort in bins
 effort.diffSec = seconds(effort.End-effort.Start);
-effort.bins = effort.diffSec/(60*p.binDur);
-effort.roundbin = round(effort.diffSec/(60*p.binDur));
+effort.bins = effort.diffSec/(60*binDur);
+effort.roundbin = round(effort.diffSec/(60*binDur));
 
 secMonitEffort = sum(effort.diffSec);
 binMonitEffort = sum(effort.roundbin);
@@ -131,11 +129,11 @@ binMonitEffort = sum(effort.roundbin);
 [er,~] = size(effort.Start);
 
 if er > 1
-    binEffort = intervalToBinTimetable(effort.Start,effort.End,p); % convert intervals in bins when there is multiple lines of effort
-    binEffort.sec = binEffort.bin*(p.binDur*60);
+    binEffort = intervalToBinTimetable_1min(effort.Start,effort.End,binDur); % convert intervals in bins when there is multiple lines of effort
+    binEffort.sec = binEffort.bin*(binDur*60);
 else
     binEffort = intervalToBinTimetable_Only1RowEffort(effort.Start,effort.End,p); % convert intervals in bins when there is only one line of effort
-    binEffort.sec = binEffort.bin*(p.binDur*60);
+    binEffort.sec = binEffort.bin*(binDur*60);
 end
 %% get average of detection by effort
 NktTkt = positiveCounts/secMonitEffort;
@@ -159,5 +157,18 @@ binDataICIgram = synchronize(binDataICIgram,binData2ICIgram(:,2));
 
 icifn = [filePrefix,'_',p.speName,'_mainicipeak'];
 save(fullfile(saveDir,icifn),'dataICIgram','binDataICIgram');
+%% group data by 1 minute bins
+binTable = synchronize(binData,binEffort);
+binTable.Properties.VariableNames{'bin'} = 'Effort_Bin';
+binTable.Properties.VariableNames{'sec'} = 'Effort_Sec';
+binTable.maxPP = [];
+binidx1 = (binTable.Count >= 1);
+[y,~]=size(binTable);
+binTable.PreAbs = zeros(y,1);
+binTable.PreAbs(binidx1) = 1; %table with 0 for no presence in 5min bin and 1 with presence in 5min bin
+%no effort bins are excluded 
 %% save workspace to avoid running previous parts again
 save([saveDir,'\',siteabrev,'_workspace125.mat']);
+
+%% save excel file for NOAA
+writetable(timetable2table(binTable), [saveDir,'\',siteabrev,'_1minBinData.csv']); %table with the mean for each day of the year

@@ -2,7 +2,7 @@
 clear all;close all;clc;
 
 %% load data
-siteName = 'KS';
+siteName = 'QN';
 DataDir = 'I:\My Drive\GofAK_TPWS_metadataReduced\SeasonalityAnalysis';
 saveDirectory = 'I:\My Drive\Manuscripts\GOA\Figures';
 %% Retime data weekly
@@ -75,7 +75,7 @@ dataWeek.year = year(dataWeek.tbin);
 WeekData.year = year(WeekData.tbin);
 %% Plot data
 %No Social Group Data
-if strcmp(siteName, 'KOA') | strcmp(siteName, 'KS')
+if strcmp(siteName, 'KOA')
     
 fBubble = figure('Position',[296 417 766 378.5000],'DefaultAxesFontSize',12,'DefaultTextFontName','Times');
 
@@ -285,7 +285,7 @@ CombinedWeek.Difference = CombinedWeek.NormBin - CombinedWeek.Added;
 CombinedWeek.Difference( CombinedWeek.Difference <= 0 ) = 0;
 %% Plotting the difference instead of the 'general pattern'
 %No Social Group Data
-if strcmp(siteName, 'KOA') | strcmp(siteName, 'KS')
+if strcmp(siteName, 'KOA')
     
 fBubble = figure('Position',[296 417 766 378.5000],'DefaultAxesFontSize',12,'DefaultTextFontName','Times');
 

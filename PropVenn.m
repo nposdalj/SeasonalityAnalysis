@@ -1,9 +1,9 @@
 clearvars
 close all
 %% Parameters defined by user
-filePrefix = 'GofAK_KOA'; % File name to match. 
-siteabrev = 'KOA'; %abbreviation of site.
-titleNAME = 'Kiska Island';
+filePrefix = 'GofAK_PT'; % File name to match. 
+siteabrev = 'PT'; %abbreviation of site.
+titleNAME = 'Pratt Seamount';
 sp = 'Pm'; % your species code
 tpwsPath = ['I:\My Drive\GofAK_TPWS_metadataReduced\TPWS_125\',filePrefix,'\TPWS_125\TPWS2\TPWS3\']; %directory of TPWS files
 %% load data from step 2
@@ -55,7 +55,7 @@ meanTAB.None = meanTAB.Zero == 0 & meanTAB.Diff == 0;
 meanTAB.Missed = meanTAB.HoursPropF == 0 & meanTAB.HoursPropJ == 0 & meanTAB.HoursPropM == 0 & meanTAB.Diff > 0 & meanTAB.Zero > 0;
 end
 %% Calculate A, AB, B, BC, C, CA, ABC
-if strcmp(siteabrev,'KOA') == 1 || strcmp(siteabrev,'KS')
+if strcmp(siteabrev,'KOA') == 1
 J = sum(meanTAB.Juv); %B
 M = sum(meanTAB.Mal); %C
 JM = sum(meanTAB.JuvMal); %BC

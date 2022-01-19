@@ -12,7 +12,7 @@ PropPlot$Site <- NULL
 
 #Create data frames
 CB <-  c(F = 1, J = 23, M = 14,"F&J" = 27, "J&M" = 313, "F&M" = 26, "F&J&M" = 26)
-PT <- c(F = 19, J = 54, M = 21,"F&J" = 22, "J&M" = 46, "F&M" = 11, "F&J&M" = 9)
+PT <- c(F = 15, J = 54, M = 21,"F&J" = 22, "J&M" = 46, "F&M" = 11, "F&J&M" = 9)
 QN <- c(F = 16, J = 20, M = 38,"F&J" = 22, "J&M" = 65, "F&M" = 12, "F&J&M" = 9)
 BD <- c(F = 5, J = 46, M = 130,"F&J" = 13, "J&M" = 134, "F&M" = 16, "F&J&M" = 7)
 AB <- c(F = 2, J = 24, M = 24,"F&J" = 1, "J&M" = 14, "F&M" = 1, "F&J&M" = 1)

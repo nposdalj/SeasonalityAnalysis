@@ -70,7 +70,8 @@ DayTab$Julian = format(DayTab$tbin,"%j")
 DayTab$Year = format(DayTab$tbin,"%Y")
 
 #PreAbs
-DayTab$HoursNorm %>% mutate_if(is.numeric, ~1 * (. > 0)) #replaces NA values with 0
+DayTab$HoursNorm[is.na(DayTab$HoursNorm)] = 0
+#DayTab$HoursNorm %>% mutate_if(is.numeric, ~1 * (. > 0)) #replaces NA values with 0
 DayTab$PreAbs = ifelse(DayTab$HoursNorm>0,1,0)
 
 #Export grouped table as .csv
