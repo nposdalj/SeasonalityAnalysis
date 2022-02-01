@@ -2,10 +2,11 @@ clearvars
 close all
 
 %% Parameters defined by user
-filePrefix = 'OTSG_CORC4_02'; % File name to match. 
-siteabrev = 'CORC'; %abbreviation of site.
-region = 'CCE'; %region
+filePrefix = 'WAT_BS'; % File name to match. 
+siteabrev = 'BS'; %abbreviation of site.
+region = 'WAT'; %region
 sp = 'Pm'; % your species code
+itnum = '1'; % which iteration you are looking for
 srate = 200; % sample rate
 GDrive = 'H'; %Google Drive
 
