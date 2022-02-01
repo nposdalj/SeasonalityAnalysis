@@ -5,20 +5,20 @@ close all
 filePrefix = 'OTSG_CORC4_02'; % File name to match. 
 genderFileName = 'OTSG_CORC4_02'; %File name to match gender file
 siteabrev = 'CORC'; %abbreviation of site
+region = 'CCE';
 sp = 'Pm'; % your species code
+itnum = '2'; % which iteration you are looking for
 srate = 200; % sample rate
+GDrive = 'H'; %Google Drive
 
-%tpwsPath = 'I:\My Drive\GofAK_TPWS_metadataReduced\SeasonalityAnalysis\'; %directory of TPWS files
-tpwsPath = ['I:\My Drive\',region,'_TPWS_metadataReduced\',siteabrev,'\TPWS_125']; %directory of TPWS files
+effortXls = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev,'\Pm_Effort.xlsx']; % specify excel file with effort times
+% effortXls = ['I:\My Drive\',region,'_TPWS_metadataReduced\',siteabrev,'\SeasonalityAnalysis\Pm_Effort.xlsx']; % specify excel file with effort times
 
-%effortXls = ['I:\My Drive\GofAK_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev,'\Pm_Effort.xlsx']; % specify excel file with effort times
-effortXls = ['I:\My Drive\',region,'_TPWS_metadataReduced\',siteabrev,'\SeasonalityAnalysis\Pm_Effort.xlsx']; % specify excel file with effort times
+saveDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev]; %specify directory to save files
+% saveDir = ['I:\My Drive\',region,'_TPWS_metadataReduced\',siteabrev,'\SeasonalityAnalysis']; %specify directory to save files
 
-%saveDir = ['I:\My Drive\GofAK_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev]; %specify directory to save files
-saveDir = ['I:\My Drive\',region,'_TPWS_metadataReduced\',siteabrev,'\SeasonalityAnalysis']; %specify directory to save files
-
-%dayBinCSV= ['I:\My Drive\GofAK_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev,'\',siteabrev,'_dayData_forGLMR125.csv']; % specify csv document with general PM information
-dayBinCSV= ['I:\My Drive\',region,'_TPWS_metadataReduced\',siteabrev,'\SeasonalityAnalysis\',siteabrev,'_dayData_forGLMR125.csv']; % specify csv document with general PM information
+dayBinCSV= [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev,'\',siteabrev,'_dayData_forGLMR125.csv']; % specify csv document with general PM information
+% dayBinCSV= ['I:\My Drive\',region,'_TPWS_metadataReduced\',siteabrev,'\SeasonalityAnalysis\',siteabrev,'_dayData_forGLMR125.csv']; % specify csv document with general PM information
 %% Get effort times matching prefix file
 %when multiple sites in the effort table
 allEfforts = readtable(effortXls); %read effort table
@@ -54,7 +54,7 @@ else
     binEffort.sec = binEffort.bin*(p.binDur*60);
 end
 %% load data
-filename = [tpwsPath,'\',siteabrev,'\',genderFileName,'_',sp,'_gender.mat'];
+filename = [saveDir,'\',genderFileName,'_',sp,'_gender.mat'];
 load(filename);
 %% group data by days and add effort
 binPresence = synchronize (binData, binEffort);

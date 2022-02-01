@@ -2,19 +2,19 @@ clearvars
 close all
 
 %% Parameters defined by user
-filePrefix = 'WAT_GS'; % File name to match. 
-siteabrev = 'GS'; %abbreviation of site.
+filePrefix = 'WAT_WC'; % File name to match. 
+siteabrev = 'WC'; %abbreviation of site.
 region = 'WAT'; %region
 binDur = 1; %desired bin duration
 sp = 'Pm'; % your species code
-itnum = '2'; % which iteration you are looking for
+itnum = '1'; % which iteration you are looking for
 srate = 200; % sample rate
-tpwsPath = ['I:\My Drive\',region,'_TPWS_metadataReduced\TPWS_125\',siteabrev]; %directory of TPWS files
-effortXls = ['I:\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev,'\Pm_Effort.xlsx']; % specify excel file with effort times
-saveDir = ['I:\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev]; %specify directory to save files
-% tpwsPath = 'E:\OC\TPWS_125'; %directory of TPWS files
-% effortXls = 'E:\OC\SeasonalityAnalysis\Pm_Effort.xlsx'; % specify excel file with effort times
-% saveDir = 'E:\OC\SeasonalityAnalysis'; %specify directory to save files
+% tpwsPath = ['I:\My Drive\',region,'_TPWS_metadataReduced\TPWS_125\',siteabrev]; %directory of TPWS files
+% effortXls = ['I:\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev,'\Pm_Effort.xlsx']; % specify excel file with effort times
+% saveDir = ['I:\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev]; %specify directory to save files
+tpwsPath = 'E:\WC\TPWS_125'; %directory of TPWS files
+effortXls = 'E:\WC\SeasonalityAnalysis\Pm_Effort.xlsx'; % specify excel file with effort times
+saveDir = 'E:\WC\SeasonalityAnalysis'; %specify directory to save files
 %% define subfolder that fit specified iteration
 if itnum > 1
    for id = 2: str2num(itnum) % iterate id times according to itnum

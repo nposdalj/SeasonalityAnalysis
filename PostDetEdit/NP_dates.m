@@ -29,9 +29,9 @@ CB_latLongs = [58.645683,-148.07; %01 in decimals
 58.66961667,-148.03];%10
 %% QN site info
 
-QN_dates = [datenum([2013 09 11]),datenum([2014 04 16]);%qn02 %datenum([2013 06 11]),datenum([2013 09 10]);%qn01
-datenum([2014 09 10]),datenum([2015 05 02]);%qn04
-datenum([2015 05 02]),datenum([2015 08 18]);%qn05
+QN_dates = [datenum([2013 09 11 21 00 00]),datenum([2014 04 16 23 50 00]);%qn02 %datenum([2013 06 11]),datenum([2013 09 10]);%qn01
+datenum([2014 09 10 18 00 00]),datenum([2015 05 02 18 41 45]);%qn04
+datenum([2015 05 02 06 00 00]),datenum([2015 08 18 18 16 15]);%qn05
 datenum([2017 04 30 00 00 00]),datenum([2017 09 14 20 38 51])];%qn06
 
 QN_depl = [2,4,5,6];
@@ -224,7 +224,7 @@ WC_dates = [datenum([2016,04,20, 06, 00, 00]), datenum([2017, 06, 29, 20,57,36])
     datenum([2017,06,30 00, 00, 00]), datenum([2018,06,02,20,42,36]);
     datenum([2018,06,02,22,00,00]), datenum([2019,05,19,08,32,30])];
 WC_depl = [1,2,3];
-WC_site(1:length(WC_depl),1) = {'GS'};
+WC_site(1:length(WC_depl),1) = {'WC'};
 WC_latLongs = [39.938, - 76;
 40.021, -76;
 40.195, - 76];

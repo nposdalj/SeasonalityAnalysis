@@ -8,8 +8,8 @@ library(lubridate)
 Sites = c('CB','PT','QN','AB','KOA','BD','KS') #The GOA and BSAI Sites
 Regions = c("GOA","BSAI") #GOA AND BSAI Region
 
-fileDir = paste("I:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",Sites, sep="")#setting the directory
-saveDir = paste("I:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites/")
+fileDir = paste("H:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",Sites, sep="")#setting the directory
+saveDir = paste("H:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites/")
 filename = paste(fileDir,"/",Sites,"_binPresence.csv",sep="")
 filename2 = paste(fileDir,"/",Sites,"_binData_forGAMGEE_sexClasses.csv",sep="")
 

@@ -1,45 +1,8 @@
 close all;clear all;clc;
 %% select directory where ship files are located
-siteabrev = 'BD';
-siteNameMatch = 'ALEUT';
-region = 'GofAK'; %all of the WAT data has a space between the site and the deployment #
-shipDataType = 1; % 1 - old ship data, %2 - new ship data
-ShipIDReDo = 1; % If you want to re-run ship and ID times, change this to 1
-
-shipDir = ['I:\My Drive\',region,'_TPWS_metadataReduced\metadata_reduced\',siteabrev];
-shipTimesDir = ['I:\My Drive\',region,'_TPWS_metadataReduced\ShipTimes\',siteabrev]; % directory where to save ship times .mat files
-%shipDir = ['I:\My Drive\',region,'_TPWS_metadataReduced\',siteabrev,'\metadata_reduced'];
-%shipTimesDir = ['I:\My Drive\',region,'_TPWS_metadataReduced\',siteabrev,'\ShipTimes']; % directory where to save ship times .mat files
-%shipTimesDir = 'E:\JAX\ShipTimes';
-
-IDDir = ['I:\My Drive\',region,'_TPWS_metadataReduced\TPWS_125\',siteabrev];
-%IDDir = ['I:\My Drive\',region,'_TPWS_metadataReduced\',siteabrev,'\TPWS_125'];
-%IDDir = 'E:\JAX\TPWS_125';
-IDTimesDir = ['I:\My Drive\',region,'_TPWS_metadataReduced\IDTimes\',siteabrev]; % directory where to save ID times .mat files
-%IDTimesDir = ['I:\My Drive\',region,'_TPWS_metadataReduced\',siteabrev,'\IDTimes']; % directory where to save ID times .mat files
-%IDTimesDir = 'E:\JAX\IDTimes';
-
-maxDetEdit = 2; % number of TPWS folders (i.e. TPWS4 is 4)
-saveTable = ['I:\My Drive\',region,'_TPWS_metadataReduced\Seasonality\',siteabrev,'\Pm_Effort.xlsx'];
-%saveTable = ['I:\My Drive\',region,'_TPWS_metadataReduced\',siteabrev,'\Seasonality\Pm_Effort.xlsx'];
-%% write ship and ID file times
-%Check to see if ship files are in the old format or new format
-if ShipIDReDo == 1
-if shipDataType == 1
-    writeSFilesTimes(shipDir,shipTimesDir); %for old ship files
-else
-    writeSMatTimes(shipDir,shipTimesDir); %for new ship files
-end
-%run join_IDs to group no effort times
-writeIDTimes(IDDir,IDTimesDir,maxDetEdit);
-else
-end
-%% Get a list of all the files in the start directory
-shipList = cellstr(ls(shipTimesDir));
-shipfiles = shipList(3:end); % exclude dots
-
-IDList = cellstr(ls(IDTimesDir));
-IDfiles = IDList(3:end); % exclude dots
+site = 'WC';
+region = 'WAT'; %all of the WAT data has a space between the site and the deployment
+saveTable = ['E:\',site,'\SeasonalityAnalysis\Effort.xlsx'];
 %% get start end dates of disks
 [edgeffort,latLongs, depl, site] = NP_dates;
 strdepl = num2str(depl,'%02d');

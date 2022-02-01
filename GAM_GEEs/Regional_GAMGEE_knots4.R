@@ -28,10 +28,10 @@ library(splines2)       # to use mSpline for the GEEs
 region = 'GOA' #specify the region of interest
 
 # Step 1: Load the Data -----------------------------------------------------------
-dir = paste("I:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites")
-saveDir = paste("I:/My Drive/GofAK_TPWS_metadataReduced/Plots/",region, sep="")
-saveWorkspace = paste("I:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",region,'/',sep="")
-fileName = paste("I:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites/AllSitesGrouped_Binary_GAMGEE_ROW.csv",sep="") #setting the directory
+dir = paste("H:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites")
+saveDir = paste("H:/My Drive/GofAK_TPWS_metadataReduced/Plots/",region, sep="")
+saveWorkspace = paste("H:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",region,'/',sep="")
+fileName = paste("H:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites/AllSitesGrouped_Binary_GAMGEE_ROW.csv",sep="") #setting the directory
 HourTable = read.csv(fileName)
 HourTable = na.omit(HourTable)
 HourTable$date = as.Date(HourTable$tbin)
@@ -65,14 +65,20 @@ BlockMod<-glm(PreAbs~
                 TimeLost, data=SiteHourTable,family=binomial)
 }
 
-acf(residuals(BlockMod), lag.max = 700, ylim=c(0,0.1))
-acf(residuals(BlockMod), lag.max = 1000, ylim=c(-0.1,0.1), xlim =c(0,30)) 
+ACF = acf(residuals(BlockMod), lag.max = 1000, ylim=c(0,0.1))
+CI = ggfortify:::confint.acf(ACF)
+ACFidx = which(ACF[["acf"]] < CI, arr.ind=TRUE)
+ACFval = ACFidx[1]
 
-if (region == 'BSAI'){
-  ACFval = 653
-}else{
-  ACFval = 23
-}
+#Manually do it
+# acf(residuals(BlockMod), lag.max = 700, ylim=c(0,0.1))
+# acf(residuals(BlockMod), lag.max = 1000, ylim=c(-0.1,0.1), xlim =c(0,30)) 
+# 
+# if (region == 'BSAI'){
+#   ACFval = 653
+# }else{
+#   ACFval = 23
+# }
 
 #create the blocks based on the full timesereies
 startDate = SiteHourTable$tbin[1]
@@ -229,7 +235,7 @@ QICmod0A
 #BSAI
 #QIC            QIC.1            QIC.2
 #model0A             POD0            POD0a            POD0b
-# QIC0A   26598.7716063937 26231.2071664586 26223.7668717875
+# QIC0A   26417.3656260167 25860.248483494 25856.1463739235
 #Julian day as a covariance matrix
 
 #GOA
@@ -268,7 +274,7 @@ QICmod2A
 #BSAI
 #QIC            QIC.1            QIC.2          QIC.3
 #model2A             POD0            POD2a            POD2b          POD2c
-# QIC2A   26598.7716063937 26636.0005421372 26610.4495685621 26654.5141226769
+# QIC2A   26417.3656260167 26458.5347150241 26426.0172751744 26462.5544299619
 #TimeLost as linear
 
 #GOA
@@ -296,7 +302,7 @@ QICmod3A
 #BSAI
 #QIC          QIC.1            QIC.2            QIC.3            QIC.4
 #model3A             POD0          POD3a            POD3b            POD3c            POD3d
-# QIC3A   26598.7716063937 26173.6683253399 26599.4583801071 26233.0799088394 26162.9487085645
+# QIC3A   26417.3656260167 25753.8401404939 26417.8686943176 25863.0210955829 25746.0005325001
 #Remove timelost as variable.
 
 #Second round of model testing without timelost
@@ -312,7 +318,7 @@ QICmod3B<-data.frame(rbind(model3B,QIC3B))
 QICmod3B
 #BSAI
 #QIC            QIC.1            QIC.2            QIC.3
-# QIC3B   26598.7716063937 26162.9487085645 26587.3271097547 26223.7668717875
+# QIC3B   26417.3656260167 25746.0005325001 26408.8121046668 25856.1463739235
 #model3B             POD0            POD3e            POD3f            POD3g
 #The full model has the lowest QIC. AvgDayMat then Site.
 }else{
@@ -415,21 +421,10 @@ if (region == 'BSAI'){
 anova(PODFinal)
 
 #BSAI
-#Analysis of 'Wald statistic' Table
-#Model: binomial, link: logit
-#Response: PreAbs
-#Terms added sequentially (first to last)
-
 #Df     X2 P(>|Chi|)    
-# AvgDayMat        2 6.52     0.038 *
-#   as.factor(Site)  1 5.87     0.015 *
-  
+# AvgDayMat        2 13.2    0.0014 ** 
+#   as.factor(Site)  1 16.9     4e-05 ***
 #GOA
-#Analysis of 'Wald statistic' Table
-#Model: binomial, link: logit
-#Response: PreAbs
-#Terms added sequentially (first to last)
-
 #Df     X2 P(>|Chi|)    
 # mSpline(Year, knots = quantile(Year, probs = c(0.333, 0.666)), Boundary.knots = c(2011, 2019))  5 462   < 2e-16 ***
 #   AvgDayMat                                                                                       2  50   1.2e-11 ***
@@ -442,64 +437,6 @@ anova(PODFinal_Site)
 }
 
 summary(PODFinal)
-
-#BSAI
-# Call:
-#   geeglm(formula = PreAbs ~ AvgDayMat + as.factor(Site), family = binomial, 
-#          data = SiteHourTableB, id = Blocks, corstr = "ar1")
-# 
-# Coefficients:
-#   Estimate Std.err Wald Pr(>|W|)  
-# (Intercept)         0.0269  0.1386 0.04    0.846  
-# AvgDayMatADBM1     -0.1527  0.2539 0.36    0.547  
-# AvgDayMatADBM2      0.6205  0.2825 4.82    0.028 *
-#   as.factor(Site)KS  -0.5217  0.2153 5.87    0.015 *
-#   ---
-#   Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-# 
-# Correlation structure = ar1 
-# Estimated Scale Parameters:
-#   
-#   Estimate Std.err
-# (Intercept)        1  0.0269
-# Link = identity 
-# 
-# Estimated Correlation Parameters:
-#   Estimate Std.err
-# alpha     0.92  0.0124
-# Number of clusters:   30  Maximum cluster size: 654 
-
-#GOA
-# Call:
-#   geeglm(formula = PreAbs ~ mSpline(Year, knots = quantile(Year, 
-#                                                            probs = c(0.333, 0.666)), Boundary.knots = c(2011, 2019)) + 
-#            AvgDayMat, family = binomial, data = SiteHourTableB, id = Blocks, 
-#          corstr = "ar1")
-# 
-# Coefficients:
-#   Estimate Std.err   Wald Pr(>|W|)    
-# (Intercept)                                                                                       0.4957  0.1114  19.78  8.7e-06 ***
-#   mSpline(Year, knots = quantile(Year, probs = c(0.333, 0.666)), Boundary.knots = c(2011, 2019))1  -0.5622  0.1895   8.80  0.00301 ** 
-#   mSpline(Year, knots = quantile(Year, probs = c(0.333, 0.666)), Boundary.knots = c(2011, 2019))2  -4.5773  0.3132 213.57  < 2e-16 ***
-#   mSpline(Year, knots = quantile(Year, probs = c(0.333, 0.666)), Boundary.knots = c(2011, 2019))3  -1.3814  0.4688   8.68  0.00321 ** 
-#   mSpline(Year, knots = quantile(Year, probs = c(0.333, 0.666)), Boundary.knots = c(2011, 2019))4  -1.9020  0.2864  44.11  3.1e-11 ***
-#   mSpline(Year, knots = quantile(Year, probs = c(0.333, 0.666)), Boundary.knots = c(2011, 2019))5  -0.5177  0.1349  14.73  0.00012 ***
-#   AvgDayMatADBM1                                                                                   -0.0679  0.0550   1.53  0.21657    
-# AvgDayMatADBM2                                                                                    0.3190  0.0453  49.48  2.0e-12 ***
-#   ---
-#   Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-# 
-# Correlation structure = ar1 
-# Estimated Scale Parameters:
-#   
-#   Estimate Std.err
-# (Intercept)     0.99  0.0126
-# Link = identity 
-# 
-# Estimated Correlation Parameters:
-#   Estimate Std.err
-# alpha    0.792 0.00527
-# Number of clusters:   2099  Maximum cluster size: 72 
 
 # Step 9: Construction of the ROC curve    --------------------------------
 pr <- predict(PODFinal, type="response")  

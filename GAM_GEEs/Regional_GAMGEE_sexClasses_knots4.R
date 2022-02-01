@@ -28,10 +28,10 @@ library(splines2)       # to use mSpline for the GEEs
 region = 'GOA' #specify the region of interest
 
 # Step 1: Load the Data -----------------------------------------------------------
-dir = paste("I:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites")
-saveDir = paste("I:/My Drive/GofAK_TPWS_metadataReduced/Plots/",region, sep="")
-fileName = paste("I:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites/AllSitesGrouped_Binary_GAMGEE_ROW_sexClasses.csv",sep="")
-saveWorkspace = paste("I:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",region,'/',sep="")
+dir = paste("H:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites")
+saveDir = paste("H:/My Drive/GofAK_TPWS_metadataReduced/Plots/",region, sep="")
+fileName = paste("H:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites/AllSitesGrouped_Binary_GAMGEE_ROW_sexClasses.csv",sep="")
+saveWorkspace = paste("H:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",region,'/',sep="")
 HourTable = read.csv(fileName)
 HourTable = na.omit(HourTable)
 HourTable$date = as.Date(HourTable$tbin)
@@ -99,32 +99,50 @@ if (region == 'BSAI'){
                 ,data=SiteHourTable,family=binomial)
 }
 
-#Females
-acf(residuals(BlockModF), lag.max = 2000, ylim=c(0,0.1))
-acf(residuals(BlockModF), lag.max = 1000, ylim=c(0,0.1), xlim =c(0,50)) 
-if (region == 'BSAI'){
-  ACFvalF = 220
-}else{
-  ACFvalF = 35
-}
+#Social Groups
+ACFF = acf(residuals(BlockModF), lag.max = 2000, ylim=c(0,0.1))
+CIF = ggfortify:::confint.acf(ACFF)
+ACFidxF = which(ACFF[["acf"]] < CIF, arr.ind=TRUE)
+ACFvalF = ACFidxF[1]
 
-#Juveniles
-acf(residuals(BlockModJ), lag.max = 1000, ylim=c(0,0.1))
-acf(residuals(BlockModJ), lag.max = 1000, ylim=c(0,0.1), xlim =c(50,100))
-if (region == 'BSAI'){
-  ACFvalJ = 162
-}else{
-  ACFvalJ = 53
-}
+#Mid Size
+ACFJ = acf(residuals(BlockModJ), lag.max = 2000, ylim=c(0,0.1))
+CIJ = ggfortify:::confint.acf(ACFJ)
+ACFidxJ = which(ACFJ[["acf"]] < CIJ, arr.ind=TRUE)
+ACFvalJ = ACFidxJ[1]
 
 #Males
-acf(residuals(BlockModM), lag.max = 1000, ylim=c(0,0.1))
-acf(residuals(BlockModM), lag.max = 1000, ylim=c(0,0.1), xlim =c(20,40))
-if (region == 'BSAI'){
-  ACFvalM = 139
-}else{
-  ACFvalM = 31
-}
+ACFM = acf(residuals(BlockModM), lag.max = 2000, ylim=c(0,0.1))
+CIM = ggfortify:::confint.acf(ACFM)
+ACFidxM = which(ACFM[["acf"]] < CIM, arr.ind=TRUE)
+ACFvalM = ACFidxM[1]
+
+# #Females
+# acf(residuals(BlockModF), lag.max = 2000, ylim=c(0,0.1))
+# acf(residuals(BlockModF), lag.max = 1000, ylim=c(0,0.1), xlim =c(0,50)) 
+# if (region == 'BSAI'){
+#   ACFvalF = 220
+# }else{
+#   ACFvalF = 35
+# }
+# 
+# #Juveniles
+# acf(residuals(BlockModJ), lag.max = 1000, ylim=c(0,0.1))
+# acf(residuals(BlockModJ), lag.max = 1000, ylim=c(0,0.1), xlim =c(50,100))
+# if (region == 'BSAI'){
+#   ACFvalJ = 162
+# }else{
+#   ACFvalJ = 53
+# }
+# 
+# #Males
+# acf(residuals(BlockModM), lag.max = 1000, ylim=c(0,0.1))
+# acf(residuals(BlockModM), lag.max = 1000, ylim=c(0,0.1), xlim =c(20,40))
+# if (region == 'BSAI'){
+#   ACFvalM = 139
+# }else{
+#   ACFvalM = 31
+# }
 
 #create the blocks based on the full timesereies
 startDate = SiteHourTable$tbin[1]
@@ -215,10 +233,10 @@ for (i in 1:nrow(gapsCont)){
 #Quick ANOVA to check for significance of variables - using the car package
 Anova(BlockModF)
 #GOA
-# bs(Julian, k = 4)      379  4     <2e-16 ***
-#   TimeLost                 4  1      0.035 *  
-#   as.factor(Site)        434  4     <2e-16 ***
-#   bs(Year, k = 4)        112  3     <2e-16 ***
+# bs(Julian, k = 4)   218.14  4  < 2.2e-16 ***
+#   bs(Year, k = 4)      55.96  3  4.285e-12 ***
+#   as.factor(Site)     524.01  4  < 2.2e-16 ***
+#   TimeLost              3.66  1    0.05557 .  
 
 #BSAI
 # bs(Julian, k = 4)     1097  4     <2e-16 ***
@@ -227,10 +245,10 @@ Anova(BlockModF)
 
 Anova(BlockModJ)
 #GOA
-# bs(Julian)          1636  3     <2e-16 ***
-#   TimeLost               4  1      0.046 *  
-#   as.factor(Site)     3023  4     <2e-16 ***
-#   bs(Year, k = 4)      321  3     <2e-16 ***
+# bs(Julian)        1513.5  3    < 2e-16 ***
+#   TimeLost             5.6  1    0.01776 *  
+#   as.factor(Site)   4022.6  4    < 2e-16 ***
+#   bs(Year, k = 4)    305.1  3    < 2e-16 ***
 
 #BSAI
 # bs(Julian, k = 4)    316.1  4    < 2e-16 ***
@@ -239,10 +257,10 @@ Anova(BlockModJ)
 
 Anova(BlockModM)
 #GOA
-# bs(Julian, k = 4)     1226  4     <2e-16 ***
-#   TimeLost                 8  1     0.0057 ** 
-#   as.factor(Site)       2579  4     <2e-16 ***
-#   bs(Year, k = 4)        583  3     <2e-16 ***
+# bs(Julian, k = 4)   1392.5  4  < 2.2e-16 ***
+#   TimeLost               8.6  1   0.003397 ** 
+#   as.factor(Site)     3480.0  4  < 2.2e-16 ***
+#   bs(Year, k = 4)      553.9  3  < 2.2e-16 ***
 
 #BSAI
 # bs(Julian, k = 4)      338  4    < 2e-16 ***
@@ -265,10 +283,10 @@ VIF(GLMF)
 
 #GOA
 # GVIF Df GVIF^(1/(2*Df))
-# Julian          1.12  1            1.06
-# TimeLost        1.01  1            1.01
-# as.factor(Site) 1.29  4            1.03
-# Year            1.41  1            1.19
+# Julian          1.111702  1        1.054373
+# TimeLost        1.009662  1        1.004819
+# as.factor(Site) 2.438748  4        1.117882
+# Year            2.569866  1        1.603080
 
 #Mid-Size
 if (region == 'BSAI'){
@@ -286,10 +304,10 @@ VIF(GLMJ)
 
 #GOA
 # GVIF Df GVIF^(1/(2*Df))
-# Julian          1.09  1            1.05
-# TimeLost        1.01  1            1.00
-# as.factor(Site) 1.28  4            1.03
-# Year            1.38  1            1.18
+# Julian          1.091565  1        1.044780
+# TimeLost        1.006564  1        1.003277
+# as.factor(Site) 1.275524  4        1.030887
+# Year            1.379046  1        1.174328
 
 #Male
 if (region == 'BSAI'){
@@ -304,10 +322,10 @@ VIF(GLMM)
 
 #GOA
 # GVIF Df GVIF^(1/(2*Df))
-# Julian          1.07  1            1.03
-# TimeLost        1.01  1            1.00
-# as.factor(Site) 1.24  4            1.03
-# Year            1.32  1            1.15
+# Julian          1.068123  1        1.033500
+# TimeLost        1.006136  1        1.003064
+# as.factor(Site) 1.207081  4        1.023804
+# Year            1.281787  1        1.132160
 
 # Step 5: Model Selection - Covariate Preparation -------------------------
 # Construct variance-covariance matrices for cyclic covariates:
@@ -342,7 +360,7 @@ QICmod0fA
 #GOA
 #QIC           QIC.1            QIC.2
 #model0fA            POD0f          POD0fa           POD0fb
-# QIC0fA   8456.24692284754 8376.26375795027 8380.3415816674
+# QIC0fA   9105.67439809655 9036.80148694459 9039.43051192032
 #Julian day as a covariance matrix
 
 #BSAI
@@ -365,7 +383,7 @@ if (region == 'GOA'){
   #GOA
   #QIC           QIC.1            QIC.2            QIC.3
   #model1fA            POD0f          POD1fa           POD1fb           POD1fc
-  #QIC1fA   8456.24692284754 8154.7264917688 8337.53585000172 8172.31983812267
+  # QIC1fA   9105.67439809655 9096.510787458 9104.6130344458 9111.44877706165
   #Year as mSpline.
 }
 
@@ -381,7 +399,7 @@ QICmod2fA
 #GOA
 #QIC            QIC.1            QIC.2            QIC.3
 #model2fA            POD0f           POD2fa           POD2fb           POD2fc
-#QIC2fA   8456.24692284754 8521.81291766263 8464.69313539556 8506.74109412136
+# QIC2fA   9105.67439809655 9192.95914527949 9134.26189400808 57861.0556253454
 #TimeLost as linear
 
 #BSAI
@@ -406,7 +424,7 @@ QICmod0jA
 #GOA
 #QIC            QIC.1            QIC.2
 #model0jA            POD0j           POD0ja           POD0jb
-# QIC0jA   66581.7159280241 65187.3747066045 65205.196089869
+# QIC0jA   68226.5136442113 66959.5429913374 66981.0738821536
 #Julian day as a covariance matrix.
 
 #BSAI
@@ -429,7 +447,7 @@ QICmod1jA
 #GOA
 #QIC            QIC.1            QIC.2            QIC.3
 #model1jA            POD0j           POD1ja           POD1jb           POD1jc
-# QIC1jA   66581.7159280241 64914.0002469341 66586.0907020832 65050.1224949519
+# QIC1jA   68226.5136442113 66342.4628844564 68224.1712143521 66453.7626840511
 #Year as mSpline
 }
 
@@ -445,7 +463,7 @@ QICmod2jA
 #GOA
 #QIC            QIC.1            QIC.2            QIC.3
 #model2jA            POD0j           POD2ja           POD2jb           POD2jc
-# QIC2jA   66581.7159280241 66748.0688240194 66602.0567455407 66626.8685397258
+# QIC2jA   68226.5136442113 68314.5554993268 68224.2885803012 68229.5597270708
 #TimeLost as linear
 
 #BSAI
@@ -470,7 +488,7 @@ QICmod0mA
 #GOA
 #QIC            QIC.1            QIC.2
 #model0mA            POD0m           POD0ma           POD0mb
-# QIC0mA   57273.6041843083 55937.5798973304 55939.0467556249
+# QIC0mA   58066.9036081687 56460.4232524141 56461.4027284332
 #Julian day as a covariance matrix.
 
 #BSAI
@@ -493,7 +511,7 @@ QICmod1mA
 #GOA
 #QIC            QIC.1            QIC.2            QIC.3
 #model1mA            POD0m           POD1ma           POD1mb           POD1mc
-# QIC1mA   57273.6041843083 55091.8989342703 56876.9193908313 55239.4271845347
+# QIC1mA   58066.9036081687 55717.5796140073 57701.7790312048 55862.6272306594
 #Year as a mSpline
 }
 
@@ -509,7 +527,7 @@ QICmod2mA
 #GOA
 #QIC            QIC.1            QIC.2            QIC.3
 #model2mA            POD0m           POD2ma           POD2mb           POD2mc
-# QIC2mA   57273.6041843083 57395.2221556857 57297.0648196474 57323.8753261535
+# QIC2mA   58066.9036081687 58155.3041102724 58077.5294636147 58090.1142780062
 #TimeLost as linear.
 
 #BSAI
@@ -549,7 +567,7 @@ QICmod3fA
 #GOA
 #QIC            QIC.1           QIC.2            QIC.3            QIC.4            QIC.5
 #model3fA            POD0f           POD3fa          POD3fb           POD3fc           POD3fd          POD3fdd
-#QIC3fA   8456.24692284754 53055.3313397732 54045.0380796403 52217.6739925846 7975.11884023873 8296.5208076644
+# QIC3fA   9105.67439809655 56007.6079723919 9306.62063602652 60304.5931527526 9071.42459773896 8885.10600320385
 #Remove site.
 
 #The  full model without Site is:
@@ -573,7 +591,7 @@ QICmod3fB
 #GOA
 #QIC            QIC.1            QIC.2            QIC.3            QIC.4
 #model3fB            POD0f           POD3fe           POD3ff           POD3fg          POD3fgg
-#QIC3fB   8456.24692284754 7975.11884023873 8188.14794657245 8388.25768979123 7962.33866280734
+# QIC3fB   9105.67439809655 9071.42459773896 9140.39772395276 9060.57604515016 9048.22689310987
 #Remove TimeLost
 
 #The full model without TimeLost is:
@@ -593,7 +611,7 @@ QICmod3fC
 #GOA
 #QIC            QIC.1           QIC.2            QIC.3
 #model3fC            POD0f           POD3fh          POD3fi           POD3fj
-#QIC3fC   8456.24692284754 7962.33866280734 8172.99897052171 8380.27835668924
+# QIC3fC   9105.67439809655 9048.22689310987 9111.44877706165 9039.43051192032
 #Full model is best
 
 #Model Order

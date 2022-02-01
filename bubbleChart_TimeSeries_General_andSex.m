@@ -2,9 +2,10 @@
 clear all;close all;clc;
 
 %% load data
-siteName = 'QN';
-DataDir = 'I:\My Drive\GofAK_TPWS_metadataReduced\SeasonalityAnalysis';
-saveDirectory = 'I:\My Drive\Manuscripts\GOA\Figures';
+siteName = 'PT';
+NumBub = 3;
+DataDir = 'H:\My Drive\GofAK_TPWS_metadataReduced\SeasonalityAnalysis';
+saveDirectory = 'H:\My Drive\Manuscripts\GOA\Figures';
 %% Retime data weekly
 load([DataDir,'\',siteName,'\',siteName,'_workspaceStep2.mat']);
 clear mean
@@ -73,9 +74,39 @@ if (strcmp(siteName,'KOA') | strcmp(siteName,'QN') | strcmp(siteName,'BD') | str
 end
 dataWeek.year = year(dataWeek.tbin);
 WeekData.year = year(WeekData.tbin);
+%% Checking to see how much was missed
+CombinedWeek = dataWeek(:,19:21);
+CombinedWeek.NormBin = WeekData.NormBin;
+CombinedWeek.Added = CombinedWeek.FemaleNormBin + CombinedWeek.JuvenileNormBin + CombinedWeek.MaleNormBin;
+CombinedWeek.Difference = CombinedWeek.NormBin - CombinedWeek.Added;
+CombinedWeek.Difference( CombinedWeek.Difference <= 0 ) = 0;
+%% Find Max Bubble Size and Distribution
+%Find max
+Femax = max(dataWeek.FemaleNormBin);
+Jumax = max(dataWeek.JuvenileNormBin);
+Mamax = max(dataWeek.MaleNormBin);
+Comax = max(CombinedWeek.Difference);
+MAX = max([Femax, Jumax, Mamax, Comax]);
+MIN = min([Femax, Jumax, Mamax, Comax]);
+
+TotalData = [dataWeek.FemaleNormBin; dataWeek.JuvenileNormBin; dataWeek.MaleNormBin; CombinedWeek.Difference]; %combine values
+%delete NAs and zeros
+nanRows = isnan(TotalData);
+zeroRows = TotalData==0;
+badRows = nanRows | zeroRows;
+TotalData(badRows) = [];
+
+%Find the histogram bins and set a cutoff
+figure, hist(TotalData,20)
+[N,edges] = histcounts(TotalData,20);
+lessThan = find(N<3); %find bins with less than 5
+CutOff = edges(lessThan(1)); %values over this value will be considered 'greater than' in the bubble sizes
+
+%Actual Cutoff (max bubble size)
+%CutOff = MIN;
 %% Plot data
 %No Social Group Data
-if strcmp(siteName, 'KOA')
+if strcmp(siteName, 'NOFEM')
     
 fBubble = figure('Position',[296 417 766 378.5000],'DefaultAxesFontSize',12,'DefaultTextFontName','Times');
 
@@ -98,7 +129,7 @@ end
 bubblesize([2 15])
 blgd= bubblelegend('Avg. daily minutes');
 blgd.Location = 'northeastoutside';
-blgd.NumBubbles = 3;
+blgd.NumBubbles = NumBub;
 set(gca,'ydir','reverse')
 bubblelim([1 round(max(WeekData.NormBin))]);
 xlim([0,53])
@@ -123,7 +154,7 @@ for y = 1:length(years)
 end
 blgd= bubblelegend('Avg. daily minutes');
 blgd.Location = 'northeastoutside';
-blgd.NumBubbles = 3;
+blgd.NumBubbles = NumBub;
 bubblesize([2 15])
 set(gca,'ydir','reverse')
 bubblelim([1 round(max(dataWeek.JuvenileNormBin))]);
@@ -150,7 +181,7 @@ for y = 1:length(years)
 end
 blgd= bubblelegend('Avg. daily minutes');
 blgd.Location = 'northeastoutside';
-blgd.NumBubbles = 3;
+blgd.NumBubbles = NumBub;
 bubblesize([2 15])
 set(gca,'ydir','reverse')
 bubblelim([1 round(max(dataWeek.MaleNormBin))]);
@@ -183,7 +214,7 @@ end
 bubblesize([2 15])
 blgd= bubblelegend('Avg. daily minutes');
 blgd.Location = 'northeastoutside';
-blgd.NumBubbles = 3;
+blgd.NumBubbles = NumBub;
 set(gca,'ydir','reverse')
 bubblelim([1 round(max(WeekData.NormBin))]);
 xlim([0,53])
@@ -210,7 +241,7 @@ end
 bubblesize([2 15])
 blgd= bubblelegend('Avg. daily minutes');
 blgd.Location = 'northeastoutside';
-blgd.NumBubbles = 3;
+blgd.NumBubbles = NumBub;
 set(gca,'ydir','reverse')
 bubblelim([1 round(max(dataWeek.FemaleNormBin))]);
 xlim([0,53])
@@ -235,7 +266,7 @@ for y = 1:length(years)
 end
 blgd= bubblelegend('Avg. daily minutes');
 blgd.Location = 'northeastoutside';
-blgd.NumBubbles = 3;
+blgd.NumBubbles = NumBub;
 bubblesize([2 15])
 set(gca,'ydir','reverse')
 bubblelim([1 round(max(dataWeek.JuvenileNormBin))]);
@@ -262,7 +293,7 @@ for y = 1:length(years)
 end
 blgd= bubblelegend('Avg. daily minutes');
 blgd.Location = 'northeastoutside';
-blgd.NumBubbles = 3;
+blgd.NumBubbles = NumBub;
 bubblesize([2 15])
 set(gca,'ydir','reverse')
 bubblelim([1 round(max(dataWeek.MaleNormBin))]);
@@ -273,19 +304,12 @@ ylabel('Adult Males')
 end
 
 %% save plot
-set(gcf,'Position',[-1165         552         812         476])
-weeklyfn = [saveDirectory,'\',siteName,'_BubbleTimeSeries.pdf'];
-exportgraphics(gcf,weeklyfn,'ContentType','vector','Resolution',300);
-
-%% Checking to see how much was missed
-CombinedWeek = dataWeek(:,19:21);
-CombinedWeek.NormBin = WeekData.NormBin;
-CombinedWeek.Added = CombinedWeek.FemaleNormBin + CombinedWeek.JuvenileNormBin + CombinedWeek.MaleNormBin;
-CombinedWeek.Difference = CombinedWeek.NormBin - CombinedWeek.Added;
-CombinedWeek.Difference( CombinedWeek.Difference <= 0 ) = 0;
+% set(gcf,'Position',[-1165         552         812         476])
+% weeklyfn = [saveDirectory,'\',siteName,'_BubbleTimeSeries.pdf'];
+% exportgraphics(gcf,weeklyfn,'ContentType','vector','Resolution',300);
 %% Plotting the difference instead of the 'general pattern'
 %No Social Group Data
-if strcmp(siteName, 'KOA')
+if strcmp(siteName, 'NOFEM')
     
 fBubble = figure('Position',[296 417 766 378.5000],'DefaultAxesFontSize',12,'DefaultTextFontName','Times');
 
@@ -307,7 +331,7 @@ for y = 1:length(years)
 end
 blgd= bubblelegend('Avg. daily minutes');
 blgd.Location = 'northeastoutside';
-blgd.NumBubbles = 3;
+blgd.NumBubbles = NumBub;
 bubblesize([2 15])
 set(gca,'ydir','reverse')
 bubblelim([1 round(max(CombinedWeek.Difference))]);
@@ -334,7 +358,7 @@ for y = 1:length(years)
 end
 blgd= bubblelegend('Avg. daily minutes');
 blgd.Location = 'northeastoutside';
-blgd.NumBubbles = 3;
+blgd.NumBubbles = NumBub;
 bubblesize([2 15])
 set(gca,'ydir','reverse')
 bubblelim([1 round(max(dataWeek.MaleNormBin))]);
@@ -362,7 +386,7 @@ end
 bubblesize([2 8])
 blgd= bubblelegend('Avg. daily minutes');
 blgd.Location = 'northeastoutside';
-blgd.NumBubbles = 3;
+blgd.NumBubbles = NumBub;
 set(gca,'ydir','reverse')
 bubblelim([1 round(max(CombinedWeek.Difference))]);
 xlim([0,53])
@@ -393,9 +417,10 @@ end
 bubblesize([2 15])
 blgd= bubblelegend('Avg. daily minutes');
 blgd.Location = 'northeastoutside';
-blgd.NumBubbles = 3;
+blgd.NumBubbles = NumBub;
 set(gca,'ydir','reverse')
-bubblelim([1 round(max(dataWeek.FemaleNormBin))]);
+%bubblelim([1 round(max(dataWeek.FemaleNormBin))]);
+bubblelim([1 round(CutOff)]);
 xlim([0,53])
 % ylim([2016.75,2017.25])
 ylabel('Social Groups')
@@ -418,10 +443,11 @@ for y = 1:length(years)
 end
 blgd= bubblelegend('Avg. daily minutes');
 blgd.Location = 'northeastoutside';
-blgd.NumBubbles = 3;
+blgd.NumBubbles = NumBub;
 bubblesize([2 15])
 set(gca,'ydir','reverse')
-bubblelim([1 round(max(dataWeek.JuvenileNormBin))]);
+% bubblelim([1 round(max(dataWeek.JuvenileNormBin))]);
+bubblelim([1 round(CutOff)]);
 xlim([0,53])
 % ylim([2016.75,2017.25])
 ylabel('Mid-size')
@@ -445,10 +471,11 @@ for y = 1:length(years)
 end
 blgd= bubblelegend('Avg. daily minutes');
 blgd.Location = 'northeastoutside';
-blgd.NumBubbles = 3;
+blgd.NumBubbles = NumBub;
 bubblesize([2 15])
 set(gca,'ydir','reverse')
-bubblelim([1 round(max(dataWeek.MaleNormBin))]);
+%bubblelim([1 round(max(dataWeek.MaleNormBin))]);
+bubblelim([1 round(CutOff)]);
 xlim([0,53])
 xlabel('Week of the year')
 % ylim([2016.75,2017.25])
@@ -470,12 +497,13 @@ for y = 1:length(years)
     bubblechart(WeekData.wN(idxYear & keep),WeekData.Year(idxYear & keep),...
         round(WeekData.NormBin(idxYear & keep)),black)
 end
-bubblesize([2 8])
+bubblesize([2 15])
 blgd= bubblelegend('Avg. daily minutes');
 blgd.Location = 'northeastoutside';
-blgd.NumBubbles = 3;
+blgd.NumBubbles = NumBub;
 set(gca,'ydir','reverse')
-bubblelim([1 round(max(CombinedWeek.Difference))]);
+%bubblelim([1 round(max(CombinedWeek.Difference))]);
+bubblelim([1 round(CutOff)]);
 xlim([0,53])
 % ylim([2016.75,2017.25])
 ylabel('Difference')
