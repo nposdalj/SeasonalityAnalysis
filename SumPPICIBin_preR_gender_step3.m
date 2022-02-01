@@ -2,28 +2,27 @@ clearvars
 close all
 
 %% Parameters defined by user
-filePrefix = 'BD'; % File name to match. 
-genderFileName = 'ALEUT'; %File name to match gender file
-siteabrev = 'BD'; %abbreviation of site
+filePrefix = 'OTSG_CORC4_02'; % File name to match. 
+genderFileName = 'OTSG_CORC4_02'; %File name to match gender file
+siteabrev = 'CORC'; %abbreviation of site
+region = 'CCE';
 sp = 'Pm'; % your species code
+itnum = '2'; % which iteration you are looking for
 srate = 200; % sample rate
-tpwsPath = 'I:\My Drive\GofAK_TPWS_metadataReduced\ICIgrams\'; %directory of TPWS files
-effortXls = 'I:\My Drive\GofAK_TPWS_metadataReduced\ICIgrams\Pm_Effort_BD.xlsx'; % specify excel file with effort times
-saveDir = 'I:\My Drive\GofAK_TPWS_metadataReduced\SeasonalityAnalysis'; %specify directory to save files
-dayBinCSV= 'I:\My Drive\GofAK_TPWS_metadataReduced\SeasonalityAnalysis\BD_dayData_forGLMR125.csv'; % specify csv document with general PM information
+GDrive = 'H'; %Google Drive
+
+effortXls = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev,'\Pm_Effort.xlsx']; % specify excel file with effort times
+% effortXls = ['I:\My Drive\',region,'_TPWS_metadataReduced\',siteabrev,'\SeasonalityAnalysis\Pm_Effort.xlsx']; % specify excel file with effort times
+
+saveDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev]; %specify directory to save files
+% saveDir = ['I:\My Drive\',region,'_TPWS_metadataReduced\',siteabrev,'\SeasonalityAnalysis']; %specify directory to save files
+
+dayBinCSV= [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev,'\',siteabrev,'_dayData_forGLMR125.csv']; % specify csv document with general PM information
+% dayBinCSV= ['I:\My Drive\',region,'_TPWS_metadataReduced\',siteabrev,'\SeasonalityAnalysis\',siteabrev,'_dayData_forGLMR125.csv']; % specify csv document with general PM information
 %% Get effort times matching prefix file
 %when multiple sites in the effort table
 allEfforts = readtable(effortXls); %read effort table
-site = siteabrev; %abbreviation used in effort table
-
-siteNUM = unique(allEfforts.Sites);
-[sr,~] = size(siteNUM);
-
-if sr > 1
-    effTable = allEfforts(ismember(allEfforts.Sites,site),:); %effort is for multiple sites
-else
-    effTable = allEfforts; %effort is for one site only
-end
+effTable = allEfforts; %effort is for one site only
 
 % make Variable Names consistent
 startVar = find(~cellfun(@isempty,regexp(effTable.Properties.VariableNames,'Start.*Effort'))>0,1,'first');
@@ -55,7 +54,7 @@ else
     binEffort.sec = binEffort.bin*(p.binDur*60);
 end
 %% load data
-filename = [tpwsPath,genderFileName,'_',sp,'_gender.mat'];
+filename = [saveDir,'\',genderFileName,'_',sp,'_gender.mat'];
 load(filename);
 %% group data by days and add effort
 binPresence = synchronize (binData, binEffort);

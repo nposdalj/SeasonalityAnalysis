@@ -2,16 +2,22 @@ clearvars
 close all
 
 %% Parameters defined by user
-filePrefix = 'BD'; % File name to match. 
-siteabrev = 'BD'; %abbreviation of site.
+filePrefix = 'OTSG_CORC4_02'; % File name to match. 
+siteabrev = 'CORC'; %abbreviation of site.
+region = 'CCE'; %region
 sp = 'Pm'; % your species code
 srate = 200; % sample rate
-effortXls = 'I:\My Drive\GofAK_TPWS_metadataReduced\SeasonalityAnalysis\BD\Pm_Effort.xlsx'; % specify excel file with effort times
-saveDir = 'I:\My Drive\GofAK_TPWS_metadataReduced\SeasonalityAnalysis\BD'; %specify directory to save files
+GDrive = 'H'; %Google Drive
+
+effortXls = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev,'\Pm_Effort.xlsx']; % specify excel file with effort times
+% effortXls = ['I:\My Drive\',region,'_TPWS_metadataReduced\',siteabrev,'\SeasonalityAnalysis\Pm_Effort.xlsx']; % specify excel file with effort times
+
+saveDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev]; %specify directory to save files
+% saveDir = ['I:\My Drive\',region,'_TPWS_metadataReduced\',siteabrev,'\SeasonalityAnalysis']; %specify directory to save files
 %% load workspace
 load([saveDir,'\',siteabrev,'_workspace125.mat']);
-effortXls = 'I:\My Drive\GofAK_TPWS_metadataReduced\SeasonalityAnalysis\BD\Pm_Effort.xlsx'; % specify excel file with effort times
-saveDir = 'I:\My Drive\GofAK_TPWS_metadataReduced\SeasonalityAnalysis\BD'; %specify directory to save files
+%effortXls = 'I:\My Drive\GofAK_TPWS_metadataReduced\SeasonalityAnalysis\KS\Pm_Effort.xlsx'; % specify excel file with effort times
+%saveDir = 'I:\My Drive\GofAK_TPWS_metadataReduced\SeasonalityAnalysis\KS'; %specify directory to save files
 %% group data by 5min bins, hourly, days, weeks, and seasons 
 %group data by 5 minute bins
 binTable = synchronize(binData,binEffort);

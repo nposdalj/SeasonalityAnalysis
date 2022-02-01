@@ -15,7 +15,7 @@ library(prettymapr)
 data(coastlineWorldFine)
 data(topoWorld)
 
-Inlet = getNOAA.bathy(lon1 = -90, lon2 = -70, lat1 = 65, lat2 = 80, resolution = 1)
+Inlet = getNOAA.bathy(lon1 = -123, lon2 = -117, lat1 = 30, lat2 = 35, resolution = 1)
 summary(Inlet)
 
 #make HARP points
@@ -34,8 +34,8 @@ reg = subset(reg, region %in% c('Canada', 'USA'))
 reg$long = (360 - reg$long)*-1
 
 #set map limits
-lons = c(-81, -74)
-lats = c(71.5, 73.5)
+lons = c(-123, -117)
+lats = c(30, 35)
 
 #make a plot
 ggplot()+
