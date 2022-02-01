@@ -18,13 +18,14 @@ library(ChemoSpecUtils)
 library(car)            # to run an ANOVA
 library(splines2)       # to use mSpline for the GEEs
 #load functions
-source('C:/Users/nposd/Documents/GitHub/SeasonalityAnalysis/GAM_GEEs/GAMGEE_Plotting_Functions.R')
+source('C:/Users/Alba/Documents/GitHub/SeasonalityAnalysis/GAM_GEEs/GAMGEE_Plotting_Functions.R')
 
 # Load Workspace --------------------------------------------------
-site = 'CB'
-saveWorkspace = paste("I:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",site,'/',sep="")
+site = 'PT'
+saveWorkspace = paste("D:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",site,'/',sep="")
 fileName = paste(saveWorkspace,site,'_SiteSpecific_gamgeeOutput.RData',sep="")
 load(fileName)
+saveDir = paste("D:/My Drive/GofAK_TPWS_metadataReduced/Plots/",site,'/',sep="")
 
 # Plot Julian Day ---------------------------------------------------------
 if (site == 'CB'){
@@ -32,7 +33,7 @@ if (site == 'CB'){
   ggPlot_JD_Year(PODFinal, SiteHourTableB)
 } else {
 BasePlot_JD(PODFinal,SiteHourTableB)
-ggPlot_JD(PODFinal,SiteHourTableB)
+ggPlot_JD(PODFinal,SiteHourTableB,site)
 }
 
 # Plot Year ---------------------------------------------------------------

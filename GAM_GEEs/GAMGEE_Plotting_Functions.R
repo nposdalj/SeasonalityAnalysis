@@ -56,7 +56,7 @@ BasePlot_JD_Year <- function(model, table){
 
 
 # Plot Julian Day with ggplot ---------------------------------------------
-ggPlot_JD <- function(model, table){
+ggPlot_JD <- function(model, table, site){
   BootstrapParameters3<-rmvnorm(10000, coef(model),summary(model)$cov.unscaled)
   start=2; finish=3; Variable=table$Julian;  
   PlottingVar3<-seq(min(Variable), max(Variable), length=5000)
