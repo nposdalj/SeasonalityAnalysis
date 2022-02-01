@@ -1,28 +1,28 @@
 close all;clear all;clc;
 %% select directory where ship files are located
-siteabrev = 'WC';
-siteNameMatch = 'WC';
+siteabrev = 'BS';
+siteNameMatch = 'BS';
 region = 'WAT'; %all of the WAT data has a space between the site and the deployment #
 shipDataType = 2; % 1 - old ship data, %2 - new ship data
-ShipIDReDo = 1; % If you want to re-run ship and ID times, change this to 1
+ShipIDReDo = 0; % If you want to re-run ship and ID times, change this to 1
 
-% shipDir = ['H:\My Drive\',region,'_TPWS_metadataReduced\metadata_reduced\',siteabrev];
-% shipTimesDir = ['H:\My Drive\',region,'_TPWS_metadataReduced\ShipTimes\',siteabrev]; % directory where to save ship times .mat files
+ shipDir = ['H:\My Drive\',region,'_TPWS_metadataReduced\metadata_reduced\',siteabrev];
+ shipTimesDir = ['H:\My Drive\',region,'_TPWS_metadataReduced\ShipTimes\',siteabrev]; % directory where to save ship times .mat files
 % shipDir = ['H:\My Drive\',region,'_TPWS_metadataReduced\',siteabrev,'\metadata_reduced'];
 % shipTimesDir = ['H:\My Drive\',region,'_TPWS_metadataReduced\',siteabrev,'\ShipTimes']; % directory where to save ship times .mat files
-shipDir = 'E:\WC\metadata_reduced';
-shipTimesDir = 'E:\WC\ShipTimes';
+%shipDir = 'E:\WC\metadata_reduced';
+%shipTimesDir = 'E:\WC\ShipTimes';
 
-% IDDir = ['I:\My Drive\',region,'_TPWS_metadataReduced\TPWS_125\',siteabrev];
+ IDDir = ['H:\My Drive\',region,'_TPWS_metadataReduced\TPWS_125\',siteabrev];
 % IDDir = ['H:\My Drive\',region,'_TPWS_metadataReduced\',siteabrev,'\TPWS_125'];
-IDDir = 'E:\WC\TPWS_125';
-% IDTimesDir = ['I:\My Drive\',region,'_TPWS_metadataReduced\IDTimes\',siteabrev]; % directory where to save ID times .mat files
+%IDDir = 'E:\WC\TPWS_125';
+ IDTimesDir = ['H:\My Drive\',region,'_TPWS_metadataReduced\IDTimes\',siteabrev]; % directory where to save ID times .mat files
 % IDTimesDir = ['H:\My Drive\',region,'_TPWS_metadataReduced\',siteabrev,'\IDTimes']; % directory where to save ID times .mat files
-IDTimesDir = 'E:\WC\IDTimes';
+%IDTimesDir = 'E:\WC\IDTimes';
 
 maxDetEdit = 1; % number of TPWS folders (i.e. TPWS4 is 4)
-saveTable = 'E:\WC\SeasonalityAnalysis\Pm_Effort.xlsx';
-% saveTable = ['H:\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev,'\Pm_Effort.xlsx'];
+%saveTable = 'E:\WC\SeasonalityAnalysis\Pm_Effort.xlsx';
+ saveTable = ['H:\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev,'\Pm_Effort.xlsx'];
 % saveTable = ['H:\My Drive\',region,'_TPWS_metadataReduced\',siteabrev,'\Seasonality\Pm_Effort.xlsx'];
 %% write ship and ID file times
 %Check to see if ship files are in the old format or new format

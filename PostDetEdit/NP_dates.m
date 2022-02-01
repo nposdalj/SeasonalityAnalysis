@@ -238,10 +238,14 @@ BP_latLongs = [39.938, - 76;
 40.021, -76;
 40.195, - 76];
 %% BS
-BS_dates = ;
-BP_depl = ;
-BP_site = ;
-BP_latLongs = ;
+BS_dates = [datenum([2016,04,27, 18, 00, 00]), datenum([2017, 06, 26, 15,22,05]);
+    datenum([2017,06,26 18, 00, 00]), datenum([2018,06,23,07,32,33]);
+    datenum([2018,06,28,00,00,00]), datenum([2019,06,16,20,13,45])];
+BS_depl = [1,2,3];
+BS_site(1:length(BS_depl),1) = {'BS'};
+BS_latLongs = [30.583, 77.39;
+30.583, 77.39;
+30.582, 77.39];
 %% JAX
 JAX_dates = [datenum([2016,04,26, 18, 00, 00]), datenum([2017, 06, 25,19,23,35]);
     datenum([2017,06,25 18,03,57]), datenum([2017,10,28,17,27,48]);
@@ -289,14 +293,14 @@ NC_latLongs = [39.938, - 76;
 edgeffort = [CB_dates; QN_dates; AB_dates; PT_dates; CORC_dates;...
     HOKE_dates; ALEUT_dates; DCPP01C_dates; ALEUT01KS_dates; OCNMSQC_dates; KOA_dates; GI_dates;...
     EI_dates; Saipan_dates; Tinian_dates; Wake_dates; OC_dates; GS_dates; NC_dates; JAX_dates; HZ_dates; BC_dates;...
-    BP_dates; WC_dates];
+    BP_dates; BS_dates; WC_dates];
 latLongs = [CB_latLongs; QN_latLongs; AB_latLongs; PT_latLongs;...
     CORC_latLongs; HOKE_latLongs; ALEUT_latLongs; DCPP01C_latLongs; ALEUT01KS_latLongs; OCNMSQC_latLongs;...
     KOA_latLongs; GI_latLongs; EI_latLongs; Saipan_latLongs; Tinian_latLongs; Wake_latLongs; OC_latLongs; GS_latLongs;...
-    NC_latLongs; JAX_latLongs; HZ_latLongs; BC_latLongs; BP_latLongs; WC_latLongs];
+    NC_latLongs; JAX_latLongs; HZ_latLongs; BC_latLongs; BP_latLongs; BS_latLongs; WC_latLongs];
 depl = [CB_depl'; QN_depl'; AB_depl'; PT_depl'; CORC_depl'; HOKE_depl';...
     ALEUT_depl'; DCPP01C_depl'; ALEUT01KS_depl';OCNMSQC_depl'; KOA_depl';GI_depl'; EI_depl'; Saipan_depl';...
-    Tinian_depl'; Wake_depl'; OC_depl'; GS_depl'; NC_depl'; JAX_depl'; HZ_depl'; BC_depl'; BP_depl'; WC_depl'];
+    Tinian_depl'; Wake_depl'; OC_depl'; GS_depl'; NC_depl'; JAX_depl'; HZ_depl'; BC_depl'; BP_depl'; BS_depl'; WC_depl'];
 site = [CB_site; QN_site; AB_site; PT_site; CORC_site; HOKE_site;...
     ALEUT_site; DCPP01C_site; ALEUT01KS_site; OCNMSQC_site; KOA_site; GI_site; EI_site; Saipan_site;...
-    Tinian_site; Wake_site; OC_site; GS_site; NC_site; JAX_site; HZ_site; BC_site; BP_site; WC_site];
+    Tinian_site; Wake_site; OC_site; GS_site; NC_site; JAX_site; HZ_site; BC_site; BP_site; BS_site; WC_site];
