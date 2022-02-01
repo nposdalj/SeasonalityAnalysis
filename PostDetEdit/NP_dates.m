@@ -238,7 +238,10 @@ BP_latLongs = [39.938, - 76;
 40.021, -76;
 40.195, - 76];
 %% BS
-
+BS_dates = ;
+BP_depl = ;
+BP_site = ;
+BP_latLongs = ;
 %% JAX
 JAX_dates = [datenum([2016,04,26, 18, 00, 00]), datenum([2017, 06, 25,19,23,35]);
     datenum([2017,06,25 18,03,57]), datenum([2017,10,28,17,27,48]);
