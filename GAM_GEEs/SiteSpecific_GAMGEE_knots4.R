@@ -216,7 +216,7 @@ if (site == 'CB'){
 # QIC            QIC.1            QIC.2           QIC.3
 # model1A             POD0            POD1a            POD1b           POD1c
 # QIC1A   56131.6234210416 45336.1244245701 46907.7523693895 45670.0355512776
-#Year as a mSpline even though factor had a higher QIC.
+#Year as a factor.
 
 #TimeLost
 POD2a = geeglm(PreAbs ~ as.factor(TimeLost), family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
@@ -259,54 +259,6 @@ QICmod2A
 if (site == "CB"){
   #CB (with Year as mSpline)
   #The initial full model is:
-  POD3a = geeglm(PreAbs ~ AvgDayMat+mSpline(Year,
-                                            knots=quantile(Year, probs=c(0.333,0.666)),
-                                            Boundary.knots=c(2011,2019))+TimeLost,family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
-  #without AvgDayMat
-  POD3b = geeglm(PreAbs ~ mSpline(Year,
-                                  knots=quantile(Year, probs=c(0.333,0.666)),
-                                  Boundary.knots=c(2011,2019))+TimeLost,family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
-  #without Year
-  POD3c = geeglm(PreAbs ~ AvgDayMat +TimeLost,family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
-  #without Timelost
-  POD3d = geeglm(PreAbs ~ AvgDayMat+mSpline(Year,
-                                            knots=quantile(Year, probs=c(0.333,0.666)),
-                                            Boundary.knots=c(2011,2019)),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
-  model3A = c("POD0","POD3a","POD3b","POD3c","POD3d")
-  QIC3A = c(QIC(POD0)[1],QIC(POD3a)[1],QIC(POD3b)[1],QIC(POD3c)[1],QIC(POD3d)[1])
-  QICmod3A<-data.frame(rbind(model3A,QIC3A))
-  QICmod3A
-  #CB
-  #QIC            QIC.1            QIC.2            QIC.3            QIC.4
-  # model3A             POD0            POD3a            POD3b           POD3c            POD3d
-  #QIC3A   56131.6234210416 45705.0585812701 45747.1474250811 54810.4495252131 45623.5070366177
-  #Remove TimeLost
-  
-  
-  #The  full model without TimeLost is:
-  POD3e = geeglm(PreAbs ~ AvgDayMat+mSpline(Year,
-                                            knots=quantile(Year, probs=c(0.333,0.666)),
-                                            Boundary.knots=c(2011,2019)),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
-  #without AvgDayMat
-  POD3f = geeglm(PreAbs ~ mSpline(Year,
-                                  knots=quantile(Year, probs=c(0.333,0.666)),
-                                  Boundary.knots=c(2011,2019)),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
-  #without Year
-  POD3g = geeglm(PreAbs ~ AvgDayMat,family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
-  model3B = c("POD0","POD3e","POD3f","POD3g")
-  QIC3B = c(QIC(POD0)[1],QIC(POD3e)[1],QIC(POD3f)[1],QIC(POD3g)[1])
-  QICmod3B<-data.frame(rbind(model3B,QIC3B))
-  QICmod3B
-  #CB
-  #QIC            QIC.1           QIC.2            QIC.3
-  #model3B             POD0            POD3e           POD3f            POD3g
-  #QIC3B   56131.6234210416 45623.5070366177 45670.0355512776 54457.4376942283
-  #Full model is the best  
-}
-
-if (site == "CB"){
-  #CB (with Year as.factor)
-  #The initial full model is:
   POD3a = geeglm(PreAbs ~ AvgDayMat+as.factor(Year)+TimeLost,family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
   #without AvgDayMat
   POD3b = geeglm(PreAbs ~ as.factor(Year)+TimeLost,family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
@@ -321,8 +273,9 @@ if (site == "CB"){
   #CB
   #QIC            QIC.1            QIC.2            QIC.3            QIC.4
   # model3A             POD0            POD3a            POD3b           POD3c            POD3d
-  # QIC3A   56131.6234210416 45326.2043699039 45369.0746505823 54810.4495252131 45289.3139321417
+  #QIC3A   56131.6234210416 45705.0585812701 45747.1474250811 54810.4495252131 45623.5070366177
   #Remove TimeLost
+  
   
   #The  full model without TimeLost is:
   POD3e = geeglm(PreAbs ~ AvgDayMat+as.factor(Year),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
@@ -337,7 +290,7 @@ if (site == "CB"){
   #CB
   #QIC            QIC.1           QIC.2            QIC.3
   #model3B             POD0            POD3e           POD3f            POD3g
-  
+  #QIC3B   56131.6234210416 45623.5070366177 45670.0355512776 54457.4376942283
   #Full model is the best  
 }
 
@@ -384,18 +337,6 @@ QICmod3A
 if (site == 'CB'){
   #CB
   dimnames(AvgDayMat)<-list(NULL,c("ADBM1", "ADBM2"))
-  PODFinal = geeglm(PreAbs ~ mSpline(Year,
-                                     knots=quantile(Year, probs=c(0.333,0.666)),
-                                     Boundary.knots=c(2011,2019)) + AvgDayMat,family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
-} else {
-  dimnames(AvgDayMat)<-list(NULL,c("ADBM1", "ADBM2"))
-  PODFinal = geeglm(PreAbs ~ AvgDayMat,family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
-}
-
-#Year as factor
-if (site == 'CB'){
-  #CB
-  dimnames(AvgDayMat)<-list(NULL,c("ADBM1", "ADBM2"))
   PODFinal = geeglm(PreAbs ~ as.factor(Year) + AvgDayMat,family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
 } else {
   dimnames(AvgDayMat)<-list(NULL,c("ADBM1", "ADBM2"))
@@ -412,9 +353,7 @@ if (site == 'CB'){
 anova(PODFinal)
 
 #CB
-# Df    X2 P(>|Chi|)    
-#mSpline(Year, knots = quantile(Year, probs = c(0.333, 0.666)), Boundary.knots = c(2011, 2019))  5 111.6    <2e-16 ***
-#  AvgDayMat                                                                                       2   0.9      0.63    
+  
 
 #BD
 # Df     X2 P(>|Chi|)  

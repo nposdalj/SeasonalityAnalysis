@@ -1,6 +1,6 @@
 close all;clear all;clc;
 %% select directory where ship files are located
-site = 'WC';
+site = 'GS';
 region = 'WAT'; %all of the WAT data has a space between the site and the deployment
 saveTable = ['E:\',site,'\SeasonalityAnalysis\Effort.xlsx'];
 %% get start end dates of disks
