@@ -6,7 +6,7 @@ filePrefix = 'WAT_BS'; % File name to match.
 siteabrev = 'BS'; %abbreviation of site.
 region = 'WAT'; %region
 sp = 'Pm'; % your species code
-itnum = '1'; % which iteration you are looking for
+itnum = '3'; % which iteration you are looking for
 srate = 200; % sample rate
 GDrive = 'H'; %Google Drive
 
