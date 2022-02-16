@@ -1,7 +1,7 @@
 close all;clear all;clc;
 %% select directory where ship files are located
-siteabrev = 'BS';
-siteNameMatch = 'BS';
+siteabrev = 'GS';
+siteNameMatch = 'GS';
 region = 'WAT'; %all of the WAT data has a space between the site and the deployment #
 shipDataType = 2; % 1 - old ship data, %2 - new ship data
 ShipIDReDo = 1; % If you want to re-run ship and ID times, change this to 1
