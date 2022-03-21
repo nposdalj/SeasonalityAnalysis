@@ -25,7 +25,7 @@ library(ChemoSpecUtils)
 library(car)            # to run an ANOVA
 library(splines2)       # to use mSpline for the GEEs
 
-region = 'GOA' #specify the region of interest
+region = 'BSAI' #specify the region of interest
 
 # Step 1: Load the Data -----------------------------------------------------------
 dir = paste("H:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites")
@@ -40,6 +40,9 @@ HourTable = HourTable[ order(HourTable$tbin , decreasing = FALSE ),]
 SiteHourTable = dplyr::filter(HourTable, grepl(region,Region))
 SiteHourTable$Hour = hour(SiteHourTable$tbin)
 SiteHourTable$Effort_Bin[SiteHourTable$Effort_Bin > 12] = 12
+
+#If it's a leap year, delete julian day 366
+SiteHourTable = SiteHourTable[!(SiteHourTable$Julian==366),]
 
 #Time lost variable
 SiteHourTable$TimeLost = max(SiteHourTable$Effort_Bin) - SiteHourTable$Effort_Bin
@@ -59,9 +62,9 @@ BlockMod<-glm(PreAbs~
                 as.factor(Site), data=SiteHourTable,family=binomial)
 }else{
 
-BlockMod<-glm(PreAbs~
-                bs(Julian)+
-                bs(Year) + 
+BlockMod<-glm(PreAbs~ bs(Julian, k = 4)+
+                as.factor(Year)+
+                as.factor(Site)+
                 TimeLost, data=SiteHourTable,family=binomial)
 }
 
@@ -69,16 +72,6 @@ ACF = acf(residuals(BlockMod), lag.max = 1000, ylim=c(0,0.1))
 CI = ggfortify:::confint.acf(ACF)
 ACFidx = which(ACF[["acf"]] < CI, arr.ind=TRUE)
 ACFval = ACFidx[1]
-
-#Manually do it
-# acf(residuals(BlockMod), lag.max = 700, ylim=c(0,0.1))
-# acf(residuals(BlockMod), lag.max = 1000, ylim=c(-0.1,0.1), xlim =c(0,30)) 
-# 
-# if (region == 'BSAI'){
-#   ACFval = 653
-# }else{
-#   ACFval = 23
-# }
 
 #create the blocks based on the full timesereies
 startDate = SiteHourTable$tbin[1]
@@ -114,103 +107,36 @@ for (i in 1:nrow(gapsCont)){
 Anova(BlockMod)
 
 #BSAI
-# bs(Julian, k = 4)      529  4    < 2e-16 ***
-#   TimeLost                 2  1       0.21    
-# as.factor(Site)         40  1    2.4e-10 ***
+# bs(Julian, k = 4)   719.87  4     <2e-16 ***
+#   TimeLost              0.62  1     0.4316    
+# as.factor(Site)      71.62  1     <2e-16 ***
 
 #GOA
-# bs(Julian, k = 4)     1763  4     <2e-16 ***
-#   TimeLost                 4  1      0.043 *  
-#   bs(Year, k = 4)       1003  3     <2e-16 ***
-#   as.factor(Site)       6317  4     <2e-16 ***
-
-summary(BlockMod)
-
-#BSAI
-# Call:
-#   glm(formula = PreAbs ~ bs(Julian, k = 4) + TimeLost + as.factor(Site), 
-#       family = binomial, data = SiteHourTable)
-# 
-# Deviance Residuals: 
-#   Min      1Q  Median      3Q     Max  
-# -3.35   -1.11   -0.99    1.18    1.45  
-# 
-# Coefficients:
-#   Estimate Std. Error z value Pr(>|z|)    
-# (Intercept)          5.6003     1.1780    4.75  2.0e-06 ***
-#   bs(Julian, k = 4)1  -5.4922     1.1870   -4.63  3.7e-06 ***
-#   bs(Julian, k = 4)2  -7.4281     1.1739   -6.33  2.5e-10 ***
-#   bs(Julian, k = 4)3  -3.3485     1.1919   -2.81    0.005 ** 
-#   bs(Julian, k = 4)4  -6.2190     1.1778   -5.28  1.3e-07 ***
-#   TimeLost             0.0667     0.0535    1.25    0.213    
-# as.factor(Site)KS   -0.3360     0.0532   -6.32  2.7e-10 ***
-#   ---
-#   Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-# 
-# (Dispersion parameter for binomial family taken to be 1)
-# 
-# Null deviance: 26591  on 19183  degrees of freedom
-# Residual deviance: 26047  on 19177  degrees of freedom
-# AIC: 26061
-# 
-# Number of Fisher Scoring iterations: 6
-
-#GOA
-# Call:
-#   glm(formula = PreAbs ~ bs(Julian, k = 4) + TimeLost + bs(Year, 
-#                                                            k = 4) + as.factor(Site), family = binomial, data = SiteHourTable)
-# 
-# Deviance Residuals: 
-#   Min      1Q  Median      3Q     Max  
-# -1.540  -0.932  -0.597   1.131   2.558  
-# 
-# Coefficients: (1 not defined because of singularities)
-# Estimate Std. Error z value Pr(>|z|)    
-# (Intercept)         -1.7815     0.1900   -9.38  < 2e-16 ***
-#   bs(Julian, k = 4)1  -0.5607     0.1872   -3.00   0.0027 ** 
-#   bs(Julian, k = 4)2   1.1451     0.1943    5.89  3.8e-09 ***
-#   bs(Julian, k = 4)3   1.0088     0.1952    5.17  2.4e-07 ***
-#   bs(Julian, k = 4)4   0.7805     0.1838    4.25  2.2e-05 ***
-#   TimeLost             0.0280     0.0139    2.02   0.0432 *  
-#   bs(Year, k = 4)1     0.0633     0.0462    1.37   0.1707    
-# bs(Year, k = 4)2    -1.5632     0.0565  -27.65  < 2e-16 ***
-#   bs(Year, k = 4)3    -0.4976     0.0895   -5.56  2.7e-08 ***
-#   bs(Year, k = 4)4         NA         NA      NA       NA    
-# as.factor(Site)CB    1.4117     0.0476   29.64  < 2e-16 ***
-#   as.factor(Site)KOA   0.5053     0.0663    7.62  2.4e-14 ***
-#   as.factor(Site)PT   -0.1722     0.0560   -3.07   0.0021 ** 
-#   as.factor(Site)QN    0.1612     0.0514    3.14   0.0017 ** 
-#   ---
-#   Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-# 
-# (Dispersion parameter for binomial family taken to be 1)
-# 
-# Null deviance: 101930  on 80121  degrees of freedom
-# Residual deviance:  90242  on 80109  degrees of freedom
-# AIC: 90268
-# 
-# Number of Fisher Scoring iterations: 4
+# bs(Julian, k = 4)     1579  4     <2e-16 ***
+#   as.factor(Year)       1118  7     <2e-16 ***
+#   as.factor(Site)       5818  4     <2e-16 ***
+#   TimeLost                 5  1       0.03 *  
 
 # Step 4: Data Exploration and Initial Analysis ---------------------------
 # Follow data exploration protocols suggested by Zuur et al. (2010), Zuur (2012), to generate pair plots, box plots, and assess collinearity between covariates in the dataset using Varinace Inflation Factors (vif).
 # Basic model for VIF analysis:
 if (region == 'BSAI'){
-  GLM = glm(PreAbs~Julian+TimeLost+Site,family=binomial,data=SiteHourTableB)
+  GLM = glm(PreAbs~bs(Julian)+TimeLost+as.factor(Site),family=binomial,data=SiteHourTableB)
 }else{
-  GLM = glm(PreAbs~Julian+TimeLost+Site+Year,family=binomial,data=SiteHourTableB)
+  GLM = glm(PreAbs~bs(Julian)+TimeLost+as.factor(Site)+as.factor(Year),family=binomial,data=SiteHourTableB)
 }
 VIF(GLM)
 
 #BSAI
-# Julian TimeLost     Site 
-# 1        1        1 
+# bs(Julian)      1.133165  3        1.021054
+# TimeLost        1.001865  1        1.000932
+# as.factor(Site) 1.134216  1        1.064996
 
 #GOA
-# GVIF Df GVIF^(1/(2*Df))
-# Julian   1.08  1            1.04
-# TimeLost 1.01  1            1.00
-# Site     1.35  4            1.04
-# Year     1.43  1            1.20
+# bs(Julian)      1.597  3           1.081
+# TimeLost        1.010  1           1.005
+# as.factor(Site) 3.110  4           1.152
+# as.factor(Year) 4.595  7           1.115
 
 # Step 5: Model Selection - Covariate Preparation -------------------------
 # Construct variance-covariance matrices for cyclic covariates:
@@ -241,7 +167,7 @@ QICmod0A
 #GOA
 #QIC            QIC.1            QIC.2
 #model0A             POD0            POD0a            POD0b
-# QIC0A   101973.193288013 100785.805498286 100764.708449876
+# QIC0A   107873.224599673 106330.17458963 106321.525271609
 #Julian day as a covariance matrix
 
 if (region == 'GOA'){
@@ -259,8 +185,8 @@ if (region == 'GOA'){
 #GOA
 #QIC            QIC.1            QIC.2            QIC.3
 #model1A             POD0            POD1a            POD1b            POD1c
-#QIC1A   101973.193288013 97401.7545591589 101737.310584738 97528.4566324262
-#Year as an mSpline.
+# QIC1A   107873.224599673 103022.472613358 107662.928732495 103058.77687551
+#Year as a factor.
 
 #TimeLost
 POD2a = geeglm(PreAbs ~ as.factor(TimeLost), family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
@@ -280,8 +206,8 @@ QICmod2A
 #GOA
 #QIC            QIC.1            QIC.2            QIC.3
 #model2A             POD0            POD2a            POD2b            POD2c
-#QIC2A   101973.193288013 102049.559092936 101981.723519973 101955.841619011
-#TimeLost as linear
+# QIC2A   107873.224599673 107869.834236126 107854.824216274 107803.257314075
+#TimeLost as mSpline, but I'm going to use linear
 
 # Step 6: Determine which covariates are most relevant --------------------
 #and which can be removed (on the basis of previous collinearity work). 
@@ -323,21 +249,13 @@ QICmod3B
 #The full model has the lowest QIC. AvgDayMat then Site.
 }else{
 #The initial full model is:
-POD3a = geeglm(PreAbs ~ AvgDayMat+as.factor(Site)+TimeLost+mSpline(Year,
-                                                                   knots=quantile(Year, probs=c(0.333,0.666)),
-                                                                   Boundary.knots=c(2011,2019)),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
+POD3a = geeglm(PreAbs ~ AvgDayMat+as.factor(Site)+TimeLost+as.factor(Year),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
 #without AvgDayMat
-POD3b = geeglm(PreAbs ~ as.factor(Site)+TimeLost+mSpline(Year,
-                                                         knots=quantile(Year, probs=c(0.333,0.666)),
-                                                         Boundary.knots=c(2011,2019)),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
+POD3b = geeglm(PreAbs ~ as.factor(Site)+TimeLost+as.factor(Year),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
 #without Site
-POD3c = geeglm(PreAbs ~ AvgDayMat +TimeLost+mSpline(Year,
-                                                    knots=quantile(Year, probs=c(0.333,0.666)),
-                                                    Boundary.knots=c(2011,2019)),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
+POD3c = geeglm(PreAbs ~ AvgDayMat +TimeLost+as.factor(Year),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
 #without Timelost
-POD3d = geeglm(PreAbs ~ AvgDayMat+as.factor(Site)+mSpline(Year,
-                                                          knots=quantile(Year, probs=c(0.333,0.666)),
-                                                          Boundary.knots=c(2011,2019)),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
+POD3d = geeglm(PreAbs ~ AvgDayMat+as.factor(Site)+as.factor(Year),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
 #Without Year
 POD3e = geeglm(PreAbs ~ AvgDayMat+as.factor(Site)+TimeLost,family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
 model3A = c("POD0","POD3a","POD3b","POD3c","POD3d","POD3e")
@@ -347,24 +265,18 @@ QICmod3A
 #GOA
 #QIC            QIC.1            QIC.2            QIC.3            QIC.4           QIC.5
 #model3A             POD0            POD3a            POD3b            POD3c            POD3d           POD3e
-#QIC3A   101973.193288013 2014594.95955435 2530294.12534769 97106.7063896764 2032709.30182762 2609370.35408955
-#Remove Site.
+#QIC3A   107873.224599673 2268321.88261158 2294195.98522917 102233.183647118 2014807.0576355 101815.271827164
+#Remove Year
 
-#Second round of model testing without Site
+#Second round of model testing without Time Lost
 #The initial full model is:
-POD3f = geeglm(PreAbs ~ AvgDayMat +TimeLost+mSpline(Year,
-                                                    knots=quantile(Year, probs=c(0.333,0.666)),
-                                                    Boundary.knots=c(2011,2019)),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
+POD3f = geeglm(PreAbs ~ AvgDayMat +as.factor(Site)+TimeLost,family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
 #without AvgDayMat
-POD3g = geeglm(PreAbs ~ TimeLost+mSpline(Year,
-                                         knots=quantile(Year, probs=c(0.333,0.666)),
-                                         Boundary.knots=c(2011,2019)),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
-#without TimeLost
-POD3h = geeglm(PreAbs ~ AvgDayMat + mSpline(Year,
-                                          knots=quantile(Year, probs=c(0.333,0.666)),
-                                          Boundary.knots=c(2011,2019)),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
+POD3g = geeglm(PreAbs ~ as.factor(Site)+TimeLost,family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
+#without Site
+POD3h = geeglm(PreAbs ~ AvgDayMat+TimeLost,family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
 #without Year
-POD3i = POD3c = geeglm(PreAbs ~ AvgDayMat +TimeLost,family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
+POD3i = POD3c = geeglm(PreAbs ~ AvgDayMat+as.factor(Site),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
 model3B = c("POD0","POD3f","POD3g","POD3h","POD3i")
 QIC3B = c(QIC(POD0)[1],QIC(POD3f)[1],QIC(POD3g)[1],QIC(POD3h)[1],QIC(POD3i)[1])
 QICmod3B<-data.frame(rbind(model3B,QIC3B))
@@ -372,18 +284,14 @@ QICmod3B
 #GOA
 #QIC            QIC.1            QIC.2            QIC.3            QIC.4
 #model3B             POD0            POD3f            POD3g            POD3h            POD3i
-#QIC3B   101973.193288013 97106.7063896764 97538.8701419481 97098.4175104023 100771.303533705
+#QIC3B   107873.224599673 101815.271827164 100118.804637723 106304.976135675 101807.980067339
 #Remove TimeLost
 
 #Third round of model testing without TimeLost
-POD3i = geeglm(PreAbs ~ AvgDayMat +mSpline(Year,
-                                                    knots=quantile(Year, probs=c(0.333,0.666)),
-                                                    Boundary.knots=c(2011,2019)),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
+POD3i = geeglm(PreAbs ~ AvgDayMat+as.factor(Site),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
 #without AvgDayMat
-POD3j = geeglm(PreAbs ~ mSpline(Year,
-                                         knots=quantile(Year, probs=c(0.333,0.666)),
-                                         Boundary.knots=c(2011,2019)),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
-#without Year
+POD3j = geeglm(PreAbs ~ as.factor(Site),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
+#without Site
 POD3k = POD3c = geeglm(PreAbs ~ AvgDayMat,family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
 model3C = c("POD0","POD3i","POD3j","POD3k")
 QIC3C = c(QIC(POD0)[1],QIC(POD3i)[1],QIC(POD3j)[1],QIC(POD3k)[1])
@@ -392,8 +300,8 @@ QICmod3C
 #GOA
 # QIC            QIC.1            QIC.2            QIC.3
 # model3C             POD0            POD3i            POD3j            POD3k
-# QIC3C   101973.193288013 97098.4175104023 97528.4566324262 100764.708449876
-#Full model is the best. Year goes first, then AvgDayMat.
+#QIC3C   107873.224599673 101807.980067339 100078.781796158 106321.525271609
+#Full model is the best. Site goes first, then AvgDayMat.
 }
 
 # Step 7: Finalize Model --------------------------------------------------
@@ -402,13 +310,7 @@ if (region == 'BSAI'){
   PODFinal = geeglm(PreAbs ~ AvgDayMat + as.factor(Site),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
 } else {
   dimnames(AvgDayMat)<-list(NULL,c("ADBM1", "ADBM2"))
-  PODFinal = geeglm(PreAbs ~ mSpline(Year,
-                                               knots=quantile(Year, probs=c(0.333,0.666)),
-                                               Boundary.knots=c(2011,2019))+AvgDayMat,family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
-  PODFinal_Site = geeglm(PreAbs ~ mSpline(Year,
-                                     knots=quantile(Year, probs=c(0.333,0.666)),
-                                     Boundary.knots=c(2011,2019))+AvgDayMat+as.factor(Site),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
-
+  PODFinal = geeglm(PreAbs ~ as.factor(Site)+AvgDayMat,family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
 }
 
 # STEP 8: Interpreting the summary of the model --------------------------
@@ -421,22 +323,18 @@ if (region == 'BSAI'){
 anova(PODFinal)
 
 #BSAI
-#Df     X2 P(>|Chi|)    
-# AvgDayMat        2 13.2    0.0014 ** 
-#   as.factor(Site)  1 16.9     4e-05 ***
+#AvgDayMat        2 13.2    0.0014 ** 
+#as.factor(Site)  1 16.9     4e-05 ***
+
 #GOA
-#Df     X2 P(>|Chi|)    
-# mSpline(Year, knots = quantile(Year, probs = c(0.333, 0.666)), Boundary.knots = c(2011, 2019))  5 462   < 2e-16 ***
-#   AvgDayMat                                                                                       2  50   1.2e-11 ***
+#as.factor(Site)  4 587   < 2e-16 ***
+#AvgDayMat        2  40   1.7e-09 ***
 
-if (region == 'GOA'){
-anova(PODFinal_Site)
-# mSpline(Year, knots = quantile(Year, probs = c(0.333, 0.666)), Boundary.knots = c(2011, 2019))  5 461.55 < 2.2e-16 ***
-#   AvgDayMat                                                                                       2  50.27 1.212e-11 ***
-#   as.factor(Site)                                                                                 4 341.25 < 2.2e-16 ***
-}
-
+filename = paste(saveWorkspace,region,'_RegionalModelSummary.txt',sep="")
+sink(filename)
 summary(PODFinal)
+anova(PODFinal)
+sink(file = NULL)
 
 # Step 9: Construction of the ROC curve    --------------------------------
 pr <- predict(PODFinal, type="response")  
@@ -482,8 +380,8 @@ cmx(DATA, threshold = cutoff)                                   # the identified
 #GOA
 # observed
 # predicted     1     0
-# 1 14556 16541
-# 0 12103 36922
+# 1 15604 31995
+# 0  5515 32462
 
   
 # The area under the curve (auc) can also be used as an rough indication of model performance:

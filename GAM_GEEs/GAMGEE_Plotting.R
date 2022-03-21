@@ -21,26 +21,29 @@ library(splines2)       # to use mSpline for the GEEs
 source('C:/Users/nposd/Documents/GitHub/SeasonalityAnalysis/GAM_GEEs/GAMGEE_Plotting_Functions.R')
 
 # Load Workspace --------------------------------------------------
-#site = 'Big'
-region = 'GOA'
+site = 'Big'
+GDrive = 'H'
+#region = 'GOA'
 if (exists("site")){
   if (site == 'Big'){
-    saveWorkspace = paste("I:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites/")
+    saveWorkspace = paste(GDrive,":/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites/",sep="")
     fileName = paste(saveWorkspace,'BigModel_gamgeeOutput.RData',sep="")
     load(fileName)
   }else{
-    saveWorkspace = paste("I:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",site,'/',sep="")
+    saveWorkspace = paste(GDrive,":/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",site,'/',sep="")
     fileName = paste(saveWorkspace,site,'_SiteSpecific_gamgeeOutput.RData',sep="")
     load(fileName)
   }
 }
 
 if (exists("region")){
-  saveWorkspace = paste("I:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",region,'/',sep="")
+  saveWorkspace = paste(GDrive,":/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",region,'/',sep="")
   fileName = paste(saveWorkspace,region,'_RegionSpecific_gamgeeOutput.RData',sep="")
   load(fileName)
-  site = region
 }
+
+#If it's a leap year, delete julian day 366 for plotting
+SiteHourTableB = SiteHourTable[!(SiteHourTableB$Julian==366),]
 
 # Plot Julian Day ---------------------------------------------------------
 if (exists("site")){
@@ -52,17 +55,18 @@ if (exists("site")){
     ggPlot_JD_Year(PODFinal, SiteHourTableB)
   }else{
     BasePlot_JD(PODFinal,SiteHourTableB)
-    ggPlot_JD(PODFinal,SiteHourTableB)
+    ggPlot_JD(PODFinal,SiteHourTableB,site)
   }
 }
 
 if (exists("region")){
+  site = region
   if (region == 'GOA'){
-    BasePlot_JD_Year(PODFinal,SiteHourTableB)
-    ggPlot_JD_Year(PODFinal, SiteHourTableB)
+    BasePlot_JD_AfterSite(PODFinal,SiteHourTableB)
+    ggPlot_JD_AfterSite(PODFinal, SiteHourTableB)
   }else{
     BasePlot_JD(PODFinal,SiteHourTableB)
-    ggPlot_JD(PODFinal,SiteHourTableB)
+    ggPlot_JD(PODFinal,SiteHourTableB,site)
 }
 } 
 
@@ -72,18 +76,13 @@ if (site == 'CB'){
   ggPlot_Year(PODFinal,SiteHourTableB,site)
 }else if (site == "Big"){
   ggPlot_Year_Big(PODFinal,SiteHourTableB,site)
-  # ggPlot_Year_Big(PODFinal_Region,SiteHourTableB,site) #model looked bad with region
-}else if (site == 'GOA'){
-  ggPlot_Year(PODFinal,SiteHourTableB,site)
-  # ggPlot_Year(PODFinal_Site,SiteHourTableB,site) #model looked bad with region
 }
 
 # Plot Site ---------------------------------------------------------------
 if (exists("region")){
    if (region == 'GOA'){
-     #do nothing since it wasn't included in the model
-# ggPlot_Site_Year(PODFinal_Site,SiteHourTableB,site)
-# ggPlot_Site_asFactor_Year(PODFinal_Site,SiteHourTableB,site)
+ggPlot_Site_GOA(PODFinal,SiteHourTableB,site)
+ggPlot_Site_asfactor_GOA(PODFinal,SiteHourTableB,site)
    }else{
 ggPlot_Site(PODFinal,SiteHourTableB,site)
 ggPlot_Site_asFactor(PODFinal,SiteHourTableB,site)
@@ -92,7 +91,7 @@ ggPlot_Site_asFactor(PODFinal,SiteHourTableB,site)
 
 # Plot Region ---------------------------------------------------------------
 if (site == 'Big'){
-  ggPlot_Region_Big(PODFinal_Region,SiteHourTableB,site)
-  ggPlot_Region_asFactor_Big(PODFinal_Region,SiteHourTableB,site)
+  ggPlot_Region_Big(PODFinal,SiteHourTableB,site)
+  ggPlot_Region_asFactor_Big(PODFinal,SiteHourTableB,site)
 }
 

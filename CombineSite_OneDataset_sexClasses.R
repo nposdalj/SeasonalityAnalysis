@@ -86,7 +86,7 @@ HourTab = data.frame(matrix(ncol = 0, nrow=0))
 for (i in 1:length(Sites)){
   HourBinTab = read.csv(filename2[i])
   modHourBinTAB = HourBinTab %>%
-    dplyr::select(tbin, FemaleHoursNorm,JuvenileHoursNorm, MaleHoursNorm, Effort_Bin, Effort_Sec)
+    dplyr::select(tbin, Female,Juvenile, Male, Effort_Bin, Effort_Sec)
   name = Sites[i]
   #names(modHourBinTAB)[names(modHourBinTAB) == "PreAbs"] = name
   if (i == 1){

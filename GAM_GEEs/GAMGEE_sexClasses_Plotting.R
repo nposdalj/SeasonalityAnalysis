@@ -21,28 +21,32 @@ library(splines2)       # to use mSpline for the GEEs
 source('C:/Users/nposd/Documents/GitHub/SeasonalityAnalysis/GAM_GEEs/GAMGEE_sexClasses_Plotting_Functions.R')
 
 # Load Workspace --------------------------------------------------
-#site = 'Big'
-region = 'GOA'
+site = 'Big'
+#region = 'GOA'
+GDrive = 'H'
 sexGroups = c('Social Groups','Mid-Size','Males')
 
 if (exists("site")){
   if (site == 'Big'){
-    saveWorkspace = paste("I:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites/")
+    saveWorkspace = paste(GDrive,":/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites/",sep="")
     fileName = paste(saveWorkspace,'BigModel_gamgeeOutput_sexClasses.RData',sep="")
     load(fileName)
   }else{
-saveWorkspace = paste("I:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",site,'/',sep="")
+saveWorkspace = paste(GDrive,":/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",site,'/',sep="")
 fileName = paste(saveWorkspace,site,'_SiteSpecific_gamgeeOutput_sexClasses.RData',sep="")
 load(fileName)
   }
 }
 
 if (exists("region")){
-  saveWorkspace = paste("I:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",region,'/',sep="")
+  saveWorkspace = paste(GDrive,":/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",region,'/',sep="")
   fileName = paste(saveWorkspace,region,'_RegionSpecific_gamgeeOutput_sexClasses.RData',sep="")
   load(fileName)
   site = region
 }
+
+#If it's a leap year, delete julian day 366 for plotting
+SiteHourTableB = SiteHourTable[!(SiteHourTableB$Julian==366),]
 
 for (i in 1:length(sexGroups)){
   sex = sexGroups[i]
@@ -60,18 +64,15 @@ if (sex == 'Social Groups'){
 }
 
 # Plot Julian Day ---------------------------------------------------------
-if (site == 'CB' & sex == 'Social Groups'){
-  BasePlot_JD_Year(PODFinal,SiteHourTableB,sex)
-  ggPlot_JD_Year(PODFinal, SiteHourTableB,sex)
-}else if (site == 'GOA' & !sex == 'Males'){
-  BasePlot_JD_Year(PODFinal,SiteHourTableB,sex)
-  ggPlot_JD_Year(PODFinal, SiteHourTableB,sex)
-}else if (site == 'GOA' & sex == 'Males' | site == 'Big' & sex == 'Mid-Size'){
-  BasePlot_JD_Year_M(PODFinalM,SiteHourTableB,sex)
-  ggPlot_JD_Year_M(PODFinalM, SiteHourTableB,sex)
-}else if (site == 'Big' & sex == 'Social Groups' | site == 'Big' & sex == 'Males'){
-  BasePlot_JD_Year(PODFinal,SiteHourTableB,sex)
-  ggPlot_JD_Year(PODFinal, SiteHourTableB,sex)
+if (site == 'CB' & sex == 'Social Groups' | site == 'GOA' & sex == 'Mid-Size' | site == 'GOA' & sex == 'Social Groups'){
+  BasePlot_JD_AfterYear(PODFinal,SiteHourTableB,sex)
+  ggPlot_JD_AfterYear(PODFinal, SiteHourTableB,sex)
+}else if (site == 'GOA' & sex == 'Males'){
+  BasePlot_JD_AfterSite(PODFinal,SiteHourTableB,sex)
+  ggPlot_JD_AfterSite(PODFinal, SiteHourTableB,sex)
+}else if (site == 'Big' & sex == 'Males'){
+  BasePlot_JD_AfterYearB(PODFinal,SiteHourTableB,sex)
+  ggPlot_JD_AfterYearB(PODFinal, SiteHourTableB,sex)
 }else{
 BasePlot_JD_sex(PODFinal,SiteHourTableB,sex)
 ggPlot_JD_sex(PODFinal,SiteHourTableB,sex)
@@ -79,25 +80,25 @@ ggPlot_JD_sex(PODFinal,SiteHourTableB,sex)
 
 # Plot Year ---------------------------------------------------------------
 if (site == 'CB'){
-  if (sex == 'Social Groups'){
-  ggPlot_Year(PODFinal,SiteHourTableB,sex)
+  if (sex == 'Mid-Size'|sex=='Males'){
+  ggPlot_Year_AfterJD(PODFinal,SiteHourTableB,sex)
   }else{
-    ggPlot_Year_MM(PODFinal,SiteHourTableB,sex)
+    ggPlot_Year(PODFinal,SiteHourTableB,sex)
   }
 }
   
-if (region == 'GOA'){
-    if (sex == 'Social Groups' | sex == 'Mid-Size'){
+if (exists("region")){
+if (region == 'GOA' & sex == 'Mid-Size' | region == 'GOA' & sex == 'Social Groups'){
       ggPlot_Year(PODFinal,SiteHourTableB,sex)
 }}
   
 if (site == 'Big'){
-  if (sex == 'Social Groups' | sex == 'Males'){
+  if (sex == 'Males'){
     ggPlot_Year_Big(PODFinal,SiteHourTableB,sex)
   }else{
-    ggPlot_Year_Big_Mid(PODFinal,SiteHourTableB,sex)
+    ggPlot_Year_AfterJDB(PODFinal,SiteHourTableB,sex)
   }
-  } 
+} 
 
 # Plot Site ---------------------------------------------------------------
 if (exists("region")){
@@ -110,3 +111,4 @@ if (exists("region")){
   }
 }
 }
+

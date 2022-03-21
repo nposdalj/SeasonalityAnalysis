@@ -26,7 +26,7 @@ library(car)            # to run an ANOVA
 library(splines2)       # to use mSpline for the GEEs
 library(ggfortify)      # extract confidence interval for ACF plots
 
-site = 'CB' #specify the site of interest
+site = 'PT' #specify the site of interest
 
 # Step 1: Load the Data -----------------------------------------------------------
 dir = paste("H:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites")
@@ -42,6 +42,9 @@ SiteHourTable = dplyr::filter(HourTable, grepl(site,Site))
 SiteHourTable$Hour = hour(SiteHourTable$tbin)
 SiteHourTable$Effort_Bin[SiteHourTable$Effort_Bin > 12] = 12
 SiteHourTable = subset(SiteHourTable, Site == site)#subset the table for the site only
+
+#If it's a leap year, delete julian day 366
+SiteHourTable = SiteHourTable[!(SiteHourTable$Julian==366),]
 
 #Time lost variable
 SiteHourTable$TimeLost = max(SiteHourTable$Effort_Bin) - SiteHourTable$Effort_Bin
@@ -108,54 +111,55 @@ Anova(BlockMod)
 summary(BlockMod)
 
 #PT 
-# s(Julian, k = 4)    195.2  4     <2e-16 ***
-#   TimeLost               1.3  1       0.26     
+# bs(Julian, k = 4)  195.177  4     <2e-16 ***
+#   TimeLost             1.282  1     0.2576   
 
 #QN
-# bs(Julian)    152.4  3     <2e-16 ***
-#   TimeLost       10.4  1     0.0012 ** 
+# bs(Julian, k = 4)      654  4     <2e-16 ***
+#   TimeLost                 8  1     0.0052 ** 
 
 #BD
-#bs(Julian)     438.21  3     <2e-16 ***
-#TimeLost       1.57  1     0.2102 
+# bs(Julian, k = 4)      695  4     <2e-16 ***
+#   TimeLost                 2  1       0.22  
 
 #CB
-# bs(Julian, k = 4)    254.4  4  < 2.2e-16 ***
-# TimeLost              22.5  1  2.126e-06 ***
-# as.factor(Year)     8911.4  7  < 2.2e-16 ***
+# bs(Julian, k = 4)     1682  4     <2e-16 ***
+#   TimeLost                 2  1       0.19    
+# as.factor(Year)       1121  7     <2e-16 ***
 
 
 # Step 4: Data Exploration and Initial Analysis ---------------------------
 # Follow data exploration protocols suggested by Zuur et al. (2010), Zuur (2012), to generate pair plots, box plots, and assess collinearity between covariates in the dataset using Varinace Inflation Factors (vif).
 # Basic model for VIF analysis:
 if (site == 'CB'){
-  GLM1 = glm(PreAbs ~ Julian + TimeLost + as.factor(Year), family = binomial, data = SiteHourTableB)
+  GLM1 = glm(PreAbs ~ bs(Julian) + TimeLost + as.factor(Year), family = binomial, data = SiteHourTableB)
   VIF(GLM1)
 #CB
-  # Julian          1.159205  1        1.076664
-  # TimeLost        1.006582  1        1.003285
-  # as.factor(Year) 1.166633  7        1.011070
+  # bs(Julian)      1.62  3            1.08
+  # TimeLost        1.01  1            1.01
+  # as.factor(Year) 1.62  7            1.04
 } else {
   #Other sites
-  GLM1 = glm(PreAbs~Julian+TimeLost,family=binomial,data=SiteHourTableB)
+  GLM1 = glm(PreAbs~bs(Julian)+TimeLost,family=binomial,data=SiteHourTableB)
   #VIF scores in GLM to work out collinearity:
   VIF(GLM1)
-#PT
-#Julian TimeLost 
-#1.000027 1.000027
-#QN
-#Julian TimeLost 
-#1.000364 1.000364 
-#BD
-#Julian TimeLost 
-#1.000101 1.000101
 }
+
+#PT
+# bs(Julian) 1.000182  3        1.000030
+# TimeLost   1.000182  1        1.000091
+#QN
+# bs(Julian)    1  3               1
+# TimeLost      1  1               1
+#BD
+# bs(Julian)    1  3               1
+# TimeLost      1  1               1
 
 
 # Step 5: Model Selection - Covariate Preparation -------------------------
 
 # Construct variance-covariance matrices for cyclic covariates:
-AvgDayBasis <- gam(PreAbs~s(Julian, bs ="cc", k=4), fit=F, data = SiteHourTableB, family =binomial, knots = list(HOUR=seq(1,366,length=4)))$X[,2:3]
+AvgDayBasis <- gam(PreAbs~s(Julian, bs ="cc", k=4), fit=F, data = SiteHourTableB, family =binomial, knots = list(HOUR=seq(1,365,length=4)))$X[,2:3]
 AvgDayMat = as.matrix(AvgDayBasis)
 
 # Selection of the correct form (linear or smooth) for the covariates available at a single scale.
@@ -166,7 +170,7 @@ POD0<-geeglm(PreAbs ~ 1, family = binomial, corstr="ar1", id=Blocks, data=SiteHo
 #Julian Day
 POD0a = geeglm(PreAbs ~ mSpline(Julian,
                                 knots=quantile(Julian, probs=c(0.333,0.666)),
-                                Boundary.knots=c(1,366),
+                                Boundary.knots=c(1,365),
                                 periodic=T), family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
 POD0b = geeglm(PreAbs ~ AvgDayMat, family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
 model0A<-c("POD0", "POD0a", "POD0b")
@@ -177,8 +181,8 @@ QICmod0A
 #CB
 #QIC          QIC.1            QIC.2
 # model0A             POD0           POD0a            POD0b
-# QIC0A   56131.6234210416 54484.6419991175 54457.4376942283
-#Julian day as mspline has lower QIC but I'll still go with a variance covariance matrix
+# QIC0A   62743.5048448833 61894.0018326248 61896.3522746218
+#Julian day as mspline, but I'll use a variance covariance matrix
 
 #PT
 #QIC            QIC.1            QIC.2
@@ -196,7 +200,7 @@ QICmod0A
 # QIC            QIC.1            QIC.2
 # model0A             POD0            POD0a            POD0b
 # QIC0A   23650.3441943795 23015.7537566308 23011.7382084554
-#Julian day as a variance-covariance matrix.
+#Julian day as mspline has lower QIC but I'll still go with a variance covariance matrix
 
 if (site == 'CB'){
   #Year
@@ -215,8 +219,8 @@ if (site == 'CB'){
 #CB
 # QIC            QIC.1            QIC.2           QIC.3
 # model1A             POD0            POD1a            POD1b           POD1c
-# QIC1A   56131.6234210416 45336.1244245701 46907.7523693895 45670.0355512776
-#Year as a factor.
+# QIC1A   62743.5048448833 61291.184631157 62727.1764111448 61263.0577232449
+#Year as mspline but I'll use factor.
 
 #TimeLost
 POD2a = geeglm(PreAbs ~ as.factor(TimeLost), family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
@@ -232,14 +236,14 @@ QICmod2A
 #CB
 #QIC            QIC.1            QIC.2            QIC.3
 #model2A             POD0            POD2a            POD2b            POD2c
-#QIC2A   56131.6234210416 1005403.62660692 56226.2659587481 56309.2542851097
+#QIC2A   62743.5048448833 63025.9560730867 62827.9224182023 62870.1796619116
 #TimeLost as linear
 
 #PT
 # QIC          QIC.1            QIC.2            QIC.3
 # model2A             POD0          POD2a            POD2b            POD2c
 # QIC2A   11571.2264645272 11578.9417632632 11585.353504737 135053.474264298
-#TimeLost as linear
+#TimeLost as factor
 
 #QN
 # QIC            QIC.1            QIC.2            QIC.3
@@ -257,7 +261,7 @@ QICmod2A
 #and which can be removed (on the basis of previous collinearity work). 
 #The reduced model with the lowest QIC is the one to use in the following step.
 if (site == "CB"){
-  #CB (with Year as mSpline)
+  #CB (with Year as factor)
   #The initial full model is:
   POD3a = geeglm(PreAbs ~ AvgDayMat+as.factor(Year)+TimeLost,family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
   #without AvgDayMat
@@ -273,9 +277,8 @@ if (site == "CB"){
   #CB
   #QIC            QIC.1            QIC.2            QIC.3            QIC.4
   # model3A             POD0            POD3a            POD3b           POD3c            POD3d
-  #QIC3A   56131.6234210416 45705.0585812701 45747.1474250811 54810.4495252131 45623.5070366177
+  #QIC3A   62743.5048448833 60915.8541569011 61277.9740202374 61977.6718987442 60920.4684434373
   #Remove TimeLost
-  
   
   #The  full model without TimeLost is:
   POD3e = geeglm(PreAbs ~ AvgDayMat+as.factor(Year),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
@@ -290,8 +293,8 @@ if (site == "CB"){
   #CB
   #QIC            QIC.1           QIC.2            QIC.3
   #model3B             POD0            POD3e           POD3f            POD3g
-  #QIC3B   56131.6234210416 45623.5070366177 45670.0355512776 54457.4376942283
-  #Full model is the best  
+  #QIC3B   62743.5048448833 60920.4684434373 61291.184631157 61896.3522746218
+  #Full model is the best, year than avgdaymat
 }
 
 if (site == 'BD' | site == 'QN' | site == 'PT'){
@@ -319,12 +322,11 @@ QICmod3A
 #Remove Time Lost as a variable. Final model is POD3C.
 
 #PT
-# QIC            QIC.1          QIC.2            QIC.3
-# model3A             POD0            POD3a          POD3b            POD3c
+# QIC           QIC.1           QIC.2            QIC.3
+# model3A             POD0           POD3a           POD3b            POD3c
 # QIC3A   11571.2264645272 11422.908619339 11585.353504737 11410.1658116943
-#Remove TimeLost as a variable. Final model is POD2C.
+#Remove Time Lost as variable. Final model is POD3C.
 }
-
 
 # Step 7: Finalize Model --------------------------------------------------
 #In descending order:
@@ -333,11 +335,11 @@ QICmod3A
 #AvgDaMat
 #For PT,QN,BD only AvgDayMat was a significant variable, so the order doesn't matter...
 
-#Year as mSpline
+#Year as factor
 if (site == 'CB'){
   #CB
   dimnames(AvgDayMat)<-list(NULL,c("ADBM1", "ADBM2"))
-  PODFinal = geeglm(PreAbs ~ as.factor(Year) + AvgDayMat,family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
+  PODFinal = geeglm(PreAbs ~ as.factor(Year)+AvgDayMat,family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
 } else {
   dimnames(AvgDayMat)<-list(NULL,c("ADBM1", "ADBM2"))
   PODFinal = geeglm(PreAbs ~ AvgDayMat,family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
@@ -345,15 +347,15 @@ if (site == 'CB'){
 
 
 # STEP 8: Interpreting the summary of the model --------------------------
-# How to intepret model results
+# How to interpret model results
 # Standard error - robust estimate - provides reasonable variance estimates even when the specified correlation model is in correct
-# Wald - square of the z-statistic reproted by the gee function
+# Wald - square of the z-statistic reported by the gee function
 # P - values are the upper tailed probabilities from the chi-squared random variable with 1 degree of freedom...
 # distribution and test whether the true parameter value is different from zero
 anova(PODFinal)
-
 #CB
-  
+# as.factor(Year)  7 41.9   5.4e-07 ***
+#   AvgDayMat        2  2.6      0.28    
 
 #BD
 # Df     X2 P(>|Chi|)  
@@ -361,13 +363,28 @@ anova(PODFinal)
 
 #PT
 # Df   X2 P(>|Chi|)   
-# AvgDayMat  2 7.31     0.026 *
+# AvgDayMat  2 7.3137   0.02581 *
   
 #QN
 # Df   X2 P(>|Chi|)  
 # AvgDayMat  2 37.3   7.8e-09 ***
 
+#Remove variables from model that were not significant after running anova
+#CB
+if (site == 'CB'){
+  dimnames(AvgDayMat)<-list(NULL,c("ADBM1", "ADBM2"))
+  PODFinal = geeglm(PreAbs ~ as.factor(Year),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
+}
+anova(PODFinal)
+#CB
+#as.factor(Year)  7 41.9   5.4e-07 ***
+
+#Save model output
+filename = paste(saveWorkspace,site,'_SiteSpecificModelSummary.txt',sep="")
+sink(filename)
 summary(PODFinal)
+anova(PODFinal)
+sink(file = NULL)
 
 # Step 9: Construction of the ROC curve    --------------------------------
 pr <- predict(PODFinal, type="response")  
@@ -414,20 +431,20 @@ cmx(DATA, threshold = cutoff)                                   # the identified
 #PT
 #observed
 #predicted     1     0
-# 1 1124 5334
-# 0  608 7385
+# 1 1250 6961
+# 0  612 7405
 
 #QN
 # observed
 # predicted    1    0
-# 1 2028 8016
-# 0  292 2924
+# 1 2150 5696
+# 0 1065 7815
 
 #BD
 #observed
 #predicted    1    0
-#1 6755 5538
-#0 1919 3216
+# 1 7916 6167
+# 0  758 2218
 
 # The area under the curve (auc) can also be used as an rough indication of model performance:
   
@@ -435,5 +452,5 @@ auc <- performance(pred, measure="auc")
 
 
 # Step 10: Save Workspace -------------------------------------------------
-fileName = paste(saveWorkspace,site,'_SiteSpecific_gamgeeOutputYearFactor.RData',sep="")
+fileName = paste(saveWorkspace,site,'_SiteSpecific_gamgeeOutput.RData',sep="")
 save.image(file = fileName)

@@ -5,11 +5,12 @@ library(tidyverse)
 library(anytime)
 library(lubridate)
 
+GDrive = 'H'
 Sites = c('CB','PT','QN','AB','KOA','BD','KS') #The GOA and BSAI Sites
 Regions = c("GOA","BSAI") #GOA AND BSAI Region
 
-fileDir = paste("I:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",Sites, sep="")#setting the directory
-saveDir = paste("I:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites/")
+fileDir = paste(GDrive,":/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",Sites, sep="")#setting the directory
+saveDir = paste(GDrive,":/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites/",sep="")
 filename = paste(fileDir,"/",Sites,"_dayData_forGLMR125.csv",sep="")
 filename2 = paste(fileDir,"/",Sites,"_binData_forGAMGEE.csv",sep="")
 

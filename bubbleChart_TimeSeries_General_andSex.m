@@ -2,7 +2,7 @@
 clear all;close all;clc;
 
 %% load data
-siteName = 'PT';
+siteName = 'AB';
 NumBub = 3;
 DataDir = 'H:\My Drive\GofAK_TPWS_metadataReduced\SeasonalityAnalysis';
 saveDirectory = 'H:\My Drive\Manuscripts\GOA\Figures';
@@ -75,7 +75,11 @@ end
 dataWeek.year = year(dataWeek.tbin);
 WeekData.year = year(WeekData.tbin);
 %% Checking to see how much was missed
+if strcmp(siteName,'BD')
+    CombinedWeek = dataWeek(:,20:22);
+else
 CombinedWeek = dataWeek(:,19:21);
+end
 CombinedWeek.NormBin = WeekData.NormBin;
 CombinedWeek.Added = CombinedWeek.FemaleNormBin + CombinedWeek.JuvenileNormBin + CombinedWeek.MaleNormBin;
 CombinedWeek.Difference = CombinedWeek.NormBin - CombinedWeek.Added;
@@ -363,7 +367,6 @@ bubblesize([2 15])
 set(gca,'ydir','reverse')
 bubblelim([1 round(max(dataWeek.MaleNormBin))]);
 xlim([0,53])
-xlabel('Week of the year')
 % ylim([2016.75,2017.25])
 ylabel('Adult Males')
 
@@ -391,6 +394,7 @@ set(gca,'ydir','reverse')
 bubblelim([1 round(max(CombinedWeek.Difference))]);
 xlim([0,53])
 ylabel('Difference')
+xlabel('Week of the year')
 set(gca,'xticklabel',[])
 
 else
@@ -477,7 +481,6 @@ set(gca,'ydir','reverse')
 %bubblelim([1 round(max(dataWeek.MaleNormBin))]);
 bubblelim([1 round(CutOff)]);
 xlim([0,53])
-xlabel('Week of the year')
 % ylim([2016.75,2017.25])
 ylabel('Adult Males')
 
@@ -507,6 +510,7 @@ bubblelim([1 round(CutOff)]);
 xlim([0,53])
 % ylim([2016.75,2017.25])
 ylabel('Difference')
+xlabel('Week of the year')
 set(gca,'xticklabel',[])
 end
 

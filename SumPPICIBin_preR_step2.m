@@ -2,11 +2,11 @@ clearvars
 close all
 
 %% Parameters defined by user
-filePrefix = 'WAT_BS'; % File name to match. 
-siteabrev = 'BS'; %abbreviation of site.
-region = 'WAT'; %region
+filePrefix = 'HOKE'; % File name to match. 
+siteabrev = 'HOKE'; %abbreviation of site.
+region = 'CCE'; %region
 sp = 'Pm'; % your species code
-itnum = '1'; % which iteration you are looking for
+itnum = '2'; % which iteration you are looking for
 srate = 200; % sample rate
 GDrive = 'H'; %Google Drive
 

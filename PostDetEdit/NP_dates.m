@@ -58,6 +58,11 @@ KOA_depl = 1;
 KOA_site(1:length(KOA_depl),1) = {'KOA'};
 
 KOA_latLongs = [57.224,-150.53]; %01
+%% CCE site info
+CCE_dates = [datenum([2016 10 10 00 00 00]), datenum([2017 11 08 22 26 21])];%CCE
+CCE_depl = 1;
+CCE_site(1:length(CCE_depl),1) = {'CCE'};
+CCE_latLongs = [57.224,-150.53]; %01
 %% PT site info
 
 PT_dates = [datenum([2012 09 09]), datenum([2013 06 10]); %pt01
@@ -79,13 +84,11 @@ CORC_depl = 2;
 CORC_site(1:length(CORC_depl),1) = {'CORC'};
 CORC_latLongs = [31.747,-121.38]; 
 %% HOKE
-
-HOKE_dates = [datenum([2008 09 15]), datenum([2009 06 06])];
+HOKE_dates = [datenum([2008 09 15]), datenum([2009 06 06 14 13 13])];
 HOKE_depl = 1;
 HOKE_site(1:length(HOKE_depl),1) = {'HOKE'};
 HOKE_latLongs = [32.1,-126.91];
 %% DCPP01C
-
 DCPP01C_dates = [datenum([2012 11 07 02 00 00]), datenum([2013 03 19 22 48 45])];
 DCPP01C_depl = 1;
 DCPP01C_site(1:length(DCPP01C_depl),1) = {'DCPP01C'};
@@ -127,13 +130,12 @@ OCNMSQC_latLongs = [47.466,-125.16; %6
 47.500633,-125.65]; %16
 
 %% Baja_GI_01
-GI_dates = [datenum([2018,11,19]), datenum([2019,10,22]); %1
-    datenum([2019,10,23]), datenum([2020,10,03])]; %2
+GI_dates = [datenum([2018,11,19,03,00,00]), datenum([2019,10,22,15,58,45]); %1
+    datenum([2019,10,23,18,00,00]), datenum([2020,10,03,13,51,15])]; %2
 GI_depl = [1,2];
 GI_site(1:length(GI_depl),1) = {'GI'};
 GI_latLongs = [29.14103333, -118.26; %1
    29.14243333, - 118.26]; %1
-
 %% Antarc01El
 EI_dates = [datenum([2018,11,19]), datenum([2019,10,22])];
 EI_depl = [1];
@@ -288,19 +290,27 @@ NC_latLongs = [39.938, - 76;
 40.021, -76;
 40.195, - 76;
 40.195, - 76];
-
+%% GofCA
+CA_dates = [datenum([2009,4,26,20,00,00]), datenum([2009,09,12,20,06,05]);
+    datenum([2009,12,07, 00, 00, 00]), datenum([2010, 05, 18, 18,47,00])];
+CA_depl = [10,11];
+CA_site(1:length(CA_depl),1) = {'GofCA'};
+CA_latLongs = [39.938, - 76;
+40.195, - 76];
 %% concatenate all information
 edgeffort = [CB_dates; QN_dates; AB_dates; PT_dates; CORC_dates;...
     HOKE_dates; ALEUT_dates; DCPP01C_dates; ALEUT01KS_dates; OCNMSQC_dates; KOA_dates; GI_dates;...
     EI_dates; Saipan_dates; Tinian_dates; Wake_dates; OC_dates; GS_dates; NC_dates; JAX_dates; HZ_dates; BC_dates;...
-    BP_dates; BS_dates; WC_dates];
+    BP_dates; BS_dates; WC_dates; CA_dates; CCE_dates];
 latLongs = [CB_latLongs; QN_latLongs; AB_latLongs; PT_latLongs;...
     CORC_latLongs; HOKE_latLongs; ALEUT_latLongs; DCPP01C_latLongs; ALEUT01KS_latLongs; OCNMSQC_latLongs;...
     KOA_latLongs; GI_latLongs; EI_latLongs; Saipan_latLongs; Tinian_latLongs; Wake_latLongs; OC_latLongs; GS_latLongs;...
-    NC_latLongs; JAX_latLongs; HZ_latLongs; BC_latLongs; BP_latLongs; BS_latLongs; WC_latLongs];
+    NC_latLongs; JAX_latLongs; HZ_latLongs; BC_latLongs; BP_latLongs; BS_latLongs; WC_latLongs; CA_latLongs; CCE_latLongs];
 depl = [CB_depl'; QN_depl'; AB_depl'; PT_depl'; CORC_depl'; HOKE_depl';...
     ALEUT_depl'; DCPP01C_depl'; ALEUT01KS_depl';OCNMSQC_depl'; KOA_depl';GI_depl'; EI_depl'; Saipan_depl';...
-    Tinian_depl'; Wake_depl'; OC_depl'; GS_depl'; NC_depl'; JAX_depl'; HZ_depl'; BC_depl'; BP_depl'; BS_depl'; WC_depl'];
+    Tinian_depl'; Wake_depl'; OC_depl'; GS_depl'; NC_depl'; JAX_depl'; HZ_depl'; BC_depl'; BP_depl'; BS_depl'; WC_depl';...
+    CA_depl'; CCE_depl'];
 site = [CB_site; QN_site; AB_site; PT_site; CORC_site; HOKE_site;...
     ALEUT_site; DCPP01C_site; ALEUT01KS_site; OCNMSQC_site; KOA_site; GI_site; EI_site; Saipan_site;...
-    Tinian_site; Wake_site; OC_site; GS_site; NC_site; JAX_site; HZ_site; BC_site; BP_site; BS_site; WC_site];
+    Tinian_site; Wake_site; OC_site; GS_site; NC_site; JAX_site; HZ_site; BC_site; BP_site; BS_site; WC_site;...
+    CA_site; CCE_site];
