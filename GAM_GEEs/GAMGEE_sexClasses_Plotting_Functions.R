@@ -414,7 +414,7 @@ ggPlot_Year <- function(model, table,site){
   
   #Center intercept (1st level of year factor) at 0 and show other levels relative to it
   AdjustedSiteCoefs = data.frame(  c(
-    BootstrapCoefs2[, 1], - mean(BootstrapCoefs2[, 1]),
+    BootstrapCoefs2[, 1] - mean(BootstrapCoefs2[, 1]),
     BootstrapCoefs2[, 2],
     BootstrapCoefs2[, 3],
     BootstrapCoefs2[, 4],
@@ -446,7 +446,7 @@ ggPlot_Year <- function(model, table,site){
 ggPlot_Year_AfterJD <- function(model,table,site){
   BootstrapParameters2<-rmvnorm(10000, coef(model),summary(model)$cov.unscaled)
   start=4; end=10; Variable=table$Year
-  BootstrapCoefs2<-inv.logit(BootstrapParameters2[, c(1,start:end)])
+  BootstrapCoefs2<-inv.logit(BootstrapParameters2[, c(1,start:end)]+)
   
   #Center intercept (1st level of year factor) at 0 and show other levels relative to it
   AdjustedSiteCoefs = data.frame(  c(

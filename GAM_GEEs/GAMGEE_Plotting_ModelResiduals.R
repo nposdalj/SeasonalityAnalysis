@@ -2,6 +2,15 @@
 # and eventually plot all of the residuals for each model
 
 #load libraries
+library(sure)
+library(PResiduals)
+library(arm)
+library(performance)
+library(parameters)
+library(see)
+
+#load functions
+#source('C:/Users/nposd/Documents/GitHub/SeasonalityAnalysis/GAM_GEEs/Binned_Residuals_Functions.R')
 
 #Specify Directories and find subdirectories
 GDrive = 'H'
@@ -23,7 +32,7 @@ for (i in 2:length(AllFolders)){
   if (file.exists(FileName)){
   load(FileName)
     jpeg(file = paste(SaveDir,'/Residuals_',Site,'.jpeg',sep=''),width = 1000, height = 400)
-    par(mfrow=c(3,1))
+    par(mfrow=c(1,3))
     plot(SiteHourTableB$tbin, SiteHourTableB$PreAbs)
     plot(PODFinal$residuals)
     plot(PODFinal$fitted.values)
@@ -34,6 +43,20 @@ for (i in 2:length(AllFolders)){
     plot(fitted(PODFinal),resid(PODFinal))
     qqnorm(resid(PODFinal))
     dev.off()
+    
+    jpeg(file = paste(SaveDir,'/BinnedPlots_',Site,'.jpeg',sep=''),width = 500, height = 400)
+    binnedplot(predict(PODFinal),resid(PODFinal,type="response"))
+    dev.off()
+    
+    jpeg(file = paste(SaveDir,'/BinnedResiduals_',Site,'.jpeg',sep=''),width = 500, height = 400)
+    print(binned_residuals(PODFinal))
+    dev.off()
+    
+    filename = paste(MainDir,'/',Site,'/',Site,'_ModelEval.txt',sep="")
+    sink(filename)
+    binned_residuals(PODFinal)
+    print(r2(PODFinal))
+    sink(file = NULL)
   }
 } 
 
@@ -53,7 +76,7 @@ for (i in 2:length(AllFolders)){
     
     #Social Groups
     jpeg(file = paste(SaveDir,'/Residuals_SocialGroups',Site,'.jpeg',sep=''),width = 1000, height = 400)
-    par(mfrow=c(3,1))
+    par(mfrow=c(1,3))
     plot(SiteHourTableB$tbin,SiteHourTableB$PreAbsF)
     plot(PODFinalF$residuals)
     plot(PODFinalF$fitted.values)
@@ -65,9 +88,17 @@ for (i in 2:length(AllFolders)){
     qqnorm(resid(PODFinalF))
     dev.off()
     
+    jpeg(file = paste(SaveDir,'/BinnedPlots_SocialGroups_',Site,'.jpeg',sep=''),width = 500, height = 400)
+    binnedplot(fitted(PODFinalF),resid(PODFinalF, type="response"))
+    dev.off()
+    
+    jpeg(file = paste(SaveDir,'/BinnedResiduals_SocialGroups_',Site,'.jpeg',sep=''),width = 500, height = 400)
+    print(binned_residuals(PODFinalF))
+    dev.off()
+    
     #Mid-Size
     jpeg(file = paste(SaveDir,'/Residuals_MidSize',Site,'.jpeg',sep=''),width = 1000, height = 400)
-    par(mfrow=c(3,1))
+    par(mfrow=c(1,3))
     plot(SiteHourTableB$tbin,SiteHourTableB$PreAbsJ)
     plot(PODFinalJ$residuals)
     plot(PODFinalJ$fitted.values)
@@ -79,9 +110,17 @@ for (i in 2:length(AllFolders)){
     qqnorm(resid(PODFinalJ))
     dev.off()
     
+    jpeg(file = paste(SaveDir,'/BinnedPlots_MidSize_',Site,'.jpeg',sep=''),width = 500, height = 400)
+    binnedplot(fitted(PODFinalJ),resid(PODFinalJ, type="response"))
+    dev.off()
+    
+    jpeg(file = paste(SaveDir,'/BinnedResiduals_MidSize_',Site,'.jpeg',sep=''),width = 500, height = 400)
+    print(binned_residuals(PODFinalJ))
+    dev.off()
+    
     #Males
     jpeg(file = paste(SaveDir,'/Residuals_Males',Site,'.jpeg',sep=''),width = 1000, height = 400)
-    par(mfrow=c(3,1))
+    par(mfrow=c(1,3))
     plot(SiteHourTableB$tbin,SiteHourTableB$PreAbsM)
     plot(PODFinalM$residuals)
     plot(PODFinalM$fitted.values)
@@ -92,6 +131,24 @@ for (i in 2:length(AllFolders)){
     plot(fitted(PODFinalM),resid(PODFinalM))
     qqnorm(resid(PODFinalM))
     dev.off()
+    
+    jpeg(file = paste(SaveDir,'/BinnedPlots_Males_',Site,'.jpeg',sep=''),width = 500, height = 400)
+    binnedplot(fitted(PODFinalM),resid(PODFinalM, type="response"))
+    dev.off()
+    
+    jpeg(file = paste(SaveDir,'/BinnedResiduals_Males_',Site,'.jpeg',sep=''),width = 500, height = 400)
+    print(binned_residuals(PODFinalM))
+    dev.off()
+    
+    filename = paste(MainDir,'/',Site,'/',Site,'_ModelEvalSexGroups.txt',sep="")
+    sink(filename)
+    binned_residuals(PODFinalF)
+    print(r2(PODFinalF))
+    binned_residuals(PODFinalJ)
+    print(r2(PODFinalJ))
+    binned_residuals(PODFinalM)
+    print(r2(PODFinalM))
+    sink(file = NULL)
   }
 }
 
@@ -109,7 +166,7 @@ for (i in 2:length(AllFolders)){
   if (file.exists(FileName)){
     load(FileName)
     jpeg(file = paste(SaveDir,'/Residuals_',Site,'.jpeg',sep=''),width = 1000, height = 400)
-    par(mfrow=c(3,1))
+    par(mfrow=c(1,3))
     plot(SiteHourTableB$tbin,SiteHourTableB$PreAbs)
     plot(PODFinal$residuals)
     plot(PODFinal$fitted.values)
@@ -120,6 +177,20 @@ for (i in 2:length(AllFolders)){
     plot(fitted(PODFinal),resid(PODFinal))
     qqnorm(resid(PODFinal))
     dev.off()
+    
+    jpeg(file = paste(SaveDir,'/BinnedPlots_',Site,'.jpeg',sep=''),width = 500, height = 400)
+    binnedplot(fitted(PODFinal),resid(PODFinal, type="response"))
+    dev.off()
+    
+    jpeg(file = paste(SaveDir,'/BinnedResiduals_',Site,'.jpeg',sep=''),width = 500, height = 400)
+    print(binned_residuals(PODFinal))
+    dev.off()
+    
+    filename = paste(MainDir,'/',Site,'/',Site,'_ModelEval.txt',sep="")
+    sink(filename)
+    binned_residuals(PODFinal)
+    print(r2(PODFinal))
+    sink(file = NULL)
   }
 } 
 
@@ -139,7 +210,7 @@ for (i in 2:length(AllFolders)){
     
     #Social Groups
     jpeg(file = paste(SaveDir,'/Residuals_SocialGroups',Site,'.jpeg',sep=''),width = 1000, height = 400)
-    par(mfrow=c(3,1))
+    par(mfrow=c(1,3))
     plot(SiteHourTableB$tbin,SiteHourTableB$PreAbsF)
     plot(PODFinalF$residuals)
     plot(PODFinalF$fitted.values)
@@ -151,9 +222,17 @@ for (i in 2:length(AllFolders)){
     qqnorm(resid(PODFinalF))
     dev.off()
     
+    jpeg(file = paste(SaveDir,'/BinnedPlots_SocialGroups',Site,'.jpeg',sep=''),width = 500, height = 400)
+    binnedplot(fitted(PODFinalF),resid(PODFinalF, type="response"))
+    dev.off()
+    
+    jpeg(file = paste(SaveDir,'/BinnedResiduals_SocialGroups_',Site,'.jpeg',sep=''),width = 500, height = 400)
+    print(binned_residuals(PODFinalF))
+    dev.off()
+    
     #Mid-Size
     jpeg(file = paste(SaveDir,'/Residuals_MidSize',Site,'.jpeg',sep=''),width = 1000, height = 400)
-    par(mfrow=c(3,1))
+    par(mfrow=c(1,3))
     plot(SiteHourTableB$tbin,SiteHourTableB$PreAbsJ)
     plot(PODFinalJ$residuals)
     plot(PODFinalJ$fitted.values)
@@ -165,9 +244,17 @@ for (i in 2:length(AllFolders)){
     qqnorm(resid(PODFinalJ))
     dev.off()
     
+    jpeg(file = paste(SaveDir,'/BinnedPlots_MidSize_',Site,'.jpeg',sep=''),width = 500, height = 400)
+    binnedplot(fitted(PODFinalJ),resid(PODFinalJ, type="response"))
+    dev.off()
+    
+    jpeg(file = paste(SaveDir,'/BinnedResiduals_MidSize_',Site,'.jpeg',sep=''),width = 500, height = 400)
+    print(binned_residuals(PODFinalJ))
+    dev.off()
+    
     #Males
     jpeg(file = paste(SaveDir,'/Residuals_Males',Site,'.jpeg',sep=''),width = 1000, height = 400)
-    par(mfrow=c(3,1))
+    par(mfrow=c(1,3))
     plot(SiteHourTableB$tbin,SiteHourTableB$PreAbsM)
     plot(PODFinalM$residuals)
     plot(PODFinalM$fitted.values)
@@ -178,6 +265,24 @@ for (i in 2:length(AllFolders)){
     plot(fitted(PODFinalM),resid(PODFinalM))
     qqnorm(resid(PODFinalM))
     dev.off()
+    
+    jpeg(file = paste(SaveDir,'/BinnedPlots_Males',Site,'.jpeg',sep=''),width = 500, height = 400)
+    binnedplot(fitted(PODFinalM),resid(PODFinalM,type="response"))
+    dev.off()
+    
+    jpeg(file = paste(SaveDir,'/BinnedResiduals_Males_',Site,'.jpeg',sep=''),width = 500, height = 400)
+    print(binned_residuals(PODFinalM))
+    dev.off()
+    
+    filename = paste(MainDir,'/',Site,'/',Site,'_ModelEvalSexGroups.txt',sep="")
+    sink(filename)
+    binned_residuals(PODFinalF)
+    print(r2(PODFinalF))
+    binned_residuals(PODFinalJ)
+    print(r2(PODFinalJ))
+    binned_residuals(PODFinalM)
+    print(r2(PODFinalM))
+    sink(file = NULL)
   }
 }
 
@@ -195,7 +300,7 @@ for (i in 2:length(AllFolders)){
   if (file.exists(FileName)){
     load(FileName)
     jpeg(file = paste(SaveDir,'/Residuals_',Site,'.jpeg',sep=''),width = 1000, height = 400)
-    par(mfrow=c(3,1))
+    par(mfrow=c(1,3))
     plot(SiteHourTableB$tbin,SiteHourTableB$PreAbs)
     plot(PODFinal$residuals)
     plot(PODFinal$fitted.values)
@@ -206,6 +311,20 @@ for (i in 2:length(AllFolders)){
     plot(fitted(PODFinal),resid(PODFinal))
     qqnorm(resid(PODFinal))
     dev.off()
+    
+    jpeg(file = paste(SaveDir,'/BinnedPlots_',Site,'.jpeg',sep=''),width = 500, height = 400)
+    binnedplot(fitted(PODFinal),resid(PODFinal, type="response"))
+    dev.off()
+    
+    jpeg(file = paste(SaveDir,'/BinnedResiduals_',Site,'.jpeg',sep=''),width = 500, height = 400)
+    print(binned_residuals(PODFinal))
+    dev.off()
+    
+    filename = paste(MainDir,'/',Site,'/',Site,'_ModelEval.txt',sep="")
+    sink(filename)
+    binned_residuals(PODFinal)
+    print(r2(PODFinal))
+    sink(file = NULL)
   }
 } 
 
@@ -225,7 +344,7 @@ for (i in 2:length(AllFolders)){
     
     #Social Groups
     jpeg(file = paste(SaveDir,'/Residuals_SocialGroups',Site,'.jpeg',sep=''),width = 1000, height = 400)
-    par(mfrow=c(3,1))
+    par(mfrow=c(1,3))
     plot(SiteHourTableB$tbin,SiteHourTableB$PreAbsF)
     plot(PODFinalF$residuals)
     plot(PODFinalF$fitted.values)
@@ -237,9 +356,17 @@ for (i in 2:length(AllFolders)){
     qqnorm(resid(PODFinalF))
     dev.off()
     
+    jpeg(file = paste(SaveDir,'/BinnedPlots_SocialGroups',Site,'.jpeg',sep=''),width = 500, height = 400)
+    binnedplot(fitted(PODFinalF),resid(PODFinalF, type="response"))
+    dev.off()
+    
+    jpeg(file = paste(SaveDir,'/BinnedResiduals_SocialGroups_',Site,'.jpeg',sep=''),width = 500, height = 400)
+    print(binned_residuals(PODFinalF))
+    dev.off()
+    
     #Mid-Size
     jpeg(file = paste(SaveDir,'/Residuals_MidSize',Site,'.jpeg',sep=''),width = 1000, height = 400)
-    par(mfrow=c(3,1))
+    par(mfrow=c(1,3))
     plot(SiteHourTableB$tbin,SiteHourTableB$PreAbsJ)
     plot(PODFinalJ$residuals)
     plot(PODFinalJ$fitted.values)
@@ -251,9 +378,17 @@ for (i in 2:length(AllFolders)){
     qqnorm(resid(PODFinalJ))
     dev.off()
     
+    jpeg(file = paste(SaveDir,'/BinnedPlots_MidSize_',Site,'.jpeg',sep=''),width = 500, height = 400)
+    binnedplot(fitted(PODFinalJ),resid(PODFinalJ, type="response"))
+    dev.off()
+    
+    jpeg(file = paste(SaveDir,'/BinnedResiduals_MidSize_',Site,'.jpeg',sep=''),width = 500, height = 400)
+    print(binned_residuals(PODFinalJ))
+    dev.off()
+    
     #Males
     jpeg(file = paste(SaveDir,'/Residuals_Males',Site,'.jpeg',sep=''),width = 1000, height = 400)
-    par(mfrow=c(3,1))
+    par(mfrow=c(1,3))
     plot(SiteHourTableB$tbin,SiteHourTableB$PreAbsM)
     plot(PODFinalM$residuals)
     plot(PODFinalM$fitted.values)
@@ -264,5 +399,24 @@ for (i in 2:length(AllFolders)){
     plot(fitted(PODFinalM),resid(PODFinalM))
     qqnorm(resid(PODFinalM))
     dev.off()
+    
+    jpeg(file = paste(SaveDir,'/BinnedPlots_Males_',Site,'.jpeg',sep=''),width = 500, height = 400)
+    binnedplot(fitted(PODFinalM),resid(PODFinalM, type="response"))
+    dev.off()
+    
+    jpeg(file = paste(SaveDir,'/BinnedResiduals_Males_',Site,'.jpeg',sep=''),width = 500, height = 400)
+    print(binned_residuals(PODFinalM))
+    dev.off()
+    
+    filename = paste(MainDir,'/',Site,'/',Site,'_ModelEvalSexGroups.txt',sep="")
+    sink(filename)
+    binned_residuals(PODFinalF)
+    print(r2(PODFinalF))
+    binned_residuals(PODFinalJ)
+    print(r2(PODFinalJ))
+    binned_residuals(PODFinalM)
+    print(r2(PODFinalM))
+    sink(file = NULL)
   }
 }
+

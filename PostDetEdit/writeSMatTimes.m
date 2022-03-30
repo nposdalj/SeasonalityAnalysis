@@ -13,7 +13,7 @@ end
 
 siteDisk = unique(siteDiskList);
 
-for i = 1:length(siteDisk)
+for i = 2:length(siteDisk)
     disp(['loading times from: ', siteDisk{i}]);
     index = strfind(siteDiskList, siteDisk{i});
     siteDiskIdx = find(not(cellfun('isempty', index)));
