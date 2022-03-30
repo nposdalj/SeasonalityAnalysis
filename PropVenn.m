@@ -1,19 +1,19 @@
 clearvars
 close all
 %% Parameters defined by user
-filePrefix = 'GofAK_PT'; % File name to match. 
-siteabrev = 'PT'; %abbreviation of site.
-titleNAME = 'Pratt Seamount';
+filePrefix = 'WAT_BS'; % File name to match. 
+siteabrev = 'BS'; %abbreviation of site.
+titleNAME = 'Western Atlantic- Blake Spur';
 sp = 'Pm'; % your species code
-tpwsPath = ['I:\My Drive\GofAK_TPWS_metadataReduced\TPWS_125\',filePrefix,'\TPWS_125\TPWS2\TPWS3\']; %directory of TPWS files
+tpwsPath = ['H:\My Drive\WAT_TPWS_metadataReduced\TPWS_125\',filePrefix,'\TPWS_125\TPWS2\TPWS3\']; %directory of TPWS files
 %% load data from step 2
-filename = ['I:\My Drive\GofAK_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev,'\',siteabrev,'_workspaceStep2'];
+filename = ['H:\My Drive\WAT_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev,'\',siteabrev,'_workspaceStep2'];
 load(filename);
 All = meantab365.HoursProp;
 %% load data from step 3
-filename = ['I:\My Drive\GofAK_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev,'\',siteabrev,'_workspaceStep3'];
+filename = ['H:\My Drive\WAT_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev,'\',siteabrev,'_workspaceStep3'];
 load(filename);
-saveDir = ['I:\My Drive\GofAK_TPWS_metadataReduced\Plots']; %specify directory to save files
+saveDir = ['H:\My Drive\WAT_TPWS_metadataReduced\SeasonalityAnalysis']; %specify directory to save files
 %% combine tables into one
 if strcmp(siteabrev,'KOA') == 1 || strcmp(siteabrev,'KS')
 meanTAB = array2table([meantab365.Day All meantab365.HoursPropJU meantab365.HoursPropMA]);

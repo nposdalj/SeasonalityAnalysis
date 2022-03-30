@@ -2,12 +2,12 @@ clearvars
 close all
 
 %% Parameters defined by user
-filePrefix = 'HHOKE'; % File name to match. 
-genderFileName = 'HOKESM01_stHS'; %File name to match gender file
-siteabrev = 'HOKE'; %abbreviation of site
-region = 'CCE';
+filePrefix = 'WAT_GS'; % File name to match. 
+genderFileName = 'WAT_GS'; %File name to match gender file
+siteabrev = 'GS'; %abbreviation of site
+region = 'WAT';
 sp = 'Pm'; % your species code
-itnum = '2'; % which iteration you are looking for
+itnum = '3'; % which iteration you are looking for
 srate = 200; % sample rate
 GDrive = 'H'; %Google Drive
 
@@ -49,7 +49,9 @@ binMonitEffort = sum(effort.roundbin);
 if er > 1
     binEffort = intervalToBinTimetable(effort.Start,effort.End,p); % convert intervals in bins when there is multiple lines of effort
     %binEffort.sec = binEffort.effortBin*(p.binDur*60);
-    binEffort.sec = binEffort.bin*(p.binDur*60);
+    %binEffort.sec = binEffort.bin*(p.binDur*60);
+    binEffort.Properties.VariableNames{'effortBin'} = 'Effort_Bin';
+    binEffort.Properties.VariableNames{'effortSec'} = 'Effort_Sec';
 else
     binEffort = intervalToBinTimetable_Only1RowEffort(effort.Start,effort.End,p); % convert intervals in bins when there is only one line of effort
     binEffort.sec = binEffort.bin*(p.binDur*60);
@@ -59,9 +61,10 @@ filename = [saveDir,'\',genderFileName,'_',sp,'_gender.mat'];
 load(filename);
 %% group data by days and add effort
 binPresence = synchronize (binData, binEffort);
-%binPresence.Properties.VariableNames{'effortBin'} = 'Effort_Bin';
-binPresence.Properties.VariableNames{'bin'} = 'Effort_Bin';
-binPresence.Properties.VariableNames{'sec'} = 'Effort_Sec';
+% binPresence.Properties.VariableNames{'effortBin'} = 'Effort_Bin';
+% binPresence.Properties.VariableNames{'effortSec'} = 'Effort_Sec';
+% binPresence.Properties.VariableNames{'bin'} = 'Effort_Bin';
+% binPresence.Properties.VariableNames{'sec'} = 'Effort_Sec';
 binPresence = retime(binPresence,'daily','sum');
 binPresence.maxPP = [];
 binPresence.meanICI = [];
@@ -295,8 +298,8 @@ Click = retime(binData(:,4:6),'hourly','sum'); % #5-min bins per hour
 hourlyEffort = retime(binEffort,'hourly','sum');
 hourlyTab = synchronize(Click,hourlyEffort);
 %hourlyTab.Properties.VariableNames{'effortBin'} = 'Effort_Bin';
-hourlyTab.Properties.VariableNames{'bin'} = 'Effort_Bin';
-hourlyTab.Properties.VariableNames{'sec'} = 'Effort_Sec';
+% hourlyTab.Properties.VariableNames{'bin'} = 'Effort_Bin';
+% hourlyTab.Properties.VariableNames{'sec'} = 'Effort_Sec';
 hourlyTab(~hourlyTab.Effort_Bin,:)=[]; %removes days with no effort, NOT days with no presence
 
 %Females

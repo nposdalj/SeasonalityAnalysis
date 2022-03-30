@@ -2,9 +2,9 @@ clearvars
 close all
 
 %% Parameters defined by user
-filePrefix = 'GofCA'; % File name to match. 
-siteabrev = 'CA'; %abbreviation of site.
-region = 'CCE'; %region
+filePrefix = 'WAT_BC'; % File name to match. 
+siteabrev = 'BC'; %abbreviation of site.
+region = 'WAT'; %region
 sp = 'Pm'; % your species code
 itnum = '2'; % which iteration you are looking for
 srate = 200; % sample rate

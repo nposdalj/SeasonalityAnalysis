@@ -8,15 +8,15 @@ saveDir = 'H:\My Drive\WAT_TPWS_metadataReduced\SeasonalityAnalysis\BS'; %specif
 titleNAME = 'Western Atlantic-Blake Spur';
 %% load workspace
 load([saveDir,'\',siteabrev,'_workspaceStep2.mat']);
-%load([saveDir,'\',siteabrev,'_workspaceStep3.mat']);
+load([saveDir,'\',siteabrev,'_workspaceStep3.mat']);
 %% Fill in missing days
 %day table
 dayTable.day= double(dayTable.day);
 dayTable = retime(dayTable,'daily','fillwithconstant');
 
 %sex table
-%binPresence.day = double(binPresence.day);
-%binPresence = retime(binPresence,'daily','fillwithconstant');
+binPresence.day = double(binPresence.day);
+binPresence = retime(binPresence,'daily','fillwithconstant');
 %% Retime for weekly presence
 %day table
 weekTable = retime(dayTable,'weekly','sum');
@@ -25,12 +25,12 @@ weekTable.NormEffort_Bin(isnan(weekTable.NormEffort_Bin)) = 0;
 weekTable.HoursProp = weekTable.Hours ./ (weekTable.Effort_Sec ./ (60*60));
 
 %sex table
-% weekPresence = retime(binPresence,'weekly','sum');
-% weekPresence.NormEffort_Bin = weekPresence.Effort_Sec ./weekPresence.MaxEffort_Sec;
-% weekPresence.NormEffort_Bin(isnan(weekPresence.NormEffort_Bin)) = 0;
-% weekPresence.FeHoursProp = weekPresence.FeHours ./(weekPresence.Effort_Sec ./ (60*60));
-% weekPresence.JuHoursProp = weekPresence.JuHours ./(weekPresence.Effort_Sec ./ (60*60));
-% weekPresence.MaHoursProp = weekPresence.MaHours ./(weekPresence.Effort_Sec ./ (60*60));
+weekPresence = retime(binPresence,'weekly','sum');
+weekPresence.NormEffort_Bin = weekPresence.Effort_Sec ./weekPresence.MaxEffort_Sec;
+weekPresence.NormEffort_Bin(isnan(weekPresence.NormEffort_Bin)) = 0;
+weekPresence.FeHoursProp = weekPresence.FeHours ./(weekPresence.Effort_Sec ./ (60*60));
+weekPresence.JuHoursProp = weekPresence.JuHours ./(weekPresence.Effort_Sec ./ (60*60));
+weekPresence.MaHoursProp = weekPresence.MaHours ./(weekPresence.Effort_Sec ./ (60*60));
 %% Plots
 %Plot proportion of hours per DAY with sperm whale presence
 figure
@@ -52,7 +52,7 @@ bar(weekTable.tbin, weekTable.HoursProp)
 ylim([0 max(weekTable.HoursProp)]);
 ylabel('Proportion of hours per week with sperm whale presence')
 yyaxis right
-plot(weekTable.tbin, weekPresence.NormEffort_Bin*100,'.r')
+plot(weekTable.tbin, weekTable.NormEffort_Bin*100,'.r')
 ylim([-1 101])
 ylabel('Percent effort')
 title([{'Weekly Presence of Sperm whales in the ',titleNAME}])
