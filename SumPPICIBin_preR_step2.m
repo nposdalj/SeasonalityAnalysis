@@ -15,6 +15,8 @@ effortXls = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnaly
 
 saveDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev]; %specify directory to save files
 % saveDir = ['I:\My Drive\',region,'_TPWS_metadataReduced\',siteabrev,'\SeasonalityAnalysis']; %specify directory to save files
+
+%% Making a change
 %% load workspace
 load([saveDir,'\',siteabrev,'_workspace125.mat']);
 %effortXls = 'I:\My Drive\GofAK_TPWS_metadataReduced\SeasonalityAnalysis\KS\Pm_Effort.xlsx'; % specify excel file with effort times
