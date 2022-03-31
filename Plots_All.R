@@ -25,8 +25,8 @@ library(lubridate)
 library(survival)
 
 #load data from MATLAB
-site = 'Wake'
-saveDir = paste("G:/My Drive/CentralPac_TPWS_metadataReduced/Wake/Seasonality/")
+site = 'BP'
+saveDir = paste("H:/My Drive/WAT_TPWS_metadataReduced/SeasonalityAnalysis/BP/")
 filename = paste(saveDir,site,"_dayData_forGLMR125.csv",sep="")
 dayBinTAB = read.csv(filename) #no effort days deleted
 head(dayBinTAB)

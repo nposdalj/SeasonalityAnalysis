@@ -23,10 +23,11 @@ library(TSA)
 library(epitools)
 library(lubridate)
 library(survival)
+library(FSA)
 
 #load data
-site = 'SAP'
-saveDir = paste("O:/My Drive/CentralPac_TPWS_metadataReduced/Saipan/Seasonality/")
+site = 'BP'
+saveDir = paste("H:/My Drive/WAT_TPWS_metadataReduced/SeasonalityAnalysis/BS/")
 filename = paste(saveDir,site,"_dayData_forGLMR125.csv",sep="")
 dayBinTAB = read.csv(filename) #no effort days deleted
 head(dayBinTAB)
@@ -102,6 +103,10 @@ if (site == 'QC'){
 }
 if (site == 'Wake'){
   n = 22
+  GroupedDay = aggregate(dayBinTAB,list(rep(1:(nrow(dayBinTAB)%/%n+1),each=n,len=nrow(dayBinTAB))),mean)[-1];
+}
+if (site == 'BS'){
+  n = 3
   GroupedDay = aggregate(dayBinTAB,list(rep(1:(nrow(dayBinTAB)%/%n+1),each=n,len=nrow(dayBinTAB))),mean)[-1];
 }
 
@@ -197,6 +202,10 @@ if (site == 'QC'){
 }
 if (site == 'Wake'){
   n = 8
+  GroupedYear = aggregate(oneyear,list(rep(1:(nrow(oneyear)%/%n+1),each=n,len=nrow(oneyear))),mean)[-1];
+}
+if (site == 'BS'){
+  n = 3
   GroupedYear = aggregate(oneyear,list(rep(1:(nrow(oneyear)%/%n+1),each=n,len=nrow(oneyear))),mean)[-1];
 }
 
@@ -312,3 +321,12 @@ print(vizGG2,pages =1)
 fig7 =paste("G:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/GAM2.png",sep="")
 ggsave(fig7)
 
+## Kruskall Wallis Test + Dunn's Test
+kruskal.test(HoursProp ~ Season, data = dayBinTAB)
+#post-hoc
+dunnTest(HoursProp ~ Season,
+         data=dayBinTAB,
+         method="bonferroni")
+#post-hoc
+pairwise.wilcox.test(dayBinTAB$HoursProp, dayBinTAB$Season,
+                     p.adjust.method = "BH")

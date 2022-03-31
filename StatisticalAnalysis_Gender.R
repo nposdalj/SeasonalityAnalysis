@@ -26,8 +26,8 @@ library(survival)
 library(gtable)
 
 #load data
-site = 'Wake'
-saveDir = paste('I:/My Drive/CentralPac_TPWS_metadataReduced/Wake/Seasonality/')
+site = 'BP'
+saveDir = paste("H:/My Drive/WAT_TPWS_metadataReduced/SeasonalityAnalysis/",site,"/",sep="")
 filename = paste(saveDir,site,"_binPresence.csv",sep="")
 binPresence = read.csv(filename) #no effort days deleted
 head(binPresence)
@@ -124,6 +124,19 @@ if (site == 'QC'){
 if (site == 'Wake'){
   n = 9
   GroupedDayF = aggregate(binPresence,list(rep(1:(nrow(binPresence)%/%n+1),each=n,len=nrow(binPresence))),mean)[-1];
+  GroupedDayJ = binPresence;
+  GroupedDayM = binPresence;
+}
+
+if (site == 'BS'){
+  n = 2
+  GroupedDayF = aggregate(binPresence,list(rep(1:(nrow(binPresence)%/%n+1),each=n,len=nrow(binPresence))),mean)[-1];
+  GroupedDayJ = binPresence;
+  GroupedDayM = binPresence;
+}
+
+if (site == 'BP'){
+  GroupedDayF = binPresence
   GroupedDayJ = binPresence;
   GroupedDayM = binPresence;
 }
@@ -304,6 +317,12 @@ if (site == 'Wake'){
   n = 4
   GroupedYearJ = aggregate(oneyearJ,list(rep(1:(nrow(oneyearJ)%/%n+1),each=n,len=nrow(oneyearJ))),mean)[-1];
   GroupedYearM = oneyearM;
+}
+if (site == 'BS'){
+  n = 2
+  GroupedDayF = aggregate(binPresence,list(rep(1:(nrow(binPresence)%/%n+1),each=n,len=nrow(binPresence))),mean)[-1];
+  GroupedDayJ = binPresence;
+  GroupedDayM = binPresence;
 }
 if (exists('oneyearF')){
   oneyear = oneyearF
@@ -494,3 +513,26 @@ vizGG2 = plot(viz, allTerms = T) +
 print(vizGG2,pages =1)
 fig7 =paste(saveDir,site,"GAM2_Males.png",sep="")
 ggsave(fig7)
+
+#### Kruskall Wallis Test + Dunn's Test
+#Females
+kruskal.test(FeHoursProp ~ Season, data = binPresence)
+dunnTest(FeHoursProp ~ Season,
+         data=dayBinTAB,
+         method="bonferroni")
+pairwise.wilcox.test(dayBinTAB$FeHoursProp, dayBinTAB$Season,
+                     p.adjust.method = "BH")
+#Juveniles
+kruskal.test(JuHoursProp ~ Season, data = binPresence)
+dunnTest(JuHoursProp ~ Season,
+         data=dayBinTAB,
+         method="bonferroni")
+pairwise.wilcox.test(dayBinTAB$JuHoursProp, dayBinTAB$Season,
+                     p.adjust.method = "BH")
+#Males
+kruskal.test(MaHoursProp ~ Season, data = binPresence)
+dunnTest(MaHoursProp ~ Season,
+         data=dayBinTAB,
+         method="bonferroni")
+pairwise.wilcox.test(dayBinTAB$MaHoursProp, dayBinTAB$Season,
+                     p.adjust.method = "BH")

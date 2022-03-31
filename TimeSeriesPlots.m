@@ -1,11 +1,11 @@
 clearvars
 close all
 %% Parameters defined by user
-filePrefix = 'WAT_BS'; % File name to match. 
-siteabrev = 'BS'; %abbreviation of site.
+filePrefix = 'WAT_BP'; % File name to match. 
+siteabrev = 'BP'; %abbreviation of site.
 sp = 'Pm'; % your species code
-saveDir = 'H:\My Drive\WAT_TPWS_metadataReduced\SeasonalityAnalysis\BS'; %specify directory to save files
-titleNAME = 'Western Atlantic-Blake Spur';
+saveDir = 'H:\My Drive\WAT_TPWS_metadataReduced\SeasonalityAnalysis\BP'; %specify directory to save files
+titleNAME = 'Western Atlantic-Blake Plateu';
 %% load workspace
 load([saveDir,'\',siteabrev,'_workspaceStep2.mat']);
 load([saveDir,'\',siteabrev,'_workspaceStep3.mat']);
