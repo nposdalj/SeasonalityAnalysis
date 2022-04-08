@@ -2,13 +2,13 @@ clearvars
 close all
 
 %% Parameters defined by user
-filePrefix = 'HOKE'; % File name to match. 
-siteabrev = 'HOKE'; %abbreviation of site.
-region = 'CCE'; %region
+filePrefix = 'WAT_NC'; % File name to match. 
+siteabrev = 'NC'; %abbreviation of site.
+region = 'WAT'; %region
 sp = 'Pm'; % your species code
-itnum = '2'; % which iteration you are looking for
+itnum = '3'; % which iteration you are looking for
 srate = 200; % sample rate
-GDrive = 'H'; %Google Drive
+GDrive = 'I'; %Google Drive
 
 effortXls = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev,'\Pm_Effort.xlsx']; % specify excel file with effort times
 % effortXls = ['I:\My Drive\',region,'_TPWS_metadataReduced\',siteabrev,'\SeasonalityAnalysis\Pm_Effort.xlsx']; % specify excel file with effort times

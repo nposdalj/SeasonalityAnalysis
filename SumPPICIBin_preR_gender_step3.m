@@ -2,14 +2,14 @@ clearvars
 close all
 
 %% Parameters defined by user
-filePrefix = 'WAT_GS'; % File name to match. 
-genderFileName = 'WAT_GS'; %File name to match gender file
-siteabrev = 'GS'; %abbreviation of site
+filePrefix = 'WAT_NC'; % File name to match. 
+genderFileName = 'WAT_NC'; %File name to match gender file
+siteabrev = 'NC'; %abbreviation of site
 region = 'WAT';
 sp = 'Pm'; % your species code
 itnum = '3'; % which iteration you are looking for
 srate = 200; % sample rate
-GDrive = 'H'; %Google Drive
+GDrive = 'I'; %Google Drive
 
 effortXls = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev,'\Pm_Effort.xlsx']; % specify excel file with effort times
 % effortXls = ['I:\My Drive\',region,'_TPWS_metadataReduced\',siteabrev,'\SeasonalityAnalysis\Pm_Effort.xlsx']; % specify excel file with effort times
@@ -48,9 +48,10 @@ binMonitEffort = sum(effort.roundbin);
 
 if er > 1
     binEffort = intervalToBinTimetable(effort.Start,effort.End,p); % convert intervals in bins when there is multiple lines of effort
-    %binEffort.sec = binEffort.effortBin*(p.binDur*60);
-    %binEffort.sec = binEffort.bin*(p.binDur*60);
-    binEffort.Properties.VariableNames{'effortBin'} = 'Effort_Bin';
+%     binEffort.sec = binEffort.effortBin*(p.binDur*60);
+%     binEffort.sec = binEffort.bin*(p.binDur*60);
+    binEffort.Properties.VariableNames{'bin'} = 'Effort_Bin';
+    binEffort.effortSec = binEffort.Effort_Bin*60;
     binEffort.Properties.VariableNames{'effortSec'} = 'Effort_Sec';
 else
     binEffort = intervalToBinTimetable_Only1RowEffort(effort.Start,effort.End,p); % convert intervals in bins when there is only one line of effort

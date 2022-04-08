@@ -1,11 +1,11 @@
 close all;clear all;clc;
 %% select directory where ship files are located
-siteabrev = 'BC';
-siteNameMatch = 'BC';
+siteabrev = 'NC';
+siteNameMatch = 'NC';
 region = 'WAT'; %all of the WAT data has a space between the site and the deployment #
 shipDataType = 2; % 1 - old ship data, %2 - new ship data
 ShipIDReDo = 0; % If you want to re-run ship and ID times, change this to 1
-GDrive = 'H';
+GDrive = 'I';
 
 shipDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\metadata_reduced\',siteabrev];
 shipTimesDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\ShipTimes\',siteabrev]; % directory where to save ship times .mat files

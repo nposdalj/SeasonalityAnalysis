@@ -2,13 +2,13 @@ clearvars
 close all
 
 %% Parameters defined by user
-filePrefix = 'WAT_BC'; % File name to match. 
-siteabrev = 'BC'; %abbreviation of site.
+filePrefix = 'WAT_NC'; % File name to match. 
+siteabrev = 'NC'; %abbreviation of site.
 region = 'WAT'; %region
 sp = 'Pm'; % your species code
-itnum = '2'; % which iteration you are looking for
+itnum = '3'; % which iteration you are looking for
 srate = 200; % sample rate
-GDrive = 'H'; %Google Drive
+GDrive = 'I'; %Google Drive
 
 tpwsPath = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\TPWS_125\',siteabrev]; %directory of TPWS files
 % tpwsPath = ['I:\My Drive\',region,'_TPWS_metadataReduced\',siteabrev,'\TPWS_125']; %directory of TPWS files
