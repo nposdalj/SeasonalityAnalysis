@@ -25,20 +25,22 @@ library(ChemoSpecUtils)
 library(car)            # to run an ANOVA
 library(splines2)       # to use mSpline for the GEEs
 
+region = 'GOA' #specify the region of interest
+GDrive= 'I'
+
 # Step 1: Load the Data -----------------------------------------------------------
-dir = paste("H:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites")
-saveDir = paste("H:/My Drive/GofAK_TPWS_metadataReduced/Plots")
-saveWorkspace = paste("H:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites")
-fileName = paste("H:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites/AllSitesGrouped_Binary_GAMGEE_ROW.csv",sep="") #setting the directory
+dir = paste(GDrive,":/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/BigModel", sep="")
+saveDir = paste(GDrive,":/My Drive/GofAK_TPWS_metadataReduced/Plots/",region, sep="")
+saveWorkspace = paste(GDrive,":/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",region,'/',sep="")
+fileName = paste(GDrive,":/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/BigModel/AllSitesGrouped_Binary_GAMGEE_ROW.csv",sep="") #setting the directory
 HourTable = read.csv(fileName)
 HourTable = na.omit(HourTable)
 HourTable$date = as.Date(HourTable$tbin)
 HourTable$tbin = as.POSIXct(HourTable$tbin)
 HourTable = HourTable[ order(HourTable$tbin , decreasing = FALSE ),]
-SiteHourTable = HourTable
+SiteHourTable = dplyr::filter(HourTable, grepl(region,Region))
+SiteHourTable$Hour = hour(SiteHourTable$tbin)
 SiteHourTable$Effort_Bin[SiteHourTable$Effort_Bin > 12] = 12
-SiteHourTable$Region = as.factor(SiteHourTable$Region)
-SiteHourTable$Site = as.factor(SiteHourTable$Site)
 
 #If it's a leap year, delete julian day 366
 SiteHourTable = SiteHourTable[!(SiteHourTable$Julian==366),]
@@ -54,17 +56,27 @@ SiteHourTable$TimeLost = max(SiteHourTable$Effort_Bin) - SiteHourTable$Effort_Bi
 
 # Step 2: Identify the Best Blocking Structure ----------------------------
 #Calculate acf on model residuals
+if (region == 'BSAI'){
 BlockMod<-glm(PreAbs~
-               bs(Julian,k=4)+
-               as.factor(Year)+
-               as.factor(Region)+
-                TimeLost
-             ,data=SiteHourTable,family=binomial)
+                bs(Julian, k=4)+
+                TimeLost + 
+                as.factor(Site), data=SiteHourTable,family=binomial)
+}else{
+
+BlockMod<-glm(PreAbs~ bs(Julian, k = 4)+
+                as.factor(Year)+
+                as.factor(Site)+
+                TimeLost, data=SiteHourTable,family=binomial)
+}
 
 ACF = acf(residuals(BlockMod), lag.max = 1000, ylim=c(0,0.1))
 CI = ggfortify:::confint.acf(ACF)
 ACFidx = which(ACF[["acf"]] < CI, arr.ind=TRUE)
 ACFval = ACFidx[1]
+
+#ACFval calculated from averaging all of the GOA sites (PT, QN, CB) - ONLY FOR GOA
+if (region == 'GOA'){
+ACFval = 390}
 
 #create the blocks based on the full timesereies
 startDate = SiteHourTable$tbin[1]
@@ -96,127 +108,116 @@ for (i in 1:nrow(gapsCont)){
 }
 
 # Step 3: ANOVA to Check for Significance of Variables --------------------
-#Quick ANOVA to check for significance of variables - using the car packageAnova(BlockMod)
+#Quick ANOVA to check for significance of variables - using the car package
 Anova(BlockMod)
 
-# LR Chisq Df Pr(>Chisq)    
-# bs(Julian, k = 4)     2069  4    < 2e-16 ***
-#   as.factor(Year)       4120  8    < 2e-16 ***
-#   as.factor(Region)      203  1    < 2e-16 ***
-#   TimeLost                32  1    1.5e-08 ***
+#BSAI
+# bs(Julian, k = 4)   719.87  4     <2e-16 ***
+#   TimeLost              0.62  1     0.4316    
+# as.factor(Site)      71.62  1     <2e-16 ***
+
+#GOA
+# bs(Julian, k = 4)     1579  4     <2e-16 ***
+#   as.factor(Year)       1122  7     <2e-16 ***
+#   as.factor(Site)       5806  4     <2e-16 ***
+#   TimeLost                 5  1      0.031 * 
 
 # Step 4: Data Exploration and Initial Analysis ---------------------------
 # Follow data exploration protocols suggested by Zuur et al. (2010), Zuur (2012), to generate pair plots, box plots, and assess collinearity between covariates in the dataset using Varinace Inflation Factors (vif).
 # Basic model for VIF analysis:
-GLM1 = glm(PreAbs ~ bs(Julian) + TimeLost + as.factor(Year) + as.factor(Region), family = binomial, data = SiteHourTableB)
-#VIF scores in GLM to work out collinearity:
-VIF(GLM1)
-# bs(Julian)        1.56  3            1.08
-# TimeLost          1.01  1            1.00
-# as.factor(Year)   3.72  8            1.09
-# as.factor(Region) 2.76  1            1.66
+if (region == 'BSAI'){
+  GLM = glm(PreAbs~bs(Julian)+TimeLost+as.factor(Site),family=binomial,data=SiteHourTableB)
+}else{
+  GLM = glm(PreAbs~bs(Julian)+TimeLost+as.factor(Site)+as.factor(Year),family=binomial,data=SiteHourTableB)
+}
+VIF(GLM)
+
+#BSAI
+# bs(Julian)      1.133165  3        1.021054
+# TimeLost        1.001865  1        1.000932
+# as.factor(Site) 1.134216  1        1.064996
+
+#GOA
+# bs(Julian)      1.597  3           1.081
+# TimeLost        1.010  1           1.005
+# as.factor(Site) 3.111  4           1.152
+# as.factor(Year) 4.594  7           1.115
 
 # Step 5: Model Selection - Covariate Preparation -------------------------
+#Skipped this step for the modified code because I know I'm going to use Julian day as a covariance-variance matrix, year as a factor...
+#when applicable and TimeLost is not going to be included because it's not significant.
 # Construct variance-covariance matrices for cyclic covariates:
 AvgDayBasis <- gam(PreAbs~s(Julian, bs ="cc", k=4), fit=F, data = SiteHourTableB, family =binomial, knots = list(HOUR=seq(1,366,length=4)))$X[,2:3]
 AvgDayMat = as.matrix(AvgDayBasis)
 
-# Selection of the correct form (linear or smooth) for the covariates available at a single scale.
-# A series of models is fitted where each of these covariate is tested as a linear term vs. a smoother and compared against an empty model.
-# Extract the QIC scores from the geeglm object to compare the empty model with the others and select how to treat the covariate.
 POD0<-geeglm(PreAbs ~ 1, family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
-
-#Julian Day
-POD0a = geeglm(PreAbs ~ mSpline(Julian,
-                                knots=quantile(Julian, probs=c(0.333,0.666)),
-                                Boundary.knots=c(1,366),
-                                periodic=T), family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
-POD0b = geeglm(PreAbs ~ AvgDayMat, family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
-model0A<-c("POD0", "POD0a", "POD0b")
-QIC0A<-c(QIC(POD0)[1],QIC(POD0a)[1],QIC(POD0b)[1])
-QICmod0A<-data.frame(rbind(model0A,QIC0A))
-QICmod0A
-#QIC            QIC.1            QIC.2
-#model0A             POD0            POD0a            POD0b
-#QIC0A   136379.927114006 134521.849914768 134504.552753242
-#Julian day as a covariance matrix
-
-#Year
-POD1a = geeglm(PreAbs ~ as.factor(Year), family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
-POD1b = geeglm(PreAbs ~ Year, family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
-POD1c = geeglm(PreAbs ~ mSpline(Year,
-                                knots=quantile(Year, probs=c(0.333,0.666)),
-                                Boundary.knots=c(2010,2019)), family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
-model1A<-c("POD0", "POD1a", "POD1b","POD1c")
-QIC1A<-c(QIC(POD0)[1],QIC(POD1a)[1],QIC(POD1b)[1],QIC(POD1c)[1])
-QICmod1A<-data.frame(rbind(model1A,QIC1A))
-QICmod1A
-#QIC            QIC.1            QIC.2            QIC.3
-#model1A             POD0            POD1a            POD1b            POD1c
-#QIC1A   136379.927114006 129597.164484651 136216.256836048 129710.557457327
-#Year as factor
-
-#TimeLost
-POD2a = geeglm(PreAbs ~ as.factor(TimeLost), family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
-POD2b = geeglm(PreAbs ~ TimeLost, family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
-POD2c = geeglm(PreAbs ~ bs(TimeLost, k=3), family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
-model2A<-c("POD0", "POD2a", "POD2b","POD2c")
-QIC2A<-c(QIC(POD0)[1],QIC(POD2a)[1],QIC(POD2b)[1],QIC(POD2c)[1])
-QICmod2A<-data.frame(rbind(model2A,QIC2A))
-QICmod2A
-#QIC            QIC.1            QIC.2            QIC.3
-#model2A             POD0            POD2a            POD2b            POD2c
-#QIC2A   136379.927114006 136431.043172737 136372.651553987 136333.151779478
-#TimeLost as smooth, but I'll use linear.
-
-#Region is a factor, no need to check them.
 
 # Step 6: Determine which covariates are most relevant --------------------
 #and which can be removed (on the basis of previous collinearity work). 
 #The reduced model with the lowest QIC is the one to use in the following step.
-#The Initial full model:
-POD3aa = geeglm(PreAbs ~ AvgDayMat+as.factor(Year)+TimeLost+as.factor(Region),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
+if (region == 'BSAI'){
+#The initial full model is:
+POD3a = geeglm(PreAbs ~ AvgDayMat+as.factor(Site),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
 #without AvgDayMat
-POD3bb = geeglm(PreAbs ~ as.factor(Year)+TimeLost+as.factor(Region),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
-#without Year
-POD3cc = geeglm(PreAbs ~ AvgDayMat +TimeLost+as.factor(Region),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
-#without Timelost
-POD3dd = geeglm(PreAbs ~ AvgDayMat+as.factor(Year)+as.factor(Region),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
-#without Region
-POD3ee = geeglm(PreAbs ~ AvgDayMat+as.factor(Year)+TimeLost,family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
-model3AA = c("POD0","POD3aa","POD3bb","POD3cc","POD3dd","POD3ee")
-QIC3AA = c(QIC(POD0)[1],QIC(POD3aa)[1],QIC(POD3bb)[1],QIC(POD3cc)[1],QIC(POD3dd)[1],QIC(POD3ee)[1][1])
-QICmod3AA<-data.frame(rbind(model3AA,QIC3AA))
-QICmod3AA
-# QIC            QIC.1            QIC.2            QIC.3            QIC.4            QIC.5
-# model3AA             POD0           POD3aa           POD3bb           POD3cc           POD3dd           POD3ee
-# QIC3AA   136379.927114006 128198.219195272 129708.176199659 133156.312422263 128205.993387564 128220.678248719
-#Remove TimeLost.
-
-#The  full model without TimeLost is:
-POD3ff = geeglm(PreAbs ~ AvgDayMat+as.factor(Region)+as.factor(Year),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
+POD3b = geeglm(PreAbs ~ as.factor(Site),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
+#without Site
+POD3c = geeglm(PreAbs ~ AvgDayMat ,family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
+model3A = c("POD0","POD3a","POD3b","POD3c")
+QIC3A = c(QIC(POD0)[1],QIC(POD3a)[1],QIC(POD3b)[1],QIC(POD3c)[1])
+QICmod3A<-data.frame(rbind(model3A,QIC3A))
+QICmod3A
+#BSAI
+# QIC            QIC.1            QIC.2            QIC.3
+# model3A             POD0            POD3a            POD3b            POD3c
+# QIC3A   26417.3656260167 25746.0005325001 26408.8121046668 25856.1463739235
+#The full model has the lowest QIC. AvgDayMat then Site.
+}else{
+#The initial full model is:
+POD3a = geeglm(PreAbs ~ AvgDayMat+as.factor(Site)+as.factor(Year),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
 #without AvgDayMat
-POD3gg = geeglm(PreAbs ~ as.factor(Region)+as.factor(Year),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
-#without Region
-POD3hh = geeglm(PreAbs ~ AvgDayMat+as.factor(Year),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
-#without Year
-POD3ii = geeglm(PreAbs ~ AvgDayMat + as.factor(Region),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
-model3BB = c("POD0","POD3ff","POD3gg",'POD3hh',"POD3ii")
-QIC3BB = c(QIC(POD0)[1],QIC(POD3ff)[1],QIC(POD3gg)[1],QIC(POD3hh)[1],QIC(POD3ii)[1])
-QICmod3BB<-data.frame(rbind(model3BB,QIC3BB))
-QICmod3BB
-# QIC            QIC.1           QIC.2            QIC.3            QIC.4
-# model3BB             POD0           POD3ff          POD3gg           POD3hh           POD3ii
-# QIC3BB   136379.927114006 128205.993387564 129715.948129013 128227.383451207 133173.510488046
+POD3b = geeglm(PreAbs ~ as.factor(Site)+as.factor(Year),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
+#without Site
+POD3c = geeglm(PreAbs ~ AvgDayMat+as.factor(Year),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
+#Without Year
+POD3d = geeglm(PreAbs ~ AvgDayMat+as.factor(Site),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
+model3A = c("POD0","POD3a","POD3b","POD3c","POD3d")
+QIC3A = c(QIC(POD0)[1],QIC(POD3a)[1],QIC(POD3b)[1],QIC(POD3c)[1],QIC(POD3d)[1])
+QICmod3A<-data.frame(rbind(model3A,QIC3A))
+QICmod3A
+#GOA
+# QIC            QIC.1            QIC.2           QIC.3            QIC.4
+# model3A             POD0            POD3a            POD3b           POD3c            POD3d
+# QIC3A   107805.868346667 2040354.01249341 2925269.19651484 102290.91556969 3323274.45011434
+# Remove site
 
-#In descending order:
-#as.factor(Year)
-#AvgDayMat
-#as.factor(Region)
+#Second round of model testing without Site
+#The initial full model is:
+POD3f = geeglm(PreAbs ~ AvgDayMat +as.factor(Year),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
+#without AvgDayMat
+POD3g = geeglm(PreAbs ~ as.factor(Year),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
+#without Year
+POD3h = geeglm(PreAbs ~ AvgDayMat,family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
+model3B = c("POD0","POD3f","POD3g","POD3h")
+QIC3B = c(QIC(POD0)[1],QIC(POD3f)[1],QIC(POD3g)[1],QIC(POD3h)[1])
+QICmod3B<-data.frame(rbind(model3B,QIC3B))
+QICmod3B
+
+#GOA
+# QIC           QIC.1            QIC.2            QIC.3
+# model3B             POD0           POD3f            POD3g            POD3h
+# QIC3B   107805.868346667 102290.91556969 103041.039454871 106288.751338627
+#Full Model is best
+#Year then AvgDayMat
+}
 
 # Step 7: Finalize Model --------------------------------------------------
-dimnames(AvgDayMat)<-list(NULL,c("ADBM1", "ADBM2"))
-PODFinal = geeglm(PreAbs ~ as.factor(Year)+AvgDayMat+as.factor(Region),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
+if (region == 'BSAI'){
+  dimnames(AvgDayMat)<-list(NULL,c("ADBM1", "ADBM2"))
+  PODFinal = geeglm(PreAbs ~ AvgDayMat + as.factor(Site),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
+} else {
+  dimnames(AvgDayMat)<-list(NULL,c("ADBM1", "ADBM2"))
+  PODFinal = geeglm(PreAbs ~ as.factor(Year)+AvgDayMat,family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
+}
 
 # STEP 8: Interpreting the summary of the model --------------------------
 # How to intepret model results
@@ -224,13 +225,18 @@ PODFinal = geeglm(PreAbs ~ as.factor(Year)+AvgDayMat+as.factor(Region),family = 
 # Wald - square of the z-statistic reproted by the gee function
 # P - values are the upper tailed probabilities from the chi-squared random variable with 1 degree of freedom...
 # distribution and test whether the true parameter value is different from zero
-anova(PODFinal)
-# as.factor(Year)    8 1003   < 2e-16 ***
-#   AvgDayMat          2  241   < 2e-16 ***
-#   as.factor(Region)  1   12   0.00048 ***
 
-#Save model output
-filename = paste(saveWorkspace,'_ModelSummary.txt',sep="")
+anova(PODFinal)
+
+#BSAI
+# AvgDayMat        2 13.2    0.0014 ** 
+# as.factor(Site)  1 16.9     4e-05 ***
+
+#GOA
+# as.factor(Year)  7 121.5   < 2e-16 ***
+# AvgDayMat        2  14.2   0.00083 ***
+
+filename = paste(saveWorkspace,region,'_RegionalModelSummary.txt',sep="")
 sink(filename)
 summary(PODFinal)
 anova(PODFinal)
@@ -268,16 +274,26 @@ names(DATA)<-c("plotID","Observed","Predicted")
 DATA$plotID<-1:dim(SiteHourTableB)[1]                                    # the first column is filled with an ID value that is unique for each row
 DATA$Observed<-SiteHourTableB$PreAbs                                           # the second column reports the observed response (0s and 1s)
 DATA$Predicted<-predict(PODFinal,type="response")                 # the third column reports the predictions
-cmx(DATA, threshold = cutoff)      
+cmx(DATA, threshold = cutoff)                                   # the identified cut-off must be used here
+
+#Confusion matrix:
+#BSAI
+# observed
+# predicted    1    0
+# 1 8651 7365
+# 0  815 2353
+
+#GOA
 # observed
 # predicted     1     0
-# 1 22189 22623
-# 0 13936 40558
+# 1 15604 31995
+# 0  5515 32462
+
   
 # The area under the curve (auc) can also be used as an rough indication of model performance:
   
 auc <- performance(pred, measure="auc")
 
 # Step 10: Save Workspace -------------------------------------------------
-fileName = paste(saveWorkspace,'/BigModel_gamgeeOutput.RData',sep="")
+fileName = paste(saveWorkspace,region,'_RegionSpecific_gamgeeOutput_modified.RData',sep="")
 save.image(file = fileName)

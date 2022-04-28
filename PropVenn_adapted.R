@@ -3,16 +3,17 @@ library("eulerr")
 library("tidyverse")
 
 #load data
-dir = paste("H:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites")
+GDrive =  'I'
+dir = paste(GDrive,":/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites",sep="")
 
 #General Data
-fileName1 = paste("H:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites/AllSitesGrouped_GAMGEE_ROW.csv")#setting the directory
+fileName1 = paste(GDrive,":/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/BigModel/AllSitesGrouped_GAMGEE_ROW.csv",sep="")#setting the directory
 DayTable = read.csv(fileName1) #no effort days deleted
 DayTable = na.omit(DayTable)
 DayTable$tbin = as.Date(DayTable$tbin)
 
 #Sex Specific Data
-fileName2 = paste("H:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites/AllSitesGrouped_GAMGEE_ROW_sexClasses.csv")#setting the directory
+fileName2 = paste(GDrive,":/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/BigModel/AllSitesGrouped_GAMGEE_ROW_sexClasses.csv",sep="")#setting the directory
 SexDayTable = read.csv(fileName2) #no effort days deleted
 SexDayTable = na.omit(SexDayTable)
 SexDayTable$tbin = as.Date(SexDayTable$tbin)
@@ -34,7 +35,7 @@ SexDayTable$FJM = SexDayTable$F + SexDayTable$J + SexDayTable$M
 SexDayTable$FJM = replace(SexDayTable$FJM, which(SexDayTable$FJM <3 ), 0)
 SexDayTable$FJM = replace(SexDayTable$FJM, which(SexDayTable$FJM == 3), 1)
 
-saveDir = 'H:/My Drive/Manuscripts/GOA/Figures'
+saveDir = paste(GDrive,":/My Drive/Manuscripts/GOA/Figures",sep="")
 
 #Site Names
 SiteNames = c('CB','PT','QN','BD','AB','KOA','KS')
@@ -70,7 +71,7 @@ for (i in 1:length(SiteNames)){
   }
 }
 
-
+#For some reason, I need to run this manually
 # Pie Charts --------------------------------------------------------------
 for (i in 1:length(SiteNames)){
   site = SiteNames[i]

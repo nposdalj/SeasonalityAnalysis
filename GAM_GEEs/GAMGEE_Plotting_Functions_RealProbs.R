@@ -9,10 +9,12 @@ BasePlot_JD <- function(model, table){
   Basis3<-gam(rbinom(5000,1,0.5)~s(PlottingVar3, bs="cc", k=4), fit=F, family=binomial, knots=list(PlottingVar2=seq(1,365,length=4)))$X[,2:3]
   RealFit3<-Basis3%*%coef(model)[c(start:finish)]
   RealFitCenter3<-RealFit3-mean(CenterVar3)
-  RealFitCenter3a<-inv.logit(RealFitCenter3)
+  RealFitCenter4<- RealFitCenter3 + coef(model)[1]
+  RealFitCenter3a<- inv.logit(RealFitCenter4)
   BootstrapFits3<-Basis3%*%t(BootstrapCoefs3)
   quant.func3<-function(x){quantile(x,probs=c(0.025, 0.975))}
-  cis3<-apply(BootstrapFits3, 1, quant.func3)-mean(CenterVar3)
+  BootstrapFit3a<- BootstrapFits3 +coef(model)[1]
+  cis3<-apply(BootstrapFit3a, 1, quant.func3)
   cis3a<-inv.logit(cis3)
   
   #Base R Plotting
@@ -37,10 +39,12 @@ BasePlot_JD_Year <- function(model, table){
   Basis3<-gam(rbinom(5000,1,0.5)~s(PlottingVar3, bs="cc", k=4), fit=F, family=binomial, knots=list(PlottingVar2=seq(1,365,length=4)))$X[,2:3]
   RealFit3<-Basis3%*%coef(model)[c(start:finish)]
   RealFitCenter3<-RealFit3-mean(CenterVar3)
-  RealFitCenter3a<-inv.logit(RealFitCenter3)
+  RealFitCenter4<- RealFitCenter3 + coef(model)[1]
+  RealFitCenter3a<- inv.logit(RealFitCenter4)
   BootstrapFits3<-Basis3%*%t(BootstrapCoefs3)
   quant.func3<-function(x){quantile(x,probs=c(0.025, 0.975))}
-  cis3<-apply(BootstrapFits3, 1, quant.func3)-mean(CenterVar3)
+  BootstrapFit3a<- BootstrapFits3 +coef(model)[1]
+  cis3<-apply(BootstrapFit3a, 1, quant.func3)
   cis3a<-inv.logit(cis3)
   
   #Base R Plotting
@@ -77,48 +81,62 @@ ggPlot_JD <- function(model, table, site){
   dens = data.frame(c(dJday$x, rev(dJday$x)), c(dJday$y, rep(0, length(dJday$y))))
   colnames(dens) = c("Day", "Density")
   dens$Density = dens$Density / 0.15 #max(dens$Density) # normalize kernel density
-  if (min(cis3a[1,])<0){ # set kernel density at bottom of y axis
-    dens$Density = dens$Density - abs(min(cis3a[1,])) 
+  if (min(cis3[1,])<0){ # set kernel density at bottom of y axis
+    dens$Density = dens$Density - abs(min(cis3[1,])) 
   } else {
-    dens$Density = dens$Density + min(cis3a[1,])
+    dens$Density = dens$Density + min(cis3[1,])
   }
   
   plotDF = data.frame(PlottingVar3, RealFitCenter3a)
   colnames(plotDF) = c("Jday", "Fit")
   
-  #Histogram for Jday observations
+    #Histogram for Jday observations
     x = seq(from = 0,to = 365,by = 1)
     fullhist = hist(SiteHourTableB$Julian,x)
     yhist = fullhist$counts
     #normalize it to be @ most half as high as y scale
     ymod = yhist/(max(yhist)-abs(min(cis3a[1,])))
+    ymodd = yhist/(max(yhist)-min(cis3[1,]))
     newy = ymod/((max(ymod)/min(plotDF$Fit))/.5) #used to use 3.5 but it was too generic
     plothist = data.frame(x=x[-1],y=newy)
+    
+    #Figure out y-scale labels based on plotting julian day as a coefficient
+    plotDF_labels = data.frame(PlottingVar3, RealFitCenter3)
+    colnames(plotDF_labels) = c("Jday", "Fit")
+    breaksy = seq(min(cis3a[1,]),max(cis3a[2,]),length.out = 3)
+    diffy = breaksy[3]-breaksy[1]
+    breaksP = seq(min(cis3[1,]),max(cis3[2,]),length.out = 3)
+    diffP = breaksP[3]+abs(breaksP[1])
+    breaksH = seq(min(newy),max(cis3a[2,]),length.out=3)
+    diffH = breaksH[3]-breaksH[1]
+    diffNP = (diffH*diffP)/diffy
+    BottomL = breaksP[3]-diffNP
+    breaksPH = rev(round(seq(breaksP[3],BottomL,length.out=3),digits = 1))
+    breaksPH_labels = as.character(breaksPH)
   
   ggplot(plotDF, aes(Jday, Fit),
-  ) + #geom_polygon(data=dens,
-   # #                 aes(Day,Density),
-   # #                 fill=4,
-   # #                 alpha=0.2
-   geom_smooth(fill = "grey",
+  ) + geom_smooth(fill = "grey",
                   colour = "black",
                   aes(ymin=cis3a[1,], ymax=cis3a[2,]),
                   stat ="identity"
-   ) + geom_bar(data = plothist,
-             aes(x,y),
-             fill = 4,
-             alpha = 0.2,
-             position = "dodge",
-             stat = "identity",
-             width = 1
-  ) + coord_cartesian(ylim = c(min(newy), abs(max(cis3a[2,])))
+  ) + geom_bar(data = plothist,
+            aes(x,y),
+            fill = 4,
+            alpha = 0.2,
+            position = "dodge",
+            stat = "identity",
+            width = 1
+  ) + coord_cartesian(ylim = c(min(newy), max(cis3a[2,]))
   ) + labs(x = "Julian Day",
-           y = "Probability",
+           y = "s(Julian Day)",
            title = paste('Julian Day at',site),
-  ) + theme(axis.line = element_line(),
-            panel.background = element_blank()
+  ) + scale_y_continuous(breaks = seq(min(newy),max(cis3a[2,]),length.out = 3), labels = breaksPH_labels
+  ) + scale_x_continuous(breaks = seq(20,350,length.out = 12),labels = c('J','F','M','A','M','J','J','A','S','O','N','D')
+  ) +theme(axis.line = element_line(),
+            panel.background = element_blank(),
+           text = element_text(size = 25)
   )
-
+  
   ggtitle = paste(saveDir,"/Julian Day - ", site,".pdf",sep="")
   
   ggsave(
@@ -137,7 +155,7 @@ ggPlot_JD_Year <- function(model, table){
   CenterVar3<-model.matrix(model)[,start:finish]*coef(model)[c(start:finish)]
   BootstrapCoefs3<-BootstrapParameters3[,c(start:finish)]
   Basis3<-gam(rbinom(5000,1,0.5)~s(PlottingVar3, bs="cc", k=4), fit=F, family=binomial, knots=list(PlottingVar2=seq(1,365,length=4)))$X[,2:3]
-  RealFit3<-Basis3%*%coef(model)[c(start:finish)]
+  RealFit3<-Basis3%*%coef(model)[c(start:finish)] #COEFFICIENTS TO PLOT
   RealFitCenter3<-RealFit3-mean(CenterVar3)
   RealFitCenter3a<-inv.logit(RealFitCenter3)
   BootstrapFits3<-Basis3%*%t(BootstrapCoefs3)
@@ -150,48 +168,68 @@ ggPlot_JD_Year <- function(model, table){
   dens = data.frame(c(dJday$x, rev(dJday$x)), c(dJday$y, rep(0, length(dJday$y))))
   colnames(dens) = c("Day", "Density")
   dens$Density = dens$Density / 0.15 #max(dens$Density) # normalize kernel density
-  if (min(cis3a[1,])<0){ # set kernel density at bottom of y axis
-    dens$Density = dens$Density - abs(min(cis3a[1,])) 
+  if (min(cis3[1,])<0){ # set kernel density at bottom of y axis
+    dens$Density = dens$Density - abs(min(cis3[1,])) 
   } else {
-    dens$Density = dens$Density + min(cis3a[1,])
+    dens$Density = dens$Density + min(cis3[1,])
   }
-  
-  #Histogram for Jday observations
-  x = seq(from = 0,to = 365,by = 1)
-  fullhist = hist(table$Julian,x)
-  yhist = fullhist$counts
-  #normalize it to be @ most half as high as y scale
-  ymod = yhist/(max(yhist)-abs(min(cis3a[1,])))
-  newy = ymod/3.5
-  plothist = data.frame(x=x[-1],y=newy)
-  
   
   plotDF = data.frame(PlottingVar3, RealFitCenter3a)
   colnames(plotDF) = c("Jday", "Fit")
   
-  ggplot(plotDF, aes(Jday, Fit),
-  ) + #geom_polygon(data=dens,
-    # #                 aes(Day,Density),
-    # #                 fill=4,
-    # #                 alpha=0.2
-    geom_smooth(fill = "grey",
-                colour = "black",
-                aes(ymin=cis3a[1,], ymax=cis3a[2,]),
-                stat ="identity"
-    ) + geom_bar(data = plothist,
-                 aes(x,y),
-                 fill = 4,
-                 alpha = 0.2,
-                 stat = "identity",
-                 width=1
-    ) + coord_cartesian(ylim = c(min(newy), abs(max(cis3a[2,])))
-    ) + labs(x = "Julian Day",
-             y = "Probability",
-             title = paste('Julian Day at',site),
-    ) + theme(axis.line = element_line(),
-              panel.background = element_blank()
-    )
+  #Histogram for Jday observations
+  x = seq(from = 0,to = 365,by = 1)
+  fullhist = hist(SiteHourTableB$Julian,x)
+  yhist = fullhist$counts
+  #normalize it to be @ most half as high as y scale
+  ymod = yhist/(max(yhist)-abs(min(cis3a[1,])))
+  ymodd = yhist/(max(yhist)-min(cis3[1,]))
+  newy = ymod/((max(ymod)/min(plotDF$Fit))/.5) #used to use 3.5 but it was too generic
+  plothist = data.frame(x=x[-1],y=newy)
   
+  #Figure out y-scale labels based on plotting julian day as a coefficient
+  plotDF_labels = data.frame(PlottingVar3, RealFitCenter3)
+  colnames(plotDF_labels) = c("Jday", "Fit")
+  breaksy = seq(min(cis3a[1,]),max(cis3a[2,]),length.out = 3)
+  diffy = breaksy[3]-breaksy[1]
+  breaksP = seq(min(cis3[1,]),max(cis3[2,]),length.out = 3)
+  diffP = breaksP[3]+abs(breaksP[1])
+  breaksH = seq(min(newy),max(cis3a[2,]),length.out=3)
+  diffH = breaksH[3]-breaksH[1]
+  diffNP = (diffH*diffP)/diffy
+  BottomL = breaksP[3]-diffNP
+  breaksPH = rev(round(seq(breaksP[3],BottomL,length.out=3),digits = 1))
+  breaksPH_labels = as.character(breaksPH)
+  
+  ggplot(plotDF, aes(Jday, Fit),
+  ) + geom_smooth(fill = "grey",
+                  colour = "black",
+                  aes(ymin=cis3a[1,], ymax=cis3a[2,]),
+                  stat ="identity"
+  ) + geom_bar(data = plothist,
+               aes(x,y),
+               fill = 4,
+               alpha = 0.2,
+               position = "dodge",
+               stat = "identity",
+               width = 1
+  ) + coord_cartesian(ylim = c(min(newy), max(cis3a[2,]))
+  ) + labs(x = "Julian Day",
+           y = "s(Julian Day)",
+           title = paste('Julian Day at',site),
+  ) + scale_y_continuous(breaks = seq(min(newy),max(cis3a[2,]),length.out = 3), labels = breaksPH_labels
+  ) + scale_x_continuous(breaks = seq(20,350,length.out = 12),labels = c('J','F','M','A','M','J','J','A','S','O','N','D')
+  ) +theme(axis.line = element_line(),
+           panel.background = element_blank(),
+           text = element_text(size = 25)
+  )
+  
+  ggplot(plotDF, aes(Jday, Fit),
+  ) + geom_smooth(fill = "grey",
+                  colour = "black",
+                  aes(ymin=cis3a[1,], ymax=cis3a[2,]),
+                  stat ="identity"
+  ) + gg
   
   ggtitle = paste(saveDir,"/Julian Day - ", site,".pdf",sep="")
   
@@ -203,15 +241,15 @@ ggPlot_JD_Year <- function(model, table){
   } # close graphics device
   print("Plot Saved")
 }
-# Plot Julian Day with a Base R Plot (CB/Big) ---------------------------------------------------------
+# Plot Julian Day with a Base R Plot (GOA) ---------------------------------------------------------
 BasePlot_JD_AfterSite <- function(model, table){
   BootstrapParameters3<-rmvnorm(10000, coef(model),summary(model)$cov.unscaled)
-  start=6; finish=7; Variable=table$Julian;  
+  start=9; finish=10; Variable=table$Julian;  
   PlottingVar3<-seq(min(Variable), max(Variable), length=5000)
   CenterVar3<-model.matrix(model)[,start:finish]*coef(model)[c(start:finish)]
   BootstrapCoefs3<-BootstrapParameters3[,c(start:finish)]
   Basis3<-gam(rbinom(5000,1,0.5)~s(PlottingVar3, bs="cc", k=4), fit=F, family=binomial, knots=list(PlottingVar2=seq(1,365,length=4)))$X[,2:3]
-  RealFit3<-Basis3%*%coef(model)[c(start:finish)]
+  RealFit3<-Basis3%*%coef(model)[c(start:finish)] #COEFFICIENTS TO PLOT
   RealFitCenter3<-RealFit3-mean(CenterVar3)
   RealFitCenter3a<-inv.logit(RealFitCenter3)
   BootstrapFits3<-Basis3%*%t(BootstrapCoefs3)
@@ -231,10 +269,7 @@ BasePlot_JD_AfterSite <- function(model, table){
   print('Plot Saved')
 }
 
-
-
-
-# Plot Julian Day with ggplot (CB) ---------------------------------------------
+# Plot Julian Day with ggplot (GOA) ---------------------------------------------
 ggPlot_JD_AfterSite <- function(model, table){
   BootstrapParameters3<-rmvnorm(10000, coef(model),summary(model)$cov.unscaled)
   start=6; finish=7; Variable=table$Julian;  
@@ -242,13 +277,16 @@ ggPlot_JD_AfterSite <- function(model, table){
   CenterVar3<-model.matrix(model)[,start:finish]*coef(model)[c(start:finish)]
   BootstrapCoefs3<-BootstrapParameters3[,c(start:finish)]
   Basis3<-gam(rbinom(5000,1,0.5)~s(PlottingVar3, bs="cc", k=4), fit=F, family=binomial, knots=list(PlottingVar2=seq(1,365,length=4)))$X[,2:3]
-  RealFit3<-Basis3%*%coef(model)[c(start:finish)]
+  RealFit3<-Basis3%*%coef(model)[c(start:finish)] #COEFFICIENTS TO PLOT
   RealFitCenter3<-RealFit3-mean(CenterVar3)
   RealFitCenter3a<-inv.logit(RealFitCenter3)
   BootstrapFits3<-Basis3%*%t(BootstrapCoefs3)
   quant.func3<-function(x){quantile(x,probs=c(0.025, 0.975))}
   cis3<-apply(BootstrapFits3, 1, quant.func3)-mean(CenterVar3)
   cis3a<-inv.logit(cis3)
+  
+  plotDF = data.frame(PlottingVar3, RealFitCenter3a)
+  colnames(plotDF) = c("Jday", "Fit")
   
   # Calculate kernel density of Jday observations
   dJday = stats::density(Variable,na.rm = TRUE,n=5000,from=1,to=365)
@@ -263,22 +301,30 @@ ggPlot_JD_AfterSite <- function(model, table){
   
   #Histogram for Jday observations
   x = seq(from = 0,to = 365,by = 1)
-  fullhist = hist(table$Julian,x)
+  fullhist = hist(SiteHourTableB$Julian,x)
   yhist = fullhist$counts
   #normalize it to be @ most half as high as y scale
   ymod = yhist/(max(yhist)-abs(min(cis3a[1,])))
-  newy = ymod/3.5
+  ymodd = yhist/(max(yhist)-min(cis3[1,]))
+  newy = ymod/((max(ymod)/min(plotDF$Fit))/.5) #used to use 3.5 but it was too generic
   plothist = data.frame(x=x[-1],y=newy)
   
-  plotDF = data.frame(PlottingVar3, RealFitCenter3a)
-  colnames(plotDF) = c("Jday", "Fit")
+  #Figure out y-scale labels based on plotting julian day as a coefficient
+  plotDF_labels = data.frame(PlottingVar3, RealFitCenter3)
+  colnames(plotDF_labels) = c("Jday", "Fit")
+  breaksy = seq(min(cis3a[1,]),max(cis3a[2,]),length.out = 3)
+  diffy = breaksy[3]-breaksy[1]
+  breaksP = seq(min(cis3[1,]),max(cis3[2,]),length.out = 3)
+  diffP = breaksP[3]+abs(breaksP[1])
+  breaksH = seq(min(newy),max(cis3a[2,]),length.out=3)
+  diffH = breaksH[3]-breaksH[1]
+  diffNP = (diffH*diffP)/diffy
+  BottomL = breaksP[3]-diffNP
+  breaksPH = rev(round(seq(breaksP[3],BottomL,length.out=3),digits = 1))
+  breaksPH_labels = as.character(breaksPH)
   
   ggplot(plotDF, aes(Jday, Fit),
-  ) + #geom_polygon(data=dens,
-    # #                 aes(Day,Density),
-    # #                 fill=4,
-    # #                 alpha=0.2
-    geom_smooth(fill = "grey",
+  ) + geom_smooth(fill = "grey",
                 colour = "black",
                 aes(ymin=cis3a[1,], ymax=cis3a[2,]),
                 stat ="identity"
@@ -292,143 +338,14 @@ ggPlot_JD_AfterSite <- function(model, table){
     ) + labs(x = "Julian Day",
              y = "Probability",
              title = paste('Julian Day at',site),
-    ) + theme(axis.line = element_line(),
-              panel.background = element_blank()
+    ) + scale_y_continuous(breaks = seq(min(newy),max(cis3a[2,]),length.out = 3), labels = breaksPH_labels
+    ) + scale_x_continuous(breaks = seq(20,350,length.out = 12),labels = c('J','F','M','A','M','J','J','A','S','O','N','D')
+    ) +theme(axis.line = element_line(),
+             panel.background = element_blank(),
+             text = element_text(size = 25)
     )
   
-  
   ggtitle = paste(saveDir,"/Julian Day - ", site,".pdf",sep="")
-  
-  ggsave(
-    ggtitle,
-    device = "pdf") # save figure
-  while (dev.cur() > 1) {
-    dev.off()
-  } # close graphics device
-  print("Plot Saved")
-}
-
-# Plot Year (as smooth) ---------------------------------------------------------------
-ggPlot_YearSmooth <- function(model, table,site){
-  BootstrapParameters1<-rmvnorm(10000, coef(model),summary(model)$cov.unscaled)
-  start=2; finish=6; Variable=table$Year;  
-  PlottingVar1<-seq(min(Variable), max(Variable), length=5000)
-  CenterVar1<-model.matrix(model)[,start:finish]*coef(model)[c(start:finish)]
-  BootstrapCoefs1<-BootstrapParameters1[,c(start:finish)]
-  Basis1 <-
-    mSpline(
-      PlottingVar1,
-      knots = c(2013,2017),
-      Boundary.knots = c(2011,2019))
-  RealFit1<-Basis1%*%coef(model)[c(start:finish)]
-  RealFitCenter1<-RealFit1-mean(CenterVar1)
-  RealFitCenter1a<-inv.logit(RealFitCenter1)
-  BootstrapFits1<-Basis1%*%t(BootstrapCoefs1)
-  quant.func1<-function(x){quantile(x,probs=c(0.025, 0.975))}
-  cis1<-apply(BootstrapFits1, 1, quant.func1)-mean(CenterVar1)
-  cis1a<-inv.logit(cis1)
-  
-  # Calculate kernel density of Year observations
-  dYear = stats::density(Variable,na.rm = TRUE,n=5000,from=2011,to=2019)
-  dens = data.frame(c(dYear$x, rev(dYear$x)), c(dYear$y, rep(0, length(dYear$y))))
-  colnames(dens) = c("Year", "Density")
-  if (site == 'GOA'){
-    divis =5
-  }else{
-    divis=2
-  }
-  dens$Density = dens$Density / divis #max(dens$Density) # normalize kernel density
-  if (min(cis1a[1,])<0){ # set kernel density at bottom of y axis
-    dens$Density = dens$Density - abs(min(cis1a[1,])) 
-  } else {
-    dens$Density = dens$Density + min(cis1a[1,])
-  }
-  
-  plotDF = data.frame(PlottingVar1, RealFitCenter1a)
-  colnames(plotDF) = c("Year", "Fit")
-  
-  ggplot(plotDF, aes(Year, Fit),
-  ) + geom_polygon(data=dens,
-                   aes(Year,Density),
-                   fill=4,
-                   alpha=0.2
-  ) + geom_smooth(fill = "grey",
-                  colour = "black",
-                  aes(ymin=cis1a[1,], ymax=cis1a[2,]),
-                  stat ="identity"
-  ) + labs(x = "Year",
-           y = "Probability",
-           title = paste('Year at',site),
-  ) + theme(axis.line = element_line(),
-            panel.background = element_blank()
-  )
-  
-  ggtitle = paste(saveDir,"/Year - ", site,".pdf",sep="")
-  
-  ggsave(
-    ggtitle,
-    device = "pdf") # save figure
-  while (dev.cur() > 1) {
-    dev.off()
-  } # close graphics device
-  print("Plot Saved")
-}
-
-
-
-
-# Plot Year (BIG) (as smooth) ---------------------------------------------------------------
-ggPlot_Year_Big_Smooth <- function(model, table,site){
-  BootstrapParameters1<-rmvnorm(10000, coef(model),summary(model)$cov.unscaled)
-  start=2; finish=6; Variable=table$Year;  
-  PlottingVar1<-seq(min(Variable), max(Variable), length=5000)
-  CenterVar1<-model.matrix(model)[,start:finish]*coef(model)[c(start:finish)]
-  BootstrapCoefs1<-BootstrapParameters1[,c(start:finish)]
-  Basis1 <-
-    mSpline(
-      PlottingVar1,
-      knots = c(2012,2017),
-      Boundary.knots = c(2010,2019))
-  RealFit1<-Basis1%*%coef(model)[c(start:finish)]
-  RealFitCenter1<-RealFit1-mean(CenterVar1)
-  RealFitCenter1a<-inv.logit(RealFitCenter1)
-  BootstrapFits1<-Basis1%*%t(BootstrapCoefs1)
-  quant.func1<-function(x){quantile(x,probs=c(0.025, 0.975))}
-  cis1<-apply(BootstrapFits1, 1, quant.func1)-mean(CenterVar1)
-  cis1a<-inv.logit(cis1)
-  
-  # Calculate kernel density of Year observations
-  dYear = stats::density(Variable,na.rm = TRUE,n=5000,from=2010,to=2019)
-  dens = data.frame(c(dYear$x, rev(dYear$x)), c(dYear$y, rep(0, length(dYear$y))))
-  colnames(dens) = c("Year", "Density")
-  divis = 6
-  dens$Density = dens$Density / divis #max(dens$Density) # normalize kernel density
-  if (min(cis1a[1,])<0){ # set kernel density at bottom of y axis
-    dens$Density = dens$Density - abs(min(cis1a[1,])) 
-  } else {
-    dens$Density = dens$Density + min(cis1a[1,])
-  }
-  
-  plotDF = data.frame(PlottingVar1, RealFitCenter1a)
-  colnames(plotDF) = c("Year", "Fit")
-  
-  ggplot(plotDF, aes(Year, Fit),
-  ) + geom_polygon(data=dens,
-                   aes(Year,Density),
-                   fill=4,
-                   alpha=0.2
-  ) + geom_smooth(fill = "grey",
-                  colour = "black",
-                  aes(ymin=cis1a[1,], ymax=cis1a[2,]),
-                  stat ="identity"
-  ) + labs(x = "Year",
-           y = "Probability",
-           title = paste('Year at',site),
-  ) + theme(axis.line = element_line(),
-            panel.background = element_blank()
-  )
-  
-  ggtitle = paste(saveDir,"/Year - ", site,".pdf",sep="")
   
   ggsave(
     ggtitle,
@@ -443,29 +360,33 @@ ggPlot_Year_Big_Smooth <- function(model, table,site){
 ggPlot_Year <- function(model, table,site){
   BootstrapParameters2<-rmvnorm(10000, coef(model),summary(model)$cov.unscaled)
   start=2; end=8; Variable=table$Year
-  BootstrapCoefs2<-inv.logit(BootstrapParameters2[, c(1,start:end)])
+  BootstrapCoefs2<-BootstrapParameters2[, c(1,start:end)]
   
   #Center intercept (1st level of year factor) at 0 and show other levels relative to it
   AdjustedSiteCoefs = data.frame(  c(
-    BootstrapCoefs2[, 1] - mean(BootstrapCoefs2[, 1]),
+    BootstrapCoefs2[, 1],
     BootstrapCoefs2[, 2],
     BootstrapCoefs2[, 3],
     BootstrapCoefs2[, 4],
     BootstrapCoefs2[, 5],
     BootstrapCoefs2[, 6],
-    BootstrapCoefs2[, 7]),
-  as.factor(rep(1:7, each = 10000)))
+    BootstrapCoefs2[, 7],
+    BootstrapCoefs2[, 8]),
+  as.factor(rep(1:8, each = 10000)))
   colnames(AdjustedSiteCoefs) = c("Probability", "Year")
-  trans = c("2012","2013","2014","2015","2017","2018","2019")
-  names(trans) = c(1,2,3,4,5,6,7)
+  trans = c("2011","2012","2013","2014","2015","2017","2018","2019")
+  names(trans) = c(1,2,3,4,5,6,7,8)
   AdjustedSiteCoefs$YearVal = trans[as.character(AdjustedSiteCoefs$Year)]
   
   ggtitle = paste(saveDir,"/Year - ", site,".pdf",sep="")
   ggplot(AdjustedSiteCoefs, aes(YearVal, Probability)
   ) + geom_boxplot(
   ) + theme(axis.line = element_line(),
-            panel.background = element_blank()
-  ) + labs(title = paste('Year at',site))
+            panel.background = element_blank(),
+            text = element_text(size = 25)
+  ) + labs(title = paste('Year at',site), 
+           x = "Year",
+           y = "s(Year)")
   
   ggsave(
     ggtitle,
@@ -479,11 +400,11 @@ ggPlot_Year <- function(model, table,site){
 ggPlot_Year_Big <- function(model, table,site){
   BootstrapParameters2<-rmvnorm(10000, coef(model),summary(model)$cov.unscaled)
   start=2; end=9; Variable=table$Year
-  BootstrapCoefs2<-inv.logit(BootstrapParameters2[, c(1,start:end)])
+  BootstrapCoefs2<-BootstrapParameters2[, c(1,start:end)]
   
   #Center intercept (1st level of year factor) at 0 and show other levels relative to it
   AdjustedSiteCoefs = data.frame(  c(
-    BootstrapCoefs2[, 1] - mean(BootstrapCoefs2[, 1]),
+    BootstrapCoefs2[, 1],
     BootstrapCoefs2[, 2],
     BootstrapCoefs2[, 3],
     BootstrapCoefs2[, 4],
@@ -502,8 +423,11 @@ ggPlot_Year_Big <- function(model, table,site){
   ggplot(AdjustedSiteCoefs, aes(YearVal, Probability)
   ) + geom_boxplot(
   ) + theme(axis.line = element_line(),
-            panel.background = element_blank()
-  ) + labs(title = paste('Year at',site))
+            panel.background = element_blank(),
+            text = element_text(size = 25)
+  ) + labs(title = paste('Year at',site), 
+           x = "Year",
+           y = "s(Year)")
   
   ggsave(
     ggtitle,
@@ -517,10 +441,10 @@ ggPlot_Year_Big <- function(model, table,site){
 ggPlot_Site <- function(model, table,site){
   BootstrapParameters2<-rmvnorm(10000, coef(model),summary(model)$cov.unscaled)
   val=4; Variable=table$Site
-  BootstrapCoefs2<-inv.logit(BootstrapParameters2[, c(1,val)])
+  BootstrapCoefs2<-BootstrapParameters2[, c(1,val)]
   
   # Center intercept (1st level of year factor) at 0 and show other levels relative to it
-  AdjustedSiteCoefs = data.frame(c(BootstrapCoefs2[, 1] - mean(BootstrapCoefs2[, 1]),
+  AdjustedSiteCoefs = data.frame(c(BootstrapCoefs2[, 1],
                                    BootstrapCoefs2[,2]),
                                  as.factor(rep(1:2, each = 10000)))
   colnames(AdjustedSiteCoefs) = c("Coefficient", "Site")
@@ -532,8 +456,11 @@ ggPlot_Site <- function(model, table,site){
   ggplot(AdjustedSiteCoefs, aes(SiteName, Coefficient)
   ) + geom_boxplot(
   ) + theme(axis.line = element_line(),
-            panel.background = element_blank()
-  ) + labs(title = paste('Site at',region))
+            panel.background = element_blank(),
+            text = element_text(size = 25)
+  ) + labs(title = paste('Site at',region), 
+           x = "Site",
+           y = "s(Site)")
   
   ggsave(
     ggtitle,
@@ -562,11 +489,11 @@ ggPlot_Site_asFactor <- function(model,table,region){
 ggPlot_Site_GOA <- function(model, table,region){
   BootstrapParameters2<-rmvnorm(10000, coef(model),summary(model)$cov.unscaled)
   start=2; end=5; Variable=table$Site
-  BootstrapCoefs2<-inv.logit(BootstrapParameters2[, c(1,start:end)])
+  BootstrapCoefs2<-BootstrapParameters2[, c(1,start:end)]
 
   #Center intercept (1st level of year factor) at 0 and show other levels relative to it
   AdjustedSiteCoefs = data.frame(  c(
-    BootstrapCoefs2[, 1] - mean(BootstrapCoefs2[, 1]),
+    BootstrapCoefs2[, 1],
     BootstrapCoefs2[, 2],
     BootstrapCoefs2[, 3],
     BootstrapCoefs2[, 4],
@@ -582,8 +509,11 @@ ggPlot_Site_GOA <- function(model, table,region){
   ggplot(AdjustedSiteCoefs, aes(SiteName, Coefficient)
   ) + geom_boxplot(
   ) + theme(axis.line = element_line(),
-            panel.background = element_blank()
-  ) + labs(title = paste('Site at',region))
+            panel.background = element_blank(),
+            text = element_text(size = 25)
+  ) + labs(title = paste('Site at',region), 
+           x = "Site",
+           y = "s(Site)")
 
   ggsave(
     ggtitle,
@@ -612,11 +542,11 @@ ggPlot_Site_asfactor_GOA <- function(model,table,region){
 ggPlot_Region_Big <- function(model, table,region){
   BootstrapParameters2<-rmvnorm(10000, coef(model),summary(model)$cov.unscaled)
   val = 12; Variable=table$Site
-  BootstrapCoefs2<-inv.logit(BootstrapParameters2[, c(1,val)])
+  BootstrapCoefs2<-BootstrapParameters2[, c(1,val)]
   
   #Center intercept (1st level of year factor) at 0 and show other levels relative to it
   AdjustedSiteCoefs = data.frame(  c(
-    BootstrapCoefs2[, 1] - mean(BootstrapCoefs2[, 1]),
+    BootstrapCoefs2[, 1],
     BootstrapCoefs2[, 2]
   ),
   as.factor(rep(1:2, each = 10000)))
@@ -629,8 +559,11 @@ ggPlot_Region_Big <- function(model, table,region){
   ggplot(AdjustedSiteCoefs, aes(SiteName, Coefficient)
   ) + geom_boxplot(
   ) + theme(axis.line = element_line(),
-            panel.background = element_blank()
-  ) + labs(title = paste('Site at',region))
+            panel.background = element_blank(),
+            text = element_text(size = 25)
+  ) + labs(title = paste('Site at',region), 
+           x = "Site",
+           y = "s(Site)")
   
   ggsave(
     ggtitle,
