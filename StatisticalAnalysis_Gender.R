@@ -518,21 +518,21 @@ ggsave(fig7)
 #Females
 kruskal.test(FeHoursProp ~ Season, data = binPresence)
 dunnTest(FeHoursProp ~ Season,
-         data=dayBinTAB,
+         data=binPresence,
          method="bonferroni")
-pairwise.wilcox.test(dayBinTAB$FeHoursProp, dayBinTAB$Season,
+pairwise.wilcox.test(binPresence$FeHoursProp, binPresence$Season,
                      p.adjust.method = "BH")
 #Juveniles
 kruskal.test(JuHoursProp ~ Season, data = binPresence)
 dunnTest(JuHoursProp ~ Season,
-         data=dayBinTAB,
+         data=binPresence,
          method="bonferroni")
-pairwise.wilcox.test(dayBinTAB$JuHoursProp, dayBinTAB$Season,
+pairwise.wilcox.test(binPresence$JuHoursProp, binPresence$Season,
                      p.adjust.method = "BH")
 #Males
 kruskal.test(MaHoursProp ~ Season, data = binPresence)
 dunnTest(MaHoursProp ~ Season,
-         data=dayBinTAB,
+         data=binPresence,
          method="bonferroni")
-pairwise.wilcox.test(dayBinTAB$MaHoursProp, dayBinTAB$Season,
+pairwise.wilcox.test(binPresence$MaHoursProp, binPresence$Season,
                      p.adjust.method = "BH")
