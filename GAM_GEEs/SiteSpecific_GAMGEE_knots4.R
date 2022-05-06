@@ -21,18 +21,18 @@ library(SimDesign)
 library(lubridate)
 library(regclass)
 library(mgcv)
-library(ChemoSpecUtils)
+library(ChemoSpec2D)
 library(car)            # to run an ANOVA
 library(splines2)       # to use mSpline for the GEEs
 library(ggfortify)      # extract confidence interval for ACF plots
 
-site = 'PT' #specify the site of interest
+site = 'BS' #specify the site of interest
 
 # Step 1: Load the Data -----------------------------------------------------------
-dir = paste("H:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites")
-saveDir = paste("H:/My Drive/GofAK_TPWS_metadataReduced/Plots/",site, sep="")
-saveWorkspace = paste("H:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",site,'/',sep="")
-fileName = paste("H:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites/AllSitesGrouped_Binary_GAMGEE_ROW.csv",sep="") #setting the directory
+dir = paste("H:/My Drive/WAT_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites")
+saveDir = paste("H:/My Drive/WAT_TPWS_metadataReduced/Plots/",site, sep="")
+saveWorkspace = paste("H:/My Drive/WAT_TPWS_metadataReduced/SeasonalityAnalysis/",site,'/',sep="")
+fileName = paste("H:/My Drive/WAT_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites/AllSitesGrouped_Binary_GAMGEE_ROW.csv",sep="") #setting the directory
 HourTable = read.csv(fileName)
 HourTable = na.omit(HourTable)
 HourTable$date = as.Date(HourTable$tbin)
@@ -71,7 +71,8 @@ BlockMod<-glm(PreAbs~
                 TimeLost, data=SiteHourTable,family=binomial)
 }
 
-ACF = acf(residuals(BlockMod), lag.max = 1000, ylim=c(0,0.1))
+#ACF = acf(residuals(BlockMod), lag.max = 500, ylim=c(0,0.1))
+ACF = acf(residuals(BlockMod))
 CI = ggfortify:::confint.acf(ACF)
 ACFidx = which(ACF[["acf"]] < CI, arr.ind=TRUE)
 ACFval = ACFidx[1]
@@ -85,25 +86,25 @@ divdiff = nrow(timeseries) - length(preBlock)
 last = tail(preBlock, n = 1)+1
 lastVec = rep(last,each = divdiff)
 timeseries$block = c(preBlock,lastVec)
-timeseries = rename(timeseries, tbin = date)
+names(timeseries)[1] = 'tbin'
 SiteHourTableB = left_join(SiteHourTable,timeseries,by="tbin")
 
 #Make blocks continuous 
-gaps = check4Gaps(SiteHourTableB$block,tol=1)
+#gaps = check4Gaps(SiteHourTableB$block,tol=1)
 UnBlock = as.data.frame(unique(SiteHourTableB$block))
 UnBlock$sequence = seq.int(nrow(UnBlock))
 SiteHourTableB$Blocks = UnBlock$sequence[match(SiteHourTableB$block,UnBlock$`unique(SiteHourTableB$block)`)]
 
 difference = diff(SiteHourTableB$Blocks) #find difference between rows
-gapsCont = check4Gaps(SiteHourTableB$Blocks)
-SiteHourTableB$Waves = rep(0,nrow(SiteHourTableB)) #make space for waves
+#gapsCont = check4Gaps(SiteHourTableB$Blocks)
+#SiteHourTableB$Waves = rep(0,nrow(SiteHourTableB)) #make space for waves
 
-for (i in 1:nrow(gapsCont)){
-  StartB = gapsCont$beg.indx[i]
-  EndB = gapsCont$end.indx[i]
-  Num = length(StartB:EndB)
-  SiteHourTableB$Waves[StartB:EndB] = seq.int(1,Num)
-}
+#for (i in 1:nrow(gapsCont)){
+  #StartB = gapsCont$beg.indx[i]
+  #EndB = gapsCont$end.indx[i]
+  #Num = length(StartB:EndB)
+  #SiteHourTableB$Waves[StartB:EndB] = seq.int(1,Num)
+#}
 
 # Step 3: ANOVA to Check for Significance of Variables --------------------
 #ANOVA with car package
@@ -126,6 +127,10 @@ summary(BlockMod)
 # bs(Julian, k = 4)     1682  4     <2e-16 ***
 #   TimeLost                 2  1       0.19    
 # as.factor(Year)       1121  7     <2e-16 ***
+
+#BP
+#bs(Julian, k = 4)  136.744  4     <2e-16 ***
+  #TimeLost             1.508  1     0.2194    
 
 
 # Step 4: Data Exploration and Initial Analysis ---------------------------
