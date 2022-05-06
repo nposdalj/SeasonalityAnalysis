@@ -415,9 +415,10 @@ QIC3jB = c(QIC(POD0j)[1],QIC(POD3je)[1],QIC(POD3jf)[1],QIC(POD3jg)[1])
 QICmod3jB<-data.frame(rbind(model3jB,QIC3jB))
 QICmod3jB
 #GOA
-
+# QIC            QIC.1            QIC.2            QIC.3
+# model3jB            POD0j           POD3je           POD3jf           POD3jg
+# QIC3jB   69641.8097101943 66864.9328409343 67899.7215740032 68357.3375205716
 #Full model is the best
-
 #Model Order
 #Year
 #AvgDayMat
@@ -455,7 +456,11 @@ model3mA = c("POD0m","POD3ma","POD3mb","POD3mc","POD3md")
 QIC3mA = c(QIC(POD0m)[1],QIC(POD3ma)[1],QIC(POD3mb)[1],QIC(POD3mc)[1],QIC(POD3md)[1])
 QICmod3mA<-data.frame(rbind(model3mA,QIC3mA))
 QICmod3mA
-#GOA
+# GOA
+# QIC           QIC.1            QIC.2           QIC.3            QIC.4
+# model3mA            POD0m          POD3ma           POD3mb          POD3mc           POD3md
+# QIC3mA   58472.1254563818 1386872.0855602 2846252.74435716 54602.786411883 55005.3032349586
+# Remove Year
 
 #The  full model without Year is:
 POD3me = geeglm(PreAbsM ~ AvgDayMatM+as.factor(Site),family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB)

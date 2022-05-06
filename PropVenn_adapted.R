@@ -1,6 +1,7 @@
 #Load libraries
 library("eulerr")
 library("tidyverse")
+library("dplyr")
 
 #load data
 GDrive =  'I'
@@ -23,17 +24,28 @@ SexDayTable$F = SexDayTable$PreAbsF
 SexDayTable$J = SexDayTable$PreAbsJ
 SexDayTable$M = SexDayTable$PreAbsM
 SexDayTable$FJ = SexDayTable$F + SexDayTable$J
-SexDayTable$FJ = replace(SexDayTable$FJ, which(SexDayTable$FJ <2 ), 0)
-SexDayTable$FJ = replace(SexDayTable$FJ, which(SexDayTable$FJ == 2), 1)
 SexDayTable$JM = SexDayTable$M + SexDayTable$J
-SexDayTable$JM = replace(SexDayTable$JM, which(SexDayTable$JM <2 ), 0)
-SexDayTable$JM = replace(SexDayTable$JM, which(SexDayTable$JM == 2), 1)
 SexDayTable$FM = SexDayTable$F + SexDayTable$M
-SexDayTable$FM = replace(SexDayTable$FM, which(SexDayTable$FM <2 ), 0)
-SexDayTable$FM = replace(SexDayTable$FM, which(SexDayTable$FM == 2), 1)
 SexDayTable$FJM = SexDayTable$F + SexDayTable$J + SexDayTable$M
-SexDayTable$FJM = replace(SexDayTable$FJM, which(SexDayTable$FJM <3 ), 0)
-SexDayTable$FJM = replace(SexDayTable$FJM, which(SexDayTable$FJM == 3), 1)
+
+SexDayTable$FJM = replace(SexDayTable$FJM, which(SexDayTable$FJM <3 ), 0) #delete rows that don't have all sexes
+SexDayTable$FJM = replace(SexDayTable$FJM, which(SexDayTable$FJM == 3), 1) #only keep rows that have both sexes and make it equal to 1
+
+SexDayTable$FJ = replace(SexDayTable$FJ, which(SexDayTable$FJ <2), 0) #delete rows that don't have both sexes
+SexDayTable$FJ = replace(SexDayTable$FJ, which(SexDayTable$FJM == 1), 0) #delete rows that have all sexes
+SexDayTable$FJ = replace(SexDayTable$FJ, which(SexDayTable$FJ == 2), 1) #only keep rows that have both sexes and make it equal to 1
+
+SexDayTable$JM = replace(SexDayTable$JM, which(SexDayTable$JM <2 ), 0) #delete rows that don't have both sexes
+SexDayTable$JM = replace(SexDayTable$JM, which(SexDayTable$FJM == 1), 0) #delete rows that have all sexes
+SexDayTable$JM = replace(SexDayTable$JM, which(SexDayTable$JM == 2), 1) #only keep rows that have both sexes and make it equal to 1
+
+SexDayTable$FM = replace(SexDayTable$FM, which(SexDayTable$FM <2 ), 0) #delete rows that don't have both sexes
+SexDayTable$FM = replace(SexDayTable$FM, which(SexDayTable$FJM == 1), 0) #delete rows that have all sexes
+SexDayTable$FM = replace(SexDayTable$FM, which(SexDayTable$FM == 2), 1) #only keep rows that have both sexes and make it equal to 1
+
+SexDayTable$F = replace(SexDayTable$F, which(SexDayTable$FJ ==1 | SexDayTable$FJM ==1 | SexDayTable$FM ==1),0) #delete F only rows when it's being accounted for in another group
+SexDayTable$J = replace(SexDayTable$J, which(SexDayTable$FJ ==1 | SexDayTable$JM ==1 | SexDayTable$FJM ==1),0) #delete J only rows when it's being accounted for in another group
+SexDayTable$M = replace(SexDayTable$M, which(SexDayTable$JM ==1 | SexDayTable$FM ==1 | SexDayTable$FJM ==1),0) #delete M only rows when it's being accounted for in another group
 
 saveDir = paste(GDrive,":/My Drive/Manuscripts/GOA/Figures",sep="")
 

@@ -67,12 +67,14 @@ if (sex == 'Social Groups'){
 }
 
 # Plot Julian Day ---------------------------------------------------------
-if (site == 'CB' & sex == 'Social Groups' | site == 'GOA' & sex == 'Mid-Size' | site == 'GOA' & sex == 'Social Groups'){
+if (site == 'CB' & sex == 'Social Groups' | site == 'GOA' & sex == 'Mid-Size'){
   ggPlot_JD_AfterYear(PODFinal, SiteHourTableB,sex)
 }else if (site == 'GOA' & sex == 'Males'){
   ggPlot_JD_AfterSite(PODFinal, SiteHourTableB,sex)
 }else if (site == 'Big'){
   ggPlot_JD_AfterYearB(PODFinal, SiteHourTableB,sex)
+}else if (site == 'GOA' & sex == 'Social Groups'){
+  ggPlot_JD_AfterYearSite(PODFinal,SiteHourTableB,sex)
 }else{
   ggPlot_JD_sex(PODFinal,SiteHourTableB,sex)
 }
@@ -101,6 +103,8 @@ if (exists("region")){
     ggPlot_Site_Year(PODFinal,SiteHourTableB,sex)
   }else if (region == 'BSAI' & sex == 'Social Groups' | region == 'BSAI' & sex == 'Males'){
     ggPlot_Site(PODFinal,SiteHourTableB,sex)
+  }else if (region == 'GOA' & sex == 'Social Groups'){
+    ggPlot_Site_AfterYear(PODFinal,SiteHourTableB,sex)
   }
 }
 }

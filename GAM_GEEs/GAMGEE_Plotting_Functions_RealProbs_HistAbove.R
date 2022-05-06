@@ -113,9 +113,9 @@ ggPlot_JD_Year <- function(model, table){
 }
 
 # Plot Julian Day with ggplot (GOA) ---------------------------------------------
-ggPlot_JD_AfterSite <- function(model, table){
+ggPlot_JD_AfterYear <- function(model, table,site){
   BootstrapParameters3<-rmvnorm(10000, coef(model),summary(model)$cov.unscaled)
-  start=6; finish=7; Variable=table$Julian;  
+  start=9; finish=10; Variable=table$Julian;  
   PlottingVar3<-seq(min(Variable), max(Variable), length=5000)
   CenterVar3<-model.matrix(model)[,start:finish]*coef(model)[c(start:finish)]
   BootstrapCoefs3<-BootstrapParameters3[,c(start:finish)]

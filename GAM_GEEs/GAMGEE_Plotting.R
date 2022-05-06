@@ -21,13 +21,14 @@ library(car)            # to run an ANOVA
 library(splines2)       # to use mSpline for the GEEs
 library(scales)
 library(magick)
+library(cowplot)
 #load functions
 source('C:/Users/nposd/Documents/GitHub/SeasonalityAnalysis/GAM_GEEs/GAMGEE_Plotting_Functions_RealProbs_HistAbove.R')
 
 # Load Workspace --------------------------------------------------
-site = 'Big'
+#site = 'Big'
 GDrive = 'I'
-#region = 'BSAI'
+region = 'GOA'
 if (exists("site")){
   if (site == 'Big'){
     saveWorkspace = paste(GDrive,":/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/BigModel/",sep="")
@@ -65,7 +66,7 @@ if (exists("site")){
 if (exists("region")){
   site = region
   if (region == 'GOA'){
-    ggPlot_JD_Year(PODFinal, SiteHourTableB)
+    ggPlot_JD_AfterYear(PODFinal, SiteHourTableB,site)
   }else{
     ggPlot_JD(PODFinal,SiteHourTableB,site)
 }
@@ -73,7 +74,7 @@ if (exists("region")){
 
 
 # Plot Year ---------------------------------------------------------------
-if (site == 'CB' | site =='G'){
+if (site == 'CB' | site =='GOA'){
   ggPlot_Year(PODFinal,SiteHourTableB,site)
 }else if (site == "Big"){
   ggPlot_Year_Big(PODFinal,SiteHourTableB,site)

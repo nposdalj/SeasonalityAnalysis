@@ -163,17 +163,6 @@ ggPlot_JD_Year <- function(model, table){
   cis3<-apply(BootstrapFits3, 1, quant.func3)-mean(CenterVar3)
   cis3a<-inv.logit(cis3)
   
-  # Calculate kernel density of Jday observations
-  dJday = stats::density(Variable,na.rm = TRUE,n=5000,from=1,to=365)
-  dens = data.frame(c(dJday$x, rev(dJday$x)), c(dJday$y, rep(0, length(dJday$y))))
-  colnames(dens) = c("Day", "Density")
-  dens$Density = dens$Density / 0.15 #max(dens$Density) # normalize kernel density
-  if (min(cis3[1,])<0){ # set kernel density at bottom of y axis
-    dens$Density = dens$Density - abs(min(cis3[1,])) 
-  } else {
-    dens$Density = dens$Density + min(cis3[1,])
-  }
-  
   plotDF = data.frame(PlottingVar3, RealFitCenter3a)
   colnames(plotDF) = c("Jday", "Fit")
   
@@ -223,13 +212,6 @@ ggPlot_JD_Year <- function(model, table){
            panel.background = element_blank(),
            text = element_text(size = 25)
   )
-  
-  ggplot(plotDF, aes(Jday, Fit),
-  ) + geom_smooth(fill = "grey",
-                  colour = "black",
-                  aes(ymin=cis3a[1,], ymax=cis3a[2,]),
-                  stat ="identity"
-  ) + gg
   
   ggtitle = paste(saveDir,"/Julian Day - ", site,".pdf",sep="")
   

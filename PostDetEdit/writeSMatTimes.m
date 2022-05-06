@@ -42,7 +42,8 @@ if length(siteDiskIdx) == 1
    shipArray(strcmp(shipArray(:,1),'ambient'),:) = [];
    shipArray(:,1) = [];
 else
-    if siteDiskIdx(j) == 1
+    if j == 1
+    shipTAB = [];
     load(PathFileListShipMatch{1});
     shipTAB = [table(shipLabels) table(num2cell(shipTimes))];
     else

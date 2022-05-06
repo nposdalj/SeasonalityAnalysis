@@ -4,7 +4,7 @@ siteabrev = 'PS';
 siteNameMatch = 'PS';
 region = 'PS'; %all of the WAT data has a space between the site and the deployment #
 shipDataType = 2; % 1 - old ship data, %2 - new ship data
-ShipIDReDo = 0; % If you want to re-run ship and ID times, change this to 1
+ShipIDReDo = 1; % If you want to re-run ship and ID times, change this to 1
 GDrive = 'I';
 
 shipDir = 'I:\Shared drives\Pt. Sur\Analyzed data\Sperm whales\metadata_reduced';
