@@ -2,21 +2,24 @@ clearvars
 close all
 
 %% Parameters defined by user
-filePrefix = 'WAT_NC'; % File name to match. 
-siteabrev = 'NC'; %abbreviation of site.
-region = 'WAT'; %region
+filePrefix = 'PS'; % File name to match. 
+siteabrev = 'PS'; %abbreviation of site.
+region = 'PS'; %region
 sp = 'Pm'; % your species code
 itnum = '3'; % which iteration you are looking for
 srate = 200; % sample rate
 GDrive = 'I'; %Google Drive
 
-tpwsPath = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\TPWS_125\',siteabrev]; %directory of TPWS files
+%tpwsPath = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\TPWS_125\',siteabrev]; %directory of TPWS files
+tpwsPath = 'I:\Shared drives\Pt. Sur\Analyzed data\Sperm whales\TPWS_125';
 % tpwsPath = ['I:\My Drive\',region,'_TPWS_metadataReduced\',siteabrev,'\TPWS_125']; %directory of TPWS files
 
-effortXls = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev,'\Pm_Effort.xlsx']; % specify excel file with effort times
+%effortXls = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev,'\Pm_Effort.xlsx'];% specify excel file with effort times
+effortXls = 'I:\Shared drives\Pt. Sur\Analyzed data\Sperm whales\SeasonalityAnalysis\Pm_effort.xlsx';
 % effortXls = ['I:\My Drive\',region,'_TPWS_metadataReduced\',siteabrev,'\SeasonalityAnalysis\Pm_Effort.xlsx']; % specify excel file with effort times
 
-saveDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev]; %specify directory to save files
+%saveDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev]; %specify directory to save files
+saveDir = 'I:\Shared drives\Pt. Sur\Analyzed data\Sperm whales\SeasonalityAnalysis';
 % saveDir = ['I:\My Drive\',region,'_TPWS_metadataReduced\',siteabrev,'\SeasonalityAnalysis']; %specify directory to save files
 %% define subfolder that fit specified iteration
 if itnum > 1

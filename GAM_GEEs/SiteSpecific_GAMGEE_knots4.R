@@ -26,13 +26,14 @@ library(car)            # to run an ANOVA
 library(splines2)       # to use mSpline for the GEEs
 library(ggfortify)      # extract confidence interval for ACF plots
 
-site = 'BS' #specify the site of interest
+site = 'PT' #specify the site of interest
+GDrive = 'I'
 
 # Step 1: Load the Data -----------------------------------------------------------
-dir = paste("H:/My Drive/WAT_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites")
-saveDir = paste("H:/My Drive/WAT_TPWS_metadataReduced/Plots/",site, sep="")
-saveWorkspace = paste("H:/My Drive/WAT_TPWS_metadataReduced/SeasonalityAnalysis/",site,'/',sep="")
-fileName = paste("H:/My Drive/WAT_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites/AllSitesGrouped_Binary_GAMGEE_ROW.csv",sep="") #setting the directory
+dir = paste(GDrive,":/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites")
+saveDir = paste(GDrive,":/My Drive/GofAK_TPWS_metadataReduced/Plots/",site, sep="")
+saveWorkspace = paste(GDrive,":/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",site,'/',sep="")
+fileName = paste(GDrive,":/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites/AllSitesGrouped_Binary_GAMGEE_ROW.csv",sep="") #setting the directory
 HourTable = read.csv(fileName)
 HourTable = na.omit(HourTable)
 HourTable$date = as.Date(HourTable$tbin)
@@ -71,8 +72,7 @@ BlockMod<-glm(PreAbs~
                 TimeLost, data=SiteHourTable,family=binomial)
 }
 
-#ACF = acf(residuals(BlockMod), lag.max = 500, ylim=c(0,0.1))
-ACF = acf(residuals(BlockMod))
+ACF = acf(residuals(BlockMod), lag.max = 1000, ylim=c(0,0.1))
 CI = ggfortify:::confint.acf(ACF)
 ACFidx = which(ACF[["acf"]] < CI, arr.ind=TRUE)
 ACFval = ACFidx[1]
@@ -86,7 +86,7 @@ divdiff = nrow(timeseries) - length(preBlock)
 last = tail(preBlock, n = 1)+1
 lastVec = rep(last,each = divdiff)
 timeseries$block = c(preBlock,lastVec)
-names(timeseries)[1] = 'tbin'
+names(timeseries)[names(timeseries) == 'date'] = 'tbin'
 SiteHourTableB = left_join(SiteHourTable,timeseries,by="tbin")
 
 #Make blocks continuous 

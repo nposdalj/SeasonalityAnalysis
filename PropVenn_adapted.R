@@ -1,18 +1,20 @@
 #Load libraries
 library("eulerr")
 library("tidyverse")
+library("dplyr")
 
 #load data
-dir = paste("H:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites")
+GDrive =  'I'
+dir = paste(GDrive,":/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites",sep="")
 
 #General Data
-fileName1 = paste("H:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites/AllSitesGrouped_GAMGEE_ROW.csv")#setting the directory
+fileName1 = paste(GDrive,":/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/BigModel/AllSitesGrouped_GAMGEE_ROW.csv",sep="")#setting the directory
 DayTable = read.csv(fileName1) #no effort days deleted
 DayTable = na.omit(DayTable)
 DayTable$tbin = as.Date(DayTable$tbin)
 
 #Sex Specific Data
-fileName2 = paste("H:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites/AllSitesGrouped_GAMGEE_ROW_sexClasses.csv")#setting the directory
+fileName2 = paste(GDrive,":/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/BigModel/AllSitesGrouped_GAMGEE_ROW_sexClasses.csv",sep="")#setting the directory
 SexDayTable = read.csv(fileName2) #no effort days deleted
 SexDayTable = na.omit(SexDayTable)
 SexDayTable$tbin = as.Date(SexDayTable$tbin)
@@ -22,19 +24,30 @@ SexDayTable$F = SexDayTable$PreAbsF
 SexDayTable$J = SexDayTable$PreAbsJ
 SexDayTable$M = SexDayTable$PreAbsM
 SexDayTable$FJ = SexDayTable$F + SexDayTable$J
-SexDayTable$FJ = replace(SexDayTable$FJ, which(SexDayTable$FJ <2 ), 0)
-SexDayTable$FJ = replace(SexDayTable$FJ, which(SexDayTable$FJ == 2), 1)
 SexDayTable$JM = SexDayTable$M + SexDayTable$J
-SexDayTable$JM = replace(SexDayTable$JM, which(SexDayTable$JM <2 ), 0)
-SexDayTable$JM = replace(SexDayTable$JM, which(SexDayTable$JM == 2), 1)
 SexDayTable$FM = SexDayTable$F + SexDayTable$M
-SexDayTable$FM = replace(SexDayTable$FM, which(SexDayTable$FM <2 ), 0)
-SexDayTable$FM = replace(SexDayTable$FM, which(SexDayTable$FM == 2), 1)
 SexDayTable$FJM = SexDayTable$F + SexDayTable$J + SexDayTable$M
-SexDayTable$FJM = replace(SexDayTable$FJM, which(SexDayTable$FJM <3 ), 0)
-SexDayTable$FJM = replace(SexDayTable$FJM, which(SexDayTable$FJM == 3), 1)
 
-saveDir = 'H:/My Drive/Manuscripts/GOA/Figures'
+SexDayTable$FJM = replace(SexDayTable$FJM, which(SexDayTable$FJM <3 ), 0) #delete rows that don't have all sexes
+SexDayTable$FJM = replace(SexDayTable$FJM, which(SexDayTable$FJM == 3), 1) #only keep rows that have both sexes and make it equal to 1
+
+SexDayTable$FJ = replace(SexDayTable$FJ, which(SexDayTable$FJ <2), 0) #delete rows that don't have both sexes
+SexDayTable$FJ = replace(SexDayTable$FJ, which(SexDayTable$FJM == 1), 0) #delete rows that have all sexes
+SexDayTable$FJ = replace(SexDayTable$FJ, which(SexDayTable$FJ == 2), 1) #only keep rows that have both sexes and make it equal to 1
+
+SexDayTable$JM = replace(SexDayTable$JM, which(SexDayTable$JM <2 ), 0) #delete rows that don't have both sexes
+SexDayTable$JM = replace(SexDayTable$JM, which(SexDayTable$FJM == 1), 0) #delete rows that have all sexes
+SexDayTable$JM = replace(SexDayTable$JM, which(SexDayTable$JM == 2), 1) #only keep rows that have both sexes and make it equal to 1
+
+SexDayTable$FM = replace(SexDayTable$FM, which(SexDayTable$FM <2 ), 0) #delete rows that don't have both sexes
+SexDayTable$FM = replace(SexDayTable$FM, which(SexDayTable$FJM == 1), 0) #delete rows that have all sexes
+SexDayTable$FM = replace(SexDayTable$FM, which(SexDayTable$FM == 2), 1) #only keep rows that have both sexes and make it equal to 1
+
+SexDayTable$F = replace(SexDayTable$F, which(SexDayTable$FJ ==1 | SexDayTable$FJM ==1 | SexDayTable$FM ==1),0) #delete F only rows when it's being accounted for in another group
+SexDayTable$J = replace(SexDayTable$J, which(SexDayTable$FJ ==1 | SexDayTable$JM ==1 | SexDayTable$FJM ==1),0) #delete J only rows when it's being accounted for in another group
+SexDayTable$M = replace(SexDayTable$M, which(SexDayTable$JM ==1 | SexDayTable$FM ==1 | SexDayTable$FJM ==1),0) #delete M only rows when it's being accounted for in another group
+
+saveDir = paste(GDrive,":/My Drive/Manuscripts/GOA/Figures",sep="")
 
 #Site Names
 SiteNames = c('CB','PT','QN','BD','AB','KOA','KS')
@@ -70,7 +83,7 @@ for (i in 1:length(SiteNames)){
   }
 }
 
-
+#For some reason, I need to run this manually
 # Pie Charts --------------------------------------------------------------
 for (i in 1:length(SiteNames)){
   site = SiteNames[i]

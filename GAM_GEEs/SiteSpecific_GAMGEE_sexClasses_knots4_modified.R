@@ -27,13 +27,14 @@ library(splines2)       # to use mSpline for the GEEs
 library(ggfortify)      # extract confidence interval for ACF plots
 
 site = 'CB' #specify the site of interest
+GDrive = 'I'
 
 # Step 1: Load the data ---------------------------------------------------
 #Hourly data
-dir = paste("H:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites")
-saveDir = paste("H:/My Drive/GofAK_TPWS_metadataReduced/Plots/",site, sep="")
-saveWorkspace = paste("H:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",site,'/',sep="")
-fileName = paste("H:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites/AllSitesGrouped_Binary_GAMGEE_ROW_sexClasses.csv",sep="") #setting the directory
+dir = paste(GDrive,":/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/BigModel",sep="")
+saveDir = paste(GDrive,":/My Drive/GofAK_TPWS_metadataReduced/Plots/",site, sep="")
+saveWorkspace = paste(GDrive,":/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",site,'/',sep="")
+fileName = paste(GDrive,":/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/BigModel/AllSitesGrouped_Binary_GAMGEE_ROW_sexClasses.csv",sep="") #setting the directory
 HourTable = read.csv(fileName)
 HourTable = na.omit(HourTable)
 HourTable$date = as.Date(HourTable$tbin)
@@ -330,6 +331,8 @@ VIF(GLMM)
 
 
 # Step 5: Model Selection - Covariate Preparation -------------------------
+#Skipped this step for the modified code because I know I'm going to use Julian day as a covariance-variance matrix, year as a factor...
+#when applicable and TimeLost is not going to be included because it's not significant.
 # Construct variance-covariance matrices for cyclic covariates:
 #Females
 AvgDayBasisF <- gam(PreAbsF~s(Julian, bs ="cc", k=4), fit=F, data = SiteHourTableB, family =binomial, knots = list(HOUR=seq(1,366,length=4)))$X[,2:3]
@@ -350,264 +353,11 @@ AvgDayMatM = as.matrix(AvgDayBasisM)
 #Female
 POD0f<-geeglm(PreAbsF ~ 1, family = binomial, corstr="ar1", id=BlocksF, data=SiteHourTableB)
 
-#Julian Day
-POD0fa = geeglm(PreAbsF ~ mSpline(Julian,
-                                  knots=quantile(Julian, probs=c(0.333,0.666)),
-                                  Boundary.knots=c(1,366),
-                                  periodic=T), family = binomial, corstr="ar1", id=BlocksF, data=SiteHourTableB)
-POD0fb = geeglm(PreAbsF ~ AvgDayMatF, family = binomial, corstr="ar1", id=BlocksF, data=SiteHourTableB)
-model0fA<-c("POD0f", "POD0fa", "POD0fb")
-QIC0fA<-c(QIC(POD0f)[1],QIC(POD0fa)[1],QIC(POD0fb)[1])
-QICmod0fA<-data.frame(rbind(model0fA,QIC0fA))
-QICmod0fA
-#BD
-#QIC            QIC.1            QIC.2
-#model0fA            POD0f           POD0fa           POD0fb
-# QIC0fA   4751.49393940578 4105.54862731724 4112.1147291363
-#Julian day as mSpline, but I'll use a covariance matrix.
-
-#PT
-#QIC            QIC.1            QIC.2
-#model0fA            POD0f           POD0fa           POD0fb
-# QIC0fA   3463.64294970002 3202.95499728672 3197.46426507714
-#Julian day as a variance covariance matrix
-
-#QN
-#QIC            QIC.1            QIC.2
-#model0fA            POD0f           POD0fa           POD0fb
-# QIC0fA   3607.55084614072 3570.51616432596 3571.65922008805
-#Julian day as a covariance matrix
-
-#CB
-#QIC            QIC.1            QIC.2
-# model0fA            POD0f           POD0fa           POD0fb
-#QIC0fA   2332.35543716108 2328.50417490589 2329.59626247959
-#Julian day as mSpline, but I'll use covariance matrix.
-
-if (site == 'CB'){
-  #Year
-  POD1fa = geeglm(PreAbsF ~ as.factor(Year), family = binomial, corstr="ar1", id=BlocksF, data=SiteHourTableB)
-  POD1fb = geeglm(PreAbsF ~ Year, family = binomial, corstr="ar1", id=BlocksF, data=SiteHourTableB)
-  POD1fc = geeglm(PreAbsF ~ mSpline(Year,
-                                    knots=quantile(Year, probs=c(0.333,0.666)),
-                                    Boundary.knots=c(2011,2019)), family = binomial, corstr="ar1", id=BlocksF, data=SiteHourTableB)
-  model1fA<-c("POD0f", "POD1fa", "POD1fb","POD1fc")
-  QIC1fA<-c(QIC(POD0f)[1],QIC(POD1fa)[1],QIC(POD1fb)[1],QIC(POD1fc)[1])
-  QICmod1fA<-data.frame(rbind(model1fA,QIC1fA))
-  QICmod1fA
-}
-#CB
-# QIC            QIC.1            QIC.2            QIC.3
-# model1fA            POD0f           POD1fa           POD1fb           POD1fc
-#QIC1fA   2332.35543716108 2159.73362663339 2306.12102082096 2168.63342439418
-#Year as factor
-
-#TimeLost
-POD2fa = geeglm(PreAbsF ~ as.factor(TimeLost), family = binomial, corstr="ar1", id=BlocksF, data=SiteHourTableB)
-POD2fb = geeglm(PreAbsF ~ TimeLost, family = binomial, corstr="ar1", id=BlocksF, data=SiteHourTableB)
-POD2fc = geeglm(PreAbsF ~ bs(TimeLost), family = binomial, corstr="ar1", id=BlocksF, data=SiteHourTableB)
-model2fA<-c("POD0f", "POD2fa", "POD2fb","POD2fc")
-QIC2fA<-c(QIC(POD0f)[1],QIC(POD2fa)[1],QIC(POD2fb)[1],QIC(POD2fc)[1])
-QICmod2fA<-data.frame(rbind(model2fA,QIC2fA))
-QICmod2fA
-#BD
-#QIC           QIC.1            QIC.2            QIC.3
-#model2fA            POD0f          POD2fa           POD2fb           POD2fc
-#QIC2fA   4751.49393940578 5194.535449834 4753.28094461306 4757.54511720217
-#TimeLost as linear.
-
-#PT
-#QIC            QIC.1            QIC.2            QIC.3
-#model2fA            POD0f           POD2fa           POD2fb           POD2fc
-# QIC2fA   3463.64294970002 3460.48758474816 26025.5039983983 26025.5041290322
-#TimeLost as factor, but I'll still use linear.
-
-#QN
-#QIC            QIC.1            QIC.2            QIC.3
-#model2fA            POD0f           POD2fa           POD2fb           POD2fc
-# QIC2fA   3607.55084614072 3613.09066119389 3607.49408899963 3610.21564902294
-#TimeLost as linear.
-
-#CB
-#QIC            QIC.1            QIC.2            QIC.3
-#model2fA            POD0f           POD2fa           POD2fb           POD2fc
-#QIC2fA   2332.35543716108 3248753.19517323 2339.63553588597 2338.88322454545
-#TimeLost as linear.
-
 #Juvenile
 POD0j<-geeglm(PreAbsJ ~ 1, family = binomial, corstr="ar1", id=BlocksJ, data=SiteHourTableB)
 
-#Julian Day
-POD0ja = geeglm(PreAbsJ ~ mSpline(Julian,
-                                  knots=quantile(Julian, probs=c(0.333,0.666)),
-                                  Boundary.knots=c(1,366),
-                                  periodic=T), family = binomial, corstr="ar1", id=BlocksJ, data=SiteHourTableB)
-POD0jb = geeglm(PreAbsJ ~ AvgDayMatJ, family = binomial, corstr="ar1", id=BlocksJ, data=SiteHourTableB)
-model0jA<-c("POD0j", "POD0ja", "POD0jb")
-QIC0jA<-c(QIC(POD0j)[1],QIC(POD0ja)[1],QIC(POD0jb)[1])
-QICmod0jA<-data.frame(rbind(model0jA,QIC0jA))
-QICmod0jA
-#BD
-#QIC            QIC.1            QIC.2
-#model0jA            POD0j           POD0ja           POD0jb
-#QIC0jA   13611.1246028419 13311.7593271007 13310.4043227396
-#Julian day covariance matrix.
-
-#PT
-#QIC            QIC.1            QIC.2
-#model0jA            POD0j           POD0ja           POD0jb
-# QIC0jA   6885.14193980651 6696.44634897979 6698.84212655132
-#Julian day as mspline but I'll use covariance matrix
-
-#QN
-#QIC            QIC.1            QIC.2
-#model0jA            POD0j           POD0ja           POD0jb
-# QIC0jA   7319.30794378126 7098.72481561668 7098.54952080784
-#Julian day as a covariance matrix
-
-#CB                      QIC            QIC.1            QIC.2
-# QIC            QIC.1            QIC.2
-# model0jA            POD0j           POD0ja           POD0jb
-# QIC0jA   46285.3794152219 44418.3259438001 44465.9619632154
-#Julian day as mSpline, but I'll use covariance matrix.
-
-if (site == 'CB'){
-  #Year
-  POD1ja = geeglm(PreAbsJ ~ as.factor(Year), family = binomial, corstr="ar1", id=BlocksJ, data=SiteHourTableB)
-  POD1jb = geeglm(PreAbsJ ~ Year, family = binomial, corstr="ar1", id=BlocksJ, data=SiteHourTableB)
-  POD1jc = geeglm(PreAbsJ ~ mSpline(Year,
-                                    knots=quantile(Year, probs=c(0.333,0.666)),
-                                    Boundary.knots=c(2011,2019)), family = binomial, corstr="ar1", id=BlocksJ, data=SiteHourTableB)
-  model1jA<-c("POD0j", "POD1ja", "POD1jb","POD1jc")
-  QIC1jA<-c(QIC(POD0j)[1],QIC(POD1ja)[1],QIC(POD1jb)[1],QIC(POD1jc)[1])
-  QICmod1jA<-data.frame(rbind(model1jA,QIC1jA))
-  QICmod1jA
-}
-#CB
-#QIC            QIC.1            QIC.2            QIC.3
-# QIC            QIC.1            QIC.2            QIC.3
-# model1jA            POD0j           POD1ja           POD1jb           POD1jc
-# QIC1jA   46285.3794152219 45357.0773456882 46194.2458972643 45731.3178289939
-#Year as factor.
-
-#TimeLost
-POD2ja = geeglm(PreAbsJ ~ as.factor(TimeLost), family = binomial, corstr="ar1", id=BlocksJ, data=SiteHourTableB)
-POD2jb = geeglm(PreAbsJ ~ TimeLost, family = binomial, corstr="ar1", id=BlocksJ, data=SiteHourTableB)
-POD2jc = geeglm(PreAbsJ ~ bs(TimeLost), family = binomial, corstr="ar1", id=BlocksJ, data=SiteHourTableB)
-model2jA<-c("POD0j", "POD2ja", "POD2jb","POD2jc")
-QIC2jA<-c(QIC(POD0j)[1],QIC(POD2ja)[1],QIC(POD2jb)[1],QIC(POD2jc)[1])
-QICmod2jA<-data.frame(rbind(model2jA,QIC2jA))
-QICmod2jA
-#BD
-#QIC           QIC.1            QIC.2            QIC.3
-#model2jA            POD0j           POD2ja           POD2jb           POD2jc
-#QIC2jA   13611.1246028419 14086.9382444343 13620.7413000152 13630.2790024408
-#TimeLost as linear.
-
-#PT
-#QIC            QIC.1            QIC.2            QIC.3
-#model2jA            POD0j           POD2ja           POD2jb           POD2jc
-# QIC2jA   6885.14193980651 6891.2804607924 6888.91636373419 6892.03041952167
-#TimeLost as linear
-
-#QN
-#QIC            QIC.1            QIC.2            QIC.3
-#model2jA            POD0j           POD2ja           POD2jb           POD2jc
-# QIC2jA   7319.30794378126 7318.10375567827 7318.75386723759 7318.9981127154
-#TimeLost as linear.
-
-#CB
-#QIC           QIC.1            QIC.2            QIC.3
-#model2jA            POD0j          POD2ja           POD2jb           POD2jc
-#QIC2jA   46285.3794152219 46425.4439192836 46297.1440587426 46316.4902442723
-#TimeLost as linear.
-
 #Male
 POD0m<-geeglm(PreAbsM ~ 1, family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB)
-
-#Julian Day
-POD0ma = geeglm(PreAbsM ~  mSpline(Julian,
-                                   knots=quantile(Julian, probs=c(0.333,0.666)),
-                                   Boundary.knots=c(1,366),periodic=T), family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB)
-POD0mb = geeglm(PreAbsM ~ AvgDayMatJ, family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB)
-model0mA<-c("POD0m", "POD0ma", "POD0mb")
-QIC0mA<-c(QIC(POD0m)[1],QIC(POD0ma)[1],QIC(POD0mb)[1])
-QICmod0mA<-data.frame(rbind(model0mA,QIC0mA))
-QICmod0mA
-#BD
-#QIC            QIC.1            QIC.2
-#model0mA            POD0m           POD0ma           POD0mb
-# QIC0mA   14385.8910442873 14195.1027938734 14194.3609863831
-#Julian Day as covariance matrix
-
-#PT
-#QIC            QIC.1            QIC.2
-#model0mA            POD0m           POD0ma           POD0mb
-# QIC0mA   2809.16464589342 2778.86703030812 2778.58654398979
-#Julian Day as covariance matrix
-
-#QN
-#QIC            QIC.1           QIC.2
-#model0mA            POD0m           POD0ma          POD0mb
-# QIC0mA   6866.81696443204 6470.76820440076 6469.65140317566
-#Julian Day as covariance matrix
-
-#CB
-# QIC            QIC.1            QIC.2
-# model0mA            POD0m           POD0ma           POD0mb
-# QIC0mA   40423.9662520198 39369.8966996129 39378.2074085191
-#Julian Day as mSpline, but I'll use covariance matrix
-
-if (site == 'CB'){
-#Year
-POD1ma = geeglm(PreAbsM ~ as.factor(Year), family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB)
-POD1mb = geeglm(PreAbsM ~ Year, family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB)
-POD1mc = geeglm(PreAbsM ~ mSpline(Year,
-                                  knots=quantile(Year, probs=c(0.333,0.666)),
-                                  Boundary.knots=c(2011,2019)), family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB)
-model1mA<-c("POD0m", "POD1ma", "POD1mb","POD1mc")
-QIC1mA<-c(QIC(POD0m)[1],QIC(POD1ma)[1],QIC(POD1mb)[1],QIC(POD1mc)[1])
-QICmod1mA<-data.frame(rbind(model1mA,QIC1mA))
-QICmod1mA
-}
-#CB
-#QIC            QIC.1            QIC.2            QIC.3
-# model1mA            POD0m           POD1ma           POD1mb           POD1mc
-# QIC1mA   40423.9662520198 39581.9007019536 40403.7675021959 39652.3872439494
-#Year as factor
-
-#TimeLost
-POD2ma = geeglm(PreAbsM ~ as.factor(TimeLost), family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB)
-POD2mb = geeglm(PreAbsM ~ TimeLost, family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB)
-POD2mc = geeglm(PreAbsM ~ bs(TimeLost), family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB)
-model2mA<-c("POD0m", "POD2ma", "POD2mb","POD2mc")
-QIC2mA<-c(QIC(POD0m)[1],QIC(POD2ma)[1],QIC(POD2mb)[1],QIC(POD2mc)[1])
-QICmod2mA<-data.frame(rbind(model2mA,QIC2mA))
-QICmod2mA
-#BD
-#QIC           QIC.1            QIC.2            QIC.3
-#model2mA            POD0m          POD2ma           POD2mb           POD2mc
-# QIC2mA   14385.8910442873 14685.1523295243 14392.6841956061 14410.0607944982
-#TimeLost as linear.
-
-#PT
-#QIC            QIC.1            QIC.2            QIC.3
-#model2mA            POD0m           POD2ma           POD2mb           POD2mc
-# QIC2mA   2809.16464589342 2839.16272510763 2817.40671935769 19933.3272719903
-#TimeLost as linear
-
-#QN
-#QIC            QIC.1            QIC.2            QIC.3
-#model2mA            POD0m           POD2ma           POD2mb           POD2mc
-# QIC2mA   QIC2mA   6866.81696443204 62829.6417888161 6877.85977627095 63252.8177234494
-#TimeLost as linear.
-
-#CB
-# QIC           QIC.1            QIC.2            QIC.3
-# model2mA            POD0m          POD2ma           POD2mb           POD2mc
-#QIC2mA   40423.9662520198 40549.654177705 40448.449207252 40472.8872071309
-#TimeLost as linear.
-
 
 # Step 6: Determine which covariates are most relevant --------------------
 #and which can be removed (on the basis of previous collinearity work). 
@@ -615,202 +365,111 @@ QICmod2mA
 if (site == 'CB'){
 #Females
 #The initial full model is:
-POD3fa = geeglm(PreAbsF ~ AvgDayMatF+as.factor(Year)+TimeLost,family = binomial, corstr="ar1", id=BlocksF, data=SiteHourTableB)
+POD3fa = geeglm(PreAbsF ~ AvgDayMatF+as.factor(Year),family = binomial, corstr="ar1", id=BlocksF, data=SiteHourTableB)
 #without AvgDayMat
-POD3fb = geeglm(PreAbsF ~ as.factor(Year)+TimeLost,family = binomial, corstr="ar1", id=BlocksF, data=SiteHourTableB)
+POD3fb = geeglm(PreAbsF ~ as.factor(Year),family = binomial, corstr="ar1", id=BlocksF, data=SiteHourTableB)
 #without Year
-POD3fc = geeglm(PreAbsF ~ AvgDayMatF +TimeLost,family = binomial, corstr="ar1", id=BlocksF, data=SiteHourTableB)
-#without Timelost
-POD3fd = geeglm(PreAbsF ~ AvgDayMatF+as.factor(Year),family = binomial, corstr="ar1", id=BlocksF, data=SiteHourTableB)
-model3fA = c("POD0f","POD3fa","POD3fb","POD3fc","POD3fd")
-QIC3fA = c(QIC(POD0f)[1],QIC(POD3fa)[1],QIC(POD3fb)[1],QIC(POD3fc)[1],QIC(POD3fd)[1])
+POD3fc = geeglm(PreAbsF ~ AvgDayMatF ,family = binomial, corstr="ar1", id=BlocksF, data=SiteHourTableB)
+model3fA = c("POD0f","POD3fa","POD3fb","POD3fc")
+QIC3fA = c(QIC(POD0f)[1],QIC(POD3fa)[1],QIC(POD3fb)[1],QIC(POD3fc)[1])
 QICmod3fA<-data.frame(rbind(model3fA,QIC3fA))
 QICmod3fA
 #CB
-# QIC            QIC.1            QIC.2            QIC.3           QIC.4
-# model3fA            POD0f           POD3fa           POD3fb           POD3fc          POD3fd
-# QIC3fA   2332.35543716108 2119.09464555095 2170.23029684459 2335.68477317228 2109.8464014643
-#Remove TimeLost.
-
-#The  full model without TimeLost is:
-POD3fe = geeglm(PreAbsF ~ AvgDayMatF+as.factor(Year),family = binomial, corstr="ar1", id=BlocksF, data=SiteHourTableB)
-#without AvgDayMat
-POD3ff = geeglm(PreAbsF ~ as.factor(Year),family = binomial, corstr="ar1", id=BlocksF, data=SiteHourTableB)
-#without Year
-POD3fg = geeglm(PreAbsF ~ AvgDayMatF,family = binomial, corstr="ar1", id=BlocksF, data=SiteHourTableB)
-model3fB = c("POD0f","POD3fe","POD3ff","POD3fg")
-QIC3fB = c(QIC(POD0f)[1],QIC(POD3fe)[1],QIC(POD3ff)[1],QIC(POD3fg)[1])
-QICmod3fB<-data.frame(rbind(model3fB,QIC3fB))
-QICmod3fB
-#CB
-# QIC           QIC.1            QIC.2            QIC.3
-# model3fB            POD0f          POD3fe           POD3ff           POD3fg
-# QIC3fB   2332.35543716108 2109.8464014643 2159.73362663339 2329.59626247959
+# QIC            QIC.1            QIC.2            QIC.3
+# model3fA            POD0f           POD3fa           POD3fb           POD3fc
+# QIC3fA   2332.22075818903 2109.19109892111 2160.65667322168 2329.36855120489
 #Full model is the best.
 #Year is first.
 #Then AvgdayMat
 }else{
   #Females
   #The initial full model is:
-  POD3fa = geeglm(PreAbsF ~ AvgDayMatF+TimeLost,family = binomial, corstr="ar1", id=BlocksF, data=SiteHourTableB)
-  #without AvgDayMat
-  POD3fb = geeglm(PreAbsF ~ TimeLost,family = binomial, corstr="ar1", id=BlocksF, data=SiteHourTableB)
-  #without Timelost
-  POD3fc = geeglm(PreAbsF ~ AvgDayMatF,family = binomial, corstr="ar1", id=BlocksF, data=SiteHourTableB)
-  model3fA = c("POD0f","POD3fa","POD3fb","POD3fc")
-  QIC3fA = c(QIC(POD0f)[1],QIC(POD3fa)[1],QIC(POD3fb)[1],QIC(POD3fc)[1])
+  POD3fa = geeglm(PreAbsF ~ AvgDayMatF,family = binomial, corstr="ar1", id=BlocksF, data=SiteHourTableB)
+  model3fA = c("POD0f","POD3fa")
+  QIC3fA = c(QIC(POD0f)[1],QIC(POD3fa)[1])
   QICmod3fA<-data.frame(rbind(model3fA,QIC3fA))
   QICmod3fA
   #BD
-  # QIC            QIC.1            QIC.2            QIC.3
-  # model3fA            POD0f           POD3fa           POD3fb           POD3fc
-  #QIC3fA   4751.49393940578 4112.98865807994 4753.28094461306 4112.1147291363
-  #Remove Time Lost.
   
   #PT
-  #BD
-  # QIC            QIC.1            QIC.2            QIC.3
-  # model3fA            POD0f           POD3fa           POD3fb           POD3fc
-  # QIC3fA   3463.64294970002 26030.1183253369 26025.5039983983 3197.46426507714
-  #Remove Time Lost.
+  # QIC            QIC.1
+  # model3fA            POD0f           POD3fa
+  # QIC3fA   3462.56567258213 3195.35080113493
+  # Full model is best
   
   #QN
-  #QIC            QIC.1            QIC.2            QIC.3
-  #model3fA            POD0f           POD3fa           POD3fb           POD3fc
-  #QIC3fA   3607.55084614072 3572.83896989477 3607.49408899963 3571.65922008805
-  #Remove Time Lost.
   
 }
 
 #Juveniles
 if (site == 'CB'){
 #The initial full model is:
-POD3ja = geeglm(PreAbsJ ~ AvgDayMatJ+as.factor(Year)+TimeLost,family = binomial, corstr="ar1", id=BlocksJ, data=SiteHourTableB)
+POD3ja = geeglm(PreAbsJ ~ AvgDayMatJ+as.factor(Year),family = binomial, corstr="ar1", id=BlocksJ, data=SiteHourTableB)
 #without AvgDayMat
-POD3jb = geeglm(PreAbsJ ~ as.factor(Year)+TimeLost,family = binomial, corstr="ar1", id=BlocksJ, data=SiteHourTableB)
+POD3jb = geeglm(PreAbsJ ~ as.factor(Year),family = binomial, corstr="ar1", id=BlocksJ, data=SiteHourTableB)
 #without Year
-POD3jc = geeglm(PreAbsJ ~ AvgDayMatJ +TimeLost,family = binomial, corstr="ar1", id=BlocksJ, data=SiteHourTableB)
-#without Timelost
-POD3jd = geeglm(PreAbsJ ~ AvgDayMatJ+as.factor(Year),family = binomial, corstr="ar1", id=BlocksJ, data=SiteHourTableB)
-model3jA = c("POD0j","POD3ja","POD3jb","POD3jc","POD3jd")
-QIC3jA = c(QIC(POD0j)[1],QIC(POD3ja)[1],QIC(POD3jb)[1],QIC(POD3jc)[1],QIC(POD3jd)[1])
+POD3jc = geeglm(PreAbsJ ~ AvgDayMatJ ,family = binomial, corstr="ar1", id=BlocksJ, data=SiteHourTableB)
+model3jA = c("POD0j","POD3ja","POD3jb","POD3jc")
+QIC3jA = c(QIC(POD0j)[1],QIC(POD3ja)[1],QIC(POD3jb)[1],QIC(POD3jc)[1])
 QICmod3jA<-data.frame(rbind(model3jA,QIC3jA))
 QICmod3jA
 #CB
-# QIC           QIC.1            QIC.2            QIC.3            QIC.4
-# model3jA            POD0j          POD3ja           POD3jb           POD3jc           POD3jd
-# QIC3jA   46285.3794152219 44186.9227494936 45368.5906566386 44478.9750496734 44174.2397229725
-#Remove TimeLost
-
-#The  full model without TimeLost is:
-POD3je = geeglm(PreAbsJ ~ AvgDayMatJ+as.factor(Year),family = binomial, corstr="ar1", id=BlocksJ, data=SiteHourTableB)
-#without AvgDayMat
-POD3jf = geeglm(PreAbsJ ~ as.factor(Year),family = binomial, corstr="ar1", id=BlocksJ, data=SiteHourTableB)
-#without Year
-POD3jg = geeglm(PreAbsJ ~ AvgDayMatJ,family = binomial, corstr="ar1", id=BlocksJ, data=SiteHourTableB)
-model3jB = c("POD0j","POD3je","POD3jf","POD3jg")
-QIC3jB = c(QIC(POD0j)[1],QIC(POD3je)[1],QIC(POD3jf)[1],QIC(POD3jg)[1])
-QICmod3jB<-data.frame(rbind(model3jB,QIC3jB))
-QICmod3jB
-#CB
-#QIC            QIC.1            QIC.2            QIC.3
-#model3jB            POD0j           POD3je           POD3jf           POD3jg
-#QIC3jB   46285.3794152219 44174.2397229725 45357.0773456882 44465.9619632154
+# QIC            QIC.1            QIC.2            QIC.3
+# model3jA            POD0j           POD3ja           POD3jb           POD3jc
+# QIC3jA   46255.4539853445 44149.6860201869 45326.6864771503 44445.2379845816
 #Full model is the best.
 #AvgDayMat first in model then year.
 }else{
-  POD3ja = geeglm(PreAbsJ ~ AvgDayMatJ+TimeLost,family = binomial, corstr="ar1", id=BlocksJ, data=SiteHourTableB)
-  #without AvgDayMat
-  POD3jb = geeglm(PreAbsJ ~ TimeLost,family = binomial, corstr="ar1", id=BlocksJ, data=SiteHourTableB)
-  #without Timelost
-  POD3jc = geeglm(PreAbsJ ~ AvgDayMatJ,family = binomial, corstr="ar1", id=BlocksJ, data=SiteHourTableB)
-  model3jA = c("POD0j","POD3ja","POD3jb","POD3jc")
-  QIC3jA = c(QIC(POD0j)[1],QIC(POD3ja)[1],QIC(POD3jb)[1],QIC(POD3jc)[1])
+  POD3ja = geeglm(PreAbsJ ~ AvgDayMatJ,family = binomial, corstr="ar1", id=BlocksJ, data=SiteHourTableB)
+  model3jA = c("POD0j","POD3ja")
+  QIC3jA = c(QIC(POD0j)[1],QIC(POD3ja)[1])
   QICmod3jA<-data.frame(rbind(model3jA,QIC3jA))
   QICmod3jA
   #BD
-  # QIC            QIC.1            QIC.2            QIC.3
-  # model3jA            POD0j           POD3ja           POD3jb           POD3jc
-  # QIC3jA   12935.4258268309 12684.3860185494 12954.2204673188 12667.9161993789
-  #Remove TimeLost
   
   #PT
-  # QIC            QIC.1            QIC.2            QIC.3
-  # model3jA            POD0j           POD3ja           POD3jb           POD3jc
-  # QIC3jA   6885.14193980651 6701.90896058155 6888.91636373419 6698.84212655132
-  #Remove TimeLost.
+  # QIC            QIC.1
+  # model3jA            POD0j           POD3ja
+  # QIC3jA   6882.43848608514 6697.22800760624
+  #Full model is best
   
   #QN
-  #QIC            QIC.1            QIC.2            QIC.3
-  #model3jA            POD0j           POD3ja           POD3jb           POD3jc
-  #QIC3jA   7319.30794378126 7099.03692182995 7318.75386723759 7098.54952080784
-  #Remvoe Time Lost.
 }
 
 #Males
 if (site == 'CB'){
 #The initial full model is:
-POD3ma = geeglm(PreAbsM ~ AvgDayMatM+as.factor(Year)+TimeLost,family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB)
+POD3ma = geeglm(PreAbsM ~ AvgDayMatM+as.factor(Year),family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB)
 #without AvgDayMat
-POD3mb = geeglm(PreAbsM ~ as.factor(Year)+TimeLost,family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB)
+POD3mb = geeglm(PreAbsM ~ as.factor(Year),family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB)
 #without Year
-POD3mc = geeglm(PreAbsM ~ AvgDayMatM+TimeLost,family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB)
-#without Timelost
-POD3md = geeglm(PreAbsM ~ AvgDayMatM+as.factor(Year),family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB)
-model3mA = c("POD0m","POD3ma","POD3mb","POD3mc","POD3md")
-QIC3mA = c(QIC(POD0m)[1],QIC(POD3ma)[1],QIC(POD3mb)[1],QIC(POD3mc)[1],QIC(POD3md)[1])
+POD3mc = geeglm(PreAbsM ~ AvgDayMatM,family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB)
+model3mA = c("POD0m","POD3ma","POD3mb","POD3mc")
+QIC3mA = c(QIC(POD0m)[1],QIC(POD3ma)[1],QIC(POD3mb)[1],QIC(POD3mc)[1])
 QICmod3mA<-data.frame(rbind(model3mA,QIC3mA))
 QICmod3mA
 #CB
-#QIC            QIC.1            QIC.2            QIC.3           QIC.4
-#model3mA            POD0m           POD3ma           POD3mb           POD3mc          POD3md
-#QIC3mA   40423.9662520198 38652.8736932768 39596.8818068662 39389.3660536625 38649.9534972491
-#Remove TimeLost.
-
-#The  full model without TimeLost is:
-POD3me = geeglm(PreAbsM ~ AvgDayMatM+as.factor(Year),family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB)
-#without AvgDayMat
-POD3mf = geeglm(PreAbsM ~ as.factor(Year),family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB)
-#without Year
-POD3mg = geeglm(PreAbsM ~ AvgDayMatM,family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB)
-model3mB = c("POD0m","POD3me","POD3mf","POD3mg")
-QIC3mB = c(QIC(POD0m)[1],QIC(POD3me)[1],QIC(POD3mf)[1],QIC(POD3mg)[1])
-QICmod3mB<-data.frame(rbind(model3mB,QIC3mB))
-QICmod3mB
-#CB
-#QIC           QIC.1            QIC.2            QIC.3
-#model3mB            POD0m          POD3me           POD3mf           POD3mg
-#QIC3mB   40423.9662520198 38649.9534972491 39581.9007019536 39378.2074085191
+# QIC            QIC.1            QIC.2            QIC.3
+# model3mA            POD0m           POD3ma           POD3mb           POD3mc
+# QIC3mA   40413.2486871344 38630.8844406452 39556.2590806026 39369.5639934325
 #Full model is the best.
 #AvgDayMat first, then year.
 }else{
   #The initial full model is:
-  POD3ma = geeglm(PreAbsM ~ AvgDayMatM+TimeLost,family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB)
-  #without AvgDayMat
-  POD3mb = geeglm(PreAbsM ~ TimeLost,family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB)
-  #without Timelost
-  POD3mc = geeglm(PreAbsM ~ AvgDayMatM,family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB)
-  model3mA = c("POD0m","POD3ma","POD3mb","POD3mc")
-  QIC3mA = c(QIC(POD0m)[1],QIC(POD3ma)[1],QIC(POD3mb)[1],QIC(POD3mc)[1])
+  POD3ma = geeglm(PreAbsM ~ AvgDayMatM,family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB)
+  model3mA = c("POD0m","POD3ma")
+  QIC3mA = c(QIC(POD0m)[1],QIC(POD3ma)[1])
   QICmod3mA<-data.frame(rbind(model3mA,QIC3mA))
   QICmod3mA
   #BD
-  # QIC            QIC.1            QIC.2            QIC.3
-  # model3mA            POD0m           POD3ma           POD3mb           POD3mc
-  # QIC3mA   14385.8910442873 14200.0927735405 14392.6841956061 14194.3609863831
-  #Remove Timelost.
   
   #PT
-  # QIC            QIC.1            QIC.2           QIC.3
-  # model3mA            POD0m           POD3ma           POD3mb          POD3mc
-  # QIC3mA   2809.16464589342 2785.7245829409 2817.40671935769 2778.58654398979
-  #Remove Time Lost.
+  # QIC            QIC.1
+  # model3mA            POD0m           POD3ma
+  # QIC3mA   2808.33560444193 2777.83156232392
+  #Full model is best
   
   #QN
-  #QIC            QIC.1            QIC.2            QIC.3
-  #model3mA            POD0m           POD3ma           POD3mb           POD3mc
-  #QIC3mA   6866.81696443204 6475.44170865174 6877.85977627095 6469.65140317566
-  #Remove Time Lost.
 }
 
 # Step 7: Finalize Model --------------------------------------------------
@@ -853,7 +512,7 @@ anova(PODFinalF)
 #Df   X2 P(>|Chi|)  
 #AvgDayMatF  2 39.4   2.8e-09 ***
 #PT
-# AvgDayMatF  2 14.1   0.00088 ***
+# AvgDayMatF  2 14.1   0.0008232 ***
 #QN
 #AvgDayMatF  2 11.5    0.0032 **
 #CB
@@ -882,8 +541,8 @@ anova(PODFinalM)
 #QN
 #AvgDayMatM  2 33.3     6e-08 ***
 #CB
-#AvgDayMatM       2 18.1   0.00012 ***
-#as.factor(Year)  7 25.9   0.00053 ***
+# AvgDayMatM       2 24.9   3.8e-06 ***
+#   as.factor(Year)  7 27.7   0.00025 ***
 
 #Remove variables from model that were not significant after running anova
 if (site == 'CB'){
@@ -1115,5 +774,5 @@ cmx(DATA, threshold = cutoff)                                   # the identified
 auc <- performance(pred, measure="auc")
 
 # Step 10: Save Workspace -------------------------------------------------
-fileName = paste(saveWorkspace,site,'_SiteSpecific_gamgeeOutput_sexClasses.RData',sep="")
+fileName = paste(saveWorkspace,site,'_SiteSpecific_gamgeeOutput_sexClasses_modified.RData',sep="")
 save.image(file = fileName)

@@ -25,13 +25,14 @@ library(ChemoSpecUtils)
 library(car)            # to run an ANOVA
 library(splines2)       # to use mSpline for the GEEs
 
-region = 'BSAI' #specify the region of interest
+region = 'GOA' #specify the region of interest
 
 # Step 1: Load the Data -----------------------------------------------------------
-dir = paste("H:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites")
-saveDir = paste("H:/My Drive/GofAK_TPWS_metadataReduced/Plots/",region, sep="")
-saveWorkspace = paste("H:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",region,'/',sep="")
-fileName = paste("H:/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites/AllSitesGrouped_Binary_GAMGEE_ROW.csv",sep="") #setting the directory
+GDrive= 'I'
+dir = paste(GDrive,":/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/BigModel", sep="")
+saveDir = paste(GDrive,":/My Drive/GofAK_TPWS_metadataReduced/Plots/",region, sep="")
+saveWorkspace = paste(GDrive,":/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",region,'/',sep="")
+fileName = paste(GDrive,":/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/BigModel/AllSitesGrouped_Binary_GAMGEE_ROW.csv",sep="") #setting the directory
 HourTable = read.csv(fileName)
 HourTable = na.omit(HourTable)
 HourTable$date = as.Date(HourTable$tbin)
@@ -73,6 +74,9 @@ CI = ggfortify:::confint.acf(ACF)
 ACFidx = which(ACF[["acf"]] < CI, arr.ind=TRUE)
 ACFval = ACFidx[1]
 
+#ACFval calculated from averaging all of the GOA sites (PT, QN, CB)
+ACFval = 390
+
 #create the blocks based on the full timesereies
 startDate = SiteHourTable$tbin[1]
 endDate = SiteHourTable$tbin[nrow(SiteHourTable)]
@@ -82,7 +86,7 @@ divdiff = nrow(timeseries) - length(preBlock)
 last = tail(preBlock, n = 1)+1
 lastVec = rep(last,each = divdiff)
 timeseries$block = c(preBlock,lastVec)
-timeseries = rename(timeseries, tbin = date)
+names(timeseries)[names(timeseries) == 'date'] = 'tbin'
 SiteHourTableB = left_join(SiteHourTable,timeseries,by="tbin")
 
 #Make blocks continuous 
@@ -113,9 +117,9 @@ Anova(BlockMod)
 
 #GOA
 # bs(Julian, k = 4)     1579  4     <2e-16 ***
-#   as.factor(Year)       1118  7     <2e-16 ***
-#   as.factor(Site)       5818  4     <2e-16 ***
-#   TimeLost                 5  1       0.03 *  
+#   as.factor(Year)       1122  7     <2e-16 ***
+#   as.factor(Site)       5806  4     <2e-16 ***
+#   TimeLost                 5  1      0.031 * 
 
 # Step 4: Data Exploration and Initial Analysis ---------------------------
 # Follow data exploration protocols suggested by Zuur et al. (2010), Zuur (2012), to generate pair plots, box plots, and assess collinearity between covariates in the dataset using Varinace Inflation Factors (vif).
@@ -135,8 +139,8 @@ VIF(GLM)
 #GOA
 # bs(Julian)      1.597  3           1.081
 # TimeLost        1.010  1           1.005
-# as.factor(Site) 3.110  4           1.152
-# as.factor(Year) 4.595  7           1.115
+# as.factor(Site) 3.111  4           1.152
+# as.factor(Year) 4.594  7           1.115
 
 # Step 5: Model Selection - Covariate Preparation -------------------------
 # Construct variance-covariance matrices for cyclic covariates:
