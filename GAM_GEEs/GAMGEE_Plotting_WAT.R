@@ -23,67 +23,26 @@ library(scales)
 library(magick)
 library(cowplot)
 #load functions
-source('C:/Users/nposd/Documents/GitHub/SeasonalityAnalysis/GAM_GEEs/GAMGEE_Plotting_Functions_RealProbs_HistAbove.R')
+source('C:/Users/Alba/Documents/GitHub/SeasonalityAnalysis/GAM_GEEs/GAMGEE_Plotting_Functions_RealProbs_HistAbove.R')
 
 # Load Workspace --------------------------------------------------
-#site = 'Big'
-GDrive = 'I'
-region = 'GOA'
-if (exists("site")){
-  if (site == 'Big'){
-    saveWorkspace = paste(GDrive,":/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/BigModel/",sep="")
-    fileName = paste(saveWorkspace,'BigModel_gamgeeOutput_modified.RData',sep="")
+site = 'BS'
+GDrive = 'H'
+    saveWorkspace = paste(GDrive,":/My Drive/WAT_TPWS_metadataReduced/SeasonalityAnalysis/",site,'/',sep="")
+    fileName = paste(saveWorkspace,site,'_SiteSpecific_gamgeeOutput.RData',sep="")
     load(fileName)
-    saveDir = paste(GDrive,":/My Drive/GofAK_TPWS_metadataReduced/Plots/BigModel/",sep="")
-  }else{
-    saveWorkspace = paste(GDrive,":/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",site,'/',sep="")
-    fileName = paste(saveWorkspace,site,'_SiteSpecific_gamgeeOutput_modified.RData',sep="")
-    load(fileName)
-    saveDir = paste(GDrive,":/My Drive/GofAK_TPWS_metadataReduced/Plots/",site,'/',sep="")
-  }
-}
-
-if (exists("region")){
-  saveWorkspace = paste(GDrive,":/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",region,'/',sep="")
-  fileName = paste(saveWorkspace,region,'_RegionSpecific_gamgeeOutput_modified.RData',sep="")
-  load(fileName)
-  saveDir = paste(GDrive,":/My Drive/GofAK_TPWS_metadataReduced/Plots/",region,'/',sep="")
-}
-
+    saveDir = paste(GDrive,":/My Drive/WAT_TPWS_metadataReduced/Plots/",site,'/',sep="")
+    
 #If it's a leap year, delete julian day 366 for plotting
 SiteHourTableB = SiteHourTable[!(SiteHourTableB$Julian==366),]
 
 # Plot Julian Day ---------------------------------------------------------
-if (exists("site")){
-  if (site == 'Big'){
-    ggPlot_JD_Year(PODFinal, SiteHourTableB)
-  }else if (site == 'CB'){
-  }else{
+
     ggPlot_JD(PODFinal,SiteHourTableB,site)
-  }
-}
-
-if (exists("region")){
-  site = region
-  if (region == 'GOA'){
-    ggPlot_JD_AfterYear(PODFinal, SiteHourTableB,site)
-  }else{
-    ggPlot_JD(PODFinal,SiteHourTableB,site)
-}
-} 
-
-
+ 
 # Plot Year ---------------------------------------------------------------
-if (site == 'CB' | site =='GOA'){
-  ggPlot_Year(PODFinal,SiteHourTableB,site)
-}else if (site == "Big"){
-  ggPlot_Year_Big(PODFinal,SiteHourTableB,site)
-}
 
-# Plot Site ---------------------------------------------------------------
-if (exists("region")){
-   if (region == 'BSAI'){
-ggPlot_Site(PODFinal,SiteHourTableB,site)
-  }
-}
+  ggPlot_Year_WAT(PODFinal,SiteHourTableB,site)
+
+
 
