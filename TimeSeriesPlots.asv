@@ -1,6 +1,5 @@
 clearvars
 close all
-% This script creates time series plots for each site.
 %% Parameters defined by user
 filePrefix = 'BC'; % File name to match. 
 siteabrev = 'BC'; %abbreviation of site.
@@ -44,8 +43,7 @@ ylim([0 max(dayTable.HoursProp)]);
 ylabel('Proportion of hours per day with sperm whale presence')
 yyaxis right
 plot(dayTable.tbin, (dayTable.Effort_Sec./dayTable.MaxEffort_Sec)*100,'.r')
-%ylim([-1 101])
-xlim([dayTable.tbin(1) dayTable.tbin(end)]) %adjust x-axis to only show data range
+ylim([-1 101])
 ylabel('Percent effort')
 title(['Daily Presence of Sperm whales in the ',titleNAME])
 saveas(gcf,[saveDir,'\',siteabrev,'DailyPresence.png']);

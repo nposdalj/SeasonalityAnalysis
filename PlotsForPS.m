@@ -11,7 +11,7 @@ titleNAME = 'Point Sur';
 load([saveDir,'\',siteabrev,'_workspaceStep2.mat']);
 %% Retime for weekly presence
 %day table
-weekTable = retime(dayTable,'weekly','sum');
+weekTable = retime(dayTable,'weekly','mean');
 weekTable.NormEffort_Bin = weekTable.Effort_Sec ./weekTable.MaxEffort_Sec;
 weekTable.NormEffort_Bin(isnan(weekTable.NormEffort_Bin)) = 0;
 weekTable.HoursProp = weekTable.Hours ./ (weekTable.Effort_Sec ./ (60*60));
@@ -25,7 +25,7 @@ ylim([0 max(dayTable.HoursProp)]);
 ylabel('Proportion of hours per day with sperm whale presence')
 yyaxis right
 plot(dayTable.tbin, (dayTable.Effort_Sec./dayTable.MaxEffort_Sec)*100,'.r')
-ylim([-1 101])
+%ylim([-1 200])
 ylabel('Percent effort')
 title(['Daily Presence of Sperm whales in the ',titleNAME])
 saveas(gcf,[saveDir,'\',siteabrev,'DailyPresence.png']);
