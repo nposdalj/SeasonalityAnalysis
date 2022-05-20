@@ -72,11 +72,9 @@ subplot(3,1,1)
 yyaxis left
 bar(binPresence.tbin,binPresence.FeHoursProp,'FaceColor',[.373 .702 .639],'BarWidth',3)
 ylim([0 max(binPresence.FeHoursProp)])
+ax.YAxis(1).Color = 'g';
 yyaxis right
 plot(binPresence.tbin, binPresence.NormEffort_Bin*100,'.','Color',[.5 .5 .5])
-ax = gca;
-ax.YAxis(1).Color = 'k';
-ax.YAxis(2).Color = [0.5 0.5 0.5];
 ylim([-1 101])
 title(['Daily Presence of Social Units in the ',titleNAME])
 subplot(3,1,2)
