@@ -9,7 +9,7 @@ region = 'WAT';
 sp = 'Pm'; % your species code
 titleNAME = 'Western Atlantic - Babylon Canyon';
 %dataDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev]; %specify directory where workspaces are saved
-dataDir = [GDrive,':\.shortcut-targets-by-id\1FGSX39xqOmreo9qPfPoqhlhUNm1STQB9\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev]; %modified for AD's use
+dataDir = ['G:\.shortcut-targets-by-id\1FGSX39xqOmreo9qPfPoqhlhUNm1STQB9\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev]; %modified for AD's use
 %% load workspace
 load([dataDir,'\',siteabrev,'_workspaceStep2.mat']);
 load([dataDir,'\',siteabrev,'_workspaceStep3.mat']);
@@ -38,6 +38,13 @@ weekPresence.FeHoursProp = weekPresence.FeHours ./(weekPresence.Effort_Sec ./ (6
 weekPresence.JuHoursProp = weekPresence.JuHours ./(weekPresence.Effort_Sec ./ (60*60));
 weekPresence.MaHoursProp = weekPresence.MaHours ./(weekPresence.Effort_Sec ./ (60*60));
 %% Plots
+
+%Color scheme
+gray = [.5 .5 .5];       % for effort
+mint = [.4000 .7608 .6471];       % for social units
+persimmon = [.9882 .5529 .3843];  % for mid-size animals
+slate = [.5529 .6275 .7961];      % for males
+
 %Plot proportion of hours per DAY with sperm whale presence
 figure
 yyaxis left
@@ -45,10 +52,10 @@ bar(dayTable.tbin, dayTable.HoursProp)
 ylim([0 max(dayTable.HoursProp)]);
 ylabel('Proportion of hours per day with sperm whale presence')
 yyaxis right
-plot(dayTable.tbin, (dayTable.Effort_Sec./dayTable.MaxEffort_Sec)*100, '.g')
+plot(dayTable.tbin, (dayTable.Effort_Sec./dayTable.MaxEffort_Sec)*100, '.', 'Color',gray)
 %ylim([-1 101])
 xlim([dayTable.tbin(1) dayTable.tbin(end)]) %adjust x-axis to only show data range
-ylabel('Percent effort')
+ylabel('Percent effort','Color',gray)
 title(['Daily Presence of Sperm whales in the ',titleNAME])
 saveas(gcf,[saveDir,'\',siteabrev,'DailyPresence.png']);
 
@@ -60,7 +67,7 @@ ylim([0 max(weekTable.HoursProp)]);
 xlim([weekTable.tbin(1),weekTable.tbin(end)])
 ylabel('Proportion of hours per week with sperm whale presence')
 yyaxis right
-plot(weekTable.tbin, weekTable.NormEffort_Bin*100,'.r')
+plot(weekTable.tbin, weekTable.NormEffort_Bin*100,'.', 'Color',[.5 .5 .5])
 ylim([-1 101])
 ylabel('Percent effort')
 title([{'Weekly Presence of Sperm whales in the ',titleNAME}])
@@ -68,79 +75,95 @@ saveas(gcf,[saveDir,'\',siteabrev,'WeeklyPresence.png']);
 
 %Plot proportion of hours per DAY with presence from each group
 figure
-set(gcf,'units','inches','PaperPositionMode','auto','OuterPosition',[3 1 7 7])
+set(gcf,'units','inches','PaperPositionMode','auto','OuterPosition',[3 1 7.5 7])
 subplot(3,1,1) % SUBPLOT 1: SOCIAL UNITS
 yyaxis left
-bar(binPresence.tbin,binPresence.FeHoursProp,'FaceColor',[.373 .702 .639],'BarWidth',3)
+bar(binPresence.tbin,binPresence.FeHoursProp,'FaceColor',mint,'BarWidth',3)
 xlim([binPresence.tbin(1),binPresence.tbin(end)])
 ylim([0 max(binPresence.FeHoursProp)])
 yyaxis right
-plot(binPresence.tbin, binPresence.NormEffort_Bin*100,'.','Color',[.5 .5 .5])
+plot(binPresence.tbin, binPresence.NormEffort_Bin*100,'.','Color',gray)
 ylim([-1 101])
 title(['Social Units'])
 ax = gca;
-ax.YAxis(1).Color = [.373 .702 .639];
-ax.YAxis(2).Color = [0.5 0.5 0.5];
+ax.YAxis(1).Color = mint;
+ax.YAxis(2).Color = gray;
 subplot(3,1,2) % SUBPLOT 2: MID-SIZE
 yyaxis left
-bar(binPresence.tbin,binPresence.JuHoursProp,'FaceColor',[1 .659 .510],'BarWidth',3)
+bar(binPresence.tbin,binPresence.JuHoursProp,'FaceColor',persimmon,'BarWidth',3)
 xlim([binPresence.tbin(1),binPresence.tbin(end)])
 ylim([0 max(binPresence.JuHoursProp)])
-ylabel('Proportion of hours per day with group presence','Color',[0 0 0]) % Left y-axis label
+ax = gca;
+ax.YAxis(1).Color = persimmon;
+label_y = ylabel('Proportion of hours per day with group presence','Color','k'); % Left y-axis label
+label_y.Position(1) = -100;
 yyaxis right
-plot(binPresence.tbin, binPresence.NormEffort_Bin*100,'.','Color',[.5 .5 .5])
+plot(binPresence.tbin, binPresence.NormEffort_Bin*100,'.','Color',gray)
 ylim([-1 101])
-ylabel('Percent Effort')
 title(['Mid-Size Animals']) % Right y-axis label
 ax = gca;
-ax.YAxis(1).Color = [1 .659 .510];
-ax.YAxis(2).Color = [0.5 0.5 0.5];
+ax.YAxis(2).Color = gray;
+ylabel('Percent Effort','Color','k')
 subplot(3,1,3) % SUBPLOT 3: MALES
 yyaxis left
-bar(binPresence.tbin,binPresence.MaHoursProp,'FaceColor',[.592 .647 .773],'BarWidth',3)
+bar(binPresence.tbin,binPresence.MaHoursProp,'FaceColor',slate,'BarWidth',3)
 xlim([binPresence.tbin(1),binPresence.tbin(end)])
 ylim([0 max(binPresence.MaHoursProp)])
 title(['Males'])
 yyaxis right
-plot(binPresence.tbin, binPresence.NormEffort_Bin*100,'.','Color',[.5 .5 .5])
+plot(binPresence.tbin, binPresence.NormEffort_Bin*100,'.','Color',gray)
 ylim([-1 101])
 ax = gca;
-ax.YAxis(1).Color = [.592 .647 .773];
-ax.YAxis(2).Color = [0.5 0.5 0.5];
-suptitle(['Daily Presence in the', titleNAME]) % Overarching title
+ax.YAxis(1).Color = slate;
+ax.YAxis(2).Color = gray;
+suptitle(['Daily Presence of Sperm Whales in the ', titleNAME]) % Overarching title
 saveas(gcf,[saveDir,'\',siteabrev,'DailyPresence_AllClasses_Subplots.png']);
 
 %Plot proportion of hours per WEEK with presence from each group
 figure
-subplot(3,1,1)
+set(gcf,'units','inches','PaperPositionMode','auto','OuterPosition',[3 1 7.5 7])
+subplot(3,1,1) % SUBPLOT 1: SOCIAL UNITS
 yyaxis left
-bar(weekPresence.tbin,weekPresence.FeHoursProp,'FaceColor',[0.373 0.702 0.639],'BarWidth',1)
+bar(weekPresence.tbin,weekPresence.FeHoursProp,'FaceColor',mint,'BarWidth',1)
 xlim([weekPresence.tbin(1),weekPresence.tbin(end)])
 ylim([0 max(weekPresence.FeHoursProp)])
 yyaxis right
-plot(weekPresence.tbin, weekPresence.NormEffort_Bin*100,'.','Color',[0.5 0.5 0.5]) %changed col red -> gray
+plot(weekPresence.tbin, weekPresence.NormEffort_Bin*100,'.','Color',gray) %changed col red -> gray
 ylim([-1 101])
-title(['Weekly Presence of Social Units in the ',titleNAME])
-subplot(3,1,2)
+title(['Social Units'])
+ax = gca;
+ax.YAxis(1).Color = mint;
+ax.YAxis(2).Color = gray;
+subplot(3,1,2) % SUBPLOT 2: MID-SIZE
 yyaxis left
-bar(weekPresence.tbin,weekPresence.JuHoursProp,'FaceColor',[1 .659 .510],'BarWidth',1)
+bar(weekPresence.tbin,weekPresence.JuHoursProp,'FaceColor',persimmon,'BarWidth',1)
 xlim([weekPresence.tbin(1),weekPresence.tbin(end)])
 ylim([0 max(weekPresence.JuHoursProp)])
 ylabel('Proportion of hours per week with group presence')
+ax = gca;
+ax.YAxis(1).Color = persimmon;
+label_y = ylabel('Proportion of hours per day with group presence','Color','k'); % Left y-axis label
+label_y.Position(1) = -100;
 yyaxis right
-plot(weekPresence.tbin, weekPresence.NormEffort_Bin*100,'.','Color',[0.5 0.5 0.5])
+plot(weekPresence.tbin, weekPresence.NormEffort_Bin*100,'.','Color',gray)
 ylim([-1 101])
-ylabel('Percent Effort')
-title(['Weekly Presence of Mid-Size Animals in the ',titleNAME])
-subplot(3,1,3)
+title(['Mid-Size Animals'])
+ax = gca;
+ax.YAxis(2).Color = gray;
+ylabel('Percent Effort','Color','k')
+subplot(3,1,3) % SUBPLOT 3: MALES
 yyaxis left
-bar(weekPresence.tbin,weekPresence.MaHoursProp,'FaceColor',[.592 .647 .773],'BarWidth',1)
+bar(weekPresence.tbin,weekPresence.MaHoursProp,'FaceColor',slate,'BarWidth',1)
 xlim([weekPresence.tbin(1),weekPresence.tbin(end)])
 ylim([0 max(weekPresence.MaHoursProp)])
-title(['Weekly Presence of Males in the ',titleNAME])
+title(['Males'])
 yyaxis right
-plot(weekPresence.tbin, weekPresence.NormEffort_Bin*100,'.','Color',[0.5 0.5 0.5])
+plot(weekPresence.tbin, weekPresence.NormEffort_Bin*100,'.','Color',gray)
 ylim([-1 101])
+ax = gca;
+ax.YAxis(1).Color = slate;
+ax.YAxis(2).Color = gray;
+suptitle(['Weekly Presence of Sperm Whales in the ', titleNAME]) % Overarching title
 saveas(gcf,[saveDir,'\',siteabrev,'WeeklyPresence_AllClasses_Subplots.png']);
 
 %% Average yearly plots
@@ -192,26 +215,32 @@ end
 %each group
 
 figure
+set(gcf,'units','inches','PaperPositionMode','auto','OuterPosition',[3 1 7.5 7])
 subplot(3,1,1)
-bar(binPresence.tbin,binPresence.FeHoursProp,'FaceColor','y','BarWidth',3)
-title(['Daily Presence of Social Units in the ',titleNAME])
+bar(binPresence.tbin,binPresence.FeHoursProp,'FaceColor',mint,'BarWidth',3)
+xlim([binPresence.tbin(1),binPresence.tbin(end)])
+title(['Social Units'])
 subplot(3,1,2)
-bar(binPresence.tbin,binPresence.JuHoursProp,'FaceColor','b','BarWidth',3)
-ylabel('Daily Presence (5-min bins)')
-title(['Daily Presence of Mid-Size Animals in the ',titleNAME])
+bar(binPresence.tbin,binPresence.JuHoursProp,'FaceColor',persimmon,'BarWidth',3)
+xlim([binPresence.tbin(1),binPresence.tbin(end)])
+label_y = ylabel('Daily Presence (5-min bins)');
+label_y.Position(1) = -100;
+title(['Mid-Size Animals',])
 subplot(3,1,3)
-bar(binPresence.tbin,binPresence.MaHoursProp,'FaceColor','c','BarWidth',3)
-title(['Daily Presence of Males in the ',titleNAME])
+bar(binPresence.tbin,binPresence.MaHoursProp,'FaceColor',slate,'BarWidth',3)
+xlim([binPresence.tbin(1),binPresence.tbin(end)])
+title(['Males'])
+suptitle(['Daily Presence of Sperm Whales in the ', titleNAME]) % Overarching title
 saveas(gcf,[saveDir,'\',siteabrev,'DailyPresence_AllClasses_Subplots130.png']);
 
 %Plot daily presence in 5-min bins for all classes in one plot
 figure
-bar(binPresence.tbin,binPresence.MaleNormBin,'FaceColor','c','BarWidth',1)
+bar(binPresence.tbin,binPresence.MaleNormBin,'FaceColor',slate,'BarWidth',1)
 ylabel('Daily Presence (5-min bins)')
 title(['Daily Presence of Each Size Class at ',titleNAME])
 hold on
-bar(binPresence.tbin,binPresence.JuvenileNormBin,'FaceColor','b','BarWidth',1)
-bar(binPresence.tbin,binPresence.FemaleNormBin,'FaceColor','y','BarWidth',1)
+bar(binPresence.tbin,binPresence.JuvenileNormBin,'FaceColor',persimmon,'BarWidth',1)
+bar(binPresence.tbin,binPresence.FemaleNormBin,'FaceColor',mint,'BarWidth',1)
 legend('Males','Mid-Size','Social Units')
 saveas(gcf,[saveDir,'\',siteabrev,'DailyPresence_AllClasses130.png']);
 
