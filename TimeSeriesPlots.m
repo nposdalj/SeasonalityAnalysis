@@ -68,35 +68,46 @@ saveas(gcf,[saveDir,'\',siteabrev,'WeeklyPresence.png']);
 
 %Plot proportion of hours per DAY with presence from each group
 figure
-subplot(3,1,1)
+set(gcf,'units','inches','PaperPositionMode','auto','OuterPosition',[3 1 7 7])
+subplot(3,1,1) % SUBPLOT 1: SOCIAL UNITS
 yyaxis left
 bar(binPresence.tbin,binPresence.FeHoursProp,'FaceColor',[.373 .702 .639],'BarWidth',3)
+xlim([binPresence.tbin(1),binPresence.tbin(end)])
 ylim([0 max(binPresence.FeHoursProp)])
 yyaxis right
 plot(binPresence.tbin, binPresence.NormEffort_Bin*100,'.','Color',[.5 .5 .5])
-ax = gca;
-ax.YAxis(1).Color = 'k';
-ax.YAxis(2).Color = [0.5 0.5 0.5];
 ylim([-1 101])
-title(['Daily Presence of Social Units in the ',titleNAME])
-subplot(3,1,2)
+title(['Social Units'])
+ax = gca;
+ax.YAxis(1).Color = [.373 .702 .639];
+ax.YAxis(2).Color = [0.5 0.5 0.5];
+subplot(3,1,2) % SUBPLOT 2: MID-SIZE
 yyaxis left
 bar(binPresence.tbin,binPresence.JuHoursProp,'FaceColor',[1 .659 .510],'BarWidth',3)
+xlim([binPresence.tbin(1),binPresence.tbin(end)])
 ylim([0 max(binPresence.JuHoursProp)])
-ylabel('Proportion of hours per day with group presence')
+ylabel('Proportion of hours per day with group presence','Color',[0 0 0]) % Left y-axis label
 yyaxis right
 plot(binPresence.tbin, binPresence.NormEffort_Bin*100,'.','Color',[.5 .5 .5])
 ylim([-1 101])
 ylabel('Percent Effort')
-title(['Daily Presence of Mid-Size Animals in the ',titleNAME])
-subplot(3,1,3)
+title(['Mid-Size Animals']) % Right y-axis label
+ax = gca;
+ax.YAxis(1).Color = [1 .659 .510];
+ax.YAxis(2).Color = [0.5 0.5 0.5];
+subplot(3,1,3) % SUBPLOT 3: MALES
 yyaxis left
 bar(binPresence.tbin,binPresence.MaHoursProp,'FaceColor',[.592 .647 .773],'BarWidth',3)
+xlim([binPresence.tbin(1),binPresence.tbin(end)])
 ylim([0 max(binPresence.MaHoursProp)])
-title(['Daily Presence of Males in the ',titleNAME])
+title(['Males'])
 yyaxis right
 plot(binPresence.tbin, binPresence.NormEffort_Bin*100,'.','Color',[.5 .5 .5])
 ylim([-1 101])
+ax = gca;
+ax.YAxis(1).Color = [.592 .647 .773];
+ax.YAxis(2).Color = [0.5 0.5 0.5];
+suptitle(['Daily Presence in the', titleNAME]) % Overarching title
 saveas(gcf,[saveDir,'\',siteabrev,'DailyPresence_AllClasses_Subplots.png']);
 
 %Plot proportion of hours per WEEK with presence from each group
@@ -104,6 +115,7 @@ figure
 subplot(3,1,1)
 yyaxis left
 bar(weekPresence.tbin,weekPresence.FeHoursProp,'FaceColor',[0.373 0.702 0.639],'BarWidth',1)
+xlim([weekPresence.tbin(1),weekPresence.tbin(end)])
 ylim([0 max(weekPresence.FeHoursProp)])
 yyaxis right
 plot(weekPresence.tbin, weekPresence.NormEffort_Bin*100,'.','Color',[0.5 0.5 0.5]) %changed col red -> gray
@@ -112,6 +124,7 @@ title(['Weekly Presence of Social Units in the ',titleNAME])
 subplot(3,1,2)
 yyaxis left
 bar(weekPresence.tbin,weekPresence.JuHoursProp,'FaceColor',[1 .659 .510],'BarWidth',1)
+xlim([weekPresence.tbin(1),weekPresence.tbin(end)])
 ylim([0 max(weekPresence.JuHoursProp)])
 ylabel('Proportion of hours per week with group presence')
 yyaxis right
@@ -122,6 +135,7 @@ title(['Weekly Presence of Mid-Size Animals in the ',titleNAME])
 subplot(3,1,3)
 yyaxis left
 bar(weekPresence.tbin,weekPresence.MaHoursProp,'FaceColor',[.592 .647 .773],'BarWidth',1)
+xlim([weekPresence.tbin(1),weekPresence.tbin(end)])
 ylim([0 max(weekPresence.MaHoursProp)])
 title(['Weekly Presence of Males in the ',titleNAME])
 yyaxis right
