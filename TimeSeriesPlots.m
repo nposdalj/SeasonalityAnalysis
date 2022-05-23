@@ -55,7 +55,9 @@ yyaxis right
 plot(dayTable.tbin, (dayTable.Effort_Sec./dayTable.MaxEffort_Sec)*100, '.', 'Color',gray)
 %ylim([-1 101])
 xlim([dayTable.tbin(1) dayTable.tbin(end)]) %adjust x-axis to only show data range
-ylabel('Percent effort','Color',gray)
+ylabel('Percent effort')
+ax = gca;
+ax.YAxis(2).Color = gray;
 title(['Daily Presence of Sperm whales in the ',titleNAME])
 saveas(gcf,[saveDir,'\',siteabrev,'DailyPresence.png']);
 
@@ -68,8 +70,10 @@ xlim([weekTable.tbin(1),weekTable.tbin(end)])
 ylabel('Proportion of hours per week with sperm whale presence')
 yyaxis right
 plot(weekTable.tbin, weekTable.NormEffort_Bin*100,'.', 'Color',[.5 .5 .5])
-ylim([-1 101])
+%ylim([-1 101])
 ylabel('Percent effort')
+ax = gca;
+ax.YAxis(2).Color = gray;
 title([{'Weekly Presence of Sperm whales in the ',titleNAME}])
 saveas(gcf,[saveDir,'\',siteabrev,'WeeklyPresence.png']);
 

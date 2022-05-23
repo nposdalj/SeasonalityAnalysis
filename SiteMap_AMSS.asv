@@ -26,18 +26,18 @@ BS_latLongs = [30.58378333, 77.39; %bs01
 30.58295, 77.39]; %bs03
 
 %% load lat and long with only 1 deployment
-%AB_mean = [57.513667,-146.50];
-%ABtext = repmat({'AB'},size(AB_mean,1),1);
-%AB = [ABtext num2cell(AB_mean)];
+AB_mean = [57.513667,-146.50];
+ABtext = repmat({'AB'},size(AB_mean,1),1);
+AB = [ABtext num2cell(AB_mean)];
 
-%ALEUT01KS_mean = [52.316783,-188.52];
+ALEUT01KS_mean = [52.316783,-188.52];
 
-%KStext = repmat({'KS'},size(ALEUT01KS_mean,1),1);
-%KS = [KStext num2cell(ALEUT01KS_mean)];
+KStext = repmat({'KS'},size(ALEUT01KS_mean,1),1);
+KS = [KStext num2cell(ALEUT01KS_mean)];
 
-%KOA_mean = [57.224,-150.53];
-%KOAtext = repmat({'KOA'},size(KOA_mean,1),1);
-%KOA = [KOAtext num2cell(KOA_mean)];
+KOA_mean = [57.224,-150.53];
+KOAtext = repmat({'KOA'},size(KOA_mean,1),1);
+KOA = [KOAtext num2cell(KOA_mean)];
 
 %find means of sites with multiple deployments
 [NClat,NClong] = meanm(NC_latLongs(:,1),NC_latLongs(:,2));
@@ -50,28 +50,23 @@ BC_mean = [BClat, BClong];
 BCtext = repmat({'BC'},size(BC_mean,1),1);
 BC = [BCtext num2cell(BC_mean)];
 
-[GSlat,GSlong] = meanm(GS_latLongs(:,1),GS_latLongs(:,2));
-GS_mean = [GSlat, GSlong];
-GStext = repmat({'GS'},size(GS_mean,1),1);
-GS = [GStext num2cell(GS_mean)];
+[PTlat,PTlong] = meanm(PT_latLongs(:,1),PT_latLongs(:,2));
+PT_mean = [PTlat, PTlong];
+PTtext = repmat({'PT'},size(PT_mean,1),1);
+PT = [PTtext num2cell(PT_mean)];
 
-[BPlat, BPlong] = meanm(BP_latLongs(:,1),BP_latLongs(:,2));
-BP_mean = [BPlat, BPlong];
-BPtext = repmat({'BP'},size(BP_mean,1),1);
-BP = [BPtext num2cell(BP_mean)];
-
-[BSlat, BSlong] = meanm(BS_latLongs(:,1),BS_latLongs(:,2));
-BS_mean = [BSlat, BSlong];
-BStext = repmat({'BS'},size(BS_mean,1),1);
-BS = [BStext num2cell(BS_mean)];
+[BDlat, BDlong] = meanm(ALEUTBD_latLongs(:,1),ALEUTBD_latLongs(:,2));
+ALEUTBD_mean = [BDlat, BDlong];
+BDtext = repmat({'BD'},size(ALEUTBD_mean,1),1);
+BD = [BDtext num2cell(ALEUTBD_mean)];
 
 %create one table with all lat and longs
-LL = [NC; BC; GS; BP; BS];
+LL = [AB; BD; NC; KS; PT; BC; KOA];
 LatLong = cell2mat(LL(:,2:3));
 
 LatLongTAB = array2table(LatLong);
 LatLongTAB.Properties.VariableNames = {'Latitude' 'Longitude'};
-LatLongTAB{:,'Site'} = {'NC'; 'BC'; 'GS'; 'BP'; 'BS'};
+LatLongTAB{:,'Site'} = {'AB'; 'BD'; 'CB'; 'KS'; 'PT'; 'QN'; 'KOA'};
 LatLongTAB.Longitude(2) = -(LatLongTAB.Longitude(2) + 10);
 
 lat_lims = [45 65];
@@ -86,11 +81,13 @@ sites = LatLongTAB.Site;
 gm = geoscatter(latitude,longitude,A,sites,'.');
 
 geolimits([45 65],[-220 -120]);
-text(latitude(1),longitude(1)-0.5,'NC','HorizontalAlignment','right','FontSize',10);
-text(latitude(2)+0.75,longitude(2),'BC','HorizontalAlignment','right','FontSize',10);
-text(latitude(3),longitude(3)-0.5,'GS','HorizontalAlignment','right','FontSize',10);
-text(latitude(4)+.4,longitude(4)-0.5,'BP','HorizontalAlignment','right','FontSize',10);
-text(latitude(5),longitude(5)+2.5,'BS','HorizontalAlignment','right','FontSize',10);
+text(latitude(1),longitude(1)-0.5,'AB','HorizontalAlignment','right','FontSize',10);
+text(latitude(2)+0.75,longitude(2),'BD','HorizontalAlignment','right','FontSize',10);
+text(latitude(3),longitude(3)-0.5,'CB','HorizontalAlignment','right','FontSize',10);
+text(latitude(4)+.4,longitude(4)-0.5,'KS','HorizontalAlignment','right','FontSize',10);
+text(latitude(5),longitude(5)+2.5,'PT','HorizontalAlignment','right','FontSize',10);
+text(latitude(6),longitude(6)-0.75,'QN','HorizontalAlignment','right','FontSize',10);
+text(latitude(7),longitude(7)-0.75,'KOA','HorizontalAlignment','right','FontSize',10);
 geolimits([45 65],[-200 -120]);
 
 %% grey site map
