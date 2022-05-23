@@ -5,10 +5,12 @@ close all
 filePrefix = 'WAT_BP'; % File name to match. 
 siteabrev = 'BP'; %abbreviation of site.
 SiteName_forPlots = 'Western Atlantic-BP';
-saveDir = ['H:\My Drive\WAT_TPWS_metadataReduced\SeasonalityAnalysis\BP']; %specify directory to save and load files
+%saveDir = ['H:\My Drive\WAT_TPWS_metadataReduced\SeasonalityAnalysis\BP']; %specify directory to save and load files
+saveDir = ['G:\.shortcut-targets-by-id\1FGSX39xqOmreo9qPfPoqhlhUNm1STQB9\WAT_TPWS_metadataReduced\SeasonalityAnalysis\BP']; %specify directory to save and load files
 %% load workspace
 load([saveDir,'\',siteabrev,'_workspace125.mat']);
-saveDir = ['H:\My Drive\WAT_TPWS_metadataReduced\SeasonalityAnalysis\BP']; %specify directory to save and load files
+%saveDir = ['H:\My Drive\WAT_TPWS_metadataReduced\SeasonalityAnalysis\BP']; %specify directory to save and load files
+saveDir = ['G:\.shortcut-targets-by-id\1FGSX39xqOmreo9qPfPoqhlhUNm1STQB9\WAT_TPWS_metadataReduced\SeasonalityAnalysis\BP']; %specify directory to save and load files
 %% group data by 5min bins, days, weeks, and seasons
 %group data by 5 minute bins
 binTable = synchronize(binData,binEffort);
