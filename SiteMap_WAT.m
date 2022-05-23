@@ -2,28 +2,28 @@
 close all;clear all;clc;
 
 %% load lat and longs for each site
-NC_latLongs = [39.83248333,-148.07; %01 in decimals
-39.83238333, 69.98; %nc02
-39.83258333, 69.98; %nc03
-39.83295, 69.98]; %nc04
+NC_latLongs = [39.83248333,-69.98; %01 in decimals
+39.83238333, -69.98; %nc02
+39.83258333, -69.98; %nc03
+39.83295, -69.98]; %nc04
 
-BC_latLongs = [39.19105, 72.23; %bc01
-39.1905, 72.23; %bc02
-39.19191667, 72.23]; %bc03
+BC_latLongs = [39.19105, -72.23; %bc01
+39.1905, -72.23; %bc02
+39.19191667, -72.23]; %bc03
 
-GS_latLongs = [33.66563333, 76.00; %gs01
-33.66701667, 76.00; %gs02
-33.66991667, 76.00]; %gs03
+GS_latLongs = [33.66563333, -76.00; %gs01
+33.66701667, -76.00; %gs02
+33.66991667, -76.00]; %gs03
 %gs04???
 
-BP_latLongs = [32.10603333, 77.09; %bp01
-32.10695, 77.09; %bp02
-32.10526667, 77.09]; %bp03
+BP_latLongs = [32.10603333, -77.09; %bp01
+32.10695, -77.09; %bp02
+32.10526667, -77.09]; %bp03
 %bp04???
 
-BS_latLongs = [30.58378333, 77.39; %bs01
-30.58303333, 77.39; %bs02
-30.58295, 77.39]; %bs03
+BS_latLongs = [30.58378333, -77.39; %bs01
+30.58303333, -77.39; %bs02
+30.58295, -77.39]; %bs03
 
 %% load lat and long with only 1 deployment
 %AB_mean = [57.513667,-146.50];
@@ -72,10 +72,10 @@ LatLong = cell2mat(LL(:,2:3));
 LatLongTAB = array2table(LatLong);
 LatLongTAB.Properties.VariableNames = {'Latitude' 'Longitude'};
 LatLongTAB{:,'Site'} = {'NC'; 'BC'; 'GS'; 'BP'; 'BS'};
-LatLongTAB.Longitude(2) = -(LatLongTAB.Longitude(2) + 10);
+%LatLongTAB.Longitude(2) = -(LatLongTAB.Longitude(2) + 10);
 
-lat_lims = [45 65];
-long_lims = [-200 -120];
+lat_lims = [28.5 42];
+long_lims = [-80 -65];
 %% grey site map with no color distinction
 figure(1)
 LatLongTAB.Site = categorical(LatLongTAB.Site);
@@ -85,13 +85,13 @@ longitude = LatLongTAB.Longitude;
 sites = LatLongTAB.Site;
 gm = geoscatter(latitude,longitude,A,sites,'.');
 
-geolimits([45 65],[-220 -120]);
-text(latitude(1),longitude(1)-0.5,'NC','HorizontalAlignment','right','FontSize',10);
-text(latitude(2)+0.75,longitude(2),'BC','HorizontalAlignment','right','FontSize',10);
+geolimits([28.5 42],[-80 -65]); %geolimits([45 65],[-220 -120]);
+text(latitude(1),longitude(1)+1.5,'NC','HorizontalAlignment','right','FontSize',10);
+text(latitude(2),longitude(2)-0.5,'BC','HorizontalAlignment','right','FontSize',10);
 text(latitude(3),longitude(3)-0.5,'GS','HorizontalAlignment','right','FontSize',10);
-text(latitude(4)+.4,longitude(4)-0.5,'BP','HorizontalAlignment','right','FontSize',10);
-text(latitude(5),longitude(5)+2.5,'BS','HorizontalAlignment','right','FontSize',10);
-geolimits([45 65],[-200 -120]);
+text(latitude(4),longitude(4)-0.5,'BP','HorizontalAlignment','right','FontSize',10);
+text(latitude(5),longitude(5)-0.5,'BS','HorizontalAlignment','right','FontSize',10);
+geolimits([28.5 42],[-80 -65]);
 
 %% grey site map
 figure(2)
@@ -101,4 +101,4 @@ latitude = LatLongTAB.Latitude;
 longitude = LatLongTAB.Longitude;
 
 gm = geoscatter(latitude,longitude,A,'.','k');  
-geolimits([-3 74],[-180 -110]);
+geolimits([28.5 42],[-80 -65]); %geolimits([-3 74],[-180 -110]);
