@@ -73,9 +73,9 @@ if (strcmp(siteName,'KOA') | strcmp(siteName,'QN') | strcmp(siteName,'BD') | str
     dataWeek(1,:) = [];
 end
 dataWeek.year = year(dataWeek.tbin);
-WeekData.year = year(WeekData.tbin);
+WeekData.year = year(WeekData.tbin); %I'm not sure why this is done -- I'll move forward without it for the time being.
 %% Checking to see how much was missed
-if strcmp(siteName,'BD')
+if strcmp(siteName,'BD') % does this need to be changed depending on the site under investigation?
     CombinedWeek = dataWeek(:,20:22);
 else
 CombinedWeek = dataWeek(:,19:21);
@@ -110,12 +110,14 @@ CutOff = edges(lessThan(1)); %values over this value will be considered 'greater
 %CutOff = MIN;
 %% Plot data
 %No Social Group Data
-if strcmp(siteName, 'NOFEM')
+if strcmp(siteName, 'NOFEM') % Don't run this if statement - takes forever to run.
+    % Want to analyze social group presence, so skip to second version of
+    % code (after "else")
     
 fBubble = figure('Position',[296 417 766 378.5000],'DefaultAxesFontSize',12,'DefaultTextFontName','Times');
 
 subplot(3,1,1)
-years = unique(WeekData.year);
+years = unique(WeekData.Year);
 keep = ~isnan(WeekData.NormBin) & WeekData.NormBin > 0;
 black = [0,0,0];
 absence = WeekData.NormBin == 0;
@@ -141,7 +143,7 @@ ylabel('General')
 set(gca,'xticklabel',[])
 
 subplot(3,1,2)
-years = unique(dataWeek.year);
+years = unique(dataWeek.Year);
 blue = '#fc8d62';%'#349987';
 keep = ~isnan(dataWeek.JuvenileNormBin) & dataWeek.JuvenileNormBin > 0;
 absence = dataWeek.JuvenileNormBin == 0;
@@ -197,7 +199,7 @@ ylabel('Adult Males')
 else
     
 fBubble = figure('Position',[296 417 766 378.5000],'DefaultAxesFontSize',12,'DefaultTextFontName','Times');
-years = unique(dataWeek.year);
+years = unique(dataWeek.Year);
 
 % General Presence
 keep = ~isnan(WeekData.NormBin) & WeekData.NormBin > 0;
@@ -305,7 +307,7 @@ xlim([0,53])
 xlabel('Week of the year')
 % ylim([2016.75,2017.25])
 ylabel('Adult Males')
-end
+end % don't run this line
 
 %% save plot
 % set(gcf,'Position',[-1165         552         812         476])
