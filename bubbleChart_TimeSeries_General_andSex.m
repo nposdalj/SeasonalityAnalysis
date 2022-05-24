@@ -5,7 +5,7 @@ clear all;close all;clc;
 siteName = 'BC';
 NumBub = 3;
 DataDir = 'G:\.shortcut-targets-by-id\1FGSX39xqOmreo9qPfPoqhlhUNm1STQB9\WAT_TPWS_metadataReduced\SeasonalityAnalysis'; %DataDir = 'H:\My Drive\GofAK_TPWS_metadataReduced\SeasonalityAnalysis';
-saveDirectory = 'G:\.shortcut-targets-by-id\1FGSX39xqOmreo9qPfPoqhlhUNm1STQB9\WAT_TPWS_metadataReduced\Plots'; %saveDirectory = 'H:\My Drive\Manuscripts\GOA\Figures';
+saveDirectory = 'G:\.shortcut-targets-by-id\1FGSX39xqOmreo9qPfPoqhlhUNm1STQB9\WAT_TPWS_metadataReduced\Plots\BC'; %saveDirectory = 'H:\My Drive\Manuscripts\GOA\Figures';
 %% Retime data weekly
 load([DataDir,'\',siteName,'\',siteName,'_workspaceStep2.mat']); %load([DataDir,'\',siteName,'\',siteName,'_workspaceStep2.mat']);
 clear mean
@@ -310,9 +310,9 @@ ylabel('Adult Males')
 end % don't run this line
 
 %% save plot
-% set(gcf,'Position',[-1165         552         812         476])
-% weeklyfn = [saveDirectory,'\',siteName,'_BubbleTimeSeries.pdf'];
-% exportgraphics(gcf,weeklyfn,'ContentType','vector','Resolution',300);
+set(gcf,'Position',[-1165         552         812         476])
+weeklyfn = [saveDirectory,'\',siteName,'_BubbleTimeSeries.pdf'];
+exportgraphics(gcf,weeklyfn,'ContentType','vector','Resolution',300);
 %% Plotting the difference instead of the 'general pattern'
 %No Social Group Data
 if strcmp(siteName, 'NOFEM')
@@ -402,7 +402,7 @@ set(gca,'xticklabel',[])
 else
     
 fBubble = figure('Position',[296 417 766 378.5000],'DefaultAxesFontSize',12,'DefaultTextFontName','Times');
-years = unique(dataWeek.year);
+years = unique(dataWeek.Year);
 
 % Social Group
 subplot(4,1,1)
@@ -486,7 +486,7 @@ xlim([0,53])
 % ylim([2016.75,2017.25])
 ylabel('Adult Males')
 
-% Difference
+% Difference %Q from AD - what's this
 subplot(4,1,4)
 black = '#C0C0C0'; %silver
 keep = ~isnan(WeekData.NormBin) & WeekData.NormBin > 0;
