@@ -58,7 +58,7 @@ xlim([dayTable.tbin(1) dayTable.tbin(end)]) %adjust x-axis to only show data ran
 ylabel('Percent effort')
 ax = gca;
 ax.YAxis(2).Color = gray;
-title(['Daily Presence of Sperm whales in the ',titleNAME])
+title([{'Daily Presence of Sperm whales in the ',titleNAME}])
 saveas(gcf,[saveDir,'\',siteabrev,'DailyPresence.png']);
 
 %Plot proportion of hours per WEEK with sperm whale presence
@@ -120,7 +120,7 @@ ylim([-1 101])
 ax = gca;
 ax.YAxis(1).Color = slate;
 ax.YAxis(2).Color = gray;
-suptitle(['Daily Presence of Sperm Whales in the ', titleNAME]) % Overarching title
+sgtitle(['Daily Presence of Sperm Whales in the ', titleNAME]) % Overarching title
 saveas(gcf,[saveDir,'\',siteabrev,'DailyPresence_AllClasses_Subplots.png']);
 
 %Plot proportion of hours per WEEK with presence from each group
@@ -167,7 +167,7 @@ ylim([-1 101])
 ax = gca;
 ax.YAxis(1).Color = slate;
 ax.YAxis(2).Color = gray;
-suptitle(['Weekly Presence of Sperm Whales in the ', titleNAME]) % Overarching title
+sgtitle(['Weekly Presence of Sperm Whales in the ', titleNAME]) % Overarching title
 saveas(gcf,[saveDir,'\',siteabrev,'WeeklyPresence_AllClasses_Subplots.png']);
 
 %% Average yearly plots
@@ -234,7 +234,7 @@ subplot(3,1,3)
 bar(binPresence.tbin,binPresence.MaHoursProp,'FaceColor',slate,'BarWidth',3)
 xlim([binPresence.tbin(1),binPresence.tbin(end)])
 title(['Males'])
-suptitle(['Daily Presence of Sperm Whales in the ', titleNAME]) % Overarching title
+sgtitle(['Daily Presence of Sperm Whales in the ', titleNAME]) % Overarching title
 saveas(gcf,[saveDir,'\',siteabrev,'DailyPresence_AllClasses_Subplots130.png']);
 
 %Plot daily presence in 5-min bins for all classes in one plot
