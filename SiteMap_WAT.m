@@ -102,3 +102,20 @@ longitude = LatLongTAB.Longitude;
 
 gm = geoscatter(latitude,longitude,A,'.','k');  
 geolimits([28.5 42],[-80 -65]); %geolimits([-3 74],[-180 -110]);
+
+%% Added by AD: grey site map with no color distinction and with labels
+figure(3)
+LatLongTAB.Site = categorical(LatLongTAB.Site);
+A = 500;
+latitude = LatLongTAB.Latitude;
+longitude = LatLongTAB.Longitude;
+sites = LatLongTAB.Site;
+gm = geoscatter(latitude,longitude,A,sites,'.','k');
+
+geolimits([28.5 42],[-80 -65]); %geolimits([45 65],[-220 -120]);
+text(latitude(1),longitude(1)+1.5,'NC','HorizontalAlignment','right','FontSize',10);
+text(latitude(2),longitude(2)-0.5,'BC','HorizontalAlignment','right','FontSize',10);
+text(latitude(3),longitude(3)-0.5,'GS','HorizontalAlignment','right','FontSize',10);
+text(latitude(4),longitude(4)-0.5,'BP','HorizontalAlignment','right','FontSize',10);
+text(latitude(5),longitude(5)-0.5,'BS','HorizontalAlignment','right','FontSize',10);
+geolimits([28.5 42],[-80 -65]);
