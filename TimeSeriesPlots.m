@@ -2,12 +2,12 @@ clearvars
 close all
 % This script creates time series plots for each site.
 %% Parameters defined by user
-filePrefix = 'BP'; % File name to match. 
-siteabrev = 'BP'; %abbreviation of site.
+filePrefix = 'GS'; % File name to match. 
+siteabrev = 'GS'; %abbreviation of site.
 GDrive = 'I'; %directory for Google Drive
 region = 'WAT';
 sp = 'Pm'; % your species code
-titleNAME = 'Western Atlantic - Blake Plateau';
+titleNAME = 'Western Atlantic - Gulf Stream';
 %dataDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev]; %specify directory where workspaces are saved
 dataDir = ['G:\.shortcut-targets-by-id\1FGSX39xqOmreo9qPfPoqhlhUNm1STQB9\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev]; %modified for AD's use
 %% load workspace
@@ -201,14 +201,17 @@ WEEKmeantab365 = array2table(meanarray365);
 WEEKmeantab365.Properties.VariableNames = {'Week' 'HoursProp' 'SEM' 'Std' 'Var' 'Range'};
 %make figure
 figure
-bar(WEEKmeantab365.Week, WEEKmeantab365.HoursProp)
+bar(WEEKmeantab365.Week, WEEKmeantab365.HoursProp,'FaceColor',[.6 .6 .6], 'EdgeColor','flat')
+%set(gcf,'position',[50 50 600 400])
 xlim([0 52])
 xlabel('Week')
 ylabel('Average proportion of hours/week')
-title({'Average Weekly Presence of Sperm Whales in the ',titleNAME});
+%title({'Average Weekly Presence of Sperm Whales in the ',titleNAME});
 hold on
-errorbar(WEEKmeantab365.Week,WEEKmeantab365.HoursProp, -(WEEKmeantab365.SEM),WEEKmeantab365.SEM)
-saveas(gcf,[saveDir,'\',siteabrev,'AverageWeeklyPresence.png']);
+errorbar(WEEKmeantab365.Week,WEEKmeantab365.HoursProp, -(WEEKmeantab365.SEM),WEEKmeantab365.SEM, ...
+    'Color','k','LineStyle','none')
+%saveas(gcf,[saveDir,'\',siteabrev,'AverageWeeklyPresence.png']);
+saveas(gcf,[saveDir,'\',siteabrev,'AverageWeeklyPresence_SansTitle.png']);
 else
 end
 
