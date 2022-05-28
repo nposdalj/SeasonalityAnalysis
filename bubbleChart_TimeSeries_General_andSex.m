@@ -2,10 +2,10 @@
 clear all;close all;clc;
 
 %% load data
-siteName = 'BS';
+siteName = 'BP';
 NumBub = 3;
 DataDir = 'G:\.shortcut-targets-by-id\1FGSX39xqOmreo9qPfPoqhlhUNm1STQB9\WAT_TPWS_metadataReduced\SeasonalityAnalysis'; %DataDir = 'H:\My Drive\GofAK_TPWS_metadataReduced\SeasonalityAnalysis';
-saveDirectory = 'G:\.shortcut-targets-by-id\1FGSX39xqOmreo9qPfPoqhlhUNm1STQB9\WAT_TPWS_metadataReduced\Plots\BS'; %saveDirectory = 'H:\My Drive\Manuscripts\GOA\Figures';
+saveDirectory = 'G:\.shortcut-targets-by-id\1FGSX39xqOmreo9qPfPoqhlhUNm1STQB9\WAT_TPWS_metadataReduced\Plots\BP'; %saveDirectory = 'H:\My Drive\Manuscripts\GOA\Figures';
 %% Retime data weekly
 load([DataDir,'\',siteName,'\',siteName,'_workspaceStep2.mat']); %load([DataDir,'\',siteName,'\',siteName,'_workspaceStep2.mat']);
 clear mean
@@ -73,7 +73,7 @@ if (strcmp(siteName,'KOA') | strcmp(siteName,'QN') | strcmp(siteName,'BD') | str
     dataWeek(1,:) = [];
 end
 dataWeek.year = year(dataWeek.tbin);
-WeekData.year = year(WeekData.tbin); %I'm not sure why this is done -- I'll move forward without it for the time being.
+WeekData.year = year(WeekData.tbin); %All this is done so that you can generate the plots without an extra year on top :)
 %% Checking to see how much was missed
 if strcmp(siteName,'BD') % does this need to be changed depending on the site under investigation?
     CombinedWeek = dataWeek(:,20:22);
@@ -311,7 +311,8 @@ end % don't run this line
 
 %% save plot
 set(gcf,'Position',[-1165         552         812         476])
-weeklyfn = [saveDirectory,'\',siteName,'_BubbleTimeSeries.pdf'];
+%weeklyfn = [saveDirectory,'\',siteName,'_BubbleTimeSeries.pdf'];
+weeklyfn = [saveDirectory,'\',siteName,'_BubbleTimeSeries.png'];
 exportgraphics(gcf,weeklyfn,'ContentType','vector','Resolution',300);
 %% Plotting the difference instead of the 'general pattern'
 %No Social Group Data
@@ -518,6 +519,7 @@ end
 
 %% save plot
 set(gcf,'Position',[-1165         552         812         476])
-weeklyfn = [saveDirectory,'\',siteName,'_BubbleTimeSeriesDifference.pdf'];
+%weeklyfn = [saveDirectory,'\',siteName,'_BubbleTimeSeriesDifference.pdf'];
+weeklyfn = [saveDirectory,'\',siteName,'_BubbleTimeSeriesDifference.png'];
 exportgraphics(gcf,weeklyfn,'ContentType','vector','Resolution',300);
 
