@@ -2,7 +2,7 @@
 clear all;close all;clc;
 
 %% load data
-siteName = 'NC';
+siteName = 'GS';
 NumBub = 3;
 DataDir = 'G:\.shortcut-targets-by-id\1FGSX39xqOmreo9qPfPoqhlhUNm1STQB9\WAT_TPWS_metadataReduced\SeasonalityAnalysis'; %DataDir = 'H:\My Drive\GofAK_TPWS_metadataReduced\SeasonalityAnalysis';
 saveDirectory = ['G:\.shortcut-targets-by-id\1FGSX39xqOmreo9qPfPoqhlhUNm1STQB9\WAT_TPWS_metadataReduced\Plots\',siteName]; %saveDirectory = 'H:\My Drive\Manuscripts\GOA\Figures';
@@ -108,6 +108,15 @@ CutOff = edges(lessThan(1)); %values over this value will be considered 'greater
 
 %Actual Cutoff (max bubble size)
 %CutOff = MIN;
+
+%ADDED BY AD: Manually mark periods of no effort for WAT sites
+if siteName == "NC"
+    WeekData.Noeffort(WeekData.Count_Click == 0) = 1;
+    dataWeek.Noeffort(WeekData.Count_Click == 0) = 1;
+elseif siteName == "BC"
+    WeekData.Noeffort(WeekData.Count_Click == 0) = 1;
+    dataWeek.Noeffort(WeekData.Count_Click == 0) = 1;
+end
 %% Plot data
 %No Social Group Data
 if strcmp(siteName, 'NOFEM') % Don't run this if statement - takes forever to run.
@@ -205,7 +214,8 @@ years = unique(dataWeek.Year);
 keep = ~isnan(WeekData.NormBin) & WeekData.NormBin > 0;
 subplot(4,1,1)
 black = [0,0,0];
-absence = WeekData.NormBin == 0;
+%absence = WeekData.NormBin == 0;
+absence = WeekData.NormBin == 0 & WeekData.Noeffort == 0;
 for y = 1:length(years)
     hold on
     idxYear = WeekData.Year == years(y);
@@ -227,13 +237,14 @@ xlim([0,53])
 % ylim([2016.75,2017.25])
 ylabel('General')
 set(gca,'xticklabel',[])
-yticks([2015 2016 2017 2018 2019])
+yticks([2016 2017 2018 2019])
 
 % Social Group
 subplot(4,1,2)
 blue = '#66c2a5';%'#2e59a8';
 keep = ~isnan(dataWeek.FemaleNormBin) & dataWeek.FemaleNormBin > 0;
-absence = dataWeek.FemaleNormBin == 0;
+%absence = dataWeek.FemaleNormBin == 0;
+absence = dataWeek.FemaleNormBin == 0 & WeekData.Noeffort == 0;
 for y = 1:length(years)
     hold on
     idxYear = dataWeek.Year == years(y);
@@ -255,12 +266,13 @@ xlim([0,53])
 % ylim([2016.75,2017.25])
 ylabel('Social Groups')
 set(gca,'xticklabel',[])
-yticks([2015 2016 2017 2018 2019])
+yticks([2016 2017 2018 2019])
 
 subplot(4,1,3)
 blue = '#fc8d62';%'#349987';
 keep = ~isnan(dataWeek.JuvenileNormBin) & dataWeek.JuvenileNormBin > 0;
-absence = dataWeek.JuvenileNormBin == 0;
+%absence = dataWeek.JuvenileNormBin == 0;
+absence = dataWeek.JuvenileNormBin == 0 & WeekData.Noeffort == 0;
 for y = 1:length(years)
     hold on
     idxYear = dataWeek.Year == years(y);
@@ -282,13 +294,14 @@ xlim([0,53])
 % ylim([2016.75,2017.25])
 ylabel('Mid-size')
 set(gca,'xticklabel',[])
-yticks([2015 2016 2017 2018 2019])
+yticks([2016 2017 2018 2019])
 
 %fBubble3 = figure('Position',[411 1008 816 160]);
 subplot(4,1,4)
 blue = '#8da0cb';
 keep = ~isnan(dataWeek.MaleNormBin) & dataWeek.MaleNormBin > 0;
-absence = dataWeek.MaleNormBin == 0;
+%absence = dataWeek.MaleNormBin == 0;
+absence = dataWeek.MaleNormBin == 0 & WeekData.Noeffort == 0;
 for y = 1:length(years)
     hold on
     idxYear = dataWeek.Year == years(y);
@@ -310,13 +323,14 @@ xlim([0,53])
 xlabel('Week of the year')
 % ylim([2016.75,2017.25])
 ylabel('Adult Males')
-yticks([2015 2016 2017 2018 2019])
+yticks([2016 2017 2018 2019])
 end % don't run this line
 
 %% save plot
 set(gcf,'Position',[-1165         552         812         476])
 %weeklyfn = [saveDirectory,'\',siteName,'_BubbleTimeSeries.pdf'];
-weeklyfn = [saveDirectory,'\',siteName,'_BubbleTimeSeries.png'];
+%weeklyfn = [saveDirectory,'\',siteName,'_BubbleTimeSeries.png'];
+weeklyfn = [saveDirectory,'\',siteName,'_BubbleTimeSeries_Style2.png'];
 exportgraphics(gcf,weeklyfn,'ContentType','vector','Resolution',300);
 %% Plotting the difference instead of the 'general pattern'
 %No Social Group Data
