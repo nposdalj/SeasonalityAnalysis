@@ -26,19 +26,6 @@ PT_latLongs = [56.24345, -142.75; %pt01
 ALEUTBD_latLongs = [52.633333,-185.63; %BD02
 52.076,-185.64]; %BD03
 %% load lat and long with only 1 deployment
-AB_mean = [57.513667,-146.50];
-ABtext = repmat({'AB'},size(AB_mean,1),1);
-AB = [ABtext num2cell(AB_mean)];
-
-ALEUT01KS_mean = [52.316783,-188.52];
-
-KStext = repmat({'KS'},size(ALEUT01KS_mean,1),1);
-KS = [KStext num2cell(ALEUT01KS_mean)];
-
-KOA_mean = [57.224,-150.53];
-KOAtext = repmat({'KOA'},size(KOA_mean,1),1);
-KOA = [KOAtext num2cell(KOA_mean)];
-
 %find means of sites with multiple deployments
 [CBlat,CBlong] = meanm(CB_latLongs(:,1),CB_latLongs(:,2));
 CB_mean = [CBlat,CBlong];

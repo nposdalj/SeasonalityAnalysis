@@ -2,10 +2,10 @@
 clear all;close all;clc;
 
 %% load data
-siteName = 'BP';
+siteName = 'GS';
 NumBub = 3;
 DataDir = 'G:\.shortcut-targets-by-id\1FGSX39xqOmreo9qPfPoqhlhUNm1STQB9\WAT_TPWS_metadataReduced\SeasonalityAnalysis'; %DataDir = 'H:\My Drive\GofAK_TPWS_metadataReduced\SeasonalityAnalysis';
-saveDirectory = 'G:\.shortcut-targets-by-id\1FGSX39xqOmreo9qPfPoqhlhUNm1STQB9\WAT_TPWS_metadataReduced\Plots\BP'; %saveDirectory = 'H:\My Drive\Manuscripts\GOA\Figures';
+saveDirectory = 'G:\.shortcut-targets-by-id\1FGSX39xqOmreo9qPfPoqhlhUNm1STQB9\WAT_TPWS_metadataReduced\Plots\'; %saveDirectory = 'H:\My Drive\Manuscripts\GOA\Figures';
 %% Retime data weekly
 load([DataDir,'\',siteName,'\',siteName,'_workspaceStep2.mat']); %load([DataDir,'\',siteName,'\',siteName,'_workspaceStep2.mat']);
 clear mean
@@ -73,7 +73,7 @@ if (strcmp(siteName,'KOA') | strcmp(siteName,'QN') | strcmp(siteName,'BD') | str
     dataWeek(1,:) = [];
 end
 dataWeek.year = year(dataWeek.tbin);
-WeekData.year = year(WeekData.tbin); %All this is done so that you can generate the plots without an extra year on top :)
+WeekData.year = year(WeekData.tbin); %I'm not sure why this is done -- I'll move forward without it for the time being.
 %% Checking to see how much was missed
 if strcmp(siteName,'BD') % does this need to be changed depending on the site under investigation?
     CombinedWeek = dataWeek(:,20:22);
