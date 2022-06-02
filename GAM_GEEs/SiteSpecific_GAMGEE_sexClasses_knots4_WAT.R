@@ -26,7 +26,7 @@ library(car) #for ANOVA
 library(splines2)       # to use mSpline for the GEEs
 library(ggfortify)      # extract confidence interval for ACF plots
 
-site = 'BS' #specify the site of interest
+site = 'BP' #specify the site of interest
 
 # Step 1: Load the data ---------------------------------------------------
 #Hourly data
@@ -158,17 +158,32 @@ Anova(BlockModF)
 #   TimeLost             2.203  1     0.1377    
 # as.factor(Year)    145.975  3     <2e-16 ***            
 
+# BP
+# bs(Julian, k = 4)   5.9524  4  0.2027284    
+# TimeLost            0.0610  1  0.8048444    
+# as.factor(Year)    18.7502  3  0.0003079 ***
+
 Anova(BlockModJ)
 #BS
 # bs(Julian, k = 4)   63.683  4  4.875e-13 ***
 #   TimeLost             0.025  1      0.874    
-# as.factor(Year)     32.818  3  3.519e-07 ***    
+# as.factor(Year)     32.818  3  3.519e-07 ***   
 
+# BP
+# bs(Julian, k = 4)   28.781  4  8.662e-06 ***
+#   TimeLost             0.004  1      0.951    
+# as.factor(Year)     53.271  3  1.605e-11 ***
+  
 Anova(BlockModM)
 #BS
 # bs(Julian, k = 4)   51.177  4  2.050e-10 ***
 #   TimeLost             2.656  1     0.1031    
 # as.factor(Year)     30.143  3  1.288e-06 ***  
+
+# BP
+# bs(Julian, k = 4)   8.7419  4    0.06789 .
+# TimeLost            0.0053  1    0.94212  
+# as.factor(Year)     4.4330  3    0.21835
 
 # Step 4: Data Exploration and Initial Analysis ------------------------------------------------------------------
 # Follow data exploration protocols suggested by Zuur et al. (2010), Zuur (2012), to generate pair plots, box plots, and assess collinearity between covariates in the dataset using Varinace Inflation Factors (vif).
@@ -201,6 +216,21 @@ VIF(GLMM)
 # TimeLost        1.000000  1        1.000000
 # as.factor(Year) 1.184703  3        1.028651
 
+# BP
+# GVIF Df GVIF^(1/(2*Df))
+# Julian          1.171332  1        1.082281
+# TimeLost        1.003916  1        1.001956
+# as.factor(Year) 1.175118  3        1.027260
+# > VIF(GLMJ)
+# GVIF Df GVIF^(1/(2*Df))
+# Julian          1.204697  1        1.097587
+# TimeLost        1.005297  1        1.002645
+# as.factor(Year) 1.210257  3        1.032317
+# > VIF(GLMM)
+# GVIF Df GVIF^(1/(2*Df))
+# Julian          1.195259  1        1.093279
+# TimeLost        1.006110  1        1.003050
+# as.factor(Year) 1.201668  3        1.031092
 
 # Step 5: Model Selection - Covariate Preparation -------------------------
 # Construct variance-covariance matrices for cyclic covariates:
@@ -256,6 +286,13 @@ QICmod3fA
 #Full model is best
 #Model Julian Day, then Year
 
+# BP
+# QIC            QIC.1            QIC.2            QIC.3
+# model3fA            POD0f           POD3fa           POD3fb           POD3fc
+# QIC3fA   1914.25301463175 1901.64260358257 1901.07525715018 1918.13397791587
+
+#Removed Julian Day
+
 #Juveniles
 #The initial full model is:
 POD3ja = geeglm(PreAbsJ ~ AvgDayMatJ+as.factor(Year),family = binomial, corstr="ar1", id=BlocksJ, data=SiteHourTableB)
@@ -276,6 +313,13 @@ QICmod3jA
 
 #Full model is best
 #Model Julian Day, then Year
+
+# BP
+# QIC            QIC.1            QIC.2            QIC.3
+# model3jA            POD0j           POD3ja           POD3jb           POD3jc
+# QIC3jA   4392.93809386802 4333.86068548319 4332.62650691385 4385.11854988794
+
+#Remove Julian Day
 
 #Males
 
@@ -299,25 +343,42 @@ QICmod3mA
 #Full model is best
 #Model Julian Day, then Year
 
+# BP
+# QIC            QIC.1            QIC.2            QIC.3
+# model3mA           POD0m           POD3ma           POD3mb           POD3mc
+# QIC3mA   1400.0922407837 1400.44708639046 1402.33490193696 1398.27844615502
+
+#remove year
+
 # Step 7: Finalize Model --------------------------------------------------
 #Females
- 
+ if(site=="BS"){
  #BS
   dimnames(AvgDayMatF)<-list(NULL,c("ADBM1", "ADBM2"))
   PODFinalF = geeglm(PreAbsF ~ AvgDayMatF+as.factor(Year),family = binomial, corstr="ar1", id=BlocksF, data=SiteHourTableB)
-
+}else{
+  #BP
+  PODFinalF = geeglm(PreAbsF ~ as.factor(Year),family = binomial, corstr="ar1", id=BlocksF, data=SiteHourTableB)
+ }
 #Juveniles
-
+if(site=="BS"){
   #BS
   dimnames(AvgDayMatJ)<-list(NULL,c("ADBM1", "ADBM2"))
   PODFinalJ = geeglm(PreAbsJ ~  AvgDayMatJ+as.factor(Year),family = binomial, corstr="ar1", id=BlocksJ, data=SiteHourTableB)
-
+}else{
+  #BP
+  PODFinalJ = geeglm(PreAbsJ ~  as.factor(Year),family = binomial, corstr="ar1", id=BlocksJ, data=SiteHourTableB)
+}
 #Males
- 
+ if(site=="BS"){
   #BS
   dimnames(AvgDayMatM)<-list(NULL,c("ADBM1", "ADBM2"))
   PODFinalM = geeglm(PreAbsM ~ AvgDayMatM + as.factor(Year),family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB)
-
+}else{
+  #BP
+  dimnames(AvgDayMatM)<-list(NULL,c("ADBM1", "ADBM2"))
+  PODFinalM = geeglm(PreAbsM ~ AvgDayMatM ,family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB)
+}
 # STEP 8: Interpreting the summary of the model --------------------------
 # How to intepret model results
 # Standard error - robust estimate - provides reasonable variance estimates even when the specified correlation model is in correct
@@ -329,18 +390,27 @@ anova(PODFinalF)
   # Df     X2 P(>|Chi|)    
   # AvgDayMatF       2 16.738  0.000232 ***
   #   as.factor(Year)  3 11.338  0.010034 *  
-
+# BP
+# Df   X2 P(>|Chi|)
+# as.factor(Year)  3 4.58      0.21
+  
 anova(PODFinalJ)
 #BS
 # Df      X2 P(>|Chi|)   
 # AvgDayMatJ       2 12.6271  0.001812 **
 #   as.factor(Year)  3  4.0919  0.251710   
-  
+# BP
+# Df   X2 P(>|Chi|)  
+# as.factor(Year)  3 8.25     0.041 *
+# 
 anova(PODFinalM)
 #BS
 # Df     X2 P(>|Chi|)   
 # AvgDayMatM       2 9.2645  0.009733 **
 #   as.factor(Year)  3 9.7511  0.020804 * 
+# BP
+# Df     X2 P(>|Chi|)  
+# AvgDayMatM  2 2.19      0.33
 
 #FINAL REMOVAL OF NON SIGNIFICANT VARIABLES
 if (site=='BS'){ 
@@ -402,6 +472,12 @@ cmx(DATA, threshold = cutoff)                                   # the identified
 # predicted     1     0
 # 1   507 10562
 # 0   141 16188
+
+# BP - Female
+# observed
+# predicted     1     0
+# 1    53  3013
+# 0   102 23899
   
 # The area under the curve (auc) can also be used as an rough indication of model performance:
   
@@ -449,6 +525,12 @@ cmx(DATA, threshold = cutoff)                                   # the identified
 # 1   232  8228
 # 0   232 18706
 
+# BP - Juvenile
+# observed
+# predicted     1     0
+# 1   232 10078
+# 0   195 16562
+
 # The area under the curve (auc) can also be used as an rough indication of model performance:
 
 auc <- performance(pred, measure="auc")
@@ -495,6 +577,11 @@ cmx(DATA, threshold = cutoff)                                   # the identified
 # 1    67  5985
 # 0    66 21280
 
+#BP - Males 
+# observed
+# predicted     1     0
+# 1    60 11076
+# 0    47 15884
 
 # The area under the curve (auc) can also be used as an rough indication of model performance:
 
