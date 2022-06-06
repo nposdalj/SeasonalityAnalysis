@@ -23,26 +23,25 @@ library(scales)
 library(magick)
 library(cowplot)
 #load functions
-source('C:/Users/Alba/Documents/GitHub/SeasonalityAnalysis/GAM_GEEs/GAMGEE_Plotting_Functions_RealProbs_HistAbove.R')
+#source('C:/Users/Alba/Documents/GitHub/SeasonalityAnalysis/GAM_GEEs/GAMGEE_Plotting_Functions_RealProbs_HistAbove.R') #on Sam's Computer
+source('C:/Users/nposd/Documents/GitHub/SeasonalityAnalysis/GAM_GEEs/GAMGEE_Plotting_Functions_RealProbs_HistAbove.R')  #on Nat's computer
 
 # Load Workspace --------------------------------------------------
 site = 'BS'
-GDrive = 'H'
-    saveWorkspace = paste(GDrive,":/My Drive/WAT_TPWS_metadataReduced/SeasonalityAnalysis/",site,'/',sep="")
-    fileName = paste(saveWorkspace,site,'_SiteSpecific_gamgeeOutput.RData',sep="")
-    load(fileName)
-    saveDir = paste(GDrive,":/My Drive/WAT_TPWS_metadataReduced/Plots/",site,'/',sep="")
+GDrive = 'I'
+saveWorkspace = paste(GDrive,":/My Drive/WAT_TPWS_metadataReduced/SeasonalityAnalysis/",site,'/',sep="")
+fileName = paste(saveWorkspace,site,'_SiteSpecific_gamgeeOutput.RData',sep="")
+load(fileName)
+saveDir = paste(GDrive,":/My Drive/WAT_TPWS_metadataReduced/Plots/",site,'/',sep="")
     
 #If it's a leap year, delete julian day 366 for plotting
 SiteHourTableB = SiteHourTable[!(SiteHourTableB$Julian==366),]
 
 # Plot Julian Day ---------------------------------------------------------
-
-    ggPlot_JD(PODFinal,SiteHourTableB,site)
+ggPlot_JD(PODFinal,SiteHourTableB,site)
  
 # Plot Year ---------------------------------------------------------------
-
-  ggPlot_Year_WAT(PODFinal,SiteHourTableB,site)
+ggPlot_Year_WAT(PODFinal,SiteHourTableB,site)
 
 
 
