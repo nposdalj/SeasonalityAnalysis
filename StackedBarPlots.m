@@ -27,7 +27,6 @@ end
 %combine all the tables into one
 table_short = vertcat(x{:});
 %% Find all files that fit your specifications for sites with more than a year
-
 %Females
 files = dir([filePath,'**\*_365GroupedMeanFemale.csv']);
 n = length(files);

@@ -23,25 +23,52 @@ library(scales)
 library(magick)
 library(cowplot)
 #load functions
-#source('C:/Users/Alba/Documents/GitHub/SeasonalityAnalysis/GAM_GEEs/GAMGEE_Plotting_Functions_RealProbs_HistAbove.R') #on Sam's Computer
-source('C:/Users/nposd/Documents/GitHub/SeasonalityAnalysis/GAM_GEEs/GAMGEE_Plotting_Functions_RealProbs_HistAbove.R')  #on Nat's computer
+source('C:/Users/nposd/Documents/GitHub/SeasonalityAnalysis/GAM_GEEs/GAMGEE_sexClasses_Plotting_Functions_RealProbs_HistAbove.R')
 
 # Load Workspace --------------------------------------------------
-site = 'BS'
+site = 'BP'
 GDrive = 'I'
 saveWorkspace = paste(GDrive,":/My Drive/WAT_TPWS_metadataReduced/SeasonalityAnalysis/",site,'/',sep="")
-fileName = paste(saveWorkspace,site,'_SiteSpecific_gamgeeOutput.RData',sep="")
+fileName = paste(saveWorkspace,site,'_SiteSpecific_gamgeeOutput_sexClasses.RData',sep="")
 load(fileName)
 saveDir = paste(GDrive,":/My Drive/WAT_TPWS_metadataReduced/Plots/",site,'/',sep="")
-    
+
+sexGroups = c('Social Groups','Mid-Size','Males')
+
 #If it's a leap year, delete julian day 366 for plotting
 SiteHourTableB = SiteHourTable[!(SiteHourTableB$Julian==366),]
 
-# Plot Julian Day ---------------------------------------------------------
-ggPlot_JD(PODFinal,SiteHourTableB,site)
- 
-# Plot Year ---------------------------------------------------------------
-ggPlot_Year_WAT(PODFinal,SiteHourTableB,site)
+for (i in 1:length(sexGroups)){
+  sex = sexGroups[i]
 
+# Set up Sex Classes --------------------------------------------------
+if (sex == 'Social Groups'){
+    PODFinal = PODFinalF
+    pr = prf
+}else if(sex == 'Mid-Size'){
+    PODFinal = PODFinalJ
+    pr = prj
+}else if(sex == 'Males'){
+    PODFinal = PODFinalM
+    pr = prm
+}
+
+# Plot Julian Day ---------------------------------------------------------
+  if (site == 'BP'){
+    print('Skip this')
+  }else{
+    ggPlot_JD_sex(PODFinal,SiteHourTableB,sex)
+  }
+
+# Plot Year ---------------------------------------------------------------
+  if (site == 'BS'& sex == 'Mid-Size' | site == 'BP' & sex == 'Social Groups' | site == 'BP' & sex == 'Males'){
+    #skip this
+    print('Skip this')
+  }else if (site == 'BP' & sex == 'Mid-Size'){
+    ggPlot_Year_WAT_first(PODFinal,SiteHourTableB,sex)
+  }else{
+    ggPlot_Year_WAT(PODFinal,SiteHourTableB,sex)
+  }
+}
 
 
