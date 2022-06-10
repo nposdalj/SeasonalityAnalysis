@@ -4,10 +4,21 @@ close all
 %this code should be run in MATLAB 2019b or later
 %making a change here
 %% Parameters defined by user
-sitename = 'BP'; %specify site; must rerun thru line 96 for each site. After each run comment the site (lines 128-132) to avoid replacing
-filePath = ['G:\.shortcut-targets-by-id\1FGSX39xqOmreo9qPfPoqhlhUNm1STQB9\WAT_TPWS_metadataReduced\SeasonalityAnalysis\', sitename]; %specify directory to save files
+%sitename = 'BP'; %specify site; must rerun thru line 96 for each site. After each run comment the site (lines 128-132) to avoid replacing
+sites = {'BC','BP','BS','GS','NC'}; %all sites of interest listed in order they appear
+GDrive = 'I';
+Region = 'WAT';
+%% Loop through each site
+for i = 1:length(sites)
+    site = sites{i};
+    FileDir = [GDrive,':\My Drive\',Region,'_TPWS_metadataReduced\SeasonalityAnalysis\',site];
+    load([FileDir,'\',site,'_workspaceStep3.mat']);
+    GDrive = 'I';
+    site = sites{i};
+    filePath = ['I:\My Drive\WAT_TPWS_metadataReduced\SeasonalityAnalysis\',site]; %specify directory to save files
+end
 %% Find all files that fit your specifications for sites with less than a year
-files = dir([filePath,'\',sitename,'_days365GroupedMean_forGLMR125.csv']);
+files = dir([filePath,'\',site,'_days365GroupedMean_forGLMR125.csv']);
 n = length(files);
 x = cell(1, numel(files)); 
 %load all of the tables

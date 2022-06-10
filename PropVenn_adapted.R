@@ -5,16 +5,21 @@ library("dplyr")
 
 #load data
 GDrive =  'I'
-dir = paste(GDrive,":/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites",sep="")
+Region = 'WAT'
+dir = paste(GDrive,":/My Drive/",Region,"_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites",sep="")
+#Site Names
+#SiteNames = c('CB','PT','QN','BD','AB','KOA','KS')
+SiteNames = c('BS','BP','NC','BC','GS')
+saveDir = paste(GDrive,":/My Drive/",Region,"_TPWS_metadataReduced/Plots",sep="")
 
 #General Data
-fileName1 = paste(GDrive,":/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/BigModel/AllSitesGrouped_GAMGEE_ROW.csv",sep="")#setting the directory
+fileName1 = paste(GDrive,":/My Drive/",Region,"_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites/AllSitesGrouped_GAMGEE_ROW.csv",sep="")#setting the directory
 DayTable = read.csv(fileName1) #no effort days deleted
 DayTable = na.omit(DayTable)
 DayTable$tbin = as.Date(DayTable$tbin)
 
 #Sex Specific Data
-fileName2 = paste(GDrive,":/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/BigModel/AllSitesGrouped_GAMGEE_ROW_sexClasses.csv",sep="")#setting the directory
+fileName2 = paste(GDrive,":/My Drive/",Region,"_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites/AllSitesGrouped_GAMGEE_ROW_sexClasses.csv",sep="")#setting the directory
 SexDayTable = read.csv(fileName2) #no effort days deleted
 SexDayTable = na.omit(SexDayTable)
 SexDayTable$tbin = as.Date(SexDayTable$tbin)
@@ -46,11 +51,6 @@ SexDayTable$FM = replace(SexDayTable$FM, which(SexDayTable$FM == 2), 1) #only ke
 SexDayTable$F = replace(SexDayTable$F, which(SexDayTable$FJ ==1 | SexDayTable$FJM ==1 | SexDayTable$FM ==1),0) #delete F only rows when it's being accounted for in another group
 SexDayTable$J = replace(SexDayTable$J, which(SexDayTable$FJ ==1 | SexDayTable$JM ==1 | SexDayTable$FJM ==1),0) #delete J only rows when it's being accounted for in another group
 SexDayTable$M = replace(SexDayTable$M, which(SexDayTable$JM ==1 | SexDayTable$FM ==1 | SexDayTable$FJM ==1),0) #delete M only rows when it's being accounted for in another group
-
-saveDir = paste(GDrive,":/My Drive/Manuscripts/GOA/Figures",sep="")
-
-#Site Names
-SiteNames = c('CB','PT','QN','BD','AB','KOA','KS')
 
 #loop through each site and pull out relevant data
 for (i in 1:length(SiteNames)){
