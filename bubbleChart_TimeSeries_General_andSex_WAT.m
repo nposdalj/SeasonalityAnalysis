@@ -2,12 +2,12 @@
 clear all;close all;clc;
 
 %% load data
-siteName = 'GS';
+siteName = 'NC';
 NumBub = 3;
-DataDir = 'G:\.shortcut-targets-by-id\1FGSX39xqOmreo9qPfPoqhlhUNm1STQB9\WAT_TPWS_metadataReduced\SeasonalityAnalysis'; %DataDir = 'H:\My Drive\GofAK_TPWS_metadataReduced\SeasonalityAnalysis';
-saveDirectory = ['G:\.shortcut-targets-by-id\1FGSX39xqOmreo9qPfPoqhlhUNm1STQB9\WAT_TPWS_metadataReduced\Plots\',siteName]; %saveDirectory = 'H:\My Drive\Manuscripts\GOA\Figures';
+DataDir = 'H:\My Drive\WAT_TPWS_metadataReduced\SeasonalityAnalysis';
+saveDirectory = ['H:\My Drive\WAT_TPWS_metadataReduced\Plots\',siteName];
 %% Retime data weekly
-load([DataDir,'\',siteName,'\',siteName,'_workspaceStep2.mat']); %load([DataDir,'\',siteName,'\',siteName,'_workspaceStep2.mat']);
+load([DataDir,'\',siteName,'\',siteName,'_workspaceStep2.mat']);
 clear mean
 
 %Add first week of the year and last to account for x's
@@ -119,7 +119,7 @@ elseif siteName == "BC"
 end
 %% Plot data
 %No Social Group Data
-if strcmp(siteName, 'NOFEM') % Don't run this if statement - takes forever to run.
+if strcmp(siteName, 'NOFEM') % For AD, don't run
     % Want to analyze social group presence, so skip to second version of
     % code (after "else")
     
@@ -215,7 +215,7 @@ keep = ~isnan(WeekData.NormBin) & WeekData.NormBin > 0;
 subplot(4,1,1)
 black = [0,0,0];
 %absence = WeekData.NormBin == 0;
-absence = WeekData.NormBin == 0 & WeekData.Noeffort == 0;
+absence = WeekData.NormBin == 0 & WeekData.Noeffort == 0; 
 for y = 1:length(years)
     hold on
     idxYear = WeekData.Year == years(y);

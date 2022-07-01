@@ -110,7 +110,7 @@ CutOff = edges(lessThan(1)); %values over this value will be considered 'greater
 %CutOff = MIN;
 %% Plot data
 %No Social Group Data
-if strcmp(siteName, 'NOFEM') % Don't run this if statement - takes forever to run.
+if strcmp(siteName, 'NOFEM')
     % Want to analyze social group presence, so skip to second version of
     % code (after "else")
     
