@@ -2,27 +2,25 @@ clearvars
 close all
 % This script creates time series plots for each site.
 %% Parameters defined by user
-filePrefix = 'NC'; % File name to match. 
-siteabrev = 'NC'; %abbreviation of site.
+filePrefix = 'CORC'; % File name to match. 
+siteabrev = 'CORC'; %abbreviation of site.
 GDrive = 'I'; %directory for Google Drive
-region = 'WAT';
+region = 'CCE';
 sp = 'Pm'; % your species code
-titleNAME = 'Western Atlantic - Nantucket Canyon';
-%dataDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev]; %specify directory where workspaces are saved
-dataDir = ['G:\.shortcut-targets-by-id\1FGSX39xqOmreo9qPfPoqhlhUNm1STQB9\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev]; %modified for AD's use
+titleNAME = 'CORC';
+dataDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev]; %specify directory where workspaces are saved
 %% load workspace
 load([dataDir,'\',siteabrev,'_workspaceStep2.mat']);
 load([dataDir,'\',siteabrev,'_workspaceStep3.mat']);
-%saveDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\Plots\',siteabrev];
-saveDir = ['G:\.shortcut-targets-by-id\1FGSX39xqOmreo9qPfPoqhlhUNm1STQB9\',region,'_TPWS_metadataReduced\Plots\',siteabrev]; %changed for AD's use
+saveDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\Plots\',siteabrev];
 %% Fill in missing days
 %day table
 dayTable.day= double(dayTable.day);
 dayTable = retime(dayTable,'daily','fillwithconstant');
 
 %sex table
-binPresence.day = double(binPresence.day);
-binPresence = retime(binPresence,'daily','fillwithconstant');
+sexbinPresence.day = double(sexbinPresence.day);
+sexbinPresence = retime(sexbinPresence,'daily','fillwithconstant');
 %% Retime for weekly presence
 %day table
 weekTable = retime(dayTable,'weekly','sum');
@@ -31,14 +29,13 @@ weekTable.NormEffort_Bin(isnan(weekTable.NormEffort_Bin)) = 0;
 weekTable.HoursProp = weekTable.Hours ./ (weekTable.Effort_Sec ./ (60*60));
 
 %sex table
-weekPresence = retime(binPresence,'weekly','sum');
+weekPresence = retime(sexbinPresence,'weekly','sum');
 weekPresence.NormEffort_Bin = weekPresence.Effort_Sec ./weekPresence.MaxEffort_Sec;
 weekPresence.NormEffort_Bin(isnan(weekPresence.NormEffort_Bin)) = 0;
 weekPresence.FeHoursProp = weekPresence.FeHours ./(weekPresence.Effort_Sec ./ (60*60));
 weekPresence.JuHoursProp = weekPresence.JuHours ./(weekPresence.Effort_Sec ./ (60*60));
 weekPresence.MaHoursProp = weekPresence.MaHours ./(weekPresence.Effort_Sec ./ (60*60));
 %% Plots
-
 %Color scheme
 gray = [.5 .5 .5];       % for effort
 mint = [.4000 .7608 .6471];       % for social units
@@ -82,11 +79,11 @@ figure
 set(gcf,'units','inches','PaperPositionMode','auto','OuterPosition',[3 1 7.5 7])
 subplot(3,1,1) % SUBPLOT 1: SOCIAL UNITS
 yyaxis left
-bar(binPresence.tbin,binPresence.FeHoursProp,'FaceColor',mint,'BarWidth',3)
-xlim([binPresence.tbin(1),binPresence.tbin(end)])
-ylim([0 max(binPresence.FeHoursProp)])
+bar(sexbinPresence.tbin,sexbinPresence.FeHoursProp,'FaceColor',mint,'BarWidth',3)
+xlim([sexbinPresence.tbin(1),sexbinPresence.tbin(end)])
+ylim([0 max(sexbinPresence.FeHoursProp)])
 yyaxis right
-plot(binPresence.tbin, binPresence.NormEffort_Bin*100,'.','Color',gray)
+plot(sexbinPresence.tbin, sexbinPresence.NormEffort_Bin*100,'.','Color',gray)
 ylim([-1 101])
 title(['Social Units'])
 ax = gca;
@@ -94,15 +91,15 @@ ax.YAxis(1).Color = mint;
 ax.YAxis(2).Color = gray;
 subplot(3,1,2) % SUBPLOT 2: MID-SIZE
 yyaxis left
-bar(binPresence.tbin,binPresence.JuHoursProp,'FaceColor',persimmon,'BarWidth',3)
-xlim([binPresence.tbin(1),binPresence.tbin(end)])
-ylim([0 max(binPresence.JuHoursProp)])
+bar(sexbinPresence.tbin,sexbinPresence.JuHoursProp,'FaceColor',persimmon,'BarWidth',3)
+xlim([sexbinPresence.tbin(1),sexbinPresence.tbin(end)])
+ylim([0 max(sexbinPresence.JuHoursProp)])
 ax = gca;
 ax.YAxis(1).Color = persimmon;
 label_y = ylabel('Proportion of hours per day with group presence','Color','k'); % Left y-axis label
 label_y.Position(1) = -100;
 yyaxis right
-plot(binPresence.tbin, binPresence.NormEffort_Bin*100,'.','Color',gray)
+plot(sexbinPresence.tbin, sexbinPresence.NormEffort_Bin*100,'.','Color',gray)
 ylim([-1 101])
 title(['Mid-Size Animals']) % Right y-axis label
 ax = gca;
@@ -110,12 +107,12 @@ ax.YAxis(2).Color = gray;
 ylabel('Percent Effort','Color','k')
 subplot(3,1,3) % SUBPLOT 3: MALES
 yyaxis left
-bar(binPresence.tbin,binPresence.MaHoursProp,'FaceColor',slate,'BarWidth',3)
-xlim([binPresence.tbin(1),binPresence.tbin(end)])
-ylim([0 max(binPresence.MaHoursProp)])
+bar(sexbinPresence.tbin,sexbinPresence.MaHoursProp,'FaceColor',slate,'BarWidth',3)
+xlim([sexbinPresence.tbin(1),sexbinPresence.tbin(end)])
+ylim([0 max(sexbinPresence.MaHoursProp)])
 title(['Males'])
 yyaxis right
-plot(binPresence.tbin, binPresence.NormEffort_Bin*100,'.','Color',gray)
+plot(sexbinPresence.tbin, sexbinPresence.NormEffort_Bin*100,'.','Color',gray)
 ylim([-1 101])
 ax = gca;
 ax.YAxis(1).Color = slate;
@@ -174,10 +171,10 @@ saveas(gcf,[saveDir,'\',siteabrev,'WeeklyPresence_AllClasses_Subplots.png']);
 %Average yearly presence of proportion of hours per DAY with sperm whale
 %presence
 figure
-bar(meantab365.Day, meantab365.HoursProp)
-xlim([0 366])
+bar(meantab365.day, meantab365.mean_HoursProp)
+%xlim([0 366])
 xlabel('Day')
-ylim([0 max(meantab365.HoursProp)]);
+ylim([0 max(meantab365.mean_HoursProp)]);
 ylabel('Average proportion of hours/day')
 title([{'Average Daily Presence of Sperm Whales in the ',titleNAME}]);
 saveas(gcf,[saveDir,'\',siteabrev,'AverageDailyPresence.png']);
@@ -186,7 +183,7 @@ saveas(gcf,[saveDir,'\',siteabrev,'AverageDailyPresence.png']);
 %presence
 %retime average table
 if length(MD) > 365
-meantab365.datetime = datetime(meantab365.Day, 'convertfrom','juliandate');
+meantab365.datetime = datetime(meantab365.day, 'convertfrom','juliandate');
 meantab365.Week = week(meantab365.datetime);
 meantab365.Week = categorical(meantab365.Week);
 [mean, sem, std, var, range] = grpstats(meantab365.HoursProp, meantab365.Week, {'mean','sem','std','var','range'}); %takes the mean of each day of the year

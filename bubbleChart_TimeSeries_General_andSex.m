@@ -2,12 +2,14 @@
 clear all;close all;clc;
 
 %% load data
-siteName = 'BP';
+siteName = 'CORC';
+GDrive = 'I';
+region = 'CCE'; %region
 NumBub = 3;
-DataDir = 'G:\.shortcut-targets-by-id\1FGSX39xqOmreo9qPfPoqhlhUNm1STQB9\WAT_TPWS_metadataReduced\SeasonalityAnalysis'; %DataDir = 'H:\My Drive\GofAK_TPWS_metadataReduced\SeasonalityAnalysis';
-saveDirectory = 'G:\.shortcut-targets-by-id\1FGSX39xqOmreo9qPfPoqhlhUNm1STQB9\WAT_TPWS_metadataReduced\Plots\BP'; %saveDirectory = 'H:\My Drive\Manuscripts\GOA\Figures';
+DataDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteName];
+saveDirectory = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\Plots\',siteName];
 %% Retime data weekly
-load([DataDir,'\',siteName,'\',siteName,'_workspaceStep2.mat']); %load([DataDir,'\',siteName,'\',siteName,'_workspaceStep2.mat']);
+load([DataDir,'\',siteName,'_workspaceStep2.mat']);
 clear mean
 
 %Add first week of the year and last to account for x's
@@ -41,10 +43,10 @@ WeekData.Year(adjYear) = WeekData.Year(adjYear-1);
 WeekData.NormBin = WeekData.NormBin *5;
 
 %Sex
-load([DataDir,'\',siteName,'\',siteName,'_workspaceStep3.mat']);
+load([DataDir,'\',siteName,'_workspaceStep3.mat']);
 clear mean
-binPresence.day = grp2idx(binPresence.day);
-binPresenceAll = synchronize(allDays,binPresence);
+sexbinPresence.day = grp2idx(sexbinPresence.day);
+binPresenceAll = synchronize(allDays,sexbinPresence);
 binPresenceAll = removevars(binPresenceAll, {'ZeroCol'});
 dataWeek = retime(binPresenceAll,'weekly',@(x) mean(x, 'omitnan'));
 dataWeek.Noeffort = isnan(dataWeek.Effort_Bin);
@@ -68,7 +70,8 @@ dataWeek.JuvenileNormBin = dataWeek.JuvenileNormBin *5;
 dataWeek.MaleNormBin = dataWeek.MaleNormBin *5;
 
 %% Delete first week for specific sites
-if (strcmp(siteName,'KOA') | strcmp(siteName,'QN') | strcmp(siteName,'BD') | strcmp(siteName,'KS') | strcmp(siteName,'CB'))
+if (strcmp(siteName,'KOA') | strcmp(siteName,'QN') | strcmp(siteName,'BD') | strcmp(siteName,'KS') | strcmp(siteName,'CB') | strcmp(siteName,'CA')...
+        | strcmp(siteName,'CCE') | strcmp(siteName,'GI') | strcmp(siteName,'HOKE') | strcmp(siteName,'CORC'))
     WeekData(1,:) = [];
     dataWeek(1,:) = [];
 end
@@ -429,7 +432,7 @@ set(gca,'ydir','reverse')
 %bubblelim([1 round(max(dataWeek.FemaleNormBin))]);
 bubblelim([1 round(CutOff)]);
 xlim([0,53])
-% ylim([2016.75,2017.25])
+% ylim([2016,2017])
 ylabel('Social Groups')
 set(gca,'xticklabel',[])
 

@@ -2,158 +2,95 @@ clearvars
 close all
 
 %% Parameters defined by user
-filePrefix = 'WAT_NC'; % File name to match. 
-genderFileName = 'WAT_NC'; %File name to match gender file
-siteabrev = 'NC'; %abbreviation of site
-region = 'WAT';
+filePrefix = 'CORC'; % File name to match. 
+genderFileName = 'CORC'; %File name to match gender file
+siteabrev = 'CORC'; %abbreviation of site
+region = 'CCE';
 sp = 'Pm'; % your species code
-itnum = '3'; % which iteration you are looking for
-srate = 200; % sample rate
 GDrive = 'I'; %Google Drive
-
 effortXls = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev,'\Pm_Effort.xlsx']; % specify excel file with effort times
-% effortXls = ['I:\My Drive\',region,'_TPWS_metadataReduced\',siteabrev,'\SeasonalityAnalysis\Pm_Effort.xlsx']; % specify excel file with effort times
-
 saveDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev]; %specify directory to save files
-% saveDir = ['I:\My Drive\',region,'_TPWS_metadataReduced\',siteabrev,'\SeasonalityAnalysis']; %specify directory to save files
-
 dayBinCSV= [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev,'\',siteabrev,'_dayData_forGLMR125.csv']; % specify csv document with general PM information
-% dayBinCSV= ['I:\My Drive\',region,'_TPWS_metadataReduced\',siteabrev,'\SeasonalityAnalysis\',siteabrev,'_dayData_forGLMR125.csv']; % specify csv document with general PM information
-%% Get effort times matching prefix file
-%when multiple sites in the effort table
-allEfforts = readtable(effortXls); %read effort table
-effTable = allEfforts; %effort is for one site only
-
-% make Variable Names consistent
-startVar = find(~cellfun(@isempty,regexp(effTable.Properties.VariableNames,'Start.*Effort'))>0,1,'first');
-endVar = find(~cellfun(@isempty,regexp(effTable.Properties.VariableNames,'End.*Effort'))>0,1,'first');
-effTable.Properties.VariableNames{startVar} = 'Start';
-effTable.Properties.VariableNames{endVar} = 'End';
-
-Start = datetime(x2mdate(effTable.Start),'ConvertFrom','datenum');
-End = datetime(x2mdate(effTable.End),'ConvertFrom','datenum');
-
-effort = table(Start,End);
-%% get default parameters
-p = sp_setting_defaults('sp',sp,'analysis','SumPPICIBin');
-%% group effort in bins
-effort.diffSec = seconds(effort.End-effort.Start);
-effort.bins = effort.diffSec/(60*p.binDur);
-effort.roundbin = round(effort.diffSec/(60*p.binDur));
-
-secMonitEffort = sum(effort.diffSec);
-binMonitEffort = sum(effort.roundbin);
-
-[er,~] = size(effort.Start);
-
-if er > 1
-    binEffort = intervalToBinTimetable(effort.Start,effort.End,p); % convert intervals in bins when there is multiple lines of effort
-%     binEffort.sec = binEffort.effortBin*(p.binDur*60);
-%     binEffort.sec = binEffort.bin*(p.binDur*60);
-    binEffort.Properties.VariableNames{'bin'} = 'Effort_Bin';
-    binEffort.effortSec = binEffort.Effort_Bin*60;
-    binEffort.Properties.VariableNames{'effortSec'} = 'Effort_Sec';
-else
-    binEffort = intervalToBinTimetable_Only1RowEffort(effort.Start,effort.End,p); % convert intervals in bins when there is only one line of effort
-    binEffort.sec = binEffort.bin*(p.binDur*60);
-end
-%% load data
+%% Load sex specific data from ICIgrams
 filename = [saveDir,'\',genderFileName,'_',sp,'_gender.mat'];
 load(filename);
+sexData = binData; %change file name so it doesn't match general sperm whale data
+%% load workspace 2
+load([saveDir,'\',siteabrev,'_workspaceStep2.mat']);
+%% Extraft effort from workspace 2 dayTable that already accounts for duty cycle, etc.
+sexBinEffort = dayBinTAB(:,{'tbin','Effort_Bin','Effort_Sec','MaxEffort_Bin','MaxEffort_Sec'});
+sexBinEffort = table2timetable(sexBinEffort);
 %% group data by days and add effort
-binPresence = synchronize (binData, binEffort);
-% binPresence.Properties.VariableNames{'effortBin'} = 'Effort_Bin';
-% binPresence.Properties.VariableNames{'effortSec'} = 'Effort_Sec';
-% binPresence.Properties.VariableNames{'bin'} = 'Effort_Bin';
-% binPresence.Properties.VariableNames{'sec'} = 'Effort_Sec';
-binPresence = retime(binPresence,'daily','sum');
-binPresence.maxPP = [];
-binPresence.meanICI = [];
-binPresence.BigMale = [];
-binPresence.Other = [];
-binPresence.Count = [];
-binPresence(~binPresence.Effort_Bin,:) = []; %removes days with no effort, NOT days with no presence
-%% accounting for effort
-[p,q]=size(binPresence);
-binPresence.MaxEffort_Bin = ones(p,1)*(288);
-binPresence.MaxEffort_Sec = ones(p,1) * (86400); %seconds in one day
-
-%dealing with duty cycled data
-if strcmp(siteabrev,'CB');
-    ge = binPresence.Effort_Bin(222:516); %bin effort (excluding ships but not considering the duty cycle)
-    ge = ge/288; %%proportion of data that was not 'ships' considering full recording effort
-    binPresence.Effort_Bin(222:516) = ge * 240; %for CB02 10 on 2 off (12 minute cycle) -- meaning you're recording 0.8333 percent of the time
-    binPresence.Effort_Sec(222:516) = binPresence.Effort_Bin(222:516) * 5 * 60;
-    else
-if strcmp(siteabrev,'BD');
-    ge = binPresence.Effort_Bin(274:end); %bin effort (excluding ships but not considering the duty cycle)
-    ge = ge/288; %%proportion of data that was not 'ships' considering full recording effort
-    binPresence.Effort_Bin(274:end) = ge * 144; %for ALEUT03BD ONLY 5 on 5 off (10 minute cycle) -- meaning you're recording 0.5 percent of the time
-    binPresence.Effort_Sec(274:end) = binPresence.Effort_Bin(274:end) * 5 * 60;
-else
-          if strcmp(siteabrev,'PG');
-    binPresence.Effort_Bin = floor(binPresence.Effort_Bin * .333); %for Pagan_01 only, 5 on 10 off (15 minute cycle)-- meaning you're recording 20% (0.2) of the time
-    binPresence.Effort_Sec = binPresence.Effort_Bin * 5 * 60; %convert from bins into efforts in seconds per day
-      else
-binPresence.MaxEffort_Bin = ones(p,1)*(288);
-end
-end
-end
-
+%Retime sex data daily
+sexData = retime(sexData,'daily','sum');
+sexbinPresence = synchronize (sexData, sexBinEffort);
+sexbinPresence.maxPP = [];
+sexbinPresence.meanICI = [];
+sexbinPresence.BigMale = [];
+sexbinPresence.Other = [];
+sexbinPresence.Count = [];
+%% accounting for effort/dutycycle
 %Proportion of hours
-binPresence.FeMinutes = binPresence.Female *5;
-binPresence.JuMinutes = binPresence.Juvenile *5;
-binPresence.MaMinutes = binPresence.Male *5;
-binPresence.FeHours = binPresence.FeMinutes ./60;
-binPresence.JuHours = binPresence.JuMinutes ./60;
-binPresence.MaHours = binPresence.MaMinutes ./60;
-binPresence.FeHoursProp = binPresence.FeHours ./(binPresence.Effort_Sec ./ (60*60));
-binPresence.JuHoursProp = binPresence.JuHours ./(binPresence.Effort_Sec ./ (60*60));
-binPresence.MaHoursProp = binPresence.MaHours ./(binPresence.Effort_Sec ./ (60*60));
+sexbinPresence.FeMinutes = sexbinPresence.Female *5;
+sexbinPresence.JuMinutes = sexbinPresence.Juvenile *5;
+sexbinPresence.MaMinutes = sexbinPresence.Male *5;
+sexbinPresence.FeHours = sexbinPresence.FeMinutes ./60;
+sexbinPresence.JuHours = sexbinPresence.JuMinutes ./60;
+sexbinPresence.MaHours = sexbinPresence.MaMinutes ./60;
+sexbinPresence.FeHoursProp = sexbinPresence.FeHours ./(sexbinPresence.Effort_Sec ./ (60*60));
+sexbinPresence.JuHoursProp = sexbinPresence.JuHours ./(sexbinPresence.Effort_Sec ./ (60*60));
+sexbinPresence.MaHoursProp = sexbinPresence.MaHours ./(sexbinPresence.Effort_Sec ./ (60*60));
 
 %normalize bin counts for each sex based on bin effort
-binPresence.NormEffort_Bin = binPresence.Effort_Bin./binPresence.MaxEffort_Bin; %what proportion of the day was there effort
-binPresence.NormEffort_Sec = binPresence.Effort_Sec./binPresence.MaxEffort_Sec; %what proportion of the day was there effort
-binPresence.FemaleNormBin = round(binPresence.Female ./ binPresence.NormEffort_Bin); %what would the normalized bin count be given the amount of effort for Females
-binPresence.JuvenileNormBin = round(binPresence.Juvenile ./ binPresence.NormEffort_Bin); %what would the normalized bin count be given the amount of effort for Juveniles
-binPresence.MaleNormBin = round(binPresence.Male ./ binPresence.NormEffort_Bin); %what would the normalized bin count be given the amount of effort for Males
-binPresence.FemaleHoursNorm = round(binPresence.FemaleNormBin ./ binPresence.NormEffort_Bin); %convert the number of 5-min bins per day to hours
-binPresence.JuvenileHoursNorm = round(binPresence.JuvenileNormBin ./ binPresence.NormEffort_Bin); %convert the number of 5-min bins per day to hours
-binPresence.MaleHoursNorm = round(binPresence.MaleNormBin ./ binPresence.NormEffort_Bin); %convert the number of 5-min bins per day to hours
+sexbinPresence.NormEffort_Bin = sexbinPresence.Effort_Bin./sexbinPresence.MaxEffort_Bin; %what proportion of the day was there effort
+sexbinPresence.NormEffort_Sec = sexbinPresence.Effort_Sec./sexbinPresence.MaxEffort_Sec; %what proportion of the day was there effort
+sexbinPresence.FemaleNormBin = round(sexbinPresence.Female ./ sexbinPresence.NormEffort_Bin); %what would the normalized bin count be given the amount of effort for Females
+sexbinPresence.JuvenileNormBin = round(sexbinPresence.Juvenile ./ sexbinPresence.NormEffort_Bin); %what would the normalized bin count be given the amount of effort for Juveniles
+sexbinPresence.MaleNormBin = round(sexbinPresence.Male ./ sexbinPresence.NormEffort_Bin); %what would the normalized bin count be given the amount of effort for Males
+sexbinPresence.FemaleHoursNorm = round(sexbinPresence.FemaleNormBin ./ sexbinPresence.NormEffort_Bin); %convert the number of 5-min bins per day to hours
+sexbinPresence.JuvenileHoursNorm = round(sexbinPresence.JuvenileNormBin ./ sexbinPresence.NormEffort_Bin); %convert the number of 5-min bins per day to hours
+sexbinPresence.MaleHoursNorm = round(sexbinPresence.MaleNormBin ./ sexbinPresence.NormEffort_Bin); %convert the number of 5-min bins per day to hours
 %% find month and season
-binPresence.Season = zeros(p,1);
-binPresence.month = month(binPresence.tbin);
+[p,~]=size(sexbinPresence);
+sexbinPresence.Season = zeros(p,1);
+sexbinPresence.month = month(sexbinPresence.tbin);
 
 %Winter starts on January (closest to the real thing, which is Dec. 21st)
-summeridxD = (binPresence.month == 7  | binPresence.month == 8 | binPresence.month == 9);
-fallidxD = (binPresence.month == 10  | binPresence.month == 11 | binPresence.month == 12);
-winteridxD = (binPresence.month == 1  | binPresence.month == 2 | binPresence.month == 3);
-springidxD = (binPresence.month == 4  | binPresence.month == 5 | binPresence.month == 6);
+summeridxD = (sexbinPresence.month == 7  | sexbinPresence.month == 8 | sexbinPresence.month == 9);
+fallidxD = (sexbinPresence.month == 10  | sexbinPresence.month == 11 | sexbinPresence.month == 12);
+winteridxD = (sexbinPresence.month == 1  | sexbinPresence.month == 2 | sexbinPresence.month == 3);
+springidxD = (sexbinPresence.month == 4  | sexbinPresence.month == 5 | sexbinPresence.month == 6);
 
-binPresence.Season(summeridxD) = 1;
-binPresence.Season(fallidxD) = 2;
-binPresence.Season(winteridxD) = 3;
-binPresence.Season(springidxD) = 4;
+sexbinPresence.Season(summeridxD) = 1;
+sexbinPresence.Season(fallidxD) = 2;
+sexbinPresence.Season(winteridxD) = 3;
+sexbinPresence.Season(springidxD) = 4;
 
 %add year and day to data
-binPresence.Year = year(binPresence.tbin);
-binPresence.day = day(binPresence.tbin,'dayofyear');
+sexbinPresence.Year = year(sexbinPresence.tbin);
+sexbinPresence.day = day(sexbinPresence.tbin,'dayofyear');
 
-NANidx = ismissing(binPresence(:,{'FemaleNormBin'}));
-binPresence{:,{'FemaleNormBin'}}(NANidx) = 0; %if there was effort, but no detections change the NormBin column to zero
+NANidx = ismissing(sexbinPresence(:,{'FemaleNormBin'}));
+sexbinPresence{:,{'FemaleNormBin'}}(NANidx) = 0; %if there was effort, but no detections change the NormBin column to zero
+sexbinPresence{:,{'FeHoursProp'}}(NANidx) = 0; %if there was effort, but no detections change the HoursProp column to zero
+sexbinPresence{:,{'FemaleHoursNorm'}}(NANidx) = 0; %if there was effort, but no detections change the HoursNorm column to zero
 
-NANidx = ismissing(binPresence(:,{'JuvenileNormBin'}));
-binPresence{:,{'JuvenileNormBin'}}(NANidx) = 0; %if there was effort, but no detections change the NormBin column to zero
+NANidx = ismissing(sexbinPresence(:,{'JuvenileNormBin'}));
+sexbinPresence{:,{'JuvenileNormBin'}}(NANidx) = 0; %if there was effort, but no detections change the NormBin column to zero
+sexbinPresence{:,{'JuHoursProp'}}(NANidx) = 0; %if there was effort, but no detections change the HoursProp column to zero
+sexbinPresence{:,{'JuvenileHoursNorm'}}(NANidx) = 0; %if there was effort, but no detections change the HoursNorm column to zero
 
-NANidx = ismissing(binPresence(:,{'MaleNormBin'}));
-binPresence{:,{'MaleNormBin'}}(NANidx) = 0; %if there was effort, but no detections change the NormBin column to zero
+NANidx = ismissing(sexbinPresence(:,{'MaleNormBin'}));
+sexbinPresence{:,{'MaleNormBin'}}(NANidx) = 0; %if there was effort, but no detections change the NormBin column to zero
+sexbinPresence{:,{'JuHoursProp'}}(NANidx) = 0; %if there was effort, but no detections change the HoursProp column to zero
+sexbinPresence{:,{'JuvenileHoursNorm'}}(NANidx) = 0; %if there was effort, but no detections change the HoursNorm column to zero
 
-writetable(timetable2table(binPresence), [saveDir,'\', siteabrev, '_binPresence.csv']); %table with bin presence for each sex (timeseries)
+writetable(timetable2table(sexbinPresence), [saveDir,'\', siteabrev, '_binPresence.csv']); %table with bin presence for each sex (timeseries)
 %% day table with days grouped together (summed and averaged) ** USE THIS **
-[MD,~] = findgroups(binPresence.day);
+[MD,~] = findgroups(sexbinPresence.day);
 
 if length(MD) < 365
-    meantab365 = table(binPresence.day(:), binPresence.FeHoursProp(:),binPresence.JuHoursProp(:),binPresence.MaHoursProp(:));
+    meantab365 = table(sexbinPresence.day(:), sexbinPresence.FeHoursProp(:),sexbinPresence.JuHoursProp(:),sexbinPresence.MaHoursProp(:));
     meantab365.Properties.VariableNames = {'Day' 'HoursPropFE' 'HoursPropJU' 'HoursPropMA'};
     [pp,~]=size(meantab365);
     meantab365.Season = zeros(pp,1);
@@ -170,9 +107,9 @@ if length(MD) < 365
     meantab365.Season(springidxD) = 4;
     writetable(meantab365, [saveDir,'\',siteabrev,'_365GroupedMean.csv']); %table with the mean for each day of the year
 else
-    binPresence.day = categorical(binPresence.day);
+    sexbinPresence.day = categorical(sexbinPresence.day);
     %mean for females
-    [mean, sem, std, var, range] = grpstats(binPresence.FeHoursProp, binPresence.day, {'mean','sem','std','var','range'}); %takes the mean of each day of the year
+    [mean, sem, std, var, range] = grpstats(sexbinPresence.FeHoursProp, sexbinPresence.day, {'mean','sem','std','var','range'}); %takes the mean of each day of the year
     meantable = array2table(mean);
     semtable = array2table(sem);
     stdtable = array2table(std);
@@ -183,7 +120,7 @@ else
     meantabFE365 = array2table(meanarrayFE365);
     meantabFE365.Properties.VariableNames = {'Day' 'HoursPropFE' 'SEM' 'Std' 'Var' 'Range'};
     %mean for juveniles
-    [mean, sem, std, var, range] = grpstats(binPresence.JuHoursProp, binPresence.day, {'mean','sem','std','var','range'}); %takes the mean of each day of the year
+    [mean, sem, std, var, range] = grpstats(sexbinPresence.JuHoursProp, sexbinPresence.day, {'mean','sem','std','var','range'}); %takes the mean of each day of the year
     meantable = array2table(mean);
     semtable = array2table(sem);
     stdtable = array2table(std);
@@ -194,7 +131,7 @@ else
     meantabJU365 = array2table(meanarrayJU365);
     meantabJU365.Properties.VariableNames = {'Day' 'HoursPropJU' 'SEM' 'Std' 'Var' 'Range'};
     %mean for males
-    [mean, sem, std, var, range] = grpstats(binPresence.MaHoursProp, binPresence.day, {'mean','sem','std','var','range'}); %takes the mean of each day of the year
+    [mean, sem, std, var, range] = grpstats(sexbinPresence.MaHoursProp, sexbinPresence.day, {'mean','sem','std','var','range'}); %takes the mean of each day of the year
     meantable = array2table(mean);
     semtable = array2table(sem);
     stdtable = array2table(std);
@@ -257,66 +194,32 @@ writetable(meantabFE365, [saveDir,'\',siteabrev,'_365GroupedMeanFemale.csv']); %
 writetable(meantabJU365, [saveDir,'\',siteabrev,'_365GroupedMeanJuvenile.csv']); %table with the mean for each day of the year
 writetable(meantabMA365, [saveDir,'\',siteabrev,'_365GroupedMeanMale.csv']); %table with the mean for each day of the year
 end
-%% Integral Time Scale Calculation 
-%continuous data
-binPresence.FeHoursProp(isnan(binPresence.FeHoursProp)) = 0;
-ts = binPresence.FeHoursProp;
-its_cont = IntegralTimeScaleCalc(ts);
-binPresence.JuHoursProp(isnan(binPresence.JuHoursProp)) = 0;
-ts = binPresence.JuHoursProp;
-its_cont = IntegralTimeScaleCalc(ts);
-binPresence.MaHoursProp(isnan(binPresence.MaHoursProp)) = 0;
-ts = binPresence.MaHoursProp;
-its_cont = IntegralTimeScaleCalc(ts);
-%Grouped Data
-if exist('meantab365','var')
-    meantab365.HoursPropFE(isnan(meantab365.HoursPropFE)) = 0; 
-    ts = meantab365.HoursPropFE;
-    its_cont = IntegralTimeScaleCalc(ts);
-    meantab365.HoursPropJU(isnan(meantab365.HoursPropJU)) = 0; 
-    ts = meantab365.HoursPropJU;
-    its_cont = IntegralTimeScaleCalc(ts);
-    meantab365.HoursPropMA(isnan(meantab365.HoursPropMA)) = 0; 
-    ts = meantab365.HoursPropMA;
-    its_cont = IntegralTimeScaleCalc(ts);
-else
-    meantabFE365.HoursPropFE(isnan(meantabFE365.HoursPropFE)) = 0; 
-    ts = meantabFE365.HoursPropFE;
-    its_cont = IntegralTimeScaleCalc(ts);
-    meantabJU365.HoursPropJU(isnan(meantabJU365.HoursPropJU)) = 0; 
-    ts = meantabJU365.HoursPropJU;
-    its_cont = IntegralTimeScaleCalc(ts);
-    meantabMA365.HoursPropMA(isnan(meantabMA365.HoursPropMA)) = 0; 
-    ts = meantabMA365.HoursPropMA;
-    its_cont = IntegralTimeScaleCalc(ts);
-end
-%% Save workspace variable
-save([saveDir,'\',siteabrev,'_workspaceStep3.mat']);
-
 %% Hourly binary Data for GAMGEE Models
+% Extraft hourly effort from workspace 2 dayTable that already accounts for duty cycle, etc.
+hourlytab = timetable2table(hourlyTab);
+sexHourEffort = hourlytab(:,{'tbin','Effort_Bin','Effort_Sec','MaxEffort_Bin','MaxEffort_Sec'});
+sexHourEffort = table2timetable(sexHourEffort);
+
 %hourly
-Click = retime(binData(:,4:6),'hourly','sum'); % #5-min bins per hour
-hourlyEffort = retime(binEffort,'hourly','sum');
-hourlyTab = synchronize(Click,hourlyEffort);
-%hourlyTab.Properties.VariableNames{'effortBin'} = 'Effort_Bin';
-% hourlyTab.Properties.VariableNames{'bin'} = 'Effort_Bin';
-% hourlyTab.Properties.VariableNames{'sec'} = 'Effort_Sec';
-hourlyTab(~hourlyTab.Effort_Bin,:)=[]; %removes days with no effort, NOT days with no presence
+Click = retime(sexData(:,4:6),'hourly','sum'); % #5-min bins per hour
+sexhourlyTab = synchronize(Click,sexHourEffort);
 
 %Females
-binidx_hourlyF = (hourlyTab.Female >= 1);
-[y,~]=size(hourlyTab);
-hourlyTab.PreAbsF = zeros(y,1);
-hourlyTab.PreAbsF(binidx_hourlyF) = 1; %table with 0 for no presence in 5min bin and 1 with presence in 1 hour bin
+binidx_hourlyF = (sexhourlyTab.Female >= 1);
+[y,~]=size(sexhourlyTab);
+sexhourlyTab.PreAbsF = zeros(y,1);
+sexhourlyTab.PreAbsF(binidx_hourlyF) = 1; %table with 0 for no presence in 5min bin and 1 with presence in 1 hour bin
 
 %Juveniles
-binidx_hourlyJ = (hourlyTab.Juvenile >= 1);
-hourlyTab.PreAbsJ = zeros(y,1);
-hourlyTab.PreAbsJ(binidx_hourlyJ) = 1; %table with 0 for no presence in 5min bin and 1 with presence in 1 hour bin
+binidx_hourlyJ = (sexhourlyTab.Juvenile >= 1);
+sexhourlyTab.PreAbsJ = zeros(y,1);
+sexhourlyTab.PreAbsJ(binidx_hourlyJ) = 1; %table with 0 for no presence in 5min bin and 1 with presence in 1 hour bin
 
 %Males
-binidx_hourlyM = (hourlyTab.Male >= 1);
-hourlyTab.PreAbsM = zeros(y,1);
-hourlyTab.PreAbsM(binidx_hourlyM) = 1; %table with 0 for no presence in 5min bin and 1 with presence in 1 hour bin
+binidx_hourlyM = (sexhourlyTab.Male >= 1);
+sexhourlyTab.PreAbsM = zeros(y,1);
+sexhourlyTab.PreAbsM(binidx_hourlyM) = 1; %table with 0 for no presence in 5min bin and 1 with presence in 1 hour bin
 
-writetable(timetable2table(hourlyTab),[saveDir,'\',siteabrev,'_binData_forGAMGEE_sexClasses.csv']); %save table to .csv to continue stats in R F:\Seasonality\Kruskal_RankSumSTATS.R
+writetable(timetable2table(sexhourlyTab),[saveDir,'\',siteabrev,'_binData_forGAMGEE_sexClasses.csv']); %save table to .csv to continue stats in R F:\Seasonality\Kruskal_RankSumSTATS.R
+%% Save workspace variable
+save([saveDir,'\',siteabrev,'_workspaceStep3.mat']);

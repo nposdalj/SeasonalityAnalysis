@@ -28,10 +28,8 @@ for i = 1:length(siteDisk)
         SearchPathMaskShip = {[cDir,'\',siteDisk{i},'*']};
         SearchPathMask = {fold};
         SearchRecursiv = 1;
-[PathFileListShip, FileListShip, PathListShip] = ...
+[PathFileListShip, FileListShip, PathListShip, FileMatch] = ...
     utFindFiles(SearchFileMaskShip, SearchPathMaskShip, SearchRecursiv);
-
-if length(FileListShip) == length(siteDiskIdx)
     
     MatchIDX = strfind(PathListShip, siteDiskIdx(j));
     
@@ -57,32 +55,6 @@ else
     end
 end
 else
-end
-else
-    [PathFileListShipa, FileListShipa, PathListShipa] = ...
-    utFindFiles(SearchFileMaskShip, SearchPathMask, SearchRecursiv);
-if ~isempty(PathFileListShipa)
-
-if length(siteDiskIdx) == 1
-   load(char(PathFileListShipa));
-   shipTAB = [table(shipLabels) table(num2cell(shipTimes))];
-   shipArray = table2array(shipTAB);
-   shipArray(strcmp(shipArray(:,1),'ambient'),:) = [];
-   shipArray(:,1) = [];
-else
-    if j == 1
-    shipTAB = [];
-    load(char(PathFileListShipa));
-    shipTAB = [table(shipLabels) table(num2cell(shipTimes))];
-    else
-    load(char(PathFileListShipa));
-    ships = [table(shipLabels) table(num2cell(shipTimes))];
-    shipTAB = [shipTAB ; ships];  
-    end
-end
-else
-end
-
 end
 end
 
