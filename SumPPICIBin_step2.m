@@ -12,6 +12,7 @@ saveDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysi
 load([saveDir,'\',siteabrev,'_workspace125.mat']);
 %% Remove bin data with less than 5 clicks
 binData(binData.Count < 5,:) = []; %identify any bins with less than 5 clicks and delete them
+
 %% group data by 5min bins, hourly, days, weeks, and seasons 
 %group data by 5 minute bins
 binTable = synchronize(binData,binEffort);

@@ -8,6 +8,7 @@ siteabrev = 'CORC'; %abbreviation of site
 region = 'CCE';
 sp = 'Pm'; % your species code
 GDrive = 'I'; %Google Drive
+
 effortXls = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev,'\Pm_Effort.xlsx']; % specify excel file with effort times
 saveDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev]; %specify directory to save files
 dayBinCSV= [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev,'\',siteabrev,'_dayData_forGLMR125.csv']; % specify csv document with general PM information
