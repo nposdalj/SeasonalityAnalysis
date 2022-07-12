@@ -1,9 +1,10 @@
 %% This code was modified by NP on 4/4/2022 from the M_Map website to plot bathymetry in the GOA/BSAI
+ % Designed to work in R2016b
 %source - https://www.eoas.ubc.ca/~rich/map.html#examples
 close all;clear all;clc;
 %% Load Site data
 % load lat and longs for each site
-SaveDir = 'I:\My Drive\Manuscripts\GOA\Figures';
+SaveDir = 'H:\My Drive\WAT_TPWS_metadataReduced\Plots';
 NC_latLongs = [39.83248333,-69.98; %01 in decimals
 39.83238333, -69.98; %nc02
 39.83258333, -69.98; %nc03
@@ -26,6 +27,26 @@ BP_latLongs = [32.10603333, -77.09; %bp01
 BS_latLongs = [30.58378333, -77.39; %bs01
 30.58303333, -77.39; %bs02
 30.58295, -77.39]; %bs03
+
+WC_latLongs = [38.37415, -73.37; %wc01
+38.37385, -73.37; %wc02
+38.37336667, -73.37]; %wc03
+
+OC_latLongs = [40.2633, -67.99; %oc01
+40.26331667, -67.99; %oc02
+40.26333333, -67.99; %oc03
+40.23, -67.98]; %oc04
+
+HZ_latLongs = [41.06191667, -66.35; %hz01
+41.06183333, -66.35; %hz02
+41.06165, -66.35; %hz03
+41.06165, -66.35]; %hz04
+
+JAX_latLongs = [30.15183333, -79.77; %JAX_D_13
+30.15268333, -79.77; %JAX_D_14
+30.15225, -79.77]; %JAX_D_15
+%Not sure if other JAX deployments will be included but this is it for now,
+%update if needed.
 
 %find means of sites with multiple deployments
 [NClat,NClong] = meanm(NC_latLongs(:,1),NC_latLongs(:,2));
@@ -53,17 +74,37 @@ BS_mean = [BSlat, BSlong];
 BStext = repmat({'BS'},size(BS_mean,1),1);
 BS = [BStext num2cell(BS_mean)];
 
+[WClat, WClong] = meanm(WC_latLongs(:,1),WC_latLongs(:,2));
+WC_mean = [WClat, WClong];
+WCtext = repmat({'WC'},size(WC_mean,1),1);
+WC = [WCtext num2cell(WC_mean)];
+
+[OClat, OClong] = meanm(OC_latLongs(:,1),OC_latLongs(:,2));
+OC_mean = [OClat, OClong];
+OCtext = repmat({'OC'},size(OC_mean,1),1);
+OC = [OCtext num2cell(OC_mean)];
+
+[HZlat, HZlong] = meanm(HZ_latLongs(:,1),HZ_latLongs(:,2));
+HZ_mean = [HZlat, HZlong];
+HZtext = repmat({'HZ'},size(HZ_mean,1),1);
+HZ = [HZtext num2cell(HZ_mean)];
+
+[JAXlat, JAXlong] = meanm(JAX_latLongs(:,1),JAX_latLongs(:,2));
+JAX_mean = [JAXlat, JAXlong];
+JAXtext = repmat({'JAX'},size(JAX_mean,1),1);
+JAX = [JAXtext num2cell(JAX_mean)];
+
 %create one table with all lat and longs
-LL = [NC; BC; GS; BP; BS];
+LL = [NC; BC; GS; BP; BS; WC; OC; HZ; JAX];
 LatLong = cell2mat(LL(:,2:3));
 
 SiteData = array2table(LatLong);
 SiteData.Properties.VariableNames = {'Latitude' 'Longitude'};
-SiteData{:,'Site'} = {'NC'; 'BC'; 'GS'; 'BP'; 'BS'};
+SiteData{:,'Site'} = {'NC'; 'BC'; 'GS'; 'BP'; 'BS'; 'WC'; 'OC'; 'HZ'; 'JAX'};
 %% Create map 
 %The projections that successfully work: UTM, Transverse mercator (or this), Mercator (probably the best),...
 %Miller Cylindrical, Albers Equal-Area Conic, Lambert Conformal Conic, Hammer-Aitoff, Mollweide, Robinson
-m_proj('Robinson','long',[-80 -65],'lat',[28.5 42]); %identify ranges of the map
+m_proj('Robinson','long',[-82 -62],'lat',[28.5 42]); %identify ranges of the map
 [CS,CH]=m_etopo2('contourf',[-7000:1000:-1000 -500 -200 0 ],'edgecolor','none'); %load bathymetry from ETOPO 1
 m_gshhs_f('patch',[.7 .7 .7],'edgecolor','none');
 m_line(SiteData.Longitude(1),SiteData.Latitude(1),'marker','s',...
@@ -81,6 +122,18 @@ m_text(SiteData.Longitude(4)+0.1,SiteData.Latitude(4),SiteData.Site(4),'FontWeig
 m_line(SiteData.Longitude(5),SiteData.Latitude(5),'marker','s',...
           'linest','none','markerfacecolor','w','clip','point');
 m_text(SiteData.Longitude(5)+0.1,SiteData.Latitude(5),SiteData.Site(5),'FontWeight','Bold','FontSize',12);
+m_line(SiteData.Longitude(6),SiteData.Latitude(6),'marker','s',...
+          'linest','none','markerfacecolor','w','clip','point');
+m_text(SiteData.Longitude(6)+0.1,SiteData.Latitude(6),SiteData.Site(6),'FontWeight','Bold','FontSize',12);
+m_line(SiteData.Longitude(7),SiteData.Latitude(7),'marker','s',...
+          'linest','none','markerfacecolor','w','clip','point');
+m_text(SiteData.Longitude(7)+0.1,SiteData.Latitude(7),SiteData.Site(7),'FontWeight','Bold','FontSize',12);
+m_line(SiteData.Longitude(8),SiteData.Latitude(8),'marker','s',...
+          'linest','none','markerfacecolor','w','clip','point');
+m_text(SiteData.Longitude(8)+0.1,SiteData.Latitude(8),SiteData.Site(8),'FontWeight','Bold','FontSize',12);
+m_line(SiteData.Longitude(9),SiteData.Latitude(9),'marker','s',...
+          'linest','none','markerfacecolor','w','clip','point');
+m_text(SiteData.Longitude(9)+0.1,SiteData.Latitude(9),SiteData.Site(9),'FontWeight','Bold','FontSize',12);
 m_grid('linest','none','tickdir','out','box','fancy','fontsize',16);
 colormap(m_colmap('blues'));  
 caxis([-7000 000]);

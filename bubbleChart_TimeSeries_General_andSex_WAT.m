@@ -2,7 +2,7 @@
 clear all;close all;clc;
 
 %% load data
-siteName = 'NC';
+siteName = 'WC';
 NumBub = 3;
 DataDir = 'H:\My Drive\WAT_TPWS_metadataReduced\SeasonalityAnalysis';
 saveDirectory = ['H:\My Drive\WAT_TPWS_metadataReduced\Plots\',siteName];
@@ -43,10 +43,10 @@ WeekData.NormBin = WeekData.NormBin *5;
 %Sex
 load([DataDir,'\',siteName,'\',siteName,'_workspaceStep3.mat']);
 clear mean
-binPresence.day = grp2idx(binPresence.day);
-binPresenceAll = synchronize(allDays,binPresence);
-binPresenceAll = removevars(binPresenceAll, {'ZeroCol'});
-dataWeek = retime(binPresenceAll,'weekly',@(x) mean(x, 'omitnan'));
+sexbinPresence.day = grp2idx(sexbinPresence.day);
+sexbinPresenceAll = synchronize(allDays,sexbinPresence);
+sexbinPresenceAll = removevars(sexbinPresenceAll, {'ZeroCol'});
+dataWeek = retime(sexbinPresenceAll,'weekly',@(x) mean(x, 'omitnan'));
 dataWeek.Noeffort = isnan(dataWeek.Effort_Bin);
 dataWeek.Year = year(dataWeek.tbin);
 dataWeek.wN = weeknum(dataWeek.tbin,2,1); % Day of week begins on Monday and uses European standard
@@ -68,7 +68,8 @@ dataWeek.JuvenileNormBin = dataWeek.JuvenileNormBin *5;
 dataWeek.MaleNormBin = dataWeek.MaleNormBin *5;
 
 %% Delete first week for specific sites
-if (strcmp(siteName,'NC') | strcmp(siteName,'BC') | strcmp(siteName,'GS') | strcmp(siteName,'BP') | strcmp(siteName,'BS'))
+if (strcmp(siteName,'NC') | strcmp(siteName,'BC') | strcmp(siteName,'GS') | strcmp(siteName,'BP') | strcmp(siteName,'BS')...
+        | strcmp(siteName,'WC') | strcmp(siteName,'OC') | strcmp(siteName,'HZ') | strcmp(siteName,'JAX'))
     WeekData(1,:) = [];
     dataWeek(1,:) = [];
 end

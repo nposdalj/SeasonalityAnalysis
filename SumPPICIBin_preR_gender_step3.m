@@ -2,12 +2,12 @@ clearvars
 close all
 
 %% Parameters defined by user
-filePrefix = 'CORC'; % File name to match. 
-genderFileName = 'CORC'; %File name to match gender file
-siteabrev = 'CORC'; %abbreviation of site
-region = 'CCE';
+filePrefix = 'WC'; % File name to match. 
+genderFileName = 'WC'; %File name to match gender file
+siteabrev = 'WC'; %abbreviation of site
+region = 'WAT';
 sp = 'Pm'; % your species code
-GDrive = 'I'; %Google Drive
+GDrive = 'H'; %Google Drive
 
 effortXls = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev,'\Pm_Effort.xlsx']; % specify excel file with effort times
 saveDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev]; %specify directory to save files
@@ -18,6 +18,14 @@ load(filename);
 sexData = binData; %change file name so it doesn't match general sperm whale data
 %% load workspace 2
 load([saveDir,'\',siteabrev,'_workspaceStep2.mat']);
+
+%overwrite some file names
+GDrive = 'H';
+effortXls(1) = GDrive;
+saveDir(1) = GDrive;
+tpwsPath(1) = GDrive;
+
+
 %% Extraft effort from workspace 2 dayTable that already accounts for duty cycle, etc.
 sexBinEffort = dayBinTAB(:,{'tbin','Effort_Bin','Effort_Sec','MaxEffort_Bin','MaxEffort_Sec'});
 sexBinEffort = table2timetable(sexBinEffort);

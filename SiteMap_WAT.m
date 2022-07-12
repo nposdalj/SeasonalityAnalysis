@@ -39,6 +39,12 @@ HZ_latLongs = [41.06191667, -66.35; %hz01
 41.06165, -66.35; %hz03
 41.06165, -66.35]; %hz04
 
+JAX_latLongs = [30.15183333, -79.77; %JAX_D_13
+30.15268333, -79.77; %JAX_D_14
+30.15225, -79.77]; %JAX_D_15
+%Not sure if other JAX deployments will be included but this is it for now,
+%update if needed.
+
 %% load lat and long with only 1 deployment
 %AB_mean = [57.513667,-146.50];
 %ABtext = repmat({'AB'},size(AB_mean,1),1);
@@ -94,13 +100,18 @@ HZ_mean = [HZlat, HZlong];
 HZtext = repmat({'HZ'},size(HZ_mean,1),1);
 HZ = [HZtext num2cell(HZ_mean)];
 
+[JAXlat, JAXlong] = meanm(JAX_latLongs(:,1),JAX_latLongs(:,2));
+JAX_mean = [JAXlat, JAXlong];
+JAXtext = repmat({'JAX'},size(JAX_mean,1),1);
+JAX = [JAXtext num2cell(JAX_mean)];
+
 %create one table with all lat and longs
-LL = [NC; BC; GS; BP; BS; WC; OC; HZ];
+LL = [NC; BC; GS; BP; BS; WC; OC; HZ; JAX];
 LatLong = cell2mat(LL(:,2:3));
 
 LatLongTAB = array2table(LatLong);
 LatLongTAB.Properties.VariableNames = {'Latitude' 'Longitude'};
-LatLongTAB{:,'Site'} = {'NC'; 'BC'; 'GS'; 'BP'; 'BS'; 'WC'; 'OC'; 'HZ'};
+LatLongTAB{:,'Site'} = {'NC'; 'BC'; 'GS'; 'BP'; 'BS'; 'WC'; 'OC'; 'HZ'; 'JAX'};
 %LatLongTAB.Longitude(2) = -(LatLongTAB.Longitude(2) + 10);
 
 lat_lims = [28.5 42];
@@ -123,6 +134,7 @@ text(latitude(5),longitude(5)-0.5,'BS','HorizontalAlignment','right','FontSize',
 text(latitude(6),longitude(6)-0.5,'WC','HorizontalAlignment','right','FontSize',10);
 text(latitude(7),longitude(7)-0.5,'OC','HorizontalAlignment','right','FontSize',10);
 text(latitude(8),longitude(8)-0.5,'HZ','HorizontalAlignment','right','FontSize',10);
+text(latitude(9),longitude(9)-0.5,'JAX','HorizontalAlignment','right','FontSize',10);
 geolimits([28.5 42],[-80 -65]);
 
 %% grey site map
@@ -149,8 +161,9 @@ text(latitude(1),longitude(1)-0.5,'NC','HorizontalAlignment','right','FontSize',
 text(latitude(2),longitude(2)-0.5,'BC','HorizontalAlignment','right','FontSize',10);
 text(latitude(3),longitude(3)-0.5,'GS','HorizontalAlignment','right','FontSize',10);
 text(latitude(4),longitude(4)-0.5,'BP','HorizontalAlignment','right','FontSize',10);
-text(latitude(5),longitude(5)-0.5,'BS','HorizontalAlignment','right','FontSize',10);
+text(latitude(5),longitude(5)+1.5,'BS','HorizontalAlignment','right','FontSize',10);
 text(latitude(6),longitude(6)-0.5,'WC','HorizontalAlignment','right','FontSize',10);
 text(latitude(7),longitude(7)-0.5,'OC','HorizontalAlignment','right','FontSize',10);
 text(latitude(8),longitude(8)-0.5,'HZ','HorizontalAlignment','right','FontSize',10);
+text(latitude(9),longitude(9)+1.5,'JAX','HorizontalAlignment','right','FontSize',10);
 geolimits([28.5 42],[-80 -65]);
