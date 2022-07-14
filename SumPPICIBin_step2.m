@@ -2,22 +2,29 @@ clearvars
 close all
 
 %% Parameters defined by user
-filePrefix = 'OC'; % File name to match. 
-siteabrev = 'OC'; %abbreviation of site.
-region = 'WAT'; %region
+filePrefix = 'QC'; % File name to match. 
+siteabrev = 'QC'; %abbreviation of site.
+region = 'CCE'; %region
 sp = 'Pm'; % your species code
-GDrive = 'H'; %Google Drive
+GDrive = 'I'; %Google Drive
 saveDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev]; %specify directory to save files
+DutyCy = 1; %if this data is duty cycled, make this equal to 1
 %% load workspace
 load([saveDir,'\',siteabrev,'_workspace125.mat']);
 
-effortXls(1) = 'H'; %Correct GDrive for SWAL1
-GDrive = 'H';
-saveDir(1) = 'H';
-tpwsPath(1) = 'H';
+effortXls(1) = 'I'; %Correct GDrive for SWAL1
+GDrive = 'I';
+saveDir(1) = 'I';
+tpwsPath(1) = 'I';
+%% Set up duty cycled dates
+% If only one or two deployments are duty cycled, adjust accordingly
+if DutyCy == 1
+    startTime = datetime(2007,07,02);
+    endTime = datetime(2008,06,16);
+else
+end
 %% Remove bin data with less than 5 clicks
 binData(binData.Count < 5,:) = []; %identify any bins with less than 5 clicks and delete them
-
 %% group data by 5min bins, hourly, days, weeks, and seasons 
 %group data by 5 minute bins
 binTable = synchronize(binData,binEffort);
@@ -62,6 +69,14 @@ dayTable(~dayTable.Effort_Bin,:)=[]; %removes days with no effort, NOT days with
 hourlyTab.MaxEffort_Bin = ones(p,1)*(12); %total number of bins possible in one day
 hourlyTab.MaxEffort_Sec = ones(p,1)*(3600); %seconds in one day
 
+if DutyCy == 1
+    DutyCycleIdxStart =  hourlyTab.tbin < startTime;
+    startVal = find(DutyCycleIdxStart == 0,1);
+    DutyCycleIdxEnd =  hourlyTab.tbin > endTime;
+    endVal = find(DutyCycleIdxEnd == 1,1);
+else
+end
+
 %dealing with duty cycled data
 if strcmp(siteabrev,'CSM');
     hourlyTab.Effort_Bin = floor(hourlyTab.Effort_Bin * .2); %for Cross_01 and 02 only, 5 on 20 off (25 minute cycle)-- meaning you're recording 20% (0.2) of the time
@@ -78,6 +93,9 @@ elseif strcmp(siteabrev,'CORC');
 elseif strcmp(siteabrev,'CA');
     hourlyTab.Effort_Bin = hourlyTab.Effort_Bin * (4/12); %for GofCA10 and 11, 5 on 10 off (15 minute cycle)-- meaning you're recording 33% (0.33) of the time
     hourlyTab.Effort_Sec = hourlyTab.Effort_Bin * 5 * 60; %convert from bins into efforts in seconds per day
+elseif strcmp(siteabrev,'QC');
+    hourlyTab.Effort_Bin(startVal:endVal) = hourlyTab.Effort_Bin(startVal:endVal) * (0.33); %for QC06 I evaluated the duty cycle using continous deployments and I should adjust by 33%
+    hourlyTab.Effort_Sec(startVal:endVal) = hourlyTab.Effort_Bin(startVal:endVal) * 5 * 60; %convert from bins into efforts in seconds per day
 else
     hourlyTab.MaxEffort_Bin = ones(p,1)*(288);
 end
@@ -126,6 +144,14 @@ writetable(timetable2table(hourlyTab),[saveDir,'\',siteabrev,'_binData_forGAMGEE
 dayTable.MaxEffort_Bin = ones(p,1)*(288); %total number of bins possible in one day
 dayTable.MaxEffort_Sec = ones(p,1)*(86400); %seconds in one day
 
+if DutyCy == 1
+    DutyCycleIdxStart =  dayTable.tbin < startTime;
+    startVal = find(DutyCycleIdxStart == 0,1);
+    DutyCycleIdxEnd =  dayTable.tbin > endTime;
+    endVal = find(DutyCycleIdxEnd == 1,1);
+else
+end
+
 %dealing with duty cycled data
 if strcmp(siteabrev,'CSM');
     dayTable.Effort_Bin = floor(dayTable.Effort_Bin * .2); %for Cross_01 and 02 only, 5 on 20 off (25 minute cycle)-- meaning you're recording 20% (0.2) of the time
@@ -142,7 +168,10 @@ elseif strcmp(siteabrev,'CORC');
 elseif strcmp(siteabrev,'CA');
     dayTable.Effort_Bin = floor(dayTable.Effort_Bin * .333); %for GofCA10 and 11, 5 on 10 off (15 minute cycle)-- meaning you're recording 33% (0.33) of the time
     dayTable.Effort_Sec = dayTable.Effort_Bin * 5 * 60; %convert from bins into efforts in seconds per day
-else
+elseif strcmp(siteabrev,'QC');
+    dayTable.Effort_Bin(startVal:endVal) = dayTable.Effort_Bin(startVal:endVal) * (0.33); %for QC06 I evaluated the duty cycle using continous deployments and I should adjust by 33%
+    dayTable.Effort_Sec(startVal:endVal) = dayTable.Effort_Bin(startVal:endVal) * 5 * 60; %convert from bins into efforts in seconds per day
+else    
     dayTable.MaxEffort_Bin = ones(p,1)*(288);
 end
 
