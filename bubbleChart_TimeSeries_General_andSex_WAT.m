@@ -2,7 +2,7 @@
 clear all;close all;clc;
 
 %% load data
-siteName = 'WC';
+siteName = 'JAX';
 NumBub = 3;
 DataDir = 'H:\My Drive\WAT_TPWS_metadataReduced\SeasonalityAnalysis';
 saveDirectory = ['H:\My Drive\WAT_TPWS_metadataReduced\Plots\',siteName];
@@ -43,6 +43,13 @@ WeekData.NormBin = WeekData.NormBin *5;
 %Sex
 load([DataDir,'\',siteName,'\',siteName,'_workspaceStep3.mat']);
 clear mean
+GDrive = 'H'; %overwrite some file names for SWAL1
+effortXls(1) = GDrive;
+saveDir(1) = GDrive;
+tpwsPath(1) = GDrive;
+dayBinCSV(1) = GDrive;
+filename(1) = GDrive;
+
 sexbinPresence.day = grp2idx(sexbinPresence.day);
 sexbinPresenceAll = synchronize(allDays,sexbinPresence);
 sexbinPresenceAll = removevars(sexbinPresenceAll, {'ZeroCol'});
@@ -238,7 +245,7 @@ xlim([0,53])
 % ylim([2016.75,2017.25])
 ylabel('General')
 set(gca,'xticklabel',[])
-yticks([2016 2017 2018 2019])
+yticks([2015 2016 2017 2018 2019])
 
 % Social Group
 subplot(4,1,2)
@@ -267,7 +274,7 @@ xlim([0,53])
 % ylim([2016.75,2017.25])
 ylabel('Social Groups')
 set(gca,'xticklabel',[])
-yticks([2016 2017 2018 2019])
+yticks([2015 2016 2017 2018 2019])
 
 subplot(4,1,3)
 blue = '#fc8d62';%'#349987';
@@ -295,7 +302,7 @@ xlim([0,53])
 % ylim([2016.75,2017.25])
 ylabel('Mid-size')
 set(gca,'xticklabel',[])
-yticks([2016 2017 2018 2019])
+yticks([2015 2016 2017 2018 2019])
 
 %fBubble3 = figure('Position',[411 1008 816 160]);
 subplot(4,1,4)
@@ -324,7 +331,7 @@ xlim([0,53])
 xlabel('Week of the year')
 % ylim([2016.75,2017.25])
 ylabel('Adult Males')
-yticks([2016 2017 2018 2019])
+yticks([2015 2016 2017 2018 2019])
 end % don't run this line
 
 %% save plot

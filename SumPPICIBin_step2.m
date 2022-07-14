@@ -2,14 +2,19 @@ clearvars
 close all
 
 %% Parameters defined by user
-filePrefix = 'WC'; % File name to match. 
-siteabrev = 'WC'; %abbreviation of site.
+filePrefix = 'OC'; % File name to match. 
+siteabrev = 'OC'; %abbreviation of site.
 region = 'WAT'; %region
 sp = 'Pm'; % your species code
-GDrive = 'I'; %Google Drive
+GDrive = 'H'; %Google Drive
 saveDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev]; %specify directory to save files
 %% load workspace
 load([saveDir,'\',siteabrev,'_workspace125.mat']);
+
+effortXls(1) = 'H'; %Correct GDrive for SWAL1
+GDrive = 'H';
+saveDir(1) = 'H';
+tpwsPath(1) = 'H';
 %% Remove bin data with less than 5 clicks
 binData(binData.Count < 5,:) = []; %identify any bins with less than 5 clicks and delete them
 
