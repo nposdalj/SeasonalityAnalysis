@@ -2,16 +2,23 @@ clearvars
 close all
 % This script creates time series plots for each site.
 %% Parameters defined by user
-filePrefix = 'CORC'; % File name to match. 
-siteabrev = 'CORC'; %abbreviation of site.
-GDrive = 'I'; %directory for Google Drive
-region = 'CCE';
+filePrefix = 'OC'; % File name to match. 
+siteabrev = 'OC'; %abbreviation of site.
+GDrive = 'H'; %directory for Google Drive
+region = 'WAT';
 sp = 'Pm'; % your species code
-titleNAME = 'CORC';
+titleNAME = 'Western Atlantic - Oceanographers Canyon';
 dataDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev]; %specify directory where workspaces are saved
 %% load workspace
 load([dataDir,'\',siteabrev,'_workspaceStep2.mat']);
 load([dataDir,'\',siteabrev,'_workspaceStep3.mat']);
+
+dayBinCSV(1) = 'H'; % Correct GDrive for SWAL1
+effortXls(1) = 'H';
+filename(1) = 'H';
+GDrive = 'H';
+tpwsPath(1) = 'H';
+
 saveDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\Plots\',siteabrev];
 %% Fill in missing days
 %day table
@@ -221,30 +228,30 @@ end
 figure
 set(gcf,'units','inches','PaperPositionMode','auto','OuterPosition',[3 1 7.5 7])
 subplot(3,1,1)
-bar(binPresence.tbin,binPresence.FeHoursProp,'FaceColor',mint,'BarWidth',3)
-xlim([binPresence.tbin(1),binPresence.tbin(end)])
+bar(sexbinPresence.tbin,sexbinPresence.FeHoursProp,'FaceColor',mint,'BarWidth',3)
+xlim([sexbinPresence.tbin(1),sexbinPresence.tbin(end)])
 title(['Social Units'])
 subplot(3,1,2)
-bar(binPresence.tbin,binPresence.JuHoursProp,'FaceColor',persimmon,'BarWidth',3)
-xlim([binPresence.tbin(1),binPresence.tbin(end)])
+bar(sexbinPresence.tbin,sexbinPresence.JuHoursProp,'FaceColor',persimmon,'BarWidth',3)
+xlim([sexbinPresence.tbin(1),sexbinPresence.tbin(end)])
 label_y = ylabel('Daily Presence (5-min bins)');
 label_y.Position(1) = -100;
 title(['Mid-Size Animals',])
 subplot(3,1,3)
-bar(binPresence.tbin,binPresence.MaHoursProp,'FaceColor',slate,'BarWidth',3)
-xlim([binPresence.tbin(1),binPresence.tbin(end)])
+bar(sexbinPresence.tbin,sexbinPresence.MaHoursProp,'FaceColor',slate,'BarWidth',3)
+xlim([sexbinPresence.tbin(1),sexbinPresence.tbin(end)])
 title(['Males'])
 sgtitle(['Daily Presence of Sperm Whales in the ', titleNAME]) % Overarching title
 saveas(gcf,[saveDir,'\',siteabrev,'DailyPresence_AllClasses_Subplots130.png']);
 
 %Plot daily presence in 5-min bins for all classes in one plot
 figure
-bar(binPresence.tbin,binPresence.MaleNormBin,'FaceColor',slate,'BarWidth',1)
+bar(sexbinPresence.tbin,sexbinPresence.MaleNormBin,'FaceColor',slate,'BarWidth',1)
 ylabel('Daily Presence (5-min bins)')
 title(['Daily Presence of Each Size Class at ',titleNAME])
 hold on
-bar(binPresence.tbin,binPresence.JuvenileNormBin,'FaceColor',persimmon,'BarWidth',1)
-bar(binPresence.tbin,binPresence.FemaleNormBin,'FaceColor',mint,'BarWidth',1)
+bar(sexbinPresence.tbin,sexbinPresence.JuvenileNormBin,'FaceColor',persimmon,'BarWidth',1)
+bar(sexbinPresence.tbin,sexbinPresence.FemaleNormBin,'FaceColor',mint,'BarWidth',1)
 legend('Males','Mid-Size','Social Units')
 saveas(gcf,[saveDir,'\',siteabrev,'DailyPresence_AllClasses130.png']);
 
@@ -253,9 +260,9 @@ dayBinTAB = readtable(dayBinCSV); %read general PM table with presence informati
 figure
 bar(dayBinTAB.tbin,dayBinTAB.NormBin,'k')
 hold on
-bar(binPresence.tbin,binPresence.MaleNormBin,'FaceColor','c','BarWidth',1)
-bar(binPresence.tbin,binPresence.JuvenileNormBin,'FaceColor','b','BarWidth',1)
-bar(binPresence.tbin,binPresence.FemaleNormBin,'FaceColor','y','BarWidth',1)
+bar(sexbinPresence.tbin,sexbinPresence.MaleNormBin,'FaceColor','c','BarWidth',1)
+bar(sexbinPresence.tbin,sexbinPresence.JuvenileNormBin,'FaceColor','b','BarWidth',1)
+bar(sexbinPresence.tbin,sexbinPresence.FemaleNormBin,'FaceColor','y','BarWidth',1)
 ylabel('Daily Presence (5-min bins)')
 title(['Daily Presence with Each Size Class at ',titleNAME])
 legend('All','Males','Mid-Size','Social Units')
