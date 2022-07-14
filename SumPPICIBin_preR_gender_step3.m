@@ -2,10 +2,10 @@ clearvars
 close all
 
 %% Parameters defined by user
-filePrefix = 'CORC'; % File name to match. 
-genderFileName = 'CORC'; %File name to match gender file
-siteabrev = 'CORC'; %abbreviation of site
-region = 'CCE';
+filePrefix = 'Palmyra'; % File name to match. 
+genderFileName = 'Palmyra'; %File name to match gender file
+siteabrev = 'Palmyra'; %abbreviation of site
+region = 'CentralPac';
 sp = 'Pm'; % your species code
 GDrive = 'I'; %Google Drive
 
@@ -23,6 +23,7 @@ sexBinEffort = dayBinTAB(:,{'tbin','Effort_Bin','Effort_Sec','MaxEffort_Bin','Ma
 sexBinEffort = table2timetable(sexBinEffort);
 %% group data by days and add effort
 %Retime sex data daily
+sexDEdata = sexData;
 sexData = retime(sexData,'daily','sum');
 sexbinPresence = synchronize (sexData, sexBinEffort);
 sexbinPresence.maxPP = [];

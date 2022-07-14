@@ -2,9 +2,9 @@ clearvars
 close all
 
 %% Parameters defined by user
-filePrefix = 'WC'; % File name to match. 
-siteabrev = 'WC'; %abbreviation of site.
-region = 'WAT'; %region
+filePrefix = 'Palmyra'; % File name to match. 
+siteabrev = 'Palmyra'; %abbreviation of site.
+region = 'CentralPac'; %region
 sp = 'Pm'; % your species code
 GDrive = 'I'; %Google Drive
 saveDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev]; %specify directory to save files

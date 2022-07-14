@@ -8,7 +8,7 @@ library(lubridate)
 GDrive = 'I'
 #Sites = c('CB','PT','QN','AB','KOA','BD','KS') #The GOA and BSAI Sites
 #Regions = c("GOA","BSAI") #GOA AND BSAI Region
-Sites = c('BS','BP','NC','BC','GS')
+Sites = c('BS','BP','NC','BC','GS','JAX','HZ','OC','WC')
 Regions = c('WAT')
 
 fileDir = paste(GDrive,":/My Drive/WAT_TPWS_metadataReduced/SeasonalityAnalysis/",Sites, sep="")#setting the directory

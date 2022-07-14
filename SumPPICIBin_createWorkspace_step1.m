@@ -2,11 +2,11 @@ clearvars
 close all
 
 %% Parameters defined by user
-filePrefix = 'OC'; % File name to match. 
-siteabrev = 'OC'; %abbreviation of site.
-region = 'WAT'; %region
+filePrefix = 'Palmyra'; % File name to match. 
+siteabrev = 'Palmyra'; %abbreviation of site.
+region = 'CentralPac'; %region
 sp = 'Pm'; % your species code
-itnum = '3'; % which iteration you are looking for (which TPWS folder)
+itnum = '2'; % which iteration you are looking for (which TPWS folder)
 GDrive = 'I'; %Google Drive
 
 tpwsPath = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\TPWS_125\',siteabrev]; %directory of TPWS files

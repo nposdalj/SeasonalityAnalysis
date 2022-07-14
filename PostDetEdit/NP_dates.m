@@ -332,20 +332,48 @@ PS_latLongs = [58.645683,-148.07; %01 in decimals
 58.66961667,-148.03;
 58.66961667,-148.03;
 58.66961667,-148.03];%10
+
+%% Palmyra
+PAL_dates = [datenum([2006 10 19 04 00 00]), datenum([2007 03 23 14 00 00]); %PAL02
+    datenum([2007 04 09 00 00 00]), datenum([2007 09 20 21 25 00]); %PAL03
+    datenum([2007 09 22 00 00 00]), datenum([2008 02 13 16 00 21]); %PAL04
+    datenum([2008 05 27 12 00 00]), datenum([2008 09 17 09 26 13]); %PAL05
+    datenum([2008 10 22 00 00 00]), datenum([2009 04 02 01 23 13]); %PAL06
+    datenum([2009 06 02 00 00 00]), datenum([2009 09 27 21 00 00]); %PAL07
+    datenum([2009 10 05 00 00 00]), datenum([2009 11 12 08 23 46]); %PAL08
+    datenum([2010 06 12 00 00 00]), datenum([2010 08 25 02 08 46]); %PAL09
+    datenum([2010 08 27 00 00 00]), datenum([2010 12 09 16 06 15])]; %PAL10
+
+PAL_depl = [2,3,4,5,6,7,8,9,10];
+
+PAL_site(1:length(PAL_depl),1) = {'Palmyra'};
+
+%DONT FIX THIS ONE
+PAL_latLongs = [58.645683,-148.07; %02
+58.671333,-148.02; %03
+58.673483,-148.00; %05
+58.671867,-148.02; %05
+58.671,-148.02; %06
+58.670817,-148.02; %07
+58.65525,-148.09; %08
+58.6695,-148.03; %09
+58.6695,-148.0338889]; %10
+
 %% concatenate all information
 edgeffort = [CB_dates; QN_dates; AB_dates; PT_dates; CORC_dates;...
     HOKE_dates; ALEUT_dates; DCPP01C_dates; ALEUT01KS_dates; OCNMSQC_dates; KOA_dates; GI_dates;...
     EI_dates; Saipan_dates; Tinian_dates; Wake_dates; OC_dates; GS_dates; NC_dates; JAX_dates; HZ_dates; BC_dates;...
-    BP_dates; BS_dates; WC_dates; CA_dates; CCE_dates; PS_dates];
+    BP_dates; BS_dates; WC_dates; CA_dates; CCE_dates; PS_dates; PAL_dates];
 latLongs = [CB_latLongs; QN_latLongs; AB_latLongs; PT_latLongs;...
     CORC_latLongs; HOKE_latLongs; ALEUT_latLongs; DCPP01C_latLongs; ALEUT01KS_latLongs; OCNMSQC_latLongs;...
     KOA_latLongs; GI_latLongs; EI_latLongs; Saipan_latLongs; Tinian_latLongs; Wake_latLongs; OC_latLongs; GS_latLongs;...
-    NC_latLongs; JAX_latLongs; HZ_latLongs; BC_latLongs; BP_latLongs; BS_latLongs; WC_latLongs; CA_latLongs; CCE_latLongs; PS_latLongs];
+    NC_latLongs; JAX_latLongs; HZ_latLongs; BC_latLongs; BP_latLongs; BS_latLongs; WC_latLongs; CA_latLongs; CCE_latLongs;...
+    PS_latLongs; PAL_latLongs];
 depl = [CB_depl'; QN_depl'; AB_depl'; PT_depl'; CORC_depl'; HOKE_depl';...
     ALEUT_depl'; DCPP01C_depl'; ALEUT01KS_depl';OCNMSQC_depl'; KOA_depl';GI_depl'; EI_depl'; Saipan_depl';...
     Tinian_depl'; Wake_depl'; OC_depl'; GS_depl'; NC_depl'; JAX_depl'; HZ_depl'; BC_depl'; BP_depl'; BS_depl'; WC_depl';...
-    CA_depl'; CCE_depl'; PS_depl'];
+    CA_depl'; CCE_depl'; PS_depl'; PAL_depl'];
 site = [CB_site; QN_site; AB_site; PT_site; CORC_site; HOKE_site;...
     ALEUT_site; DCPP01C_site; ALEUT01KS_site; OCNMSQC_site; KOA_site; GI_site; EI_site; Saipan_site;...
     Tinian_site; Wake_site; OC_site; GS_site; NC_site; JAX_site; HZ_site; BC_site; BP_site; BS_site; WC_site;...
-    CA_site; CCE_site; PS_site];
+    CA_site; CCE_site; PS_site; PAL_site];
