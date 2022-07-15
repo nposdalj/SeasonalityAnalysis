@@ -2,7 +2,7 @@
 clear all;close all;clc;
 
 %% load data
-siteName = 'CORC';
+siteName = 'QC';
 GDrive = 'I';
 region = 'CCE'; %region
 NumBub = 3;

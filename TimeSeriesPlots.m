@@ -2,22 +2,22 @@ clearvars
 close all
 % This script creates time series plots for each site.
 %% Parameters defined by user
-filePrefix = 'OC'; % File name to match. 
-siteabrev = 'OC'; %abbreviation of site.
-GDrive = 'H'; %directory for Google Drive
-region = 'WAT';
+filePrefix = 'QC'; % File name to match. 
+siteabrev = 'QC'; %abbreviation of site.
+GDrive = 'I'; %directory for Google Drive
+region = 'CCE';
 sp = 'Pm'; % your species code
-titleNAME = 'Western Atlantic - Oceanographers Canyon';
+titleNAME = 'Olympic Coast National Marine Sanctuary - Quinault Canyon';
 dataDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev]; %specify directory where workspaces are saved
 %% load workspace
 load([dataDir,'\',siteabrev,'_workspaceStep2.mat']);
 load([dataDir,'\',siteabrev,'_workspaceStep3.mat']);
 
-dayBinCSV(1) = 'H'; % Correct GDrive for SWAL1
-effortXls(1) = 'H';
-filename(1) = 'H';
-GDrive = 'H';
-tpwsPath(1) = 'H';
+dayBinCSV(1) = 'I'; % Correct GDrive for SWAL1
+effortXls(1) = 'I';
+filename(1) = 'I';
+GDrive = 'I';
+tpwsPath(1) = 'I';
 
 saveDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\Plots\',siteabrev];
 %% Fill in missing days
@@ -190,30 +190,54 @@ saveas(gcf,[saveDir,'\',siteabrev,'AverageDailyPresence.png']);
 %presence
 %retime average table
 if length(MD) > 365
-meantab365.datetime = datetime(meantab365.day, 'convertfrom','juliandate');
-meantab365.Week = week(meantab365.datetime);
-meantab365.Week = categorical(meantab365.Week);
-[mean, sem, std, var, range] = grpstats(meantab365.HoursProp, meantab365.Week, {'mean','sem','std','var','range'}); %takes the mean of each day of the year
-meantable = array2table(mean);
-semtable = array2table(sem);
-stdtable = array2table(std);
-vartable = array2table(var);
-rangetable = array2table(range);
-newcol_mean = (1:length(mean))';
-meanarray365 = [newcol_mean mean sem std var range];
-WEEKmeantab365 = array2table(meanarray365);
-WEEKmeantab365.Properties.VariableNames = {'Week' 'HoursProp' 'SEM' 'Std' 'Var' 'Range'};
+n=7; %average every 7th value to account for week
+meantab365.day = double(string(meantab365.day));
+meantab365ARRAY = table2array(meantab365);
+mean_hoursNorm = meantab365ARRAY(:,8);
+mean_SEM = meantab365ARRAY(:,9);
+
+% HOURS NORM
+s1 = size(mean_hoursNorm, 1);      % Find the next smaller multiple of n
+m  = s1 - mod(s1, n);
+y  = reshape(mean_hoursNorm(1:m,:), n, []);     % Reshape x to a [n, m/n] matrix
+Avg = transpose(sum(y, 1) / n);  % Calculate the mean over the 1st dim
+
+% SEM
+y2  = reshape(mean_SEM(1:m,:), n, []);     % Reshape x to a [n, m/n] matrix
+Avg2 = transpose(sum(y2, 1) / n);  % Calculate the mean over the 1st dim
+
+meantab52 = (1:52)';
+meantab365WEEK = array2table([meantab52 Avg Avg2]);
+meantab365WEEK.Properties.VariableNames = {'Week' 'HoursProp' 'SEM'};
+
+%Old code not ready to part with it yet
+% meantab365WEEK = squeeze(mean(reshape(table2array(meantab365),[]),1));
+% meantab365.datetime = datetime(meantab365.day, 'convertfrom','juliandate');
+% meantab365.Week = week(meantab365.datetime);
+% meantab365.Week = categorical(meantab365.Week);
+% [mean, sem, std, var, range] = grpstats(meantab365.HoursProp, meantab365.Week, {'mean','sem','std','var','range'}); %takes the mean of each day of the year
+% meantable = array2table(mean);
+% semtable = array2table(sem);
+% stdtable = array2table(std);
+% vartable = array2table(var);
+% rangetable = array2table(range);
+% newcol_mean = (1:length(mean))';
+% meanarray365 = [newcol_mean mean sem std var range];
+% WEEKmeantab365 = array2table(meanarray365);
+% WEEKmeantab365.Properties.VariableNames = {'Week' 'HoursProp' 'SEM' 'Std' 'Var' 'Range'};
+
 %make figure
 figure
-bar(WEEKmeantab365.Week, WEEKmeantab365.HoursProp,'FaceColor',[.6 .6 .6], 'EdgeColor','flat')
+bar(meantab365WEEK.Week, meantab365WEEK.HoursProp,'FaceColor',[.6 .6 .6], 'EdgeColor','flat')
 %set(gcf,'position',[50 50 700 400])
 xlim([0 52])
 xlabel('Week')
 ylabel('Average proportion of hours/week')
 title({'Average Weekly Presence of Sperm Whales in the ',titleNAME});
 hold on
-errorbar(WEEKmeantab365.Week,WEEKmeantab365.HoursProp, -(WEEKmeantab365.SEM),WEEKmeantab365.SEM, ...
+errorbar(meantab365WEEK.Week,meantab365WEEK.HoursProp, -(meantab365WEEK.SEM),meantab365WEEK.SEM, ...
     'Color','k','LineStyle','none')
+ylim([0 inf])
 saveas(gcf,[saveDir,'\',siteabrev,'AverageWeeklyPresence.png']);
 %saveas(gcf,[saveDir,'\',siteabrev,'AverageWeeklyPresence_SansTitle.png']);
 else
