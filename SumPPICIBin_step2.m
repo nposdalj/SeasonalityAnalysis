@@ -2,13 +2,13 @@ clearvars
 close all
 
 %% Parameters defined by user
-filePrefix = 'QC'; % File name to match. 
-siteabrev = 'QC'; %abbreviation of site.
-region = 'CCE'; %region
+filePrefix = 'PS'; % File name to match. 
+siteabrev = 'PS1'; %abbreviation of site.
+region = 'CCE1'; %region
 sp = 'Pm'; % your species code
 GDrive = 'I'; %Google Drive
 saveDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev]; %specify directory to save files
-DutyCy = 1; %if this data is duty cycled, make this equal to 1
+DutyCy = 0; %if this data is duty cycled, make this equal to 1
 %% load workspace
 load([saveDir,'\',siteabrev,'_workspace125.mat']);
 

@@ -1,0 +1,19 @@
+tbin - date
+Count_Click - # of Clicks
+Count_Bin - # of 5-min bins
+Effort_Bin - # of 5-min bins with recording effort
+Effort_Sec - recording effort in seconds
+MaxEffort_Bin - Max # of 5-min bins with recording effort possible
+MaxEffort_Sec - Max recording effort in seconds possible
+Minutes - # of recording minutes
+Hours - # of recording hours
+HoursProp - Proprtion of hours with presence considering effort
+NormEffort_Bin - Proportion of effort (5-min bins)
+NormEffort_Sec - Proprtion of effort (seconds)
+NormBin - Normalized 5-min bin count considering effort
+NormClick - Normalized click count considering effort
+HoursNorm - Normalized presence in hours considering effort
+Season - Recording season [3 = Winter (Jan-Mar), 4 = Spring (Apr-Jun), 1 - Summer (Jul-Sep), 2 - Fall (Oct-Dec)]
+Month - Recording month
+Year - Recording year
+day - Julian day

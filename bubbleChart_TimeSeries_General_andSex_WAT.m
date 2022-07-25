@@ -2,10 +2,10 @@
 clear all;close all;clc;
 
 %% load data
-siteName = 'JAX';
+siteName = 'OC';
 NumBub = 3;
-DataDir = 'H:\My Drive\WAT_TPWS_metadataReduced\SeasonalityAnalysis';
-saveDirectory = ['H:\My Drive\WAT_TPWS_metadataReduced\Plots\',siteName];
+DataDir = 'I:\My Drive\WAT_TPWS_metadataReduced\SeasonalityAnalysis';
+saveDirectory = ['I:\My Drive\WAT_TPWS_metadataReduced\Plots\',siteName];
 %% Retime data weekly
 load([DataDir,'\',siteName,'\',siteName,'_workspaceStep2.mat']);
 clear mean
