@@ -128,12 +128,12 @@ elseif DutyCy == 6
     endVal4 = find(DutyCycleIdxEnd4 == 1,1);
     DutyCycleIdxStart5 =  hourlyTab.tbin < startTime5;
     startVal5 = find(DutyCycleIdxStart5 == 0,1);
-    DutyCycleIdxEnd5 =  hourlyTab.tbin > endTime5;
-    endVal5 = find(DutyCycleIdxEnd5 == 1,1);
-    DutyCycleIdxStart6 =  hourlyTab.tbin < startTime6;
-    startVal6 = find(DutyCycleIdxStart6 == 0,1);
     DutyCycleIdxEnd6 =  hourlyTab.tbin > endTime6;
     endVal6 = find(DutyCycleIdxEnd6 == 1,1);
+    DutyCycleIdxStart6 =  hourlyTab.tbin < startTime6;
+    startVal3 = find(DutyCycleIdxStart3 == 0,1);
+    DutyCycleIdxEnd3 =  hourlyTab.tbin > endTime3;
+    endVal6 = find(DutyCycleIdxEnd3 == 1,1);
 end
 
 %dealing with duty cycled data
@@ -155,26 +155,13 @@ elseif strcmp(siteabrev,'CA');
 elseif strcmp(siteabrev,'QC');
     hourlyTab.Effort_Bin(startVal:endVal) = hourlyTab.Effort_Bin(startVal:endVal) * (0.33); %for QC06 I evaluated the duty cycle using continous deployments and I should adjust by 33%
     hourlyTab.Effort_Sec(startVal:endVal) = hourlyTab.Effort_Bin(startVal:endVal) * 5 * 60; %convert from bins into efforts in seconds per day
-elseif strcmp(siteabrev,'PS1');
+elseif strcmp(siteabrev,'PS');
     hourlyTab.Effort_Bin(startVal1:endVal1) = hourlyTab.Effort_Bin(startVal1:endVal1) * (0.33); %for PS1_01 and 02 I evaluated the duty cycle using PS 12 (continous deployment) and I should adjust by 33%
     hourlyTab.Effort_Sec(startVal1:endVal1) = hourlyTab.Effort_Bin(startVal1:endVal1) * 5 * 60; %convert from bins into efforts in seconds per day
     hourlyTab.Effort_Bin(startVal2:endVal2) = hourlyTab.Effort_Bin(startVal2:endVal2) * (0.25); %for PS1_03 and 04 I evaluated the duty cycle using PS 12 (continous deployment) and I should adjust by 25%
     hourlyTab.Effort_Sec(startVal2:endVal2) = hourlyTab.Effort_Bin(startVal2:endVal2) * 5 * 60; %convert from bins into efforts in seconds per day
     hourlyTab.Effort_Bin(startVal3:endVal3) = hourlyTab.Effort_Bin(startVal3:endVal3) * (0.5); %for PS1_13 I evaluated the duty cycle using PS 12 (continous deployment) and I should adjust by 50%
     hourlyTab.Effort_Sec(startVal3:endVal3) = hourlyTab.Effort_Bin(startVal3:endVal3) * 5 * 60; %convert from bins into efforts in seconds per day
-elseif strcmp(siteabrev,'PS2');
-    hourlyTab.Effort_Bin(startVal1:endVal1) = hourlyTab.Effort_Bin(startVal1:endVal1) * (0.33); %for PS2_05 I evaluated the duty cycle using PS 14-15 (continous deployment) and I should adjust by 33%
-    hourlyTab.Effort_Sec(startVal1:endVal1) = hourlyTab.Effort_Bin(startVal1:endVal1) * 5 * 60; %convert from bins into efforts in seconds per day
-    hourlyTab.Effort_Bin(startVal2:endVal2) = hourlyTab.Effort_Bin(startVal2:endVal2) * (0.5); %for PS2_06 I evaluated the duty cycle using PS 14-15 (continous deployment) and I should adjust by 25%
-    hourlyTab.Effort_Sec(startVal2:endVal2) = hourlyTab.Effort_Bin(startVal2:endVal2) * 5 * 60; %convert from bins into efforts in seconds per day
-    hourlyTab.Effort_Bin(startVal3:endVal3) = hourlyTab.Effort_Bin(startVal3:endVal3) * (0.33); %for PS2_07 I evaluated the duty cycle using PS 14-15 (continous deployment) and I should adjust by 50%
-    hourlyTab.Effort_Sec(startVal3:endVal3) = hourlyTab.Effort_Bin(startVal3:endVal3) * 5 * 60; %convert from bins into efforts in seconds per day
-    hourlyTab.Effort_Bin(startVal4:endVal4) = hourlyTab.Effort_Bin(startVal4:endVal4) * (0.5); %for PS2_08 I evaluated the duty cycle using PS 14-15 (continous deployment) and I should adjust by 50%
-    hourlyTab.Effort_Sec(startVal4:endVal4) = hourlyTab.Effort_Bin(startVal4:endVal4) * 5 * 60; %convert from bins into efforts in seconds per day
-    hourlyTab.Effort_Bin(startVal5:endVal5) = hourlyTab.Effort_Bin(startVal5:endVal5) * (0.2); %for PS2_09 I evaluated the duty cycle using PS 14-15 (continous deployment) and I should adjust by 50%
-    hourlyTab.Effort_Sec(startVal5:endVal5) = hourlyTab.Effort_Bin(startVal5:endVal5) * 5 * 60; %convert from bins into efforts in seconds per day
-    hourlyTab.Effort_Bin(startVal6:endVal6) = hourlyTab.Effort_Bin(startVal6:endVal6) * (0.5); %for PS2_11 I evaluated the duty cycle using PS 14-15 (continous deployment) and I should adjust by 50%
-    hourlyTab.Effort_Sec(startVal6:endVal6) = hourlyTab.Effort_Bin(startVal6:endVal6) * 5 * 60; %convert from bins into efforts in seconds per day
 else
     hourlyTab.MaxEffort_Bin = ones(p,1)*(288);
 end
@@ -241,31 +228,6 @@ elseif DutyCy == 3
     startVal3 = find(DutyCycleIdxStart3 == 0,1);
     DutyCycleIdxEnd3 =  dayTable.tbin > endTime3;
     endVal3 = find(DutyCycleIdxEnd3 == 1,1);
-elseif DutyCy == 6
-    DutyCycleIdxStart1 =  dayTable.tbin < startTime1;
-    startVal1 = find(DutyCycleIdxStart1 == 0,1);
-    DutyCycleIdxEnd1 =  dayTable.tbin > endTime1;
-    endVal1 = find(DutyCycleIdxEnd1 == 1,1);
-    DutyCycleIdxStart2 =  dayTable.tbin < startTime2;
-    startVal2 = find(DutyCycleIdxStart2 == 0,1);
-    DutyCycleIdxEnd2 =  dayTable.tbin > endTime2;
-    endVal2 = find(DutyCycleIdxEnd2 == 1,1);
-    DutyCycleIdxStart3 =  dayTable.tbin < startTime3;
-    startVal3 = find(DutyCycleIdxStart3 == 0,1);
-    DutyCycleIdxEnd3 =  dayTable.tbin > endTime3;
-    endVal3 = find(DutyCycleIdxEnd3 == 1,1);
-    DutyCycleIdxStart4 =  dayTable.tbin < startTime4;
-    startVal4 = find(DutyCycleIdxStart4 == 0,1);
-    DutyCycleIdxEnd4 =  dayTable.tbin > endTime4;
-    endVal4 = find(DutyCycleIdxEnd4 == 1,1);
-    DutyCycleIdxStart5 =  dayTable.tbin < startTime5;
-    startVal5 = find(DutyCycleIdxStart5 == 0,1);
-    DutyCycleIdxEnd5 =  dayTable.tbin > endTime5;
-    endVal5 = find(DutyCycleIdxEnd5 == 1,1);
-    DutyCycleIdxStart6 =  dayTable.tbin < startTime6;
-    startVal6 = find(DutyCycleIdxStart6 == 0,1);
-    DutyCycleIdxEnd6 =  dayTable.tbin > endTime6;
-    endVal6 = find(DutyCycleIdxEnd6 == 1,1);
 end
 
 
@@ -288,26 +250,13 @@ elseif strcmp(siteabrev,'CA');
 elseif strcmp(siteabrev,'QC');
     dayTable.Effort_Bin(startVal:endVal) = dayTable.Effort_Bin(startVal:endVal) * (0.33); %for QC06 I evaluated the duty cycle using continous deployments and I should adjust by 33%
     dayTable.Effort_Sec(startVal:endVal) = dayTable.Effort_Bin(startVal:endVal) * 5 * 60; %convert from bins into efforts in seconds per day
-elseif strcmp(siteabrev,'PS1');
+elseif strcmp(siteabrev,'PS');
     dayTable.Effort_Bin(startVal1:endVal1) = dayTable.Effort_Bin(startVal1:endVal1) * (0.33); %for PS1_01 and 02 I evaluated the duty cycle using PS 12 (continous deployment) and I should adjust by 33%
     dayTable.Effort_Sec(startVal1:endVal1) = dayTable.Effort_Bin(startVal1:endVal1) * 5 * 60; %convert from bins into efforts in seconds per day
     dayTable.Effort_Bin(startVal2:endVal2) = dayTable.Effort_Bin(startVal2:endVal2) * (0.25); %for PS1_03 and 04 I evaluated the duty cycle using PS 12 (continous deployment) and I should adjust by 25%
     dayTable.Effort_Sec(startVal2:endVal2) = dayTable.Effort_Bin(startVal2:endVal2) * 5 * 60; %convert from bins into efforts in seconds per day
     dayTable.Effort_Bin(startVal3:endVal3) = dayTable.Effort_Bin(startVal3:endVal3) * (0.5); %for PS1_13 I evaluated the duty cycle using PS 12 (continous deployment) and I should adjust by 50%
     dayTable.Effort_Sec(startVal3:endVal3) = dayTable.Effort_Bin(startVal3:endVal3) * 5 * 60; %convert from bins into efforts in seconds per day
-elseif strcmp(siteabrev,'PS2');
-    dayTable.Effort_Bin(startVal1:endVal1) = dayTable.Effort_Bin(startVal1:endVal1) * (0.33); %for PS2_05 I evaluated the duty cycle using PS 14-15 (continous deployment) and I should adjust by 33%
-    dayTable.Effort_Sec(startVal1:endVal1) = dayTable.Effort_Bin(startVal1:endVal1) * 5 * 60; %convert from bins into efforts in seconds per day
-    dayTable.Effort_Bin(startVal2:endVal2) = dayTable.Effort_Bin(startVal2:endVal2) * (0.5); %for PS2_06 I evaluated the duty cycle using PS 14-15 (continous deployment) and I should adjust by 25%
-    dayTable.Effort_Sec(startVal2:endVal2) = dayTable.Effort_Bin(startVal2:endVal2) * 5 * 60; %convert from bins into efforts in seconds per day
-    dayTable.Effort_Bin(startVal3:endVal3) = dayTable.Effort_Bin(startVal3:endVal3) * (0.33); %for PS2_07 I evaluated the duty cycle using PS 14-15 (continous deployment) and I should adjust by 50%
-    dayTable.Effort_Sec(startVal3:endVal3) = dayTable.Effort_Bin(startVal3:endVal3) * 5 * 60; %convert from bins into efforts in seconds per day
-    dayTable.Effort_Bin(startVal4:endVal4) = dayTable.Effort_Bin(startVal4:endVal4) * (0.5); %for PS2_08 I evaluated the duty cycle using PS 14-15 (continous deployment) and I should adjust by 50%
-    dayTable.Effort_Sec(startVal4:endVal4) = dayTable.Effort_Bin(startVal4:endVal4) * 5 * 60; %convert from bins into efforts in seconds per day
-    dayTable.Effort_Bin(startVal5:endVal5) = dayTable.Effort_Bin(startVal5:endVal5) * (0.2); %for PS2_09 I evaluated the duty cycle using PS 14-15 (continous deployment) and I should adjust by 50%
-    dayTable.Effort_Sec(startVal5:endVal5) = dayTable.Effort_Bin(startVal5:endVal5) * 5 * 60; %convert from bins into efforts in seconds per day
-    dayTable.Effort_Bin(startVal6:endVal6) = dayTable.Effort_Bin(startVal6:endVal6) * (0.5); %for PS2_11 I evaluated the duty cycle using PS 14-15 (continous deployment) and I should adjust by 50%
-    dayTable.Effort_Sec(startVal6:endVal6) = dayTable.Effort_Bin(startVal6:endVal6) * 5 * 60; %convert from bins into efforts in seconds per day
 else    
     dayTable.MaxEffort_Bin = ones(p,1)*(288);
 end

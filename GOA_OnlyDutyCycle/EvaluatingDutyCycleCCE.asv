@@ -20,7 +20,7 @@ DutyCont = 0; %If the Duty cycle is at the beginning or end of a deployment
 %and it's continuous (1) if only 1 deployment isn't duty cycled and that's 
 %the one you want to test on (0)
 MinRec = 5; %How many minutes did the duty cycle record for
-MinPer = 15; %what was the cycle interval
+MinPer = 20; %what was the cycle interval
 tpwsPath = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\TPWS_125\',siteabrev]; %directory of TPWS files
 dir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev]; %seasonality analysis directory
 effortXls = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev,'\Pm_Effort.xlsx']; % specify excel file with effort times
@@ -198,4 +198,10 @@ Avg_DutyCycle = ['The average duty cycle was ',num2str(Day_2016)];
 disp(Avg_DutyCycle)
 
 %QC - 0.33
+%PS1 (5/15) - 0.33
+%PS1 (5/20) - 
+%PS1 (5/10) - 
+%PS2 (5/15) - 
+%PS2 (5/10) - 
+%PS2 (5/25) - 
 

@@ -11,23 +11,24 @@ close all
 
 %% Parameters defined by user
 filePrefix = 'PS'; % File name to match 
-siteabrev = 'PS1'; %abbreviation of site.
+siteabrev = 'PS2'; %abbreviation of site.
 sp = 'Pm'; % your species code
 srate = 200; % sample rate
 region = 'CCE';
 GDrive = 'I';
+NumSamples = 100; %Number of random duty cycles you want it to test
 DutyCont = 0; %If the Duty cycle is at the beginning or end of a deployment
 %and it's continuous (1) if only 1 deployment isn't duty cycled and that's 
 %the one you want to test on (0)
 MinRec = 5; %How many minutes did the duty cycle record for
-MinPer = 15; %what was the cycle interval
+MinPer = 25; %what was the cycle interval
 tpwsPath = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\TPWS_125\',siteabrev]; %directory of TPWS files
 dir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev]; %seasonality analysis directory
 effortXls = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev,'\Pm_Effort.xlsx']; % specify excel file with effort times
 saveDir = [GDrive,':\My Drive\GofAK_TPWS_metadataReduced\Plots\',siteabrev]; %specify directory to save files
 load([dir,'\',siteabrev,'_workspace125.mat']); %load workspace from sumPPICIbin_seasonality code
 %% Which deployments are duty cycled
-clearvars -except vTT tbin TTall PPall effort er p binEffort DutyCont MinRec MinPer
+clearvars -except vTT tbin TTall PPall effort er p binEffort DutyCont MinRec MinPer NumSamples
 %If the duty cycled data is one after the other
 if DutyCont == 1 %duty cycle is continous and you want to remove that single deployment
     startTime = datetime(2006,10,03);
@@ -35,12 +36,11 @@ if DutyCont == 1 %duty cycle is continous and you want to remove that single dep
 else
     %only one deployment IS NOT duty cycled and that's the one you want to
     %test on
-    startTime = datetime(2011,11,30);
-    endTime = datetime(2012,6,24); 
+    startTime = datetime(2018,11,14);
+    endTime = datetime(2020,1,25); 
 end
 SecRec = MinRec *60;
 SecPer = MinPer * 60;
-NumSamples = 100;
 %% Evaluating the duty cycle by shifting the 15 minute listening period by 1 minute - THIS IS THE ONE I ENDED UP USING
 %within the entire 20 minute cycle. This will result in 20 samples.
 %group data by 1 second bins
@@ -197,5 +197,11 @@ Day_2016 = nanmean(All_Clicks_Bin_Effort_Days.DutyPercent);
 Avg_DutyCycle = ['The average duty cycle was ',num2str(Day_2016)];
 disp(Avg_DutyCycle)
 
-%QC - 0.33
+%QC (5/35) - 0.33
+%PS1 (5/15) - 0.33
+%PS1 (5/20) - 0.25
+%PS1 (5/10) - 0.499 or 0.50
+%PS2 (5/15) - 0.33
+%PS2 (5/10) - 0.50
+%PS2 (5/25) - 0.20
 

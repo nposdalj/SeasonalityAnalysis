@@ -2,10 +2,10 @@ clearvars
 close all
 
 %% Parameters defined by user
-filePrefix = 'GS'; % File name to match. 
-genderFileName = 'WAT_GS'; %File name to match gender file
-siteabrev = 'GS'; %abbreviation of site
-region = 'WAT';
+filePrefix = 'PS'; % File name to match. 
+genderFileName = 'PS'; %File name to match gender file
+siteabrev = 'PS2'; %abbreviation of site
+region = 'CCE';
 sp = 'Pm'; % your species code
 GDrive = 'I'; %Google Drive
 
@@ -24,7 +24,7 @@ GDrive = 'I';
 effortXls(1) = GDrive;
 saveDir(1) = GDrive;
 tpwsPath(1) = GDrive;
-%% Extraft effort from workspace 2 dayTable that already accounts for duty cycle, etc.
+%% Extract effort from workspace 2 dayTable that already accounts for duty cycle, etc.
 sexBinEffort = dayBinTAB(:,{'tbin','Effort_Bin','Effort_Sec','MaxEffort_Bin','MaxEffort_Sec'});
 sexBinEffort = table2timetable(sexBinEffort);
 %% group data by days and add effort
