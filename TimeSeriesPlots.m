@@ -2,12 +2,12 @@ clearvars
 close all
 % This script creates time series plots for each site.
 %% Parameters defined by user
-filePrefix = 'OC'; % File name to match. 
-siteabrev = 'OC'; %abbreviation of site.
+filePrefix = 'QC'; % File name to match. 
+siteabrev = 'QC'; %abbreviation of site.
 GDrive = 'I'; %directory for Google Drive
-region = 'WAT';
+region = 'CCE';
 sp = 'Pm'; % your species code
-titleNAME = 'Oceanographers Canyon';
+titleNAME = 'Quinault Canyon';
 dataDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev]; %specify directory where workspaces are saved
 %% load workspace
 load([dataDir,'\',siteabrev,'_workspaceStep2.mat']);
@@ -68,18 +68,18 @@ saveas(gcf,[saveDir,'\',siteabrev,'DailyPresence.png']);
 %Plot proportion of hours per WEEK with sperm whale presence
 figure
 yyaxis left
-bar(weekTable.tbin, weekTable.HoursProp)
-ylim([0 max(weekTable.HoursProp)]);
+bar(weekTable.tbin, weekTable.HoursNorm)
+ylim([0 max(weekTable.HoursNorm)]);
 xlim([weekTable.tbin(1),weekTable.tbin(end)])
-ylabel('Proportion of hours per week with sperm whale presence')
+ylabel('Normalized hours per week with sperm whale presence')
 yyaxis right
 plot(weekTable.tbin, weekTable.NormEffort_Bin*100,'.', 'Color',[.5 .5 .5])
-%ylim([-1 101])
+ylim([-1 101])
 ylabel('Percent effort')
 ax = gca;
 ax.YAxis(2).Color = gray;
 title([{'Weekly Presence of Sperm whales in the ',titleNAME}])
-saveas(gcf,[saveDir,'\',siteabrev,'WeeklyPresence.png']);
+saveas(gcf,[saveDir,'\',siteabrev,'WeeklyPresenceHoursNorm.png']);
 
 %Plot proportion of hours per DAY with presence from each group
 figure

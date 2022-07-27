@@ -3,7 +3,7 @@ close all
 
 %% Parameters defined by user
 filePrefix = 'PS'; % File name to match. 
-siteabrev = 'PS2'; %abbreviation of site.
+siteabrev = 'PS1'; %abbreviation of site.
 region = 'CCE'; %region
 sp = 'Pm'; % your species code
 GDrive = 'I'; %Google Drive
