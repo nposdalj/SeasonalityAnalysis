@@ -18,9 +18,6 @@ mtJU365WEEK_reg = nan(52,length(siteabrevs));
 mtMA365WEEK_reg = nan(52,length(siteabrevs));
 
 %% Loop through sites. Go find something fun to do, this takes a while :)
-
-saveDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\Plots\GENERAL']; % Where tables and plots are saved
-
 for site = 1:length(siteabrevs)
     siteabrev = char(siteabrevs(site));
     
@@ -38,6 +35,8 @@ for site = 1:length(siteabrevs)
     effortXls(1) = GDrive;
     filename(1) = GDrive;
     tpwsPath(1) = GDrive;
+    
+    saveDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\Plots\',siteabrev];
     
     % %% Fill in missing days
     % %day table
@@ -65,9 +64,6 @@ for site = 1:length(siteabrevs)
     
     % ADDED BY AD: Make a new version of meantab365 that is analogous to the class-specific tables
     meantab365GN = meantab365;
-    meantab365GN.Properties.VariableNames(1) = {'Day'};
-
-    
     
     %Average yearly presence of proportion of hours per WEEK with sperm whale
     %presence
@@ -149,7 +145,6 @@ ylabel('Site')
 xlabel('Week')
 ylabel(colbar,'\fontsize{11} Average proportion of hours/week with presence')
 saveas(allsites_cplot, saveDir, 'png');
-
 %% Plot - BY CLASS
 allsites_cmapF = figure(102);
 colormap(parula)
