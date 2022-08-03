@@ -39,6 +39,19 @@ for site = 1:length(siteabrevs)
     filename(1) = GDrive;
     tpwsPath(1) = GDrive;
     
+    %% Make versions of meantabFE365,meantabJU365,meantabMA365 that are exactly analogous to meantab365
+    % Just will exclude the stats for class-specific NormClick cuz sexbinPresence doesn't have that
+    % Process of design: meantabFE365x is derived from sexbinPresence as
+    % meantab365 is derived from dayTable.
+    % How meantab365 is defined in Step2:
+    % meantab365 = grpstats(timetable2table(dayTable),'day',{'mean','sem','std','var','range'},'DataVars',{'HoursProp','HoursNorm','NormBin','NormClick'}); %takes the mean of each day of the year
+    % Similar process in Step3 for class-specific, but just HoursProp:
+    % [mean, sem, std, var, range] = grpstats(sexbinPresence.FeHoursProp, sexbinPresence.day, {'mean','sem','std','var','range'}); %takes the mean of each day of the year
+    
+    meantabFE365x = grpstats(timetable2table(sexbinPresence),'day',{'mean','sem','std','var','range'},'DataVars',{'FeHoursProp','FemaleHoursNorm','FemaleNormBin'});
+    meantabJU365x = grpstats(timetable2table(sexbinPresence),'day',{'mean','sem','std','var','range'},'DataVars',{'JuHoursProp','JuvenileHoursNorm','JuvenileNormBin'});
+    meantabMA365x = grpstats(timetable2table(sexbinPresence),'day',{'mean','sem','std','var','range'},'DataVars',{'MaHoursProp','MaleHoursNorm','MaleNormBin'});
+        
     % %% Fill in missing days
     % %day table
     % dayTable.day= double(dayTable.day);
@@ -63,9 +76,9 @@ for site = 1:length(siteabrevs)
     % weekPresence.JuHoursProp = weekPresence.JuHours ./(weekPresence.Effort_Sec ./ (60*60));
     % weekPresence.MaHoursProp = weekPresence.MaHours ./(weekPresence.Effort_Sec ./ (60*60));
     
-    % ADDED BY AD: Make a new version of meantab365 that is analogous to the class-specific tables
-    meantab365GN = meantab365;
-    meantab365GN.Properties.VariableNames(1) = {'Day'};
+%     % ADDED BY AD: Make a new version of meantab365 that is analogous to the class-specific tables
+%     meantab365GN = meantab365;
+%     meantab365GN.Properties.VariableNames(1) = {'Day'};
 
     
     
@@ -78,13 +91,13 @@ for site = 1:length(siteabrevs)
         for i = 1:4
             
             if i == 1
-                mt365_TYPE = meantabGN365;
+                mt365_TYPE = meantab365;
             elseif i == 2
-                mt365_TYPE = meantabFE365;
+                mt365_TYPE = meantabFE365x;
             elseif i == 3
-                mt365_TYPE = meantabJU365;
+                mt365_TYPE = meantabJU365x;
             elseif i == 4
-                mt365_TYPE = meantabMA365;
+                mt365_TYPE = meantabMA365x;
             end
             
             mt365_TYPE.day = double(string(mt365_TYPE.day));
@@ -103,21 +116,24 @@ for site = 1:length(siteabrevs)
             Avg2 = transpose(sum(y2, 1) / n);  % Calculate the mean over the 1st dim
             
             meantab52 = (1:52)';
-            mt365_TYPE = array2table([meantab52 Avg Avg2]);
-            mt365_TYPE.Properties.VariableNames = {'Week' 'HoursProp' 'SEM'};
+            mt365_TYPEWEEK = array2table([meantab52 Avg Avg2]);
+            mt365_TYPEWEEK.Properties.VariableNames = {'Week' 'HoursProp' 'SEM'};
             
             if i == 1
-                mtGN365WEEK_reg(:,site) = meantab365WEEK.HoursProp; % Store the HoursProp data above in the array for all sites
+                mtGN365WEEK_reg(:,site) = mt365_TYPEWEEK.HoursProp; % Store the HoursProp data above in the array for all sites
             elseif i == 2
-                mtFE365WEEK_reg(:,site) = meantabFE365WEEK.HoursPropFE; % Store the HoursProp data above in the array for all sites
+                %mtFE365WEEK_reg(:,site) = meantabFE365WEEK.HoursPropFE; % Store the HoursProp data above in the array for all sites
+                mtFE365WEEK_reg(:,site) = mt365_TYPEWEEK.HoursProp; % Store the HoursProp data above in the array for all sites
             elseif i == 3
-                mtJU365WEEK_reg(:,site) = meantabJU365WEEK.HoursPropJU; % Store the HoursProp data above in the array for all sites
+                %mtJU365WEEK_reg(:,site) = meantabJU365WEEK.HoursPropJU; % Store the HoursProp data above in the array for all sites
+                mtJU365WEEK_reg(:,site) = mt365_TYPEWEEK.HoursProp; % Store the HoursProp data above in the array for all sites
             elseif i == 4
-                mtMA365WEEK_reg(:,site) = meantabMA365WEEK.HoursPropMA; % Store the HoursProp data above in the array for all sites
+                %mtMA365WEEK_reg(:,site) = meantabMA365WEEK.HoursPropMA; % Store the HoursProp data above in the array for all sites
+                mtMA365WEEK_reg(:,site) = mt365_TYPEWEEK.HoursProp; % Store the HoursProp data above in the array for all sites
             end
         end
         
-        disp('Site Data stored summary arrays.')
+        disp(['Site Data for ' siteabrev ' stored summary arrays.'])
         
     else
     end
