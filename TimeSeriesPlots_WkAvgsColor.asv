@@ -1,9 +1,8 @@
 clearvars
 close all
 
-% This script creates plots of weekly average presence of sperm whales at
-% all sites, with the average number of hours with presence indicated by
-% color.
+% This script plots weekly average presence of sperm whales at all sites,
+% with the average number of hours with presence indicated by color.
 
 %% Parameters defined by user
 siteabrevs = {'HZ' 'OC' 'NC' 'BC' 'WC' 'GS' 'BP' 'BS' 'JAX'}; %abbreviations of sites.
@@ -19,13 +18,14 @@ mtMA365WEEK_reg = nan(52,length(siteabrevs));
 
 %% Loop through sites. Go find something fun to do, this takes a while :)
 
-saveDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\Plots\GENERAL']; % Where tables and plots are saved
+saveDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\Plots\All_Sites']; % Where tables and plots are saved
 
 for site = 1:length(siteabrevs)
     siteabrev = char(siteabrevs(site));
     
     %% Load in site-specific workspaces
-    dataDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',char(siteabrevs(site))]; %specify directory where workspaces are saved
+    dataDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',char(siteabrevs(site))];
+        %specify directory where workspaces are saved
     
     GDrive_real = GDrive; % Temporarily store a protected version of GDrive, as the workspaces will overwrite it
     load([dataDir,'\',siteabrev,'_workspaceStep2.mat']);
@@ -39,18 +39,31 @@ for site = 1:length(siteabrevs)
     filename(1) = GDrive;
     tpwsPath(1) = GDrive;
     
+    %% Make alternate version of sexbinPresence which, like dayTable, excludes days w/ no effort
+    sexbinPresence_E = sexbinPresence;
+    sexbinPresence_E(isnan(sexbinPresence_E.Effort_Bin),:) = [];
+    
     %% Make versions of meantabFE365,meantabJU365,meantabMA365 that are exactly analogous to meantab365
     % Just will exclude the stats for class-specific NormClick cuz sexbinPresence doesn't have that
     % Process of design: meantabFE365x is derived from sexbinPresence as
     % meantab365 is derived from dayTable.
     % How meantab365 is defined in Step2:
-    % meantab365 = grpstats(timetable2table(dayTable),'day',{'mean','sem','std','var','range'},'DataVars',{'HoursProp','HoursNorm','NormBin','NormClick'}); %takes the mean of each day of the year
+    % meantab365 = grpstats(timetable2table(dayTable),'day',{'mean','sem','std','var','range'},...
+    %   'DataVars',{'HoursProp','HoursNorm','NormBin','NormClick'}); %takes the mean of each day of the year
     % Similar process in Step3 for class-specific, but just HoursProp:
-    % [mean, sem, std, var, range] = grpstats(sexbinPresence.FeHoursProp, sexbinPresence.day, {'mean','sem','std','var','range'}); %takes the mean of each day of the year
+    % [mean, sem, std, var, range] = grpstats(sexbinPresence.FeHoursProp, sexbinPresence.day,...
+    %   {'mean','sem','std','var','range'}); %takes the mean of each day of the year
     
-    meantabFE365x = grpstats(timetable2table(sexbinPresence),'day',{'mean','sem','std','var','range'},'DataVars',{'FeHoursProp','FemaleHoursNorm','FemaleNormBin'});
-    meantabJU365x = grpstats(timetable2table(sexbinPresence),'day',{'mean','sem','std','var','range'},'DataVars',{'JuHoursProp','JuvenileHoursNorm','JuvenileNormBin'});
-    meantabMA365x = grpstats(timetable2table(sexbinPresence),'day',{'mean','sem','std','var','range'},'DataVars',{'MaHoursProp','MaleHoursNorm','MaleNormBin'});
+    sexbinPresence_E.FemaleHoursNorm = (sexbinPresence_E.FemaleNormBin*5)./60; % CORRECT HOURS NORM!!!
+    sexbinPresence_E.JuvenileHoursNorm = (sexbinPresence_E.JuvenileNormBin*5)./60; % CORRECT HOURS NORM!!!
+    sexbinPresence_E.MaleHoursNorm = (sexbinPresence_E.MaleNormBin*5)./60; % CORRECT HOURS NORM!!!
+
+    meantabFE365x = grpstats(timetable2table(sexbinPresence_E),'day',{'mean','sem','std','var','range'},...
+        'DataVars',{'FeHoursProp','FemaleHoursNorm','FemaleNormBin'});
+    meantabJU365x = grpstats(timetable2table(sexbinPresence_E),'day',{'mean','sem','std','var','range'},...
+        'DataVars',{'JuHoursProp','JuvenileHoursNorm','JuvenileNormBin'});
+    meantabMA365x = grpstats(timetable2table(sexbinPresence_E),'day',{'mean','sem','std','var','range'},...
+        'DataVars',{'MaHoursProp','MaleHoursNorm','MaleNormBin'});
         
     % %% Fill in missing days
     % %day table
@@ -76,12 +89,6 @@ for site = 1:length(siteabrevs)
     % weekPresence.JuHoursProp = weekPresence.JuHours ./(weekPresence.Effort_Sec ./ (60*60));
     % weekPresence.MaHoursProp = weekPresence.MaHours ./(weekPresence.Effort_Sec ./ (60*60));
     
-%     % ADDED BY AD: Make a new version of meantab365 that is analogous to the class-specific tables
-%     meantab365GN = meantab365;
-%     meantab365GN.Properties.VariableNames(1) = {'Day'};
-
-    
-    
     %Average yearly presence of proportion of hours per WEEK with sperm whale
     %presence
     %retime average tables - for overall AND for size classes
@@ -106,7 +113,7 @@ for site = 1:length(siteabrevs)
             mean_SEM = mt365_TYPEARRAY(:,9);
             
             % HOURS NORM
-            s1 = size(mean_hoursNorm, 1);      % Find the next smaller multiple of n % <- AHAHA THE CLASS-SPECIFIC TABLES DON'T HAVE THIS RIP AARON
+            s1 = size(mean_hoursNorm, 1);      % Find the next smaller multiple of n
             m  = s1 - mod(s1, n);
             y  = reshape(mean_hoursNorm(1:m,:), n, []);     % Reshape x to a [n, m/n] matrix
             Avg = transpose(sum(y, 1) / n);  % Calculate the mean over the 1st dim
@@ -133,40 +140,92 @@ for site = 1:length(siteabrevs)
             end
         end
         
-        disp(['Site Data for ' siteabrev ' stored summary arrays.'])
+        disp(['Site Data for ' siteabrev ' stored in summary arrays.'])
         
     else
     end
     
 end
 
-meantab365WEEK_regionalBACKUP = mtGN365WEEK_reg;
-BACKUPmeantab365WEEK_regiona = mtGN365WEEK_reg;
+%% Remake avg weekly presence summary arrays as tables, plot, and save tables and plots.
 
-meantab365WEEK_regPlot = nan(53,length(siteabrevs)+1);
-meantab365WEEK_regPlot(1:52,1:length(siteabrevs)) = mtGN365WEEK_reg; % Make version that can be plotted, since pcolor plots vertices
-% (and will therefore be missing one row and one column of values)
+mtGN365WEEK_BACKUPreg = mtGN365WEEK_reg; % Make backups in case these variables get changed inadvertently
+mtFE365WEEK_BACKUPreg = mtFE365WEEK_reg; % Because generating them took a little while
+mtJU365WEEK_BACKUPreg = mtJU365WEEK_reg;
+mtMA365WEEK_BACKUPreg = mtMA365WEEK_reg;
 
-%% Save avg weekly presence summary arrays, as tables
+presenceMax = max([max(mtGN365WEEK_reg(:)) max(mtFE365WEEK_reg(:)) max(mtJU365WEEK_reg(:)) max(mtMA365WEEK_reg(:))]);
+    % Find absolute max across all plots so they can be set to the same color scale
 
-%% Plot - GENERAL
-allsites_cmap = figure(101);
-colormap(parula)
-allsites_cplot = pcolor(0:length(meantab365WEEK.Week), 0:length(siteabrevs), meantab365WEEK_regPlot.');
-set(gca, 'YTick', 0.5:1:length(siteabrevs)-.5) % Make y-axis ticks line up with grid squares, rather than sit on gridlines
-set(gca, 'YTickLabel', ['' siteabrevs]) % Assign site labels correctly to y-axis
-set(gca, 'YDir', 'reverse')
-set(gca, 'XTick', -0.5:5:50.5) % Make y-axis ticks line up with grid squares, rather than sit on gridlines
-set(gca, 'XTickLabel', 0:5:50) % Assign week numbers correctly to x-axis
-set(allsites_cplot, 'EdgeColor', 'white')
-colbar = colorbar;
-title(['Average Weekly Presence of Sperm Whales in ' region ' Region'])
-ylabel('Site')
-xlabel('Week')
-ylabel(colbar,'\fontsize{11} Average proportion of hours/week with presence')
-saveas(allsites_cplot, saveDir, 'png');
+for i = 1:4
+    if i == 1       % Cycle through GN, FE, JU, and MA (generalized as XX) regional weekly meantabs and plot each
+        mtXX365WEEK_reg = mtGN365WEEK_reg;
+        classname = 'General';
+    elseif i == 2
+        mtXX365WEEK_reg = mtFE365WEEK_reg;
+        classname = 'FE';
+    elseif i == 3
+        mtXX365WEEK_reg = mtJU365WEEK_reg;
+        classname = 'JU';
+    elseif i == 4
+        mtXX365WEEK_reg = mtMA365WEEK_reg;
+        classname = 'MA';
+    end
+    
+    %% Create and save tables
+    
+    mtXX365WEEK_regTab = [array2table((1:52).') array2table(mtGN365WEEK_reg)]; % Convert to table AND include column for week numbers
+    colnames = ['HoursProp' classname '_' siteabrevs(1:9)];
+    mtXX365WEEK_regTab.Properties.VariableNames(1) = {'Week'};
+    for vari = 1:length(siteabrevs) % Give table columns names specifying time 
+        mtXX365WEEK_regTab.Properties.VariableNames(vari+1) = {strcat('HoursProp', classname, '_', char(siteabrevs(vari)))};
+    end
+    
+    writetable(mtXX365WEEK_regTab, [region '_AverageWeeklyPresence'], 'png')
 
-%% Plot - BY CLASS
-allsites_cmapF = figure(102);
-colormap(parula)
-allsites_cpotF = pcolor(0:52, 0:length(siteabrevs), weekPresenceF_regPlot.');
+    if i == 1
+        mtGN365WEEK_regTab = mtXX365WEEK_regTab;    % Generate the General table as a variable
+    elseif i == 2
+        mtFE365WEEK_regTab = mtXX365WEEK_regTab;    % Generate the Female table as a variable
+    elseif i == 3
+        mtJU365WEEK_regTab = mtXX365WEEK_regTab;    % Generate the Juvenile table as a variable
+    elseif i == 4
+        mtMA365WEEK_regTab = mtXX365WEEK_regTab;    % Generate the Male table as a variable
+    end
+    
+    %% Create and save plots
+    
+    mtXX365WEEK_regPlot = nan(53,length(siteabrevs)+1);
+    mtXX365WEEK_regPlot(1:52,1:length(siteabrevs)) = mtXX365WEEK_reg; % Make version that can be plotted, since pcolor plots vertices
+    % (and will therefore be missing one row and one column of values without this adjustment)
+
+    allsites_cmap = figure(100+i);
+    colormap(parula)
+    allsites_cplot = pcolor(0:52, 0:length(siteabrevs), mtXX365WEEK_regPlot.');
+    set(gca, 'YTick', 0.5:1:length(siteabrevs)-.5) % Make y-axis ticks line up with grid squares, rather than sit on gridlines
+    set(gca, 'YTickLabel', ['' siteabrevs]) % Assign site labels correctly to y-axis
+    set(gca, 'YDir', 'reverse')
+    set(gca, 'XTick', -0.5:5:50.5) % Make y-axis ticks line up with grid squares, rather than sit on gridlines
+    set(gca, 'XTickLabel', 0:5:50) % Assign week numbers correctly to x-axis
+    set(gcf, 'Position', [100 100 750 350])
+    set(allsites_cplot, 'EdgeColor', 'white')
+    colbar = colorbar;
+    caxis([0 presenceMax])
+    title(['Avg Weekly Presence of Sperm Whales in ' region ' - ' classname])
+    ylabel('Site')
+    xlabel('Week')
+    ylabel(colbar,{'\fontsize{11} Average proportion of';'\fontsize{11} hours/week with presence'})
+    saveas(allsites_cplot, [saveDir, '\' 'WAT_RegPresence_' classname], 'png');
+
+end
+
+% figure(110)
+% weekly_bars = bar3(mtGN365WEEK_reg);
+% set(gca, 'XDir', 'reverse')
+% set(gca, 'View', [-37.5000 45])
+% set(weekly_bars, 'EdgeColor', 'w')
+% for k = 1:length(weekly_bars)
+%     zdat = weekly_bars(k).ZData;
+%     weekly_bars(k).CData = zdat;
+%     weekly_bars(k).FaceColor = 'interp';
+% end

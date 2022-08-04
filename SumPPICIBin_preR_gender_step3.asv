@@ -55,9 +55,12 @@ sexbinPresence.NormEffort_Sec = sexbinPresence.Effort_Sec./sexbinPresence.MaxEff
 sexbinPresence.FemaleNormBin = round(sexbinPresence.Female ./ sexbinPresence.NormEffort_Bin); %what would the normalized bin count be given the amount of effort for Females
 sexbinPresence.JuvenileNormBin = round(sexbinPresence.Juvenile ./ sexbinPresence.NormEffort_Bin); %what would the normalized bin count be given the amount of effort for Juveniles
 sexbinPresence.MaleNormBin = round(sexbinPresence.Male ./ sexbinPresence.NormEffort_Bin); %what would the normalized bin count be given the amount of effort for Males
-sexbinPresence.FemaleHoursNorm = round(sexbinPresence.FemaleNormBin ./ sexbinPresence.NormEffort_Bin); %convert the number of 5-min bins per day to hours
-sexbinPresence.JuvenileHoursNorm = round(sexbinPresence.JuvenileNormBin ./ sexbinPresence.NormEffort_Bin); %convert the number of 5-min bins per day to hours
-sexbinPresence.MaleHoursNorm = round(sexbinPresence.MaleNormBin ./ sexbinPresence.NormEffort_Bin); %convert the number of 5-min bins per day to hours
+% sexbinPresence.FemaleHoursNorm = round(sexbinPresence.FemaleNormBin ./ sexbinPresence.NormEffort_Bin); %convert the number of 5-min bins per day to hours
+% sexbinPresence.JuvenileHoursNorm = round(sexbinPresence.JuvenileNormBin ./ sexbinPresence.NormEffort_Bin); %convert the number of 5-min bins per day to hours
+% sexbinPresence.MaleHoursNorm = round(sexbinPresence.MaleNormBin ./ sexbinPresence.NormEffort_Bin); %convert the number of 5-min bins per day to hours
+sexbinPresence.FemaleHoursNorm = (sexbinPresence.FemaleNormBin ./ sexbinPresence.NormEffort_Bin); %convert the number of 5-min bins per day to hours
+sexbinPresence.JuvenileHoursNorm = (sexbinPresence.JuvenileNormBin ./ sexbinPresence.NormEffort_Bin); %convert the number of 5-min bins per day to hours
+sexbinPresence.MaleHoursNorm = (sexbinPresence.MaleNormBin ./ sexbinPresence.NormEffort_Bin); %convert the number of 5-min bins per day to hours
 %% find month and season
 [p,~]=size(sexbinPresence);
 sexbinPresence.Season = zeros(p,1);
