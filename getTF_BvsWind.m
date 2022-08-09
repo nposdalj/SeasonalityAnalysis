@@ -18,12 +18,11 @@ if exist(tfbdir)
         suggestedTFPath = cell2mat(fullfile(tfdcell(2,tfMatchIdx),tfdcell(1,tfMatchIdx)));
     end
 end
-% end
+
 stfnum = num2str(tfnum);
 tffile = fullfile(suggestedTFPath,stfnum,[stfnum,'*B_HARP.tf']);
 tffilename = dir(tffile);
 tffile = fullfile(suggestedTFPath,stfnum,tffilename.name);
-%disp(['B Transfer function: ',tffile ]);
 [freqB,uppcB] = loadTF(tffile); % open and read B Transfer Function
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -43,16 +42,20 @@ if exist(tfwdir)
             tfM1 = []; tfM2 = []; tfM3 = [];
         end
     end
+end   
+
     if ~isempty(tfMatch)
         tffilew = cell2mat(fullfile(tfdcellw(2,tfMatch),tfdcellw(1,tfMatch)));
         [freqW,uppcW] = loadTF(tffilew); % open and
-    iB = find(freqB == Freq);
-    iW = find(freqW == Freq);
-    adjustTF = uppcW(iW) - uppcB(iB) ;
-    disp([num2str(tfnum),'  Wind TF : ',num2str(uppcW(iW)),'  B TF : ',num2str(uppcB(iB)),...
-    ' AdjustTF = ',num2str(adjustTF)])
+        iB = find(freqB == Freq);
+        iW = find(freqW == Freq);
+        adjustTF = uppcW(iW) - uppcB(iB) ;
+        disp([num2str(tfnum),'  Wind TF : ',num2str(uppcW(iW)),'  B TF : ',num2str(uppcB(iB)),...
+        ' AdjustTF = ',num2str(adjustTF)])
     else
-        disp('No wind TF exists for num2str(tfnum)')
+        disp(['No wind TF exists for ', num2str(tfnum)])
+        adjustTF = NaN;
+        
     end
 end
 

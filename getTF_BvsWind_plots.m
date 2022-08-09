@@ -1,4 +1,4 @@
-function adjustTF = getTF_BvsWind(site,tfbdir,tfwdir,tfnum,Freq)
+function plotTF = getTF_BvsWind(site,tfbdir,tfwdir,tfnum,Freq)
 % find TF number from XLS and then read in TF"B" and TF "Wind" to find dif
 %Search TFs folder for the appropriate preamp
 
@@ -53,7 +53,8 @@ end
         disp([num2str(tfnum),'  Wind TF : ',num2str(uppcW(iW)),'  B TF : ',num2str(uppcB(iB)),...
         ' AdjustTF = ',num2str(adjustTF)])
     else
-        disp('No wind TF exists for num2str(tfnum)')
+        disp(['No wind TF exists for ', num2str(tfnum)])
+        adjustTF = NaN; 
     end
 end
 
