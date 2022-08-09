@@ -89,7 +89,7 @@ dayTable(~dayTable.Effort_Bin,:)=[]; %removes days with no effort, NOT days with
 %% accounting for the duty cycle and effort (hourly data)
 [p,~]=size(hourlyTab);
 hourlyTab.MaxEffort_Bin = ones(p,1)*(12); %total number of bins possible in one day
-hourlyTab.MaxEffort_Sec = ones(p,1)*(3600); %seconds in one day
+hourlyTab.MaxEffort_Sec = ones(p,1)*(3600); %seconds in an hour
 
 if DutyCy == 1
     DutyCycleIdxStart =  hourlyTab.tbin < startTime;

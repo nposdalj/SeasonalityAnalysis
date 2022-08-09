@@ -2,10 +2,10 @@ clearvars
 close all
 
 %% Parameters defined by user
-filePrefix = 'PS'; % File name to match. 
-genderFileName = 'PS'; %File name to match gender file
-siteabrev = 'PS2'; %abbreviation of site
-region = 'CCE';
+filePrefix = 'JAX'; % File name to match. 
+genderFileName = 'JAX'; %File name to match gender file
+siteabrev = 'JAX'; %abbreviation of site
+region = 'WAT';
 sp = 'Pm'; % your species code
 GDrive = 'I'; %Google Drive
 
