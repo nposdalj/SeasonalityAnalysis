@@ -9,6 +9,9 @@ if exist(tfbdir)
     tfd = floor(tfnum(1)/100)*100;
     tfMatch = [];
     iTF = 3;
+    if tfd <= 300
+        suggestedTFPath = [tfbdir,'\100-399'];
+    else
     while isempty(tfMatch) && iTF<=length(tfdstruct)
         tfMatch = strfind(tfdcell{1,iTF},num2str(tfd));
         iTF = iTF+1;
@@ -17,14 +20,26 @@ if exist(tfbdir)
         tfMatchIdx = iTF-1;
         suggestedTFPath = cell2mat(fullfile(tfdcell(2,tfMatchIdx),tfdcell(1,tfMatchIdx)));
     end
+    end
 end
 
 stfnum = num2str(tfnum);
 tffile = fullfile(suggestedTFPath,stfnum,[stfnum,'*B_HARP.tf']);
 tffilename = dir(tffile);
-tffile = fullfile(suggestedTFPath,stfnum,tffilename.name);
-[freqB,uppcB] = loadTF(tffile); % open and read B Transfer Function
-
+if ~isempty(tffilename)
+    tffile = fullfile(suggestedTFPath,stfnum,tffilename.name);
+    [freqB,uppcB] = loadTF(tffile); % open and read B Transfer Function
+else
+    tffile = fullfile(suggestedTFPath,stfnum,[stfnum,'*A_HARP.tf']);
+    tffilename = dir(tffile);
+    if ~isempty(tffilename)
+    tffile = fullfile(suggestedTFPath,stfnum,tffilename.name);
+    [freqB,uppcB] = loadTF(tffile); % open and read A Transfer Function
+    else
+    disp([num2str(stfnum),' TF does not exist'])
+    adjustTF = NaN;    
+    end
+    end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 if exist(tfwdir)
     tfdstructw = dir(tfwdir);
@@ -49,11 +64,18 @@ end
         [freqW,uppcW] = loadTF(tffilew); % open and
         iB = find(freqB == Freq);
         iW = find(freqW == Freq);
-        adjustTF = uppcW(iW) - uppcB(iB) ;
-        disp([num2str(tfnum),'  Wind TF : ',num2str(uppcW(iW)),'  B TF : ',num2str(uppcB(iB)),...
-        ' AdjustTF = ',num2str(adjustTF)])
+        if ~isempty(iB)
+            adjustTF = uppcW(iW) - uppcB(iB) ;
+            disp([num2str(tfnum),'  Wind TF : ',num2str(uppcW(iW)),'  B TF : ',num2str(uppcB(iB)),...
+            ' AdjustTF = ',num2str(adjustTF)])
+        else
+            disp([num2str(Freq),' dBs does not exist for wind TF'])
+            adjustTF = NaN;
+        end
     else
-        disp('No wind TF exists for num2str(tfnum)')
+        disp(['No wind TF exists for ', num2str(tfnum)])
+        adjustTF = NaN;
+        
     end
 end
 

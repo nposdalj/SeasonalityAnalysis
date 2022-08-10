@@ -9,6 +9,9 @@ if exist(tfbdir)
     tfd = floor(tfnum(1)/100)*100;
     tfMatch = [];
     iTF = 3;
+     if tfd <= 300
+        suggestedTFPath = [tfbdir,'\100-399'];
+    else
     while isempty(tfMatch) && iTF<=length(tfdstruct)
         tfMatch = strfind(tfdcell{1,iTF},num2str(tfd));
         iTF = iTF+1;
@@ -17,12 +20,24 @@ if exist(tfbdir)
         tfMatchIdx = iTF-1;
         suggestedTFPath = cell2mat(fullfile(tfdcell(2,tfMatchIdx),tfdcell(1,tfMatchIdx)));
     end
+     end
 end
 
 stfnum = num2str(tfnum);
 tffile = fullfile(suggestedTFPath,stfnum,[stfnum,'*B_HARP.tf']);
 tffilename = dir(tffile);
-tffile = fullfile(suggestedTFPath,stfnum,tffilename.name);
-[Vals,RevBTF] = loadTF(tffile); % open and read B Transfer Function
+if ~isempty(tffilename)
+    tffile = fullfile(suggestedTFPath,stfnum,tffilename.name);
+    [Vals,RevBTF] = loadTF(tffile); % open and read B Transfer Function
+else
+    tffile = fullfile(suggestedTFPath,stfnum,[stfnum,'*A_HARP.tf']);
+    tffilename = dir(tffile);
+    if ~isempty(tffilename)
+    tffile = fullfile(suggestedTFPath,stfnum,tffilename.name);
+    [Vals,RevBTF] = loadTF(tffile); % open and read A Transfer Function
+    else
+        disp([No 
+    end
+    end
 end
 

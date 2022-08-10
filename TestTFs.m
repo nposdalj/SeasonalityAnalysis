@@ -6,12 +6,13 @@ close all;clear all;clc;
 %% User Definied Variables
 GDrive = 'I';
 Freq = {9000,10000,11000}; %frequency of comparing interest in kHz
-%Freq = 10000;
-site = 'NC';
-region = 'WAT';
+site = 'QC';
+region = 'OCNMS';
 fullSite = [region,'_',site];
 fullSitePlots = [region,'\_',site];
-dpns = {'01','02','03','04'};
+%fullSite = [site,'_D'];
+%fullSitePlots = site;
+dpns = {'06','12','14','15','16'};
 
 % REV B
 MBARC_TF = [GDrive,':\Shared drives\MBARC_TF'];
@@ -24,22 +25,6 @@ Wind_TF = [GDrive,':\Shared drives\Wind_deltaTF\pub_TF\TF_Wind'];
 
 saveDIR = [GDrive,':\My Drive\TestTFs']; %directory where to save outputs
 HARPsum = [saveDIR,'\HARPdataSummary.xlsx']; %HARP data summary sheet
-%% Determine Series based on TF
-%if TF >= 100 && TF <= 399
-%    Series = '100-399';
- %   elseif TF >= 400 && TF <= 499
-  %      Series = '400-499';
-   %     elseif TF >= 500 && TF <= 599
-    %        Series = '500-599';
-     %       elseif TF >= 600 && TF <= 699
-      %         Series = '600-699';
-       %        elseif TF >= 700 && TF <= 799
-        %           Series = '700-799';
-         %          elseif TF >= 800 && TF <= 899
-          %             Series = '800-899';
-           %            elseif TF >= 900 && TF <= 999
-            %               Series = '900-999';
-%end
 %% Loop through HARP data summary sheet and find matching sites and TFs
 dtable = readtable(HARPsum);
 stxt = size(dtable); 
@@ -56,12 +41,19 @@ end
 [~,q] = size(Freq);
 [~,qq] = size(tfnum);
 adjustTF = zeros(q,qq); %preallocate vecctor
+
 for itf = 1:qq
     for ifr = 1:q
         Freqq = Freq{ifr};
         adjustTF(ifr,itf) = getTF_BvsWind(site,MBARC_TF,Wind_TF,tfnum(itf),Freqq);
     end
 end
+
+%max adjustment for each TF (regardless of peak frequency)
+maxAdjust = max(adjustTF);
+
+%save adjustments as text files
+save([saveDIR,'\',fullSite,'_Adjustments.mat'],'tfnum','Freq','adjustTF','maxAdjust');
 %% Find and load TF files
 % Rev B
 RevBTF = [];
