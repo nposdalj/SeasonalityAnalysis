@@ -29,9 +29,12 @@ tffilename = dir(tffile);
 if ~isempty(tffilename)
     [ax,~]=size(tffilename);
     if ax > 1
-    else
+     tffile = fullfile(suggestedTFPath,stfnum,tffilename(1).name);
+    [Vals,RevBTF] = loadTF(tffile); % open and read B Transfer Function
+        else
     tffile = fullfile(suggestedTFPath,stfnum,tffilename.name);
     [Vals,RevBTF] = loadTF(tffile); % open and read B Transfer Function
+    end
     else
     tffile = fullfile(suggestedTFPath,stfnum,[stfnum,'*A_HARP.tf']);
     tffilename = dir(tffile);

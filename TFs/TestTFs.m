@@ -6,8 +6,8 @@ close all;clear all;clc;
 %% User Definied Variables
 GDrive = 'I';
 Freq = {9000,10000,11000}; %frequency of comparing interest in kHz
-site = 'CB';
-region = 'GofCA';
+site = 'PAL';
+region = '';
 if ~isempty(region)
 fullSite = [region,'_',site];
 fullSitePlots = [region,'\_',site];
@@ -15,7 +15,7 @@ else
 fullSite = site;
 fullSitePlots = site;
 end
-dpns = {'10','11'};
+dpns = {'02','03','05','06','07','08'};
 
 % REV B
 MBARC_TF = [GDrive,':\Shared drives\MBARC_TF'];
