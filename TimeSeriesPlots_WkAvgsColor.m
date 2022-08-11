@@ -26,14 +26,14 @@ for site = 1:length(siteabrevs)
     %% Load in site-specific workspaces
     dataDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',char(siteabrevs(site))];
         %specify directory where workspaces are saved
-    GDrive_real = GDrive; % Temporarily store a protected version of GDrive, as the workspaces will overwrite it
+    GDrive_correct = GDrive; % Temporarily store a protected version of GDrive, as the workspaces will overwrite it
     
     disp(['Loading Workspace2 for ' siteabrev '...'])
     load([dataDir,'\',siteabrev,'_workspaceStep2.mat']);
     disp(['Loading Workspace3 for ' siteabrev '...']);
     load([dataDir,'\',siteabrev,'_workspaceStep3.mat']);
     
-    GDrive = GDrive_real;       % Restore the correct GDrive and apply to path names as needed
+    GDrive = GDrive_correct;       % Restore the correct GDrive and apply to path names as needed
     dayBinCSV(1) = GDrive;
     effortXls(1) = GDrive;
     filename(1) = GDrive;
@@ -182,7 +182,7 @@ for i = 1:4 % LOOP THROUGH CLASSES: 1 = GN (General), 2 = FE, 3 = JU, 4 = MA
     set(gcf, 'Position', [100 100 750 350])
     set(allsites_cplot, 'EdgeColor', 'white')
     colbar = colorbar;
-    caxis([0 presenceMax])
+    %caxis([0 presenceMax])
     title(['Avg Weekly Presence of Sperm Whales in ' region ' - ' classname])
     ylabel('Site')
     xlabel('Week')

@@ -17,10 +17,11 @@ filename = [saveDir,'\',genderFileName,'_',sp,'_gender.mat'];
 load(filename);
 sexData = binData; %change file name so it doesn't match general sperm whale data
 %% load workspace 2
+GDrive_correct = GDrive; % Preserve correct GDrive as it was entered above
 load([saveDir,'\',siteabrev,'_workspaceStep2.mat']);
 
-%overwrite some file names
-GDrive = 'G';
+% Overwrite some path names
+GDrive = GDrive_correct; %Correct GDrive if overwritten by loading workspace
 effortXls(1) = GDrive;
 saveDir(1) = GDrive;
 tpwsPath(1) = GDrive;

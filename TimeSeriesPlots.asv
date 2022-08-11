@@ -19,6 +19,7 @@ GDrive = GDrive_correct; %Correct GDrive if overwritten by loading workspace
 dayBinCSV(1) = GDrive;
 effortXls(1) = GDrive;
 filename(1) = GDrive;
+GDrive = GDrive;
 tpwsPath(1) = GDrive;
 
 saveDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\Plots\',siteabrev];
