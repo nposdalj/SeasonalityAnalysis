@@ -2,10 +2,11 @@
 clear all;close all;clc;
 
 %% load data
-siteName = 'OC';
+siteName = 'PS2';
 NumBub = 3;
-DataDir = 'I:\My Drive\WAT_TPWS_metadataReduced\SeasonalityAnalysis';
-saveDirectory = ['I:\My Drive\WAT_TPWS_metadataReduced\Plots\',siteName];
+DataDir = 'I:\My Drive\CCE_TPWS_metadataReduced\SeasonalityAnalysis';
+saveDirectory = ['I:\My Drive\CCE_TPWS_metadataReduced\Plots\',siteName];
+dates = [2006 2007 2008 2009 2010 2011 2012 2013 2014 2015 2016 2017 2018 2019 2020];
 %% Retime data weekly
 load([DataDir,'\',siteName,'\',siteName,'_workspaceStep2.mat']);
 clear mean
@@ -245,7 +246,7 @@ xlim([0,53])
 % ylim([2016.75,2017.25])
 ylabel('General')
 set(gca,'xticklabel',[])
-yticks([2015 2016 2017 2018 2019])
+yticks(dates)
 
 % Social Group
 subplot(4,1,2)
@@ -274,7 +275,7 @@ xlim([0,53])
 % ylim([2016.75,2017.25])
 ylabel('Social Groups')
 set(gca,'xticklabel',[])
-yticks([2015 2016 2017 2018 2019])
+yticks(dates)
 
 subplot(4,1,3)
 blue = '#fc8d62';%'#349987';
@@ -302,7 +303,7 @@ xlim([0,53])
 % ylim([2016.75,2017.25])
 ylabel('Mid-size')
 set(gca,'xticklabel',[])
-yticks([2015 2016 2017 2018 2019])
+yticks(dates)
 
 %fBubble3 = figure('Position',[411 1008 816 160]);
 subplot(4,1,4)
@@ -331,7 +332,7 @@ xlim([0,53])
 xlabel('Week of the year')
 % ylim([2016.75,2017.25])
 ylabel('Adult Males')
-yticks([2015 2016 2017 2018 2019])
+yticks(dates)
 end % don't run this line
 
 %% save plot
