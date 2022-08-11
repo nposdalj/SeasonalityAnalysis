@@ -1,7 +1,7 @@
 function adjustTF = getTF_BvsWind(site,tfbdir,tfwdir,tfnum,Freq)
 % find TF number from XLS and then read in TF"B" and TF "Wind" to find dif
 %Search TFs folder for the appropriate preamp
-
+if ~isnan(tfnum)
 if exist(tfbdir)
     tfdstruct = dir(tfbdir);
     tfdcell = struct2cell(tfdstruct);
@@ -27,9 +27,15 @@ stfnum = num2str(tfnum);
 tffile = fullfile(suggestedTFPath,stfnum,[stfnum,'*B_HARP.tf']);
 tffilename = dir(tffile);
 if ~isempty(tffilename)
+    [ax,~] = size(tffilename);
+    if ax > 1
+    tffile = fullfile(suggestedTFPath,stfnum,tffilename(1).name);
+    [freqB,uppcB] = loadTF(tffile); % open and read B Transfer Function
+    else
     tffile = fullfile(suggestedTFPath,stfnum,tffilename.name);
     [freqB,uppcB] = loadTF(tffile); % open and read B Transfer Function
-else
+    end
+    else
     tffile = fullfile(suggestedTFPath,stfnum,[stfnum,'*A_HARP.tf']);
     tffilename = dir(tffile);
     if ~isempty(tffilename)
@@ -76,5 +82,9 @@ end
         adjustTF = NaN;
         
     end
+else
+    disp(['Transfer Function does not exist; double check data summary sheet'])
+    adjustTF = NaN;
+end
 end
 
