@@ -2,22 +2,23 @@ clearvars
 close all
 % This script creates time series plots for each site.
 %% Parameters defined by user
-filePrefix = 'OC'; % File name to match. 
-siteabrev = 'OC'; %abbreviation of site.
-GDrive = 'I'; %directory for Google Drive
+filePrefix = 'HZ'; % File name to match. 
+siteabrev = 'HZ'; %abbreviation of site.
+GDrive = 'H'; %directory for Google Drive
 region = 'WAT';
 sp = 'Pm'; % your species code
-titleNAME = 'Oceanographers Canyon';
+titleNAME = 'Western Atlantic - Heezen Canyon';
 dataDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev]; %specify directory where workspaces are saved
 %% load workspace
 load([dataDir,'\',siteabrev,'_workspaceStep2.mat']);
 load([dataDir,'\',siteabrev,'_workspaceStep3.mat']);
 
-dayBinCSV(1) = 'I'; % Correct GDrive for SWAL1
-effortXls(1) = 'I';
-filename(1) = 'I';
-GDrive = 'I';
-tpwsPath(1) = 'I';
+GDrive = 'I';       %Correct GDrive
+dayBinCSV(1) = GDrive;
+effortXls(1) = GDrive;
+filename(1) = GDrive;
+GDrive = GDrive;
+tpwsPath(1) = GDrive;
 
 saveDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\Plots\',siteabrev];
 %% Fill in missing days
@@ -229,11 +230,11 @@ meantab365WEEK.Properties.VariableNames = {'Week' 'HoursProp' 'SEM'};
 %make figure
 figure
 bar(meantab365WEEK.Week, meantab365WEEK.HoursProp,'FaceColor',[.6 .6 .6], 'EdgeColor','flat')
-%set(gcf,'position',[50 50 700 400])
+set(gcf,'position',[50 50 700 400])
 xlim([0 52])
 xlabel('Week')
 ylabel('Average proportion of hours/week')
-title({'Average Weekly Presence of Sperm Whales in the ',titleNAME});
+%title({'Average Weekly Presence of Sperm Whales in the ',titleNAME});
 hold on
 errorbar(meantab365WEEK.Week,meantab365WEEK.HoursProp, -(meantab365WEEK.SEM),meantab365WEEK.SEM, ...
     'Color','k','LineStyle','none')

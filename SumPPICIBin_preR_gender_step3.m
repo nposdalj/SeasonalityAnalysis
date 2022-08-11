@@ -2,12 +2,12 @@ clearvars
 close all
 
 %% Parameters defined by user
-filePrefix = 'PS'; % File name to match. 
-genderFileName = 'PS'; %File name to match gender file
-siteabrev = 'PS2'; %abbreviation of site
-region = 'CCE';
+filePrefix = 'GS'; % File name to match. 
+genderFileName = 'WAT_GS'; %File name to match gender file
+siteabrev = 'GS'; %abbreviation of site
+region = 'WAT';
 sp = 'Pm'; % your species code
-GDrive = 'I'; %Google Drive
+GDrive = 'H'; %Google Drive
 
 effortXls = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev,'\Pm_Effort.xlsx']; % specify excel file with effort times
 saveDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev]; %specify directory to save files
@@ -20,7 +20,7 @@ sexData = binData; %change file name so it doesn't match general sperm whale dat
 load([saveDir,'\',siteabrev,'_workspaceStep2.mat']);
 
 %overwrite some file names
-GDrive = 'I';
+GDrive = 'H';
 effortXls(1) = GDrive;
 saveDir(1) = GDrive;
 tpwsPath(1) = GDrive;

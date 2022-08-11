@@ -2,11 +2,11 @@ clearvars
 close all
 
 %% Parameters defined by user
-filePrefix = 'PS'; % File name to match. 
-siteabrev = 'PS2'; %abbreviation of site.
-region = 'CCE'; %region
+filePrefix = 'GS'; % File name to match. 
+siteabrev = 'GS'; %abbreviation of site.
+region = 'WAT'; %region
 sp = 'Pm'; % your species code
-GDrive = 'I'; %Google Drive
+GDrive = 'H'; %Google Drive
 saveDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev]; %specify directory to save files
 DutyCy = 6; %if this data only has 1 deployment that is duty cycled make it equal to 1
 %otherwise, make it equal to the number of deployments that have different
@@ -15,10 +15,10 @@ DutyCy = 6; %if this data only has 1 deployment that is duty cycled make it equa
 %% load workspace
 load([saveDir,'\',siteabrev,'_workspace125.mat']);
 
-effortXls(1) = 'I'; %Correct GDrive for SWAL1
-GDrive = 'I';
-saveDir(1) = 'I';
-tpwsPath(1) = 'I';
+GDrive = 'H'; %Correct GDrive for SWAL1
+effortXls(1) = GDrive;
+saveDir(1) = GDrive;
+tpwsPath(1) = GDrive;
 %% Set up duty cycled dates
 % If only one or two deployments are duty cycled, adjust accordingly
 if DutyCy == 1
