@@ -15,10 +15,11 @@ DutyCy = 0; %DutyCy = 6; %if this data only has 1 deployment that is duty cycled
 %% load workspace
 load([saveDir,'\',siteabrev,'_workspace125.mat']);
 
-effortXls(1) = 'G'; %Correct GDrive for SWAL1
-GDrive = 'G';
-saveDir(1) = 'G';
-tpwsPath(1) = 'G';
+GDrive = 'G'; %Correct GDrive for SWAL1
+effortXls(1) = GDrive;
+saveDir(1) = GDrive;
+tpwsPath(1) = GDrive;
+
 %% Set up duty cycled dates
 % If only one or two deployments are duty cycled, adjust accordingly
 if DutyCy == 1
