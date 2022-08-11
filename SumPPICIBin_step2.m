@@ -6,19 +6,20 @@ filePrefix = 'GS'; % File name to match.
 siteabrev = 'GS'; %abbreviation of site.
 region = 'WAT'; %region
 sp = 'Pm'; % your species code
-GDrive = 'H'; %Google Drive
+GDrive = 'G'; %Google Drive
 saveDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev]; %specify directory to save files
-DutyCy = 6; %if this data only has 1 deployment that is duty cycled make it equal to 1
+DutyCy = 0; %DutyCy = 6; %if this data only has 1 deployment that is duty cycled make it equal to 1
 %otherwise, make it equal to the number of deployments that have different
 %duty cycles that must be accounted for; if this data is NOT duty cycled,
 %make it equal to 0
 %% load workspace
 load([saveDir,'\',siteabrev,'_workspace125.mat']);
 
-GDrive = 'H'; %Correct GDrive for SWAL1
+GDrive = 'G'; %Correct GDrive for SWAL1
 effortXls(1) = GDrive;
 saveDir(1) = GDrive;
 tpwsPath(1) = GDrive;
+
 %% Set up duty cycled dates
 % If only one or two deployments are duty cycled, adjust accordingly
 if DutyCy == 1
@@ -89,7 +90,7 @@ dayTable(~dayTable.Effort_Bin,:)=[]; %removes days with no effort, NOT days with
 %% accounting for the duty cycle and effort (hourly data)
 [p,~]=size(hourlyTab);
 hourlyTab.MaxEffort_Bin = ones(p,1)*(12); %total number of bins possible in one day
-hourlyTab.MaxEffort_Sec = ones(p,1)*(3600); %seconds in one day
+hourlyTab.MaxEffort_Sec = ones(p,1)*(3600); %seconds in an hour
 
 if DutyCy == 1
     DutyCycleIdxStart =  hourlyTab.tbin < startTime;
