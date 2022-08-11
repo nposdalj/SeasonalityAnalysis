@@ -27,8 +27,9 @@ stfnum = num2str(tfnum);
 tffile = fullfile(suggestedTFPath,stfnum,[stfnum,'*B_HARP.tf']);
 tffilename = dir(tffile);
 if ~isempty(tffilename)
-    if length(tffilename.name) > 1
-    tffile = fullfile(suggestedTFPath,stfnum,tffilename.name);
+    [ax,~] = size(tffilename);
+    if ax > 1
+    tffile = fullfile(suggestedTFPath,stfnum,tffilename(1).name);
     [freqB,uppcB] = loadTF(tffile); % open and read B Transfer Function
     else
     tffile = fullfile(suggestedTFPath,stfnum,tffilename.name);
