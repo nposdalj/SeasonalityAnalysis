@@ -6,7 +6,7 @@ close all
 
 %% Parameters defined by user
 siteabrevs = {'HZ' 'OC' 'NC' 'BC' 'WC' 'GS' 'BP' 'BS' 'JAX'}; % List of abbreviations of sites in your region.
-GDrive = 'G'; % Directory for Google Drive on this device
+GDrive = 'P'; % Directory for Google Drive on this device
 region = 'WAT';
 sp = 'Pm'; % your species code
 
@@ -26,14 +26,15 @@ for site = 1:length(siteabrevs)
     %% Load in site-specific workspaces
     dataDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',char(siteabrevs(site))];
         %specify directory where workspaces are saved
-    GDrive_correct = GDrive; % Temporarily store a protected version of GDrive, as the workspaces will overwrite it
+    GDrive_correctII = GDrive; % Temporarily store a protected version of GDrive, as the workspaces will overwrite it
+        % named GDrive_correctII since workspaces also contain a GDrive_correct that will overwrite this one
     
     disp(['Loading Workspace2 for ' siteabrev '...'])
     load([dataDir,'\',siteabrev,'_workspaceStep2.mat']);
     disp(['Loading Workspace3 for ' siteabrev '...']);
     load([dataDir,'\',siteabrev,'_workspaceStep3.mat']);
     
-    GDrive = GDrive_correct;       % Restore the correct GDrive and apply to path names as needed
+    GDrive = GDrive_correctII;       % Restore the correct GDrive and apply to path names as needed
     dayBinCSV(1) = GDrive;
     effortXls(1) = GDrive;
     filename(1) = GDrive;
@@ -43,9 +44,9 @@ for site = 1:length(siteabrevs)
     sexbinPresence_E = sexbinPresence;
     sexbinPresence_E(isnan(sexbinPresence_E.Effort_Bin),:) = [];
     
-    sexbinPresence_E.FemaleHoursNorm = (sexbinPresence_E.FemaleNormBin*5)./60; % CORRECT HOURSNORM!!!
-    sexbinPresence_E.JuvenileHoursNorm = (sexbinPresence_E.JuvenileNormBin*5)./60; % CORRECT HOURSNORM!!!
-    sexbinPresence_E.MaleHoursNorm = (sexbinPresence_E.MaleNormBin*5)./60; % CORRECT HOURSNORM!!!
+%     sexbinPresence_E.FemaleHoursNorm = (sexbinPresence_E.FemaleNormBin*5)./60; % CORRECT HOURSNORM!!!
+%     sexbinPresence_E.JuvenileHoursNorm = (sexbinPresence_E.JuvenileNormBin*5)./60; % CORRECT HOURSNORM!!!
+%     sexbinPresence_E.MaleHoursNorm = (sexbinPresence_E.MaleNormBin*5)./60; % CORRECT HOURSNORM!!!
     
     %% Make versions of meantabFE365,meantabJU365,meantabMA365 that are exactly analogous to meantab365
     % Just will exclude the stats for class-specific NormClick cuz sexbinPresence doesn't have that
@@ -187,6 +188,6 @@ for i = 1:4 % LOOP THROUGH CLASSES: 1 = GN (General), 2 = FE, 3 = JU, 4 = MA
     ylabel('Site')
     xlabel('Week')
     ylabel(colbar,{'\fontsize{11} Average proportion of';'\fontsize{11} hours/week with presence'})
-    saveas(allsites_cplot, [saveDir, '\' 'WAT_AverageWeeklyPresence_' classname], 'png');
+%     saveas(allsites_cplot, [saveDir, '\' 'WAT_AverageWeeklyPresence_' classname], 'png');
     
 end
