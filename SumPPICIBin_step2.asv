@@ -2,8 +2,8 @@ clearvars
 close all
 
 %% Parameters defined by user
-filePrefix = 'GS'; % File name to match. 
-siteabrev = 'GS'; %abbreviation of site.
+filePrefix = 'OC'; % File name to match. 
+siteabrev = 'OC'; %abbreviation of site.
 region = 'WAT'; %region
 sp = 'Pm'; % your species code
 GDrive = 'I'; %Google Drive
@@ -13,9 +13,12 @@ DutyCy = 0; %DutyCy = 6; %if this data only has 1 deployment that is duty cycled
 %duty cycles that must be accounted for; if this data is NOT duty cycled,
 %make it equal to 0
 %% load workspace
+GDrive_correct = GDrive; % Preserve correct GDrive as it was entered above
 load([saveDir,'\',siteabrev,'_workspace125.mat']);
-
 GDrive = 'I'; %Correct GDrive for SWAL1
+
+% Overwrite some path names
+GDrive = GDrive_correct; %Correct GDrive if overwritten by loading workspace
 effortXls(1) = GDrive;
 saveDir(1) = GDrive;
 tpwsPath(1) = GDrive;
@@ -361,17 +364,6 @@ if length(MD) < 365
     dayTable.HoursProp(isnan(dayTable.HoursProp)) = 0; 
 else
 dayTable.day = categorical(dayTable.day);
-%mean
-% [mean, sem, std, var, range] = grpstats(dayTable.HoursProp, dayTable.day, {'mean','sem','std','var','range'}); %takes the mean of each day of the year
-% meantable = array2table(mean);
-% semtable = array2table(sem);
-% stdtable = array2table(std);
-% vartable = array2table(var);
-% rangetable = array2table(range);
-% newcol_mean = (1:length(mean))';
-% meanarray365 = [newcol_mean mean sem std var range];
-% meantab365 = array2table(meanarray365);
-% meantab365.Properties.VariableNames = {'Day' 'HoursProp' 'SEM' 'Std' 'Var' 'Range'};
 meantab365 = grpstats(timetable2table(dayTable),'day',{'mean','sem','std','var','range'},'DataVars',{'HoursProp','HoursNorm','NormBin','NormClick'}); %takes the mean of each day of the year
 end
 
