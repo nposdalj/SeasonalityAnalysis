@@ -2,8 +2,8 @@ clearvars
 close all
 
 %% Parameters defined by user
-filePrefix = 'OC'; % File name to match. 
-siteabrev = 'OC'; %abbreviation of site.
+filePrefix = 'BP'; % File name to match. 
+siteabrev = 'BP'; %abbreviation of site.
 region = 'WAT'; %region
 sp = 'Pm'; % your species code
 GDrive = 'I'; %Google Drive
@@ -13,7 +13,6 @@ DutyCy = 0; %DutyCy = 6; %if this data only has 1 deployment that is duty cycled
 %duty cycles that must be accounted for; if this data is NOT duty cycled,
 %make it equal to 0
 %% load workspace
-GDrive_correct = GDrive; % Preserve correct GDrive as it was entered above
 load([saveDir,'\',siteabrev,'_workspace125.mat']);
 GDrive = 'I'; %Correct GDrive for SWAL1
 
