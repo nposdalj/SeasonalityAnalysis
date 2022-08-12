@@ -2,8 +2,8 @@ clearvars
 close all
 
 %% Parameters defined by user
-filePrefix = 'NC'; % File name to match. 
-siteabrev = 'NC'; %abbreviation of site.
+filePrefix = 'JAX'; % File name to match. 
+siteabrev = 'JAX'; %abbreviation of site.
 region = 'WAT'; %region
 sp = 'Pm'; % your species code
 GDrive = 'I'; %Google Drive

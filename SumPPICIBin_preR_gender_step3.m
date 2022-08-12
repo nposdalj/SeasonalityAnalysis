@@ -2,9 +2,9 @@ clearvars
 close all
 
 %% Parameters defined by user
-filePrefix = 'GS'; % File name to match. 
-genderFileName = 'GS'; %File name to match gender file
-siteabrev = 'GS'; %abbreviation of site
+filePrefix = 'BC'; % File name to match. 
+genderFileName = 'WAT_BC'; %File name to match gender file
+siteabrev = 'BC'; %abbreviation of site
 region = 'WAT';
 sp = 'Pm'; % your species code
 GDrive = 'I'; %Google Drive
@@ -204,13 +204,13 @@ writetable(meantabJU365, [saveDir,'\',siteabrev,'_365GroupedMeanJuvenile.csv']);
 writetable(meantabMA365, [saveDir,'\',siteabrev,'_365GroupedMeanMale.csv']); %table with the mean for each day of the year
 end
 %% Hourly binary Data for GAMGEE Models
-% Extraft hourly effort from workspace 2 dayTable that already accounts for duty cycle, etc.
+% Extract hourly effort from workspace 2 dayTable that already accounts for duty cycle, etc.
 hourlytab = timetable2table(hourlyTab);
 sexHourEffort = hourlytab(:,{'tbin','Effort_Bin','Effort_Sec','MaxEffort_Bin','MaxEffort_Sec'});
 sexHourEffort = table2timetable(sexHourEffort);
 
 %hourly
-Click = retime(sexData(:,4:6),'hourly','sum'); % #5-min bins per hour
+Click = retime(sexDEdata(:,4:6),'hourly','sum'); % #5-min bins per hour
 sexhourlyTab = synchronize(Click,sexHourEffort);
 
 %Females
