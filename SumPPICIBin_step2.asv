@@ -2,8 +2,8 @@ clearvars
 close all
 
 %% Parameters defined by user
-filePrefix = 'OC'; % File name to match. 
-siteabrev = 'OC'; %abbreviation of site.
+filePrefix = 'GS'; % File name to match. 
+siteabrev = 'GS'; %abbreviation of site.
 region = 'WAT'; %region
 sp = 'Pm'; % your species code
 GDrive = 'I'; %Google Drive
@@ -361,6 +361,17 @@ if length(MD) < 365
     dayTable.HoursProp(isnan(dayTable.HoursProp)) = 0; 
 else
 dayTable.day = categorical(dayTable.day);
+%mean
+% [mean, sem, std, var, range] = grpstats(dayTable.HoursProp, dayTable.day, {'mean','sem','std','var','range'}); %takes the mean of each day of the year
+% meantable = array2table(mean);
+% semtable = array2table(sem);
+% stdtable = array2table(std);
+% vartable = array2table(var);
+% rangetable = array2table(range);
+% newcol_mean = (1:length(mean))';
+% meanarray365 = [newcol_mean mean sem std var range];
+% meantab365 = array2table(meanarray365);
+% meantab365.Properties.VariableNames = {'Day' 'HoursProp' 'SEM' 'Std' 'Var' 'Range'};
 meantab365 = grpstats(timetable2table(dayTable),'day',{'mean','sem','std','var','range'},'DataVars',{'HoursProp','HoursNorm','NormBin','NormClick'}); %takes the mean of each day of the year
 end
 
