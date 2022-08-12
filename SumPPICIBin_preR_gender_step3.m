@@ -2,12 +2,12 @@ clearvars
 close all
 
 %% Parameters defined by user
-filePrefix = 'JAX'; % File name to match. 
-genderFileName = 'JAX'; %File name to match gender file
-siteabrev = 'JAX'; %abbreviation of site
+filePrefix = 'GS'; % File name to match. 
+genderFileName = 'GS'; %File name to match gender file
+siteabrev = 'GS'; %abbreviation of site
 region = 'WAT';
 sp = 'Pm'; % your species code
-GDrive = 'G'; %Google Drive
+GDrive = 'I'; %Google Drive
 
 effortXls = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev,'\Pm_Effort.xlsx']; % specify excel file with effort times
 saveDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev]; %specify directory to save files
