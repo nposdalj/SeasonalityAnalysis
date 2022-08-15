@@ -8,7 +8,9 @@ region = 'CCE'; %region
 NumBub = 3;
 DataDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteName];
 saveDirectory = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\Plots\',siteName];
+dates = [2006 2007 2008 2009 2010 2011 2012 2013 2014 2015 2016 2017 2018 2019 2020];
 %% Retime data weekly
+GDrive_correctII = GDrive; % Store correct GDrive to overwrite some path names later
 load([DataDir,'\',siteName,'_workspaceStep2.mat']);
 clear mean
 
@@ -45,6 +47,14 @@ WeekData.NormBin = WeekData.NormBin *5;
 %Sex
 load([DataDir,'\',siteName,'_workspaceStep3.mat']);
 clear mean
+
+GDrive = GDrive_correctII; %Correct GDrive
+effortXls(1) = GDrive;
+saveDir(1) = GDrive;
+tpwsPath(1) = GDrive;
+dayBinCSV(1) = GDrive;
+filename(1) = GDrive;
+
 sexbinPresence.day = grp2idx(sexbinPresence.day);
 binPresenceAll = synchronize(allDays,sexbinPresence);
 binPresenceAll = removevars(binPresenceAll, {'ZeroCol'});
@@ -70,8 +80,10 @@ dataWeek.JuvenileNormBin = dataWeek.JuvenileNormBin *5;
 dataWeek.MaleNormBin = dataWeek.MaleNormBin *5;
 
 %% Delete first week for specific sites
-if (strcmp(siteName,'KOA') | strcmp(siteName,'QN') | strcmp(siteName,'BD') | strcmp(siteName,'KS') | strcmp(siteName,'CB') | strcmp(siteName,'CA')...
-        | strcmp(siteName,'CCE') | strcmp(siteName,'GI') | strcmp(siteName,'HOKE') | strcmp(siteName,'CORC'))
+if (strcmp(siteName,'KOA') | strcmp(siteName,'QN') | strcmp(siteName,'BD') | strcmp(siteName,'KS') | strcmp(siteName,'CB') | strcmp(siteName,'CA')... % GOA
+        | strcmp(siteName,'CCE') | strcmp(siteName,'GI') | strcmp(siteName,'HOKE') | strcmp(siteName,'CORC')...
+        | strcmp(siteName,'NC') | strcmp(siteName,'BC') | strcmp(siteName,'GS') | strcmp(siteName,'BP') | strcmp(siteName,'BS')... % WAT
+        | strcmp(siteName,'WC') | strcmp(siteName,'OC') | strcmp(siteName,'HZ') | strcmp(siteName,'JAX'))
     WeekData(1,:) = [];
     dataWeek(1,:) = [];
 end
@@ -111,6 +123,16 @@ CutOff = edges(lessThan(1)); %values over this value will be considered 'greater
 
 %Actual Cutoff (max bubble size)
 %CutOff = MIN;
+
+%Edit by AD: Manually mark periods of no effort for WAT sites
+if siteName == 'NC'
+    WeekData.Noeffort(WeekData.Count_Click == 0) = 1;
+    dataWeek.Noeffort(WeekData.Count_Click == 0) = 1;
+elseif siteName == 'BC'
+    WeekData.Noeffort(WeekData.Count_Click == 0) = 1;
+    dataWeek.Noeffort(WeekData.Count_Click == 0) = 1;
+end
+
 %% Plot data
 %No Social Group Data
 if strcmp(siteName, 'NOFEM')
@@ -208,7 +230,8 @@ years = unique(dataWeek.Year);
 keep = ~isnan(WeekData.NormBin) & WeekData.NormBin > 0;
 subplot(4,1,1)
 black = [0,0,0];
-absence = WeekData.NormBin == 0;
+%absence = WeekData.NormBin == 0; % How it was before
+absence = WeekData.NormBin == 0 & WeekData.Noeffort == 0; % Change by AD
 for y = 1:length(years)
     hold on
     idxYear = WeekData.Year == years(y);
@@ -230,12 +253,14 @@ xlim([0,53])
 % ylim([2016.75,2017.25])
 ylabel('General')
 set(gca,'xticklabel',[])
+yticks(dates)
 
 % Social Group
 subplot(4,1,2)
 blue = '#66c2a5';%'#2e59a8';
 keep = ~isnan(dataWeek.FemaleNormBin) & dataWeek.FemaleNormBin > 0;
-absence = dataWeek.FemaleNormBin == 0;
+%absence = dataWeek.FemaleNormBin == 0; % How it was before
+absence = dataWeek.FemaleNormBin == 0 & WeekData.Noeffort == 0; % Edit by AD
 for y = 1:length(years)
     hold on
     idxYear = dataWeek.Year == years(y);
@@ -257,11 +282,13 @@ xlim([0,53])
 % ylim([2016.75,2017.25])
 ylabel('Social Groups')
 set(gca,'xticklabel',[])
+yticks(dates)
 
 subplot(4,1,3)
 blue = '#fc8d62';%'#349987';
 keep = ~isnan(dataWeek.JuvenileNormBin) & dataWeek.JuvenileNormBin > 0;
-absence = dataWeek.JuvenileNormBin == 0;
+%absence = dataWeek.JuvenileNormBin == 0; % How it was before
+absence = dataWeek.JuvenileNormBin == 0 & WeekData.Noeffort == 0; % Edit by AD
 for y = 1:length(years)
     hold on
     idxYear = dataWeek.Year == years(y);
@@ -283,12 +310,14 @@ xlim([0,53])
 % ylim([2016.75,2017.25])
 ylabel('Mid-size')
 set(gca,'xticklabel',[])
+yticks(dates)
 
 %fBubble3 = figure('Position',[411 1008 816 160]);
 subplot(4,1,4)
 blue = '#8da0cb';
 keep = ~isnan(dataWeek.MaleNormBin) & dataWeek.MaleNormBin > 0;
-absence = dataWeek.MaleNormBin == 0;
+%absence = dataWeek.MaleNormBin == 0; % How it was before
+absence = dataWeek.MaleNormBin == 0 & WeekData.Noeffort == 0; % Edit by AD
 for y = 1:length(years)
     hold on
     idxYear = dataWeek.Year == years(y);
@@ -310,6 +339,7 @@ xlim([0,53])
 xlabel('Week of the year')
 % ylim([2016.75,2017.25])
 ylabel('Adult Males')
+yticks(dates)
 end % don't run this line
 
 %% save plot

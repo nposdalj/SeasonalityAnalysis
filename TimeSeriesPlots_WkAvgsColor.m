@@ -18,7 +18,7 @@ mtMA365WEEK_reg = nan(52,length(siteabrevs));
 
 %% Loop through sites
 
-saveDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\Plots\All_Sites']; % Where tables and plots are saved
+saveDir2 = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\Plots\All_Sites']; % Where tables and plots are saved
 
 for site = 1:length(siteabrevs)
     siteabrev = char(siteabrevs(site));
@@ -154,7 +154,7 @@ for i = 1:4 % LOOP THROUGH CLASSES: 1 = GN (General), 2 = FE, 3 = JU, 4 = MA
     for vari = 1:length(siteabrevs) % Give table columns names specifying class and site
         mtXX365WEEK_regTab.Properties.VariableNames(vari+1) = {strcat('HoursProp', classname, '_', char(siteabrevs(vari)))};
     end
-    writetable(mtXX365WEEK_regTab, [saveDir '\' region '_AverageWeeklyPresence_' classname '.xlsx'])
+    writetable(mtXX365WEEK_regTab, [saveDir2 '\' region '_AverageWeeklyPresence_' classname '.xlsx'])
     
     if i == 1
         mtGN365WEEK_regTab = mtXX365WEEK_regTab;    % Generate the General table as a variable
@@ -188,6 +188,6 @@ for i = 1:4 % LOOP THROUGH CLASSES: 1 = GN (General), 2 = FE, 3 = JU, 4 = MA
     ylabel('Site')
     xlabel('Week')
     ylabel(colbar,{'\fontsize{11} Average proportion of';'\fontsize{11} hours/week with presence'})
-%     saveas(allsites_cplot, [saveDir, '\' 'WAT_AverageWeeklyPresence_' classname], 'png');
+    saveas(allsites_cplot, [saveDir2, '\' 'WAT_AverageWeeklyPresence_' classname], 'png');
     
 end
