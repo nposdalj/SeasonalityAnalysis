@@ -8,7 +8,7 @@ SiteName_forPlots = 'Western Atlantic-BP';
 saveDir = ['H:\My Drive\WAT_TPWS_metadataReduced\SeasonalityAnalysis\BP']; %specify directory to save and load files
 %% load workspace
 load([saveDir,'\',siteabrev,'_workspace125.mat']);
-saveDir = ['H:\My Drive\WAT_TPWS_metadataReduced\Plots\BP']; %specify directory to save and load files
+saveDir = ['H:\My Drive\WAT_TPWS_metadataReduced\SeasonalityAnalysis\BP']; %specify directory to save and load files
 %% group data by 5min bins, days, weeks, and seasons
 %group data by 5 minute bins
 binTable = synchronize(binData,binEffort);
@@ -106,14 +106,11 @@ title({'Average Weekly Presence of Sperm Whales',SiteName_forPlots})
 ylabel('Proportion of Hours per Week with Clicks')
 hold on
 yyaxis right
-plot(weekTable.tbin,weekTable.Percent,'.','Color',[.5 .5 .5])
+plot(weekTable.tbin,weekTable.Percent,'.r')
 ylabel('Percent Effort')
 col = [0 0 0];
 set(gcf,'defaultAxesColorOrder',[col;col])
 weeklyfn = [siteabrev,'_','_weeklyPresence'];
-ax = gca;
-ax.YAxis(1).Color = 'k';
-ax.YAxis(2).Color = [.5 .5 .5];
 saveas(gcf,fullfile(saveDir,weeklyfn),'png')
 %% Average weekly click count (log scale)
 if strcmp(siteabrev,'BD')
