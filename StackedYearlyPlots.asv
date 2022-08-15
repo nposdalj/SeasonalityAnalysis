@@ -2,13 +2,25 @@ clearvars
 close all
 
 %% Parameters defined by user
+GDrive = 'P';
+Region = 'WAT';
 filePrefix = 'WAT_BP'; % File name to match. 
 siteabrev = 'BP'; %abbreviation of site.
 SiteName_forPlots = 'Western Atlantic-BP';
-saveDir = ['H:\My Drive\WAT_TPWS_metadataReduced\SeasonalityAnalysis\BP']; %specify directory to save and load files
+inDir = [GDrive ':\My Drive\' Region '_TPWS_metadataReduced\SeasonalityAnalysis\' siteabrev]; %specify directory to save and load files
+
+saveDir = [GDrive ':\My Drive\' Region '_TPWS_metadataReduced\Plots\' siteabrev]; %specify directory to save and load files
 %% load workspace
-load([saveDir,'\',siteabrev,'_workspace125.mat']);
-saveDir = ['H:\My Drive\WAT_TPWS_metadataReduced\SeasonalityAnalysis\BP']; %specify directory to save and load files
+GDrive_correctII = GDrive; % store correct GDrive
+saveDir_correctII = saveDir; % store correct saveDir
+
+load([inDir,'\',siteabrev,'_workspace125.mat']);
+
+GDrive = GDrive_correctII; % restore correct GDrive
+saveDir = saveDir_correctII; % restore correct saveDir
+effortXls(1) = GDrive;
+tpwsPath(1) = GDrive;
+
 %% group data by 5min bins, days, weeks, and seasons
 %group data by 5 minute bins
 binTable = synchronize(binData,binEffort);
@@ -39,13 +51,13 @@ dayTable.MaxEffort_Bin = ones(p,1)*(288); %total number of bins possible in one 
 dayTable.MaxEffort_Sec = ones(p,1)*(86400); %seconds in one day
 
 %dealing with duty cycled data
-if strcmp(siteabrev,'CB');
+if strcmp(siteabrev,'CB')
     ge = dayTable.Effort_Bin(222:516); %bin effort (excluding ships but not considering duty cycle)
     ge = ge/288; %proportion of data that was not ships if it were full recording effort
     dayTable.Effort_Bin(222:516) = ge * 240; %for CB02 10 on 2 off (12 minute cycle) -- meaning you're recording 0.8333 percent of the time
     dayTable.Effort_Sec(222:516) = dayTable.Effort_Bin(222:516) * 5 * 60; %convert from bins into efforts in seconds per day
     else
-if strcmp(siteabrev,'BD');
+if strcmp(siteabrev,'BD')
         ge = dayTable.Effort_Bin(222:516); %bin effort (excluding ships but not considering duty cycle)
     ge = ge/288; %proportion of data that was not ships if it were full recording effort
     dayTabe.Effort_Bin(222:516) = ge * 144; %for ALEUT03BD ONLY 5 on 5 off (10 minute cycle) -- meaning you're recording 0.5 percent of the time
@@ -106,643 +118,64 @@ title({'Average Weekly Presence of Sperm Whales',SiteName_forPlots})
 ylabel('Proportion of Hours per Week with Clicks')
 hold on
 yyaxis right
-plot(weekTable.tbin,weekTable.Percent,'.r')
+plot(weekTable.tbin,weekTable.Percent,'.','Color',[.5 .5 .5])
 ylabel('Percent Effort')
 col = [0 0 0];
 set(gcf,'defaultAxesColorOrder',[col;col])
 weeklyfn = [siteabrev,'_','_weeklyPresence'];
+ax = gca;
+ax.YAxis(1).Color = 'k';
+ax.YAxis(2).Color = [.5 .5 .5];
 saveas(gcf,fullfile(saveDir,weeklyfn),'png')
+
+%% Years to plot depending on site
+
+Years.CB   = [                     2011 2012 2013 2014 2015      2017 2018 2019      ];
+Years.QN   = [                               2013 2014 2015      2017                ];
+Years.BD   = [                2010 2011 2012                                         ];
+Years.GI   = [                                                        2018 2019 2020 ];
+Years.TIN  = [                     2011 2012 2013 2014 2015 2016 2017 2018 2019      ];
+Years.SAP  = [                2010 2011 2012 2013 2014 2015 2016 2017 2018 2019      ];
+Years.Wake = [                2010 2011 2012 2013 2014 2015 2016 2017                ];
+Years.CORC = [                                    2014 2015                          ];
+Years.QC   = [ 2007 2008 2009 2010 2011 2012 2013 2014                               ];
+Years.HZ   = [                                         2015 2016 2017 2018 2019      ];
+Years.NC   = [                                         2015 2016 2017 2018 2019      ];
+Years.BC   = [                                              2016 2017 2018 2019      ];
+Years.GS   = [                                              2016 2017 2018 2019      ];
+Years.BP   = [                                              2016 2017 2018 2019      ];
+Years.BS   = [                                              2016 2017 2018 2019      ];
+Years.JAX  = [                                              2016 2017 2018 2019      ];
+Years.OC   = [                                         2015 2016 2017 2018 2019      ];
+Years.WC   = [                                              2016 2017 2018 2019      ];
+
 %% Average weekly click count (log scale)
-if strcmp(siteabrev,'BD')
-subplot(3,1,1) %number of plots, column, row)
-bar1 = bar(dayTable.tbin(dayTable.year==2010),dayTable.HoursProp(dayTable.year==2010),'k')
-title({'Average Daily Presence of Sperm Whales at ',SiteName_forPlots})
-tstart = datetime(2010,01,01);
-tend = datetime(2010,12,31);
-xlim([tstart tend]);
+
+numYears = length(Years.(siteabrev));
+siteYears = Years.(siteabrev);
+
 ylim1 = min(dayTable.HoursProp);
 ylim2 = max(dayTable.HoursProp);
-ylim([ylim1 ylim2]);
-subplot(3,1,2) %number of plots, column, row)
-bar2 = bar(dayTable.tbin(dayTable.year==2011),dayTable.HoursProp(dayTable.year==2011),'k')
-tstart = datetime(2011,01,01);
-tend = datetime(2011,12,31);
+
+for i = 1:numYears
+    
+subplot(numYears,1,i) %number of plots, column, row)
+bar_i = bar(dayTable.tbin(dayTable.year==siteYears(i)),dayTable.HoursProp(dayTable.year==siteYears(i)),'k');
+tstart = datetime(siteYears(i),01,01);
+tend = datetime(siteYears(i),12,31);
 xlim([tstart tend]);
 ylim([ylim1 ylim2]);
-ylabel('Average Daily # of 5-min Bins')
-subplot(3,1,3) %number of plots, column, row)
-bar3 = bar(dayTable.tbin(dayTable.year==2012),dayTable.HoursProp(dayTable.year==2012),'k')
-tstart = datetime(2012,01,01);
-tend = datetime(2012,12,31);
-xlim([tstart tend]);
-ylim([ylim1 ylim2]);
-xlabel('Time (months)')
+
+if i == 1  % Title, y-label, and x-label
+title({'Average Daily Presence of Sperm Whales at ',SiteName_forPlots}) % Add title to top subplot
+elseif i == round(numYears/2)
+    ylabel('Average Daily # of 5-min Bins') % Add y-label to the middle subplot
+elseif i == numYears
+    xlabel('Time (months)') % Add x-label to bottom subplot
+end
+
+end
+
 % Save plot
 dailyfn = [siteabrev,'_','_subplots_daily_average_presence'];
 saveas(gcf,fullfile(saveDir,dailyfn),'png')
-end
-
-if strcmp(siteabrev,'CB')
-figure
-subplot(8,1,1) %number of plots, column, row)
-bar1 = bar(dayTable.tbin(dayTable.year==2011),dayTable.HoursProp(dayTable.year==2011),'k')
-title({'Average Daily Presence of Sperm Whales at ',SiteName_forPlots})
-tstart = datetime(2011,01,01);
-tend = datetime(2011,12,31);
-xlim([tstart tend]);
-ylim1 = min(dayTable.HoursProp);
-ylim2 = max(dayTable.HoursProp);
-ylim([ylim1 ylim2]);
-subplot(8,1,2) %number of plots, column, row)
-bar2 = bar(dayTable.tbin(dayTable.year==2012),dayTable.HoursProp(dayTable.year==2012),'k')
-tstart = datetime(2012,01,01);
-tend = datetime(2012,12,31);
-xlim([tstart tend]);
-ylim([ylim1 ylim2]);
-subplot(8,1,3) %number of plots, column, row)
-bar3 = bar(dayTable.tbin(dayTable.year==2013),dayTable.HoursProp(dayTable.year==2013),'k')
-tstart = datetime(2013,01,01);
-tend = datetime(2013,12,31);
-xlim([tstart tend]);
-ylim([ylim1 ylim2]);
-subplot(8,1,4) %number of plots, column, row)
-bar3 = bar(dayTable.tbin(dayTable.year==2014),dayTable.HoursProp(dayTable.year==2014),'k')
-tstart = datetime(2014,01,01);
-tend = datetime(2014,12,31);
-xlim([tstart tend]);
-ylim([ylim1 ylim2]);
-subplot(8,1,5) %number of plots, column, row)
-bar3 = bar(dayTable.tbin(dayTable.year==2015),dayTable.HoursProp(dayTable.year==2015),'k')
-tstart = datetime(2015,01,01);
-tend = datetime(2015,12,31);
-xlim([tstart tend]);
-ylim([ylim1 ylim2]);
-ylabel('Proportion of Hours/Day with Sperm Whales')
-subplot(8,1,6) %number of plots, column, row)
-bar3 = bar(dayTable.tbin(dayTable.year==2017),dayTable.HoursProp(dayTable.year==2017),'k')
-tstart = datetime(2017,01,01);
-tend = datetime(2017,12,31);
-xlim([tstart tend]);
-ylim([ylim1 ylim2]);
-subplot(8,1,7) %number of plots, column, row)
-bar3 = bar(dayTable.tbin(dayTable.year==2018),dayTable.HoursProp(dayTable.year==2018),'k')
-tstart = datetime(2018,01,01);
-tend = datetime(2018,12,31);
-xlim([tstart tend]);
-ylim([ylim1 ylim2]);
-subplot(8,1,8) %number of plots, column, row)
-bar3 = bar(dayTable.tbin(dayTable.year==2019),dayTable.HoursProp(dayTable.year==2019),'k')
-tstart = datetime(2019,01,01);
-tend = datetime(2019,12,31);
-xlim([tstart tend]);
-ylim([ylim1 ylim2]);
-xlabel('Time (months)')
-% Save plot
-dailyfn = [siteabrev,'_','_subplots_daily_average_presence'];
-saveas(gcf,fullfile(saveDir,dailyfn),'png')
-end
-
-if strcmp(siteabrev,'QN')
-figure
-subplot(4,1,1) %number of plots, column, row)
-bar1 = bar(dayTable.tbin(dayTable.year==2013),dayTable.HoursProp(dayTable.year==2013),'k')
-title({'Average Daily Presence of Sperm Whales at ',SiteName_forPlots})
-tstart = datetime(2013,01,01);
-tend = datetime(2013,12,31);
-xlim([tstart tend]);
-ylim1 = min(dayTable.HoursProp);
-ylim2 = max(dayTable.HoursProp);
-ylim([ylim1 ylim2]);
-subplot(4,1,2) %number of plots, column, row)
-bar2 = bar(dayTable.tbin(dayTable.year==2014),dayTable.HoursProp(dayTable.year==2014),'k')
-tstart = datetime(2014,01,01);
-tend = datetime(2014,12,31);
-xlim([tstart tend]);
-ylim([ylim1 ylim2]);
-ylabel('Proportion of Hours/Day with Sperm Whales')
-subplot(4,1,3) %number of plots, column, row)
-bar3 = bar(dayTable.tbin(dayTable.year==2015),dayTable.HoursProp(dayTable.year==2015),'k')
-tstart = datetime(2015,01,01);
-tend = datetime(2015,12,31);
-xlim([tstart tend]);
-ylim([ylim1 ylim2]);
-subplot(4,1,4) %number of plots, column, row)
-bar3 = bar(dayTable.tbin(dayTable.year==2017),dayTable.HoursProp(dayTable.year==2017),'k')
-tstart = datetime(2017,01,01);
-tend = datetime(2017,12,31);
-xlim([tstart tend]);
-ylim([ylim1 ylim2]);
-xlabel('Time (months)')
-% Save plot
-dailyfn = [siteabrev,'_','_subplots_daily_average_presence'];
-saveas(gcf,fullfile(saveDir,dailyfn),'png')
-end
-
-
-if strcmp(siteabrev,'GI')
-figure
-subplot(3,1,1) %number of plots, column, row)
-bar1 = bar(dayTable.tbin(dayTable.year==2018),dayTable.HoursProp(dayTable.year==2018),'k')
-title({'Average Daily Presence of Sperm Whales at ',SiteName_forPlots})
-tstart = datetime(2018,01,01);
-tend = datetime(2018,12,31);
-xlim([tstart tend]);
-ylim1 = min(dayTable.HoursProp);
-ylim2 = max(dayTable.HoursProp);
-ylim([ylim1 ylim2]);
-subplot(3,1,2) %number of plots, column, row)
-bar2 = bar(dayTable.tbin(dayTable.year==2019),dayTable.HoursProp(dayTable.year==2019),'k')
-tstart = datetime(2019,01,01);
-tend = datetime(2019,12,31);
-xlim([tstart tend]);
-ylim([ylim1 ylim2]);
-ylabel('Proportion of Hours/Day with Sperm Whales')
-subplot(3,1,3) %number of plots, column, row)
-bar3 = bar(dayTable.tbin(dayTable.year==2020),dayTable.HoursProp(dayTable.year==2020),'k')
-tstart = datetime(2020,01,01);
-tend = datetime(2020,12,31);
-xlim([tstart tend]);
-ylim([ylim1 ylim2]);
-xlabel('Time (months)')
-% Save plot
-dailyfn = [siteabrev,'_','_subplots_daily_average_presence'];
-saveas(gcf,fullfile(saveDir,dailyfn),'png')
-end
-
-if strcmp(siteabrev,'CORC')
-figure
-subplot(2,1,1) %number of plots, column, row)
-bar1 = bar(dayTable.tbin(dayTable.year==2014),dayTable.HoursProp(dayTable.year==2014),'k')
-title({'Average Daily Presence of Sperm Whales at ',SiteName_forPlots})
-tstart = datetime(2014,01,01);
-tend = datetime(2014,12,31);
-xlim([tstart tend]);
-ylim1 = min(dayTable.HoursProp);
-ylim2 = max(dayTable.HoursProp);
-ylim([ylim1 ylim2]);
-subplot(2,1,2) %number of plots, column, row)
-bar2 = bar(dayTable.tbin(dayTable.year==2015),dayTable.HoursProp(dayTable.year==2015),'k')
-tstart = datetime(2015,01,01);
-tend = datetime(2015,12,31);
-xlim([tstart tend]);
-ylim([ylim1 ylim2]);
-ylabel('Proportion of Hours/Day with Sperm Whales')
-xlabel('Time (months)')
-% Save plot
-dailyfn = [siteabrev,'_','_subplots_daily_average_presence'];
-saveas(gcf,fullfile(saveDir,dailyfn),'png')
-end
-
-
-if strcmp(siteabrev,'TIN')
-figure
-subplot(9,1,1) %number of plots, column, row)
-bar1 = bar(dayTable.tbin(dayTable.year==2011),dayTable.HoursProp(dayTable.year==2011),'k')
-title({'Average Daily Presence of Sperm Whales at ',SiteName_forPlots})
-tstart = datetime(2011,01,01);
-tend = datetime(2011,12,31);
-xlim([tstart tend]);
-ylim1 = min(dayTable.HoursProp);
-ylim2 = max(dayTable.HoursProp);
-ylim([ylim1 ylim2]);
-subplot(9,1,2) %number of plots, column, row)
-bar2 = bar(dayTable.tbin(dayTable.year==2012),dayTable.HoursProp(dayTable.year==2012),'k')
-tstart = datetime(2012,01,01);
-tend = datetime(2012,12,31);
-xlim([tstart tend]);
-ylim([ylim1 ylim2]);
-ylabel('Proportion of Hours/Day with Sperm Whales')
-subplot(9,1,3) %number of plots, column, row)
-bar3 = bar(dayTable.tbin(dayTable.year==2013),dayTable.HoursProp(dayTable.year==2013),'k')
-tstart = datetime(2013,01,01);
-tend = datetime(2013,12,31);
-xlim([tstart tend]);
-ylim([ylim1 ylim2]);
-subplot(9,1,4) %number of plots, column, row)
-bar3 = bar(dayTable.tbin(dayTable.year==2014),dayTable.HoursProp(dayTable.year==2014),'k')
-tstart = datetime(2014,01,01);
-tend = datetime(2014,12,31);
-xlim([tstart tend]);
-ylim([ylim1 ylim2]);
-subplot(9,1,5) %number of plots, column, row)
-bar3 = bar(dayTable.tbin(dayTable.year==2015),dayTable.HoursProp(dayTable.year==2015),'k')
-tstart = datetime(2015,01,01);
-tend = datetime(2015,12,31);
-xlim([tstart tend]);
-ylim([ylim1 ylim2]);
-subplot(9,1,6) %number of plots, column, row)
-bar3 = bar(dayTable.tbin(dayTable.year==2016),dayTable.HoursProp(dayTable.year==2016),'k')
-tstart = datetime(2016,01,01);
-tend = datetime(2016,12,31);
-xlim([tstart tend]);
-ylim([ylim1 ylim2]);
-subplot(9,1,7) %number of plots, column, row)
-bar3 = bar(dayTable.tbin(dayTable.year==2017),dayTable.HoursProp(dayTable.year==2017),'k')
-tstart = datetime(2017,01,01);
-tend = datetime(2017,12,31);
-xlim([tstart tend]);
-ylim([ylim1 ylim2]);
-subplot(9,1,8) %number of plots, column, row)
-bar3 = bar(dayTable.tbin(dayTable.year==2018),dayTable.HoursProp(dayTable.year==2018),'k')
-tstart = datetime(2018,01,01);
-tend = datetime(2018,12,31);
-xlim([tstart tend]);
-ylim([ylim1 ylim2]);
-subplot(9,1,9) %number of plots, column, row)
-bar3 = bar(dayTable.tbin(dayTable.year==2019),dayTable.HoursProp(dayTable.year==2019),'k')
-tstart = datetime(2019,01,01);
-tend = datetime(2019,12,31);
-xlim([tstart tend]);
-ylim([ylim1 ylim2]);
-xlabel('Time (months)')
-% Save plot
-dailyfn = [siteabrev,'_','_subplots_daily_average_presence'];
-saveas(gcf,fullfile(saveDir,dailyfn),'png')
-end
-
-
-if strcmp(siteabrev,'SAP')
-figure
-subplot(10,1,1) %number of plots, column, row)
-bar1 = bar(dayTable.tbin(dayTable.year==2010),dayTable.HoursProp(dayTable.year==2010),'k')
-title({'Average Daily Presence of Sperm Whales at ',SiteName_forPlots})
-tstart = datetime(2010,01,01);
-tend = datetime(2010,12,31);
-xlim([tstart tend]);
-ylim1 = min(dayTable.HoursProp);
-ylim2 = max(dayTable.HoursProp);
-ylim([ylim1 ylim2]);
-subplot(10,1,2) %number of plots, column, row)
-bar1 = bar(dayTable.tbin(dayTable.year==2011),dayTable.HoursProp(dayTable.year==2011),'k')
-title({'Average Daily Presence of Sperm Whales at ',SiteName_forPlots})
-tstart = datetime(2011,01,01);
-tend = datetime(2011,12,31);
-xlim([tstart tend]);
-ylim1 = min(dayTable.HoursProp);
-ylim2 = max(dayTable.HoursProp);
-ylim([ylim1 ylim2]);
-subplot(10,1,3) %number of plots, column, row)
-bar2 = bar(dayTable.tbin(dayTable.year==2012),dayTable.HoursProp(dayTable.year==2012),'k')
-tstart = datetime(2012,01,01);
-tend = datetime(2012,12,31);
-xlim([tstart tend]);
-ylim([ylim1 ylim2]);
-ylabel('Proportion of Hours/Day with Sperm Whales')
-subplot(9,1,3) %number of plots, column, row)
-bar3 = bar(dayTable.tbin(dayTable.year==2013),dayTable.HoursProp(dayTable.year==2013),'k')
-tstart = datetime(2013,01,01);
-tend = datetime(2013,12,31);
-xlim([tstart tend]);
-ylim([ylim1 ylim2]);
-subplot(10,1,5) %number of plots, column, row)
-bar3 = bar(dayTable.tbin(dayTable.year==2014),dayTable.HoursProp(dayTable.year==2014),'k')
-tstart = datetime(2014,01,01);
-tend = datetime(2014,12,31);
-xlim([tstart tend]);
-ylim([ylim1 ylim2]);
-subplot(10,1,6) %number of plots, column, row)
-bar3 = bar(dayTable.tbin(dayTable.year==2015),dayTable.HoursProp(dayTable.year==2015),'k')
-tstart = datetime(2015,01,01);
-tend = datetime(2015,12,31);
-xlim([tstart tend]);
-ylim([ylim1 ylim2]);
-subplot(10,1,7) %number of plots, column, row)
-bar3 = bar(dayTable.tbin(dayTable.year==2016),dayTable.HoursProp(dayTable.year==2016),'k')
-tstart = datetime(2016,01,01);
-tend = datetime(2016,12,31);
-xlim([tstart tend]);
-ylim([ylim1 ylim2]);
-subplot(10,1,8) %number of plots, column, row)
-bar3 = bar(dayTable.tbin(dayTable.year==2017),dayTable.HoursProp(dayTable.year==2017),'k')
-tstart = datetime(2017,01,01);
-tend = datetime(2017,12,31);
-xlim([tstart tend]);
-ylim([ylim1 ylim2]);
-subplot(10,1,9) %number of plots, column, row)
-bar3 = bar(dayTable.tbin(dayTable.year==2018),dayTable.HoursProp(dayTable.year==2018),'k')
-tstart = datetime(2018,01,01);
-tend = datetime(2018,12,31);
-xlim([tstart tend]);
-ylim([ylim1 ylim2]);
-subplot(10,1,10) %number of plots, column, row)
-bar3 = bar(dayTable.tbin(dayTable.year==2019),dayTable.HoursProp(dayTable.year==2019),'k')
-tstart = datetime(2019,01,01);
-tend = datetime(2019,12,31);
-xlim([tstart tend]);
-ylim([ylim1 ylim2]);
-xlabel('Time (months)')
-% Save plot
-dailyfn = [siteabrev,'_','_subplots_daily_average_presence'];
-saveas(gcf,fullfile(saveDir,dailyfn),'png')
-end
-
-if strcmp(siteabrev,'QC')
-figure
-subplot(8,1,1) %number of plots, column, row)
-bar1 = bar(dayTable.tbin(dayTable.year==2007),dayTable.HoursProp(dayTable.year==2007),'k')
-title({'Average Daily Presence of Sperm Whales at ',SiteName_forPlots})
-tstart = datetime(2007,01,01);
-tend = datetime(2007,12,31);
-xlim([tstart tend]);
-ylim1 = min(dayTable.HoursProp);
-ylim2 = max(dayTable.HoursProp);
-ylim([ylim1 ylim2]);
-subplot(8,1,2) %number of plots, column, row)
-bar2 = bar(dayTable.tbin(dayTable.year==2008),dayTable.HoursProp(dayTable.year==2008),'k')
-tstart = datetime(2008,01,01);
-tend = datetime(2008,12,31);
-xlim([tstart tend]);
-ylim([ylim1 ylim2]);
-subplot(8,1,3) %number of plots, column, row)
-bar3 = bar(dayTable.tbin(dayTable.year==2009),dayTable.HoursProp(dayTable.year==2009),'k')
-tstart = datetime(2009,01,01);
-tend = datetime(2009,12,31);
-xlim([tstart tend]);
-ylim([ylim1 ylim2]);
-subplot(8,1,4) %number of plots, column, row)
-bar3 = bar(dayTable.tbin(dayTable.year==2010),dayTable.HoursProp(dayTable.year==2010),'k')
-tstart = datetime(2010,01,01);
-tend = datetime(2010,12,31);
-xlim([tstart tend]);
-ylim([ylim1 ylim2]);
-subplot(8,1,5) %number of plots, column, row)
-bar3 = bar(dayTable.tbin(dayTable.year==2011),dayTable.HoursProp(dayTable.year==2011),'k')
-tstart = datetime(2011,01,01);
-tend = datetime(2011,12,31);
-xlim([tstart tend]);
-ylim([ylim1 ylim2]);
-ylabel('Proportion of Hours/Day with Sperm Whales')
-subplot(8,1,6) %number of plots, column, row)
-bar3 = bar(dayTable.tbin(dayTable.year==2012),dayTable.HoursProp(dayTable.year==2012),'k')
-tstart = datetime(2012,01,01);
-tend = datetime(2012,12,31);
-xlim([tstart tend]);
-ylim([ylim1 ylim2]);
-subplot(8,1,7) %number of plots, column, row)
-bar3 = bar(dayTable.tbin(dayTable.year==2013),dayTable.HoursProp(dayTable.year==2013),'k')
-tstart = datetime(2013,01,01);
-tend = datetime(2013,12,31);
-xlim([tstart tend]);
-ylim([ylim1 ylim2]);
-subplot(8,1,8) %number of plots, column, row)
-bar3 = bar(dayTable.tbin(dayTable.year==2014),dayTable.HoursProp(dayTable.year==2014),'k')
-tstart = datetime(2014,01,01);
-tend = datetime(2014,12,31);
-xlim([tstart tend]);
-ylim([ylim1 ylim2]);
-xlabel('Time (months)')
-% Save plot
-dailyfn = [siteabrev,'_','_subplots_daily_average_presence'];
-saveas(gcf,fullfile(saveDir,dailyfn),'png')
-end
-
-if strcmp(siteabrev,'Wake')
-figure
-subplot(8,1,1) %number of plots, column, row)
-bar1 = bar(dayTable.tbin(dayTable.year==2010),dayTable.HoursProp(dayTable.year==2010),'k')
-title({'Average Daily Presence of Sperm Whales at ',SiteName_forPlots})
-tstart = datetime(2010,01,01);
-tend = datetime(2010,12,31);
-xlim([tstart tend]);
-ylim1 = min(dayTable.HoursProp);
-ylim2 = max(dayTable.HoursProp);
-ylim([ylim1 ylim2]);
-subplot(8,1,2) %number of plots, column, row)
-bar2 = bar(dayTable.tbin(dayTable.year==2011),dayTable.HoursProp(dayTable.year==2011),'k')
-tstart = datetime(2011,01,01);
-tend = datetime(2011,12,31);
-xlim([tstart tend]);
-ylim([ylim1 ylim2]);
-subplot(8,1,3) %number of plots, column, row)
-bar3 = bar(dayTable.tbin(dayTable.year==2012),dayTable.HoursProp(dayTable.year==2012),'k')
-tstart = datetime(2012,01,01);
-tend = datetime(2012,12,31);
-xlim([tstart tend]);
-ylim([ylim1 ylim2]);
-subplot(8,1,4) %number of plots, column, row)
-bar3 = bar(dayTable.tbin(dayTable.year==2013),dayTable.HoursProp(dayTable.year==2013),'k')
-tstart = datetime(2013,01,01);
-tend = datetime(2013,12,31);
-xlim([tstart tend]);
-ylim([ylim1 ylim2]);
-subplot(8,1,5) %number of plots, column, row)
-bar3 = bar(dayTable.tbin(dayTable.year==2014),dayTable.HoursProp(dayTable.year==2014),'k')
-tstart = datetime(2014,01,01);
-tend = datetime(2014,12,31);
-xlim([tstart tend]);
-ylim([ylim1 ylim2]);
-ylabel('Proportion of Hours/Day with Sperm Whales')
-subplot(8,1,6) %number of plots, column, row)
-bar3 = bar(dayTable.tbin(dayTable.year==2015),dayTable.HoursProp(dayTable.year==2015),'k')
-tstart = datetime(2015,01,01);
-tend = datetime(2015,12,31);
-xlim([tstart tend]);
-ylim([ylim1 ylim2]);
-subplot(8,1,7) %number of plots, column, row)
-bar3 = bar(dayTable.tbin(dayTable.year==2016),dayTable.HoursProp(dayTable.year==2016),'k')
-tstart = datetime(2016,01,01);
-tend = datetime(2016,12,31);
-xlim([tstart tend]);
-ylim([ylim1 ylim2]);
-subplot(8,1,8) %number of plots, column, row)
-bar3 = bar(dayTable.tbin(dayTable.year==2017),dayTable.HoursProp(dayTable.year==2017),'k')
-tstart = datetime(2017,01,01);
-tend = datetime(2017,12,31);
-xlim([tstart tend]);
-ylim([ylim1 ylim2]);
-xlabel('Time (months)')
-% Save plot
-dailyfn = [siteabrev,'_','_subplots_daily_average_presence'];
-saveas(gcf,fullfile(saveDir,dailyfn),'png')
-end
-
-%SITE: BC - BABYLON CANYON
-if strcmp(siteabrev,'BC')
-subplot(4,1,1) %number of plots, column, row)
-bar1 = bar(dayTable.tbin(dayTable.year==2016),dayTable.HoursProp(dayTable.year==2016),'k')
-title({'Average Daily Presence of Sperm Whales at ',SiteName_forPlots})
-tstart = datetime(2016,01,01);
-tend = datetime(2016,12,31);
-xlim([tstart tend]);
-ylim1 = min(dayTable.HoursProp);
-ylim2 = max(dayTable.HoursProp);
-ylim([ylim1 ylim2]);
-subplot(4,1,2) %number of plots, column, row)
-bar2 = bar(dayTable.tbin(dayTable.year==2017),dayTable.HoursProp(dayTable.year==2017),'k')
-tstart = datetime(2017,01,01);
-tend = datetime(2017,12,31);
-xlim([tstart tend]);
-ylim([ylim1 ylim2]);
-subplot(4,1,3) %number of plots, column, row)
-bar3 = bar(dayTable.tbin(dayTable.year==2018),dayTable.HoursProp(dayTable.year==2018),'k')
-tstart = datetime(2018,01,01);
-tend = datetime(2018,12,31);
-xlim([tstart tend]);
-ylim([ylim1 ylim2]);
-ylabel('Average Daily # of 5-min Bins')
-subplot(4,1,4) %number of plots, column, row)
-bar4 = bar(dayTable.tbin(dayTable.year==2019),dayTable.HoursProp(dayTable.year==2019),'k')
-tstart = datetime(2019,01,01);
-tend = datetime(2019,12,31);
-xlim([tstart tend]);
-ylim([ylim1 ylim2]);
-xlabel('Time (months)')  % Plot for 2019 comes out looking different and idk why?
-% Save plot
-dailyfn = [siteabrev,'_','_subplots_daily_average_presence'];
-saveas(gcf,fullfile(saveDir,dailyfn),'png')
-end
-
-%SITE: NC - NANTUCKET CANYON
-if strcmp(siteabrev,'NC')
-subplot(5,1,1) %number of plots, column, row)
-bar1 = bar(dayTable.tbin(dayTable.year==2015),dayTable.HoursProp(dayTable.year==2015),'k')
-title({'Average Daily Presence of Sperm Whales at ',SiteName_forPlots})
-tstart = datetime(2015,01,01);
-tend = datetime(2015,12,31);
-xlim([tstart tend]);
-ylim1 = min(dayTable.HoursProp);
-ylim2 = max(dayTable.HoursProp);
-ylim([ylim1 ylim2]);
-subplot(5,1,2) %number of plots, column, row)
-bar1 = bar(dayTable.tbin(dayTable.year==2016),dayTable.HoursProp(dayTable.year==2016),'k')
-tstart = datetime(2016,01,01);
-tend = datetime(2016,12,31);
-xlim([tstart tend]);
-ylim1 = min(dayTable.HoursProp);
-ylim2 = max(dayTable.HoursProp);
-ylim([ylim1 ylim2]);
-subplot(5,1,3) %number of plots, column, row)
-bar2 = bar(dayTable.tbin(dayTable.year==2017),dayTable.HoursProp(dayTable.year==2017),'k')
-tstart = datetime(2017,01,01);
-tend = datetime(2017,12,31);
-xlim([tstart tend]);
-ylim([ylim1 ylim2]);
-ylabel('Average Daily # of 5-min Bins')
-subplot(5,1,4) %number of plots, column, row)
-bar3 = bar(dayTable.tbin(dayTable.year==2018),dayTable.HoursProp(dayTable.year==2018),'k')
-tstart = datetime(2018,01,01);
-tend = datetime(2018,12,31);
-xlim([tstart tend]);
-ylim([ylim1 ylim2]);
-subplot(5,1,5) %number of plots, column, row)
-bar4 = bar(dayTable.tbin(dayTable.year==2019),dayTable.HoursProp(dayTable.year==2019),'k')
-tstart = datetime(2019,01,01);
-tend = datetime(2019,12,31);
-xlim([tstart tend]);
-ylim([ylim1 ylim2]);
-xlabel('Time (months)')
-% Save plot
-dailyfn = [siteabrev,'_','_asdfsubplots_daily_average_presence'];
-saveas(gcf,fullfile(saveDir,dailyfn),'png')
-end
-
-%SITE: GS - GULF STREAM
-if strcmp(siteabrev,'GS')
-subplot(4,1,1) %number of plots, column, row)
-bar1 = bar(dayTable.tbin(dayTable.year==2016),dayTable.HoursProp(dayTable.year==2016),'k')
-title({'Average Daily Presence of Sperm Whales at ',SiteName_forPlots})
-tstart = datetime(2016,01,01);
-tend = datetime(2016,12,31);
-xlim([tstart tend]);
-ylim1 = min(dayTable.HoursProp);
-ylim2 = max(dayTable.HoursProp);
-ylim([ylim1 ylim2]);
-subplot(4,1,2) %number of plots, column, row)
-bar2 = bar(dayTable.tbin(dayTable.year==2017),dayTable.HoursProp(dayTable.year==2017),'k')
-tstart = datetime(2017,01,01);
-tend = datetime(2017,12,31);
-xlim([tstart tend]);
-ylim([ylim1 ylim2]);
-subplot(4,1,3) %number of plots, column, row)
-bar3 = bar(dayTable.tbin(dayTable.year==2018),dayTable.HoursProp(dayTable.year==2018),'k')
-tstart = datetime(2018,01,01);
-tend = datetime(2018,12,31);
-xlim([tstart tend]);
-ylim([ylim1 ylim2]);
-ylabel('Average Daily # of 5-min Bins')
-subplot(4,1,4) %number of plots, column, row)
-bar4 = bar(dayTable.tbin(dayTable.year==2019),dayTable.HoursProp(dayTable.year==2019),'k')
-tstart = datetime(2019,01,01);
-tend = datetime(2019,12,31);
-xlim([tstart tend]);
-ylim([ylim1 ylim2]);
-xlabel('Time (months)') 
-% Save plot
-dailyfn = [siteabrev,'_','_subplots_daily_average_presence'];
-saveas(gcf,fullfile(saveDir,dailyfn),'png')
-end
-
-if strcmp(siteabrev,'BP')
-figure
-subplot(4,1,1) %number of plots, column, row)
-bar1 = bar(dayTable.tbin(dayTable.year==2016),dayTable.HoursProp(dayTable.year==2016),'k')
-title({'Average Daily Presence of Sperm Whales at ',SiteName_forPlots})
-tstart = datetime(2016,01,01);
-tend = datetime(2016,12,31);
-xlim([tstart tend]);
-ylim1 = min(dayTable.HoursProp);
-ylim2 = max(dayTable.HoursProp);
-ylim([ylim1 ylim2]);
-subplot(4,1,2) %number of plots, column, row)
-bar2 = bar(dayTable.tbin(dayTable.year==2017),dayTable.HoursProp(dayTable.year==2017),'k')
-tstart = datetime(2017,01,01);
-tend = datetime(2017,12,31);
-xlim([tstart tend]);
-ylim([ylim1 ylim2]);
-subplot(4,1,3) %number of plots, column, row)
-bar3 = bar(dayTable.tbin(dayTable.year==2018),dayTable.HoursProp(dayTable.year==2018),'k')
-tstart = datetime(2018,01,01);
-tend = datetime(2018,12,31);
-xlim([tstart tend]);
-ylim([ylim1 ylim2]);
-ylabel('Proportion of Hours/Day with Sperm Whales')
-subplot(4,1,4) %number of plots, column, row)
-bar3 = bar(dayTable.tbin(dayTable.year==2019),dayTable.HoursProp(dayTable.year==2019),'k')
-tstart = datetime(2019,01,01);
-tend = datetime(2019,12,31);
-xlim([tstart tend]);
-ylim([ylim1 ylim2]);
-xlabel('Time (months)')
-% Save plot
-dailyfn = [siteabrev,'_','_subplots_daily_average_presence'];
-saveas(gcf,fullfile(saveDir,dailyfn),'png')
-end
-
-if strcmp(siteabrev,'BS')
-figure
-subplot(4,1,1) %number of plots, column, row)
-bar1 = bar(dayTable.tbin(dayTable.year==2016),dayTable.HoursProp(dayTable.year==2016),'k')
-title({'Average Daily Presence of Sperm Whales at ',SiteName_forPlots})
-tstart = datetime(2016,01,01);
-tend = datetime(2016,12,31);
-xlim([tstart tend]);
-ylim1 = min(dayTable.HoursProp);
-ylim2 = max(dayTable.HoursProp);
-ylim([ylim1 ylim2]);
-subplot(4,1,2) %number of plots, column, row)
-bar2 = bar(dayTable.tbin(dayTable.year==2017),dayTable.HoursProp(dayTable.year==2017),'k')
-tstart = datetime(2017,01,01);
-tend = datetime(2017,12,31);
-xlim([tstart tend]);
-ylim([ylim1 ylim2]);
-subplot(4,1,3) %number of plots, column, row)
-bar3 = bar(dayTable.tbin(dayTable.year==2018),dayTable.HoursProp(dayTable.year==2018),'k')
-tstart = datetime(2018,01,01);
-tend = datetime(2018,12,31);
-xlim([tstart tend]);
-ylim([ylim1 ylim2]);
-ylabel('Proportion of Hours/Day with Sperm Whales')
-subplot(4,1,4) %number of plots, column, row)
-bar3 = bar(dayTable.tbin(dayTable.year==2019),dayTable.HoursProp(dayTable.year==2019),'k')
-tstart = datetime(2019,01,01);
-tend = datetime(2019,12,31);
-xlim([tstart tend]);
-ylim([ylim1 ylim2]);
-
-xlabel('Time (months)')
-% Save plot
-dailyfn = [siteabrev,'_','_subplots_daily_average_presence'];
-saveas(gcf,fullfile(saveDir,dailyfn),'png')
-end
-
-
