@@ -88,9 +88,9 @@ if (strcmp(siteName,'KOA') | strcmp(siteName,'QN') | strcmp(siteName,'BD') | str
     dataWeek(1,:) = [];
 end
 dataWeek.year = year(dataWeek.tbin);
-WeekData.year = year(WeekData.tbin); %All this is done so that you can generate the plots without an extra year on top :)
+WeekData.year = year(WeekData.tbin); % All this is done so that you can generate the plots without an extra year on top :)
 %% Checking to see how much was missed
-if strcmp(siteName,'BD') % does this need to be changed depending on the site under investigation?
+if strcmp(siteName,'BD') % AD: Does this need to be changed depending on the site under investigation?
     CombinedWeek = dataWeek(:,20:22);
 else
 CombinedWeek = dataWeek(:,19:21);
@@ -125,13 +125,14 @@ CutOff = edges(lessThan(1)); %values over this value will be considered 'greater
 %CutOff = MIN;
 
 %ADDED BY AD: Manually mark periods of no effort for WAT sites
-if siteName == 'NC'
+if strcmp(siteName, 'NC')
     WeekData.Noeffort(WeekData.Count_Click == 0) = 1;
     dataWeek.Noeffort(WeekData.Count_Click == 0) = 1;
-elseif siteName == 'BC'
+elseif strcmp(siteName, 'BC')
     WeekData.Noeffort(WeekData.Count_Click == 0) = 1;
     dataWeek.Noeffort(WeekData.Count_Click == 0) = 1;
 end
+% AD: This adjustment may need to be made for other sites too, not sure
 
 %% Plot data
 %No Social Group Data
@@ -350,8 +351,7 @@ end
 %% save plot
 set(gcf,'Position',[-1165         552         812         476])
 %weeklyfn = [saveDirectory,'\',siteName,'_BubbleTimeSeries.pdf'];
-%weeklyfn = [saveDirectory,'\',siteName,'_BubbleTimeSeries.png'];
-weeklyfn = [saveDirectory,'\',siteName,'_BubbleTimeSeries_Style2.png'];
+weeklyfn = [saveDirectory,'\',siteName,'_BubbleTimeSeries.png'];
 exportgraphics(gcf,weeklyfn,'ContentType','vector','Resolution',300);
 %% Plotting the difference instead of the 'general pattern'
 %No Social Group Data
@@ -420,7 +420,8 @@ subplot(3,1,3)
 years = unique(WeekData.year);
 keep = ~isnan(WeekData.NormBin) & WeekData.NormBin > 0;
 black = '#C0C0C0'; %silver
-absence = WeekData.NormBin == 0;
+%absence = WeekData.NormBin == 0; % How it was before
+absence = WeekData.NormBin == 0 & WeekData.Noeffort == 0; % Change by AD
 for y = 1:length(years)
     hold on
     idxYear = WeekData.Year == years(y);
@@ -541,7 +542,8 @@ yticks(dates)
 subplot(4,1,4)
 black = '#C0C0C0'; %silver
 keep = ~isnan(WeekData.NormBin) & WeekData.NormBin > 0;
-absence = WeekData.NormBin == 0;
+%absence = WeekData.NormBin == 0; % How it was before
+absence = WeekData.NormBin == 0 & WeekData.Noeffort == 0; % Change by AD
 for y = 1:length(years)
     hold on
     idxYear = WeekData.Year == years(y);
