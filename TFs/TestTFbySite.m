@@ -77,7 +77,7 @@ tf_now = num2str(tfnum(itrP));
 figure
 semilogx(Vals{itrP},RevBTF{itrP},'r-','LineWidth',2)
 hold on
-semilogx(Valss{itrP},windTF{itrP},'k--','LineWidth',2) %comment out if there is no wind TF
+semilogx(Valss{itrP},windTF{itrP},'k--','LineWidth',2)
 grid on
 xlabel('Frequency [Hz]')
 ylabel('Inverse Sensitivity [dB re \muPa//Count]')

@@ -35,12 +35,18 @@ if ~isempty(tffilename)
     tffile = fullfile(suggestedTFPath,stfnum,tffilename.name);
     [Vals,RevBTF] = loadTF(tffile); % open and read B Transfer Function
     end
-    else
+else
     tffile = fullfile(suggestedTFPath,stfnum,[stfnum,'*A_HARP.tf']);
     tffilename = dir(tffile);
     if ~isempty(tffilename)
-    tffile = fullfile(suggestedTFPath,stfnum,tffilename.name);
-    [Vals,RevBTF] = loadTF(tffile); % open and read A Transfer Function
+        [ax,~]=size(tffilename);
+        if ax > 1
+            tffile = fullfile(suggestedTFPath,stfnum,tffilename(1).name);
+            [Vals,RevBTF] = loadTF(tffile); % open and read A Transfer Function
+        else
+            tffile = fullfile(suggestedTFPath,stfnum,tffilename.name);
+            [Vals,RevBTF] = loadTF(tffile); % open and read A Transfer Function
+        end
     else
         disp([num2str(tfnum),' TF does not exist'])
         Vals = NaN;
