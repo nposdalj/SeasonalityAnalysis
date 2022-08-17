@@ -5,21 +5,23 @@ close all;clear all;clc;
 % NP 08/08/2022
 %% User Definied Variables
 GDrive = 'I';
-Freq = {9000,10000,11000}; %frequency of comparing interest in kHz
-Phone = '453';
 
 % REV B
 MBARC_TF = [GDrive,':\Shared drives\MBARC_TF'];
 
 % WIND TF
 Wind_TF = [GDrive,':\Shared drives\Wind_deltaTF\pub_TF\TF_Wind'];
-%Site = 'SOCALN35'; %site and deployment for wind TF
 
 saveDIR = [GDrive,':\My Drive\TestTFs']; %directory where to save outputs
 HARPsum = [saveDIR,'\HARPdataSummary.xlsx']; %HARP data summary sheet
-%% Loop through HARP data summary sheet and find matching sites and TFs
+TFdata = [saveDIR,'\SiteTransferFunctions.xlsx']; %All the TFs I want to test
+%% Load Transfer Functions to test
+TFtable = readtable(TFdata);
 dtable = readtable(HARPsum);
 stxt = size(dtable); 
+%% Loop through HARP data summary sheet and find matching sites and TFs
+for allTF = 1:height(TFtable)
+Phone = num2str(TFtable.TF(allTF));
 ifoundx = 0;
 for itab = 1 : stxt(1)
     ifound = strfind(dtable.PreAmp(itab),Phone);
@@ -38,8 +40,13 @@ end
 windTF = cell(1,qq);
 Valss = cell(1,qq);
 AllWindSite = cell(1,qq);
-for itf = 1:qq
-[Valss,windTF,AllWindSite] = getWindTFALLL(WindSite{itf},Wind_TF,Phone,qq,AllWindSite,Valss,windTF);
+[Valss,windTF,AllWindSite] = getWindTFALLL(Wind_TF,Phone,Valss,AllWindSite,windTF);
+%Delete empty cells
+if isa(AllWindSite,'double')
+else
+    windTF = windTF(~cellfun('isempty',windTF));
+    Valss = Valss(~cellfun('isempty',Valss));
+    AllWindSite = AllWindSite(~cellfun('isempty',AllWindSite));
 end
 %% Test if the wind TFs are different from site to site
 [~,qqq] = size(AllWindSite);
@@ -51,6 +58,9 @@ if qqq > 1
     end
 end
 %% Plots
+if isa(AllWindSite,'double')
+    disp('No Wind TFs to Plot')
+else
 figure
 semilogx(Vals,RevBTF,'r-','LineWidth',2)
 hold on
@@ -65,7 +75,7 @@ grid on
 xlabel('Frequency [Hz]')
 ylabel('Inverse Sensitivity [dB re \muPa//Count]')
 axis([1 3e5 10 100])
-legend(['RevB',Site],'Location','best')
+legend(['RevB',AllWindSite],'Location','best')
 title(['All Sites - ',Phone])
 
 % save plots
@@ -83,3 +93,5 @@ saveas(gcf,[plotName,'_windRange.png'])
 xlim([5000 100000])
 ylim([25 90])
 saveas(gcf,[plotName,'_5-95kHz.png'])
+end
+end
