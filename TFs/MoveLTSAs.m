@@ -1,0 +1,19 @@
+%% This code was created to move all LTSAs in a directory to another specificed folder
+%NP 08182022
+%% Set Directories
+StartDIR = 'I:\Shared drives\MBARC_All\LTSAs (old, use FROSTY)\WAT\BC\df1'; %Directory where the LTSAs currently live
+EndDIR = 'G:\Delete Later'; %Directory where you want to move the LTSAs
+%% Find all the LTSAs in a given directory and move the files into the specified directory
+dirinfo = dir(StartDIR);
+dirinfo(~[dirinfo.isdir]) = [];  %remove non-directories
+dirinfo(1:2) = [];
+subdirinfo = cell(length(dirinfo),1);
+for K = 1 : length(dirinfo)
+  thisdir = [dirinfo(K).folder,'\',dirinfo(K).name];
+  subdirinfo{K} = dir(fullfile(thisdir, '*.LTSA'));
+  for KK = 1:length(subdirinfo{K,1})
+    copyfile([subdirinfo{K,1}(KK).folder,'\',subdirinfo{1,1}(KK).name],EndDIR)
+  end
+end
+
+disp(['Done Moving LTSAs'])
