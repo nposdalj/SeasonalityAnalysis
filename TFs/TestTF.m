@@ -5,7 +5,7 @@ close all;clear all;clc;
 % NP 08/08/2022
 %% User Definied Variables
 GDrive = 'I';
-
+Freq = {9000,10000,11000}; %frequency of comparing interest in kHz
 % REV B
 MBARC_TF = [GDrive,':\Shared drives\MBARC_TF'];
 
@@ -19,9 +19,17 @@ TFdata = [saveDIR,'\SiteTransferFunctions.xlsx']; %All the TFs I want to test
 TFtable = readtable(TFdata);
 dtable = readtable(HARPsum);
 stxt = size(dtable); 
+%% Prepare tables
+sz = [107 4];
+varNames = {'Phone','WindDiff','Adjustment','RevBDiff'};
+T = array2table(zeros(sz));
+T.Properties.VariableNames = varNames;
+T.Adjustment = num2cell(T.Adjustment);
+T.Phone = TFtable.TF;
 %% Loop through HARP data summary sheet and find matching sites and TFs
 for allTF = 1:height(TFtable)
 Phone = num2str(TFtable.TF(allTF));
+disp(['Beginning Analysis for Hydrophone ' Phone])
 ifoundx = 0;
 for itab = 1 : stxt(1)
     ifound = strfind(dtable.PreAmp(itab),Phone);
@@ -56,10 +64,30 @@ if qqq > 1
         diffInt = windTF{1,1} - windTF{1,qqq};
         diff{itrD} = max(diffInt);
     end
+    diff = diff(~cellfun('isempty',diff));
+    diffMAT = cell2mat(diff);
+    GreaterOned = diffMAT > 1;
+    LessOned = diffMAT < -1;
+    if sum(sum(GreaterOned)) >= 1 || sum(sum(LessOned)) >= 1
+        disp(['The wind TF for Hydrophone ',Phone,' have differences greater than 1 dB.'])
+        T.WindDiff(allTF) = 1;
+    end
+end
+%% Look for differences between each wind TF and Rev B
+adjustTF = [];
+if ~isa(AllWindSite,'double') && isa(RevBTF,'double')
+    adjustTF = getAdjustment(windTF,Valss,RevBTF,Vals,Freq,Phone,AllWindSite);
+    T.Adjustment(allTF) = {adjustTF};
+    adjustTFMAT = cell2mat(adjustTF);
+    GreaterOne = adjustTFMAT > 1;
+    LessOne = adjustTFMAT < -1;
+    if sum(sum(GreaterOne)) >= 1 || sum(sum(LessOne)) >= 1
+        T.RevBDiff(allTF) = 1;
+    end
 end
 %% Plots
 if isa(AllWindSite,'double')
-    disp('No Wind TFs to Plot')
+    disp(['No Wind TFs to Plot for ',Phone])
 else
 figure
 semilogx(Vals,RevBTF,'r-','LineWidth',2)
@@ -93,5 +121,12 @@ saveas(gcf,[plotName,'_windRange.png'])
 xlim([5000 100000])
 ylim([25 90])
 saveas(gcf,[plotName,'_5-95kHz.png'])
+
+xlim([8500 11500])
+ylim([25 90])
+saveas(gcf,[plotName,'_9-11kHz.png'])
+close all;
 end
 end
+%% Save table as .mat file
+save([saveDIR,'\SummaryTable.mat'],'T');
