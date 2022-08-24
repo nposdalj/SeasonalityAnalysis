@@ -2,8 +2,8 @@
 %NP 08182022
 close all;clear all;clc;
 %% Set Directories
-StartDIR = '\\snowman.ucsd.edu\Atlantic_Region_Decimated_3\WAT_HZ_01'; %Directory where the LTSAs currently live
-EndDIR = '\\frosty.ucsd.edu\LTSA\WAT\HZ'; %Directory where you want to move the LTSAs
+StartDIR = '\\SNOWMAN\PIFSC_Decimated_3\Wake\Wake05S'; %Directory where the LTSAs currently live
+EndDIR = '\\frosty.ucsd.edu\LTSA\Wake\S'; %Directory where you want to move the LTSAs
 %% Find all the LTSAs in a given directory and move the files into the specified directory
 dirinfo = dir(StartDIR);
 dirinfo(~[dirinfo.isdir]) = [];  %remove non-directories

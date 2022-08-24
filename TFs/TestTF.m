@@ -4,7 +4,7 @@ close all;clear all;clc;
 % at two peak frequencies and make plots.
 % NP 08/08/2022
 %% User Definied Variables
-GDrive = 'I';
+GDrive = 'G';
 Freq = {9000,10000,11000}; %frequency of comparing interest in kHz
 % REV B
 MBARC_TF = [GDrive,':\Shared drives\MBARC_TF'];
@@ -20,8 +20,8 @@ TFtable = readtable(TFdata);
 dtable = readtable(HARPsum);
 stxt = size(dtable); 
 %% Prepare tables
-sz = [107 4];
-varNames = {'Phone','WindDiff','Adjustment','RevBDiff'};
+sz = [107 6];
+varNames = {'Phone','WindExist','WindDiff','TFExist','Adjustment','RevBDiff'};
 T = array2table(zeros(sz));
 T.Properties.VariableNames = varNames;
 T.Adjustment = num2cell(T.Adjustment);
@@ -42,6 +42,11 @@ end
 %% Find and load TF files
 % Rev B
 [Vals,RevBTF] = getRevB(Site(1),MBARC_TF,str2double(Phone));
+if isnan(RevBTF)
+    T.TFExist(allTF) = 0;
+else
+    T.TFExist(allTF) = 1;
+end
 
 %Wind
 [~,qq] = size(Site);
@@ -51,10 +56,12 @@ AllWindSite = cell(1,qq);
 [Valss,windTF,AllWindSite] = getWindTFALLL(Wind_TF,Phone,Valss,AllWindSite,windTF);
 %Delete empty cells
 if isa(AllWindSite,'double')
+    T.WindExist(allTF) = 0;
 else
     windTF = windTF(~cellfun('isempty',windTF));
     Valss = Valss(~cellfun('isempty',Valss));
     AllWindSite = AllWindSite(~cellfun('isempty',AllWindSite));
+    T.WindExist(allTF) = 1;
 end
 %% Test if the wind TFs are different from site to site
 [~,qqq] = size(AllWindSite);
@@ -62,7 +69,7 @@ diff = [];
 if qqq > 1
     for itrD = 2:qqq
         diffInt = windTF{1,1} - windTF{1,qqq};
-        diff{itrD} = max(diffInt);
+        diff{itrD} = max(abs(diffInt));
     end
     diff = diff(~cellfun('isempty',diff));
     diffMAT = cell2mat(diff);
@@ -130,3 +137,7 @@ end
 end
 %% Save table as .mat file
 save([saveDIR,'\SummaryTable.mat'],'T');
+%save a table where wind and RevB both exist
+TT = T;
+TT(~TT.WindExist,:) = [];
+save([saveDIR,'\SummaryTableReduced.mat'],'TT');
