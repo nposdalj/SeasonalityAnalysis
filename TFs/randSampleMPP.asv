@@ -1,0 +1,136 @@
+% randSampleMPP
+
+% Note: IDAll file has all click times, and all pp amplitudes for one
+% deployment, could just be [MTT, MPP], merged cumulatively across all
+% disks.
+% My case is a little more complicated because I have multi-species labels
+% and different levels of certainty for the labels. So you'd want to
+% simplify this quite a bit
+
+% This code was provided by KEF and modified by NP 08312022
+close all;clear all clc;
+%% User Definied Parameters
+siteabrevv = {'NC','WC','OC','BC','HZ','BS','BP','GS','JAX'}; %abbreviation of site.
+GDrive = 'I'; %directory for Google Drive
+region = 'WAT';
+RLmin = 125; %Recieved level threshold of your data
+RLmax = 170; %Max recieved level you're intersted in plotting
+%% Calculate variable sizes
+[~,gg] = size(siteabrevv);
+rlVec = RLmin:1:RLmax;
+%% Load workspaces
+for ss = 1:gg
+siteabrev = siteabrevv{ss}; %choose site
+disp(['Loading data from site ',siteabrev])
+dataDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev]; %specify directory where workspaces are saved
+%load([dataDir,'\',siteabrev,'_workspaceStep2.mat']);
+load([dataDir,'\',siteabrev,'_workspace125.mat']); %load this in last to properly load the variable p
+saveDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\Plots\',siteabrev]; % add desired saveDir back in here
+
+%% Create empty variables
+histSubset = {};
+counterI = 1;
+spMean = [];
+spStd = [];
+nameStr = {};
+figure(9);clf
+
+for itr = 1:50
+     try
+                isempty(histSubset{iD,iS})
+            catch
+                
+                histSubset{iD,iS} = [];
+                
+            end
+end
+
+
+
+
+
+for iD = 1:length(IDList)
+    [~,dirParts] = fileparts(IDList(iD).folder);
+    load(fullfile(IDList(iD).folder,IDList(iD).name))
+    if isempty(IDAll)
+        continue
+    end
+    for iS = 9% 1:length(mySpID)
+        
+        
+        thisSet = find(IDAll(:,2) >=9);
+        for itr = 1:50
+            try
+                isempty(histSubset{iD,iS})
+            catch
+                
+                histSubset{iD,iS} = [];
+                
+            end
+            p = randsample(length(thisSet),100000);
+            histSubset{iD,iS} = [histSubset{iD,iS};hist(IDAll(thisSet(p),3),rlVec)];
+            
+        end
+    end
+    
+    subplot(4,4,counterI)
+    spMean(counterI,:) = (mean(histSubset{iD,iS}));
+    spStd(counterI,:) = (std(histSubset{iD,iS}));
+    semilogy(rlVec,histSubset{iD,iS})
+
+    hold on
+   
+    plot(rlVec,spMean(counterI,:),'-k','Linewidth',2)
+    plot(rlVec,spMean(counterI,:)+spStd(counterI,:),'--k','Linewidth',2)
+    plot(rlVec,spMean(counterI,:)-spStd(counterI,:),'--k','Linewidth',2)
+    grid on
+    ylabel('log10(counts)')
+
+    xlabel('RL(dB_P_P)')
+    plot([125,125],[1,10000],'--r')
+    ylim([1,3000])
+    xlim([120,140])
+    nameTry = strfind(dirParts,'GOM');
+    if isempty(nameTry)
+        nameTry = strfind(dirParts,'GofMX');
+        nameStr{counterI} = dirParts(7:10);
+    else
+        nameStr{counterI} = strrep(dirParts(5:9),'_','-');
+    end
+    title(nameStr{counterI})   
+    counterI = counterI+1;
+
+end
+
+figure(19);clf
+for iR = 1:size(spMean,1)
+    y = log10(spMean(iR,:));
+    ystd1 = log10(spMean(iR,:)+spStd(iR,:));
+    ystd2 = log10(spMean(iR,:)-spStd(iR,:));
+    badY = isinf(y);
+    y(badY)=[];
+    ystd1(badY)=[];
+    
+    ystd2(badY)=[];
+    h = plot(rlVec(~badY),y);
+    %ylim([1,1000])
+    hold on
+    x2 = [rlVec(~badY),fliplr(rlVec(~badY))];
+    inBetween = ([ystd1,fliplr(ystd2)]);
+    
+    fill(x2, inBetween,h.Color,'edgecolor','none','facealpha',.5);
+    delete(h)
+end
+
+
+xlim([120,140])
+grid on
+plot(rlVec,log10(mean(spMean)),'-k','linewidth',2)
+ylim([0,3.5])
+[~,cIdx] = min(abs(rlVec-125));
+meanCross = log10(mean(spMean(:,cIdx)));
+plot([125,125],[1,10000],'--r')
+plot(rlVec,ones(size(rlVec))*meanCross,'--r')
+
+[C,I] = min(abs(spMean - meanCross),[],2);
+legend(cellstr(nameStr))
