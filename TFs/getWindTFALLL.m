@@ -26,23 +26,5 @@ if exist(tfwdir)
         windTF = 0;
         AllWindSite = 0;
     end
-
-    %if exist('tfMatch','var')
-        %if ~isempty(tfMatch)
-        %tffilew = cell2mat(fullfile(tfdcellw(2,tfMatch),tfdcellw(1,tfMatch)));
-        %newStr = extractAfter(tffilew,[tfnum,'_']);
-        %finalStr = extractBefore(newStr,'_');
-        %AllWindSite = finalStr;
-        %[Valss,windTF] = loadTF(tffilew);
-        %else
-        %Valss = NaN;
-        %windTF = NaN;
-        %end
-    %else
-        %Valss = NaN;
-        %windTF = NaN;
-        %AllWindSite = NaN;
-    %end
-    %end
 end
 

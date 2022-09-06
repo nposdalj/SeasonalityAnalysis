@@ -12,8 +12,9 @@ GDrive = 'I'; %directory for Google Drive
 region = 'WAT';
 sp = 'Pm'; % your species code
 itnum = '3'; % which iteration you are looking for (which TPWS folder)
+N = 100000; %random clicks to choose from each deployment
 RLmin = 125; %Recieved level threshold of your data
-RLmax = 170; %Max recieved level you're intersted in plotting
+RLmax = 167; %Max recieved level you're intersted in plotting
 %% Calculate variable sizes
 [~,gg] = size(siteabrevv);
 rlVec = RLmin:1:RLmax;
@@ -27,7 +28,9 @@ effortXls = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnaly
 %load([dataDir,'\',siteabrev,'_workspaceStep2.mat']);
 %load([dataDir,'\',siteabrev,'_workspace125.mat']); %load this in last to properly load the variable p
 saveDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\Plots\',siteabrev]; % add desired saveDir back in here
-
+%% Create empty variables
+counterI = 1;
+figure(9);clf
 %% define subfolder that fit specified iteration
 if itnum > 1
    for id = 2: str2num(itnum) % iterate id times according to itnum
@@ -35,7 +38,6 @@ if itnum > 1
        tpwsPath = (fullfile(tpwsPath,subfolder));
    end
 end
-
 %% Find all TPWS files that fit your specifications (does not look in subdirectories)
 % Concatenate parts of file name
 detfn = [region,'_',siteabrev,'.*',sp,'.*TPWS',itnum,'.mat'];
@@ -71,6 +73,13 @@ for s = 1: length(concatFiles)
     siteDiskList{s,1} = concatFiles{s}(1:a-1);
 end
 siteDisk = unique(siteDiskList);
+    [qq,~] = size(siteDisk);
+    SiteMPP = cell(1,qq);
+    SiteMTT = cell(1,qq);
+    SiteICI = cell(1,qq);
+    histSubset = cell(1,qq);
+    spMean = cell(1,qq);
+    spStd = cell(1,qq);
 for i = 1:length(siteDisk)
     disp(['loading times from: ', siteDisk{i}]);
     index = strfind(siteDiskList, siteDisk{i});
@@ -96,94 +105,45 @@ for idsk = 1 : length(siteDiskIdx)
     % Inter-Click Interval
     ici = diff(MTT)*24*60*60*1000; % in ms
     ICIall = [ICIall;[ici; nan]];  % group inter-click interval
-end
-end
-%% After parfor data may not be sorted. Sort all the variables.
-[~,sorted] = sort(TTall);
-TTall = TTall(sorted);
-PPall = PPall(sorted);
-ICIall = ICIall(sorted);
-
-%% Create empty variables
-histSubset = {};
-counterI = 1;
-spMean = [];
-spStd = [];
-nameStr = {};
-figure(9);clf
-
-for itr = 1:50
-     try
-        isempty(histSubset{iD,iS})
-     catch
-         histSubset{iD,iS} = [];           
-     end
-     p = randsample(length(thisSet),100000);
-     histSubset{iD,iS} = [histSubset{iD,iS};hist(IDAll(thisSet(p),3),rlVec)];
-end
-
-end
-
-
-
-for iD = 1:length(IDList)
-    [~,dirParts] = fileparts(IDList(iD).folder);
-    load(fullfile(IDList(iD).folder,IDList(iD).name))
-    if isempty(IDAll)
-        continue
-    end
-    for iS = 9% 1:length(mySpID)
-        
-        
-        thisSet = find(IDAll(:,2) >=9);
-        for itr = 1:50
-            try
-                isempty(histSubset{iD,iS})
-            catch
-                
-                histSubset{iD,iS} = [];
-                
-            end
-            p = randsample(length(thisSet),100000);
-            histSubset{iD,iS} = [histSubset{iD,iS};hist(IDAll(thisSet(p),3),rlVec)];
-            
-        end
-    end
     
+    %% After parfor data may not be sorted. Sort all the variables.
+    [~,sorted] = sort(TTall);
+    TTall = TTall(sorted);
+    PPall = PPall(sorted);
+    ICIall = ICIall(sorted);
+    %% Save variables
+    SiteMPP{i} = PPall;
+    SiteMTT{i} = TTall;
+    SiteICI{i} = ICIall;
+end
+for itr = 1:50
+    p = randsample(length(SiteMPP{i}),N); %choose N random click samples
+    histSubset{i} = [histSubset{i};hist(SiteMPP{i}(p),rlVec)];
+end
     subplot(4,4,counterI)
-    spMean(counterI,:) = (mean(histSubset{iD,iS}));
-    spStd(counterI,:) = (std(histSubset{iD,iS}));
-    semilogy(rlVec,histSubset{iD,iS})
-
+    figure
+    spMean{i} = mean(histSubset{i});
+    spStd{i} = std(histSubset{i});
+    semilogy(rlVec,histSubset{i})
     hold on
-   
-    plot(rlVec,spMean(counterI,:),'-k','Linewidth',2)
-    plot(rlVec,spMean(counterI,:)+spStd(counterI,:),'--k','Linewidth',2)
-    plot(rlVec,spMean(counterI,:)-spStd(counterI,:),'--k','Linewidth',2)
+    plot(rlVec,spMean{i},'-k','Linewidth',2)
+    plot(rlVec,spMean{i}+spStd{i},'--k','Linewidth',2)
+    plot(rlVec,spMean{i}-spStd{i},'--k','Linewidth',2)
     grid on
     ylabel('log10(counts)')
-
     xlabel('RL(dB_P_P)')
     plot([125,125],[1,10000],'--r')
-    ylim([1,3000])
-    xlim([120,140])
-    nameTry = strfind(dirParts,'GOM');
-    if isempty(nameTry)
-        nameTry = strfind(dirParts,'GofMX');
-        nameStr{counterI} = dirParts(7:10);
-    else
-        nameStr{counterI} = strrep(dirParts(5:9),'_','-');
-    end
-    title(nameStr{counterI})   
+    plot([125,125],[1,10000],'--r')
+    ylim([1,40000])
+    xlim([RLmin,RLmax])
+    title(['Recieved Level for ',siteDisk{i}])
     counterI = counterI+1;
-
 end
-
-figure(19);clf
-for iR = 1:size(spMean,1)
-    y = log10(spMean(iR,:));
-    ystd1 = log10(spMean(iR,:)+spStd(iR,:));
-    ystd2 = log10(spMean(iR,:)-spStd(iR,:));
+    figure(19);clf
+for iR = 1:q
+    y = log10(spMean{iR});
+    ystd1 = log10(spMean{iR}+spStd{iR});
+    ystd2 = log10(spMean{iR}-spStd{iR});
     badY = isinf(y);
     y(badY)=[];
     ystd1(badY)=[];
@@ -202,12 +162,15 @@ end
 
 xlim([120,140])
 grid on
-plot(rlVec,log10(mean(spMean)),'-k','linewidth',2)
+plot(rlVec,log10(mean(spMean{iR})),'-k','linewidth',2)
 ylim([0,3.5])
 [~,cIdx] = min(abs(rlVec-125));
-meanCross = log10(mean(spMean(:,cIdx)));
+meanCross = log10(mean(spMean{iR}(:,cIdx)));
 plot([125,125],[1,10000],'--r')
 plot(rlVec,ones(size(rlVec))*meanCross,'--r')
 
-[C,I] = min(abs(spMean - meanCross),[],2);
-legend(cellstr(nameStr))
+[C,I] = min(abs(spMean{iR} - meanCross),[],2);
+legend(siteDisk)
+end
+
+
