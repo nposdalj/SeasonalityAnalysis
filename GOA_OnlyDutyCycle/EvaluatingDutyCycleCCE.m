@@ -28,6 +28,8 @@ effortXls = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnaly
 saveDir = [GDrive,':\My Drive\GofAK_TPWS_metadataReduced\Plots\',siteabrev]; %specify directory to save files
 load([dir,'\',siteabrev,'_workspace125.mat']); %load workspace from sumPPICIbin_seasonality code
 %% Which deployments are duty cycled
+%The goal of this section is to remove the duty cycled data so that you
+%only have continuous data to test the duty cyle regime on
 clearvars -except vTT tbin TTall PPall effort er p binEffort DutyCont MinRec MinPer NumSamples
 %If the duty cycled data is one after the other
 if DutyCont == 1 %duty cycle is continous and you want to remove that single deployment
@@ -41,7 +43,7 @@ else
 end
 SecRec = MinRec *60;
 SecPer = MinPer * 60;
-%% Evaluating the duty cycle by shifting the 15 minute listening period by 1 minute - THIS IS THE ONE I ENDED UP USING
+%% Evaluating the duty cycle by shifting the listening period by 1 minute - THIS IS THE ONE I ENDED UP USING
 %within the entire 20 minute cycle. This will result in 20 samples.
 %group data by 1 second bins
 tbin = datetime(vTT);
@@ -117,11 +119,12 @@ for j = 1:NumSamples
     end
 end
 
-%Group the duty cycled data back into 5 min bins
+%Group the duty cycled data back into 5 min bins -- change to 1 hour bin
+%for Michaela
 All_Clicks_Bin = retime(All_Clicks, 'minutely','sum');
 vTT = datevec(All_Clicks_Bin.tbin);
 All_Clicks_Bin.tbin = datetime([vTT(:,1:4), floor(vTT(:,5)/p.binDur)*p.binDur, ...
-    zeros(length(vTT),1)]);
+    zeros(length(vTT),1)]); %5 minute bins -- change to 1 hour bin for Michaela
 binEffort_1 = binEffort;
 binEffort_2 = binEffort;
 binEffort_1(binEffort_1.tbin > startTime,:) = [];
