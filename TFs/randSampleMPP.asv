@@ -7,7 +7,7 @@
 % This code was provided by KEF and modified by NP 08312022
 close all;clear all clc;
 %% User Definied Parameters
-siteabrevv = {'BC','HZ','BS','BP','GS','JAX'}; %abbreviation of site.
+siteabrevv = {'GS','JAX'}; %abbreviation of site.
 GDrive = 'I'; %directory for Google Drive
 region = 'WAT';
 sp = 'Pm'; % your species code
@@ -22,7 +22,7 @@ rlVec = RLmin:1:RLmax;
 for ss = 1:gg
 siteabrev = siteabrevv{ss}; %choose site
 disp(['Loading data from site ',siteabrev])
-tpwsPath = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\TPWS_125\',siteabrev]; %directory of TPWS files
+tpwsDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\TPWS_125\',siteabrev]; %directory of TPWS files
 dataDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev]; %specify directory where workspaces are saved
 effortXls = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev,'\Pm_Effort.xlsx'];% specify excel file with effort times
 saveDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\Plots\',siteabrev]; % add desired saveDir back in here
@@ -32,7 +32,7 @@ counterI = 1;
 if itnum > 1
    for id = 2: str2num(itnum) % iterate id times according to itnum
        subfolder = ['TPWS',num2str(id)];
-       tpwsPath = (fullfile(tpwsPath,subfolder));
+       tpwsPath = (fullfile(tpwsDir,subfolder));
    end
 end
 %% Find all TPWS files that fit your specifications (does not look in subdirectories)
@@ -51,10 +51,10 @@ if isempty(fileMatchIdx)
     if itnum > 1
         for id = 2: str2num(itnum) % iterate id times according to itnum
             subfolder = ['TPWS',num2str(id)];
-            tpwsPath = (fullfile(tpwsPath,subfolder));
+            tpwsPath = (fullfile(tpwsDir,subfolder));
         end
     % Concatenate parts of file name
-    detfn = [region,'_',siteabrev,'.*',sp,'.*TPWS',itnum,'.mat'];
+    detfn = ['.*',sp,'.*TPWS',itnum,'.mat'];
 
     % Get a list of all the files in the start directory
     fileList = cellstr(ls(tpwsPath));
@@ -135,12 +135,59 @@ for idsk = 1 : length(siteDiskIdx)
 end
 
 for itr = 1:50
-    p = randsample(length(SiteMPP{i}),N); %choose N random click samples
+    if length(SiteMPP{i}) < N
+        N = length(SiteMPP{i});
+        p = randsample(length(SiteMPP{i}),N); %choose N random click samples
+    else
+        p = randsample(length(SiteMPP{i}),N); %choose N random click samples
+    end
     histSubset{i} = [histSubset{i};hist(SiteMPP{i}(p),rlVec)];
 end
 end
-
 figure
+if length(siteDisk) > 4
+for i = 1:length(siteDisk)
+    subplot(3,3,counterI)
+    spMean{i} = mean(histSubset{i});
+    spStd{i} = std(histSubset{i});
+    semilogy(rlVec,histSubset{i})
+    hold on
+    plot(rlVec,spMean{i},'-k','Linewidth',2)
+    plot(rlVec,spMean{i}+spStd{i},'--k','Linewidth',2)
+    plot(rlVec,spMean{i}-spStd{i},'--k','Linewidth',2)
+    grid on
+    ylabel('log10(counts)')
+    xlabel('RL(dB_P_P)')
+    plot([125,125],[1,10000],'--r')
+    plot([125,125],[1,10000],'--r')
+    ylim([1,40000])
+    xlim([125 150])
+    xlim([RLmin,RLmax])
+    title(['Recieved Level for ',siteDisk{i}])
+    counterI = counterI+1;
+end
+elseif length(siteDisk) > 9
+    for i = 1:length(siteDisk)
+    subplot(3,3,counterI)
+    spMean{i} = mean(histSubset{i});
+    spStd{i} = std(histSubset{i});
+    semilogy(rlVec,histSubset{i})
+    hold on
+    plot(rlVec,spMean{i},'-k','Linewidth',2)
+    plot(rlVec,spMean{i}+spStd{i},'--k','Linewidth',2)
+    plot(rlVec,spMean{i}-spStd{i},'--k','Linewidth',2)
+    grid on
+    ylabel('log10(counts)')
+    xlabel('RL(dB_P_P)')
+    plot([125,125],[1,10000],'--r')
+    plot([125,125],[1,10000],'--r')
+    ylim([1,40000])
+    xlim([125 150])
+    xlim([RLmin,RLmax])
+    title(['Recieved Level for ',siteDisk{i}])
+    counterI = counterI+1;
+end
+else
 for i = 1:length(siteDisk)
     subplot(2,2,counterI)
     spMean{i} = mean(histSubset{i});
@@ -160,6 +207,7 @@ for i = 1:length(siteDisk)
     xlim([RLmin,RLmax])
     title(['Recieved Level for ',siteDisk{i}])
     counterI = counterI+1;
+end
 end
 plotName = [saveDir,'\',region,'_',siteabrev,'_SubPlotRecievedLevel'];
 saveas(gcf,[plotName,'.png'])

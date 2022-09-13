@@ -7,9 +7,9 @@
 % This code was provided by KEF and modified by NP 08312022
 close all;clear all clc;
 %% User Definied Parameters
-siteabrevv = {'BC','HZ','BS','BP','GS','JAX'}; %abbreviation of site.
+siteabrevv = {'PT','QN'}; %abbreviation of site.
 GDrive = 'I'; %directory for Google Drive
-region = 'WAT';
+region = 'GofAK';
 sp = 'Pm'; % your species code
 itnum = '3'; % which iteration you are looking for (which TPWS folder)
 N = 100000; %random clicks to choose from each deployment
@@ -54,7 +54,7 @@ if isempty(fileMatchIdx)
             tpwsPath = (fullfile(tpwsDir,subfolder));
         end
     % Concatenate parts of file name
-    detfn = [region,'_',siteabrev,'.*',sp,'.*TPWS',itnum,'.mat'];
+    detfn = ['.*',sp,'.*TPWS',itnum,'.mat'];
 
     % Get a list of all the files in the start directory
     fileList = cellstr(ls(tpwsPath));
@@ -135,12 +135,59 @@ for idsk = 1 : length(siteDiskIdx)
 end
 
 for itr = 1:50
-    p = randsample(length(SiteMPP{i}),N); %choose N random click samples
+    if length(SiteMPP{i}) < N
+        N = length(SiteMPP{i});
+        p = randsample(length(SiteMPP{i}),N); %choose N random click samples
+    else
+        p = randsample(length(SiteMPP{i}),N); %choose N random click samples
+    end
     histSubset{i} = [histSubset{i};hist(SiteMPP{i}(p),rlVec)];
 end
 end
-
 figure
+if length(siteDisk) > 9
+for i = 1:length(siteDisk)
+    subplot(3,4,counterI)
+    spMean{i} = mean(histSubset{i});
+    spStd{i} = std(histSubset{i});
+    semilogy(rlVec,histSubset{i})
+    hold on
+    plot(rlVec,spMean{i},'-k','Linewidth',2)
+    plot(rlVec,spMean{i}+spStd{i},'--k','Linewidth',2)
+    plot(rlVec,spMean{i}-spStd{i},'--k','Linewidth',2)
+    grid on
+    ylabel('log10(counts)')
+    xlabel('RL(dB_P_P)')
+    plot([125,125],[1,10000],'--r')
+    plot([125,125],[1,10000],'--r')
+    ylim([1,40000])
+    xlim([125 150])
+    xlim([RLmin,RLmax])
+    title(['Recieved Level for ',siteDisk{i}])
+    counterI = counterI+1;
+end
+elseif length(siteDisk) > 4 && length(siteDisk) < 10
+    for i = 1:length(siteDisk)
+    subplot(3,3,counterI)
+    spMean{i} = mean(histSubset{i});
+    spStd{i} = std(histSubset{i});
+    semilogy(rlVec,histSubset{i})
+    hold on
+    plot(rlVec,spMean{i},'-k','Linewidth',2)
+    plot(rlVec,spMean{i}+spStd{i},'--k','Linewidth',2)
+    plot(rlVec,spMean{i}-spStd{i},'--k','Linewidth',2)
+    grid on
+    ylabel('log10(counts)')
+    xlabel('RL(dB_P_P)')
+    plot([125,125],[1,10000],'--r')
+    plot([125,125],[1,10000],'--r')
+    ylim([1,40000])
+    xlim([125 150])
+    xlim([RLmin,RLmax])
+    title(['Recieved Level for ',siteDisk{i}])
+    counterI = counterI+1;
+    end
+else
 for i = 1:length(siteDisk)
     subplot(2,2,counterI)
     spMean{i} = mean(histSubset{i});
@@ -160,6 +207,7 @@ for i = 1:length(siteDisk)
     xlim([RLmin,RLmax])
     title(['Recieved Level for ',siteDisk{i}])
     counterI = counterI+1;
+end
 end
 plotName = [saveDir,'\',region,'_',siteabrev,'_SubPlotRecievedLevel'];
 saveas(gcf,[plotName,'.png'])
