@@ -22,7 +22,7 @@ rlVec = RLmin:1:RLmax;
 for ss = 1:gg
 siteabrev = siteabrevv{ss}; %choose site
 disp(['Loading data from site ',siteabrev])
-tpwsDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\TPWS_125\',siteabrev]; %directory of TPWS files
+tpwsPath = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\TPWS_125\',siteabrev]; %directory of TPWS files
 dataDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev]; %specify directory where workspaces are saved
 effortXls = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev,'\Pm_Effort.xlsx'];% specify excel file with effort times
 saveDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\Plots\',siteabrev]; % add desired saveDir back in here
@@ -32,7 +32,7 @@ counterI = 1;
 if itnum > 1
    for id = 2: str2num(itnum) % iterate id times according to itnum
        subfolder = ['TPWS',num2str(id)];
-       tpwsPath = (fullfile(tpwsDir,subfolder));
+       tpwsPath = (fullfile(tpwsPath,subfolder));
    end
 end
 %% Find all TPWS files that fit your specifications (does not look in subdirectories)
@@ -51,7 +51,7 @@ if isempty(fileMatchIdx)
     if itnum > 1
         for id = 2: str2num(itnum) % iterate id times according to itnum
             subfolder = ['TPWS',num2str(id)];
-            tpwsPath = (fullfile(tpwsDir,subfolder));
+            tpwsPath = (fullfile(tpwsPath,subfolder));
         end
     % Concatenate parts of file name
     detfn = [region,'_',siteabrev,'.*',sp,'.*TPWS',itnum,'.mat'];

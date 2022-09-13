@@ -6,7 +6,7 @@ filePrefix = 'PS'; % File name to match.
 siteabrev = 'PS2'; %abbreviation of site.
 region = 'CCE'; %region
 sp = 'Pm'; % your species code
-itnum = '3'; % which iteration you are looking for (which TPWS folder)
+itnum = '2'; % which iteration you are looking for (which TPWS folder)
 GDrive = 'I'; %Google Drive
 
 tpwsPath = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\TPWS_125\',siteabrev]; %directory of TPWS files
@@ -57,8 +57,8 @@ p = sp_setting_defaults('sp',sp,'analysis','SumPPICIBin');
 %% Parameters to calculate peak frequency
 % fix parameters that should be given from sp_setting_default (now it is
 % just hard coded)
-p.N = 512;
-srate = 200;
+p.N = 512; %fft
+srate = 200; %sampling rate
 p.frRange = [5 srate/2];
 
 smsp2 = p.N/2; % num fft points
