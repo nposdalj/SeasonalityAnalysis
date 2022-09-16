@@ -5,14 +5,14 @@
 % disks.
 
 % This code was provided by KEF and modified by NP 08312022
-close all;clear all clc;
+close all;clear all; clc;
 %% User Definied Parameters
-siteabrevv = {'PT','QN'}; %abbreviation of site.
+siteabrevv = {'CA','GI','PS1','PS2','QC'}; %abbreviation of site.
 GDrive = 'I'; %directory for Google Drive
-region = 'GofAK';
+region = 'CCE';
 sp = 'Pm'; % your species code
 itnum = '3'; % which iteration you are looking for (which TPWS folder)
-N = 100000; %random clicks to choose from each deployment
+NN = 100000; %random clicks to choose from each deployment
 RLmin = 125; %Recieved level threshold of your data
 RLmax = 160; %Max recieved level you're intersted in plotting
 %% Calculate variable sizes
@@ -133,17 +133,19 @@ for idsk = 1 : length(siteDiskIdx)
     SiteMTT{i} = TTall;
     SiteICI{i} = ICIall;
 end
+end
 
+N = round(min(cellfun(@(c) size(c,1), SiteMPP))/2); %come up with a sample size that's half the size of the min number of clicks
+
+for i = 1:length(siteDisk)
+%Find min length of SiteMPP to adjust N accordingly
 for itr = 1:50
-    if length(SiteMPP{i}) < N
-        N = length(SiteMPP{i});
-        p = randsample(length(SiteMPP{i}),N); %choose N random click samples
-    else
-        p = randsample(length(SiteMPP{i}),N); %choose N random click samples
-    end
+    p = randsample(length(SiteMPP{i}),N); %choose N random click samples
     histSubset{i} = [histSubset{i};hist(SiteMPP{i}(p),rlVec)];
 end
 end
+
+
 figure
 if length(siteDisk) > 9
 for i = 1:length(siteDisk)
@@ -241,13 +243,8 @@ end
     saveas(gcf,[plotName,'.fig'])
     close all
 %% save .mat files for future need
-save([dataDir,['\',siteabrev,'_simulatedRL.mat']],'spStd','histSubset','spMean','SiteMPP','SiteICI','SiteMTT','rlVec','-v7.3')
+save([dataDir,['\',siteabrev,'_simulatedRL.mat']],'spStd','histSubset','spMean','SiteMPP','SiteICI','SiteMTT','rlVec','N','NN','-v7.3')
 end
-
-
-
-
-
 
 
 
