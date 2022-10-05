@@ -2,16 +2,16 @@ clearvars
 close all
 
 %% Parameters defined by user
-filePrefix = 'Wake'; % File name to match. 
-siteabrev = 'Wake'; %abbreviation of site.
+filePrefix = 'Palmyra'; % File name to match. 
+siteabrev = 'Palmyra'; %abbreviation of site.
 region = 'CentralPac'; %region
 sp = 'Pm'; % your species code
 GDrive = 'I'; %Google Drive
 saveDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev]; %specify directory to save files
-DutyCy = 3; %if this data only has 1 deployment that is duty cycled make it equal to 1
+DutyCy = 0; %if this data only has 1 deployment that is duty cycled make it equal to 1
 %otherwise, make it equal to the number of deployments that have different
-%duty cycles that must be accounted for; if this data is NOT duty cycled, 
-%or if the entire deployment is duty cycled, make it equal to 0
+%duty cycles that must be accounted for; if this data is NOT duty cycled,
+%make it equal to 0
 %% load workspace
 GDrive_correct = GDrive; % Preserve correct GDrive as it was entered above
 load([saveDir,'\',siteabrev,'_workspace125.mat']);
@@ -34,20 +34,20 @@ if DutyCy == 1
  %   endTime2 = datetime(2008,07,08); %PS1
  %   startTime3 = datetime(2012,07,03); %PS1
  %   endTime3 = datetime(2012,08,26); %PS1
-%elseif DutyCy == 3 %Tinian
- %   startTime1 = datetime(2011,04,13); %Tinian
- %   endTime1 = datetime(2011,11,22); %Tinian
- %   startTime2 = datetime(2012,06,23); %Tinian
- %   endTime2 = datetime(2013,05,14); %Tinian
- %   startTime3 = datetime(2013,07,23); %Tinian
- %   endTime3 = datetime(2019,05,12); %Tinian
-elseif DutyCy == 3 %Wake
-    startTime1 = datetime(2010,01,31); %Wake
-    endTime1 = datetime(2010,04,25); %Wake
-    startTime2 = datetime(2011,03,25); %Wake
-    endTime2 = datetime(2011,05,27); %Wake
-    startTime3 = datetime(2012,02,25); %Wake
-    endTime3 = datetime(2017,10,28); %Wake
+elseif DutyCy == 3 %Tinian
+    startTime1 = datetime(2011,04,13); %Tinian
+    endTime1 = datetime(2011,11,22); %Tinian
+    startTime2 = datetime(2012,06,23); %Tinian
+    endTime2 = datetime(2013,05,14); %Tinian
+    startTime3 = datetime(2013,07,23); %Tinian
+    endTime3 = datetime(2019,05,12); %Tinian
+%elseif DutyCy == 3 %Wake
+ %   startTime1 = datetime(2010,01,31); %Wake
+ %   endTime1 = datetime(2010,04,25); %Wake
+ %   startTime2 = datetime(2011,03,25); %Wake
+ %   endTime2 = datetime(2011,05,27); %Wake
+ %   startTime3 = datetime(2012,02,25); %Wake
+ %   endTime3 = datetime(2017,10,28); %Wake
 %elseif DutyCy == 4 %PHR
  %   startTime1 = datetime(2009,10,20);%PHR
  %   endTime1 = datetime(2010,05,23);%PHR
@@ -211,8 +211,8 @@ elseif strcmp(siteabrev,'QC');
     hourlyTab.Effort_Bin(startVal:endVal) = hourlyTab.Effort_Bin(startVal:endVal) * (0.33); %for QC06 I evaluated the duty cycle using continous deployments and I should adjust by 33%
     hourlyTab.Effort_Sec(startVal:endVal) = hourlyTab.Effort_Bin(startVal:endVal) * 5 * 60; %convert from bins into efforts in seconds per day
 elseif strcmp(siteabrev,'Palmyra');
-    hourlyTab.Effort_Bin = floor(hourlyTab.Effort_Bin * 0.25); %No continous data so I linear boosted by the duty cycle
-    hourlyTab.Effort_Sec = hourlyTab.Effort_Bin * 5 * 60; %convert from bins into efforts in seconds per day
+    hourlyTab.Effort_Bin(startVal:endVal) = hourlyTab.Effort_Bin(startVal:endVal) * (0.25); %No continous data so I linear boosted by the duty cycle
+    hourlyTab.Effort_Sec(startVal:endVal) = hourlyTab.Effort_Bin(startVal:endVal) * 5 * 60; %convert from bins into efforts in seconds per day
 elseif strcmp(siteabrev,'PS1');
     hourlyTab.Effort_Bin(startVal1:endVal1) = hourlyTab.Effort_Bin(startVal1:endVal1) * (0.33); %for PS1_01 and 02 I evaluated the duty cycle using PS 12 (continous deployment) and I should adjust by 33%
     hourlyTab.Effort_Sec(startVal1:endVal1) = hourlyTab.Effort_Bin(startVal1:endVal1) * 5 * 60; %convert from bins into efforts in seconds per day
@@ -404,8 +404,8 @@ elseif strcmp(siteabrev,'PS1');
     dayTable.Effort_Bin(startVal3:endVal3) = dayTable.Effort_Bin(startVal3:endVal3) * (0.5); %for PS1_13 I evaluated the duty cycle using PS 12 (continous deployment) and I should adjust by 50%
     dayTable.Effort_Sec(startVal3:endVal3) = dayTable.Effort_Bin(startVal3:endVal3) * 5 * 60; %convert from bins into efforts in seconds per day
 elseif strcmp(siteabrev,'Palmyra');
-    dayTable.Effort_Bin = floor(dayTable.Effort_Bin * 0.25); %No continous data so I linear boosted by the duty cycle
-    dayTable.Effort_Sec = dayTable.Effort_Bin * 5 * 60; %convert from bins into efforts in seconds per day
+    dayTable.Effort_Bin(startVal:endVal) = dayTable.Effort_Bin(startVal:endVal) * (0.25); %No continous data so I linear boosted by the duty cycle
+    dayTable.Effort_Sec(startVal:endVal) = dayTable.Effort_Bin(startVal:endVal) * 5 * 60; %convert from bins into efforts in seconds per day
 elseif strcmp(siteabrev,'Tinian');
     dayTable.Effort_Bin(startVal1:endVal1) = dayTable.Effort_Bin(startVal1:endVal1) * (0.25); %No continous data so I linear boosted by the duty cycle
     dayTable.Effort_Sec(startVal1:endVal1) = dayTable.Effort_Bin(startVal1:endVal1) * 5 * 60; %convert from bins into efforts in seconds per day

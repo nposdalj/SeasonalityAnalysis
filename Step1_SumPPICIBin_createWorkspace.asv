@@ -2,8 +2,8 @@ clearvars
 close all
 
 %% Parameters defined by user
-filePrefix = 'Palmyra'; % File name to match. 
-siteabrev = 'Palmyra'; %abbreviation of site.
+filePrefix = 'Equator'; % File name to match. 
+siteabrev = 'Equator'; %abbreviation of site.
 region = 'CentralPac'; %region
 sp = 'Pm'; % your species code
 itnum = '2'; % which iteration you are looking for (which TPWS folder)
@@ -136,7 +136,7 @@ end
 NktTkt = positiveCounts/secMonitEffort;
 NktTktbin = positiveBins/binMonitEffort;
 %% Remove bin data with less than 5 clicks
-binData(binData.Count < 5,:) = []; %identify any bins with less than 5 clicks and delete them
+ binData(binData.Count < 5,:) = []; %identify any bins with less than 5 clicks and delete them
 %% ICIgram information
 %  Exclude ICI above thresholds
 idxICI = find(ICIall < p.iciRange(1) | ICIall > p.iciRange(2));
@@ -153,7 +153,6 @@ binData2ICIgram.Properties.VariableNames{'GroupCount'} = 'Count'; % #clicks per 
 binData2ICIgram.Properties.VariableNames{'mean_PeakFrall'} = 'avgPeakFr';
 
 binDataICIgram = synchronize(binDataICIgram,binData2ICIgram(:,2));
-binDataICIgram(binDataICIgram.Count < 5,:) = []; %identify any bins with less than 5 clicks and delete them
 
 icifn = [filePrefix,'_',p.speName,'_mainicipeak'];
 save(fullfile(saveDir,icifn),'dataICIgram','binDataICIgram');

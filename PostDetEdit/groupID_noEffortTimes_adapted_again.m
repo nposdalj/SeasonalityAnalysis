@@ -1,11 +1,11 @@
 %% Clear all variables
 close all;clear all;clc;
 %% select directory where ship files are located
-siteabrev = 'PS1';
-siteNameMatch = 'PS';
-region = 'CCE'; %all of the WAT data has a space between the site and the deployment #
-shipDataType = 2; % 1 - old ship data, %2 - new ship data
-ShipIDReDo = 1; % If you want to re-run ship and ID times, change this to 1
+siteabrev = 'Palmyra';
+siteNameMatch = 'Palmyra';
+region = 'CentralPac'; %all of the WAT data has a space between the site and the deployment #
+shipDataType = 1; % 1 - old ship data, %2 - new ship data
+ShipIDReDo = 0; % If you want to re-run ship and ID times, change this to 1
 GDrive = 'I';
 
 %shipDir = 'I:\Shared drives\Pt. Sur\Analyzed data\Sperm whales\metadata_reduced';
@@ -26,7 +26,7 @@ IDTimesDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\IDTimes\',sitea
 % IDTimesDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\',siteabrev,'\IDTimes']; % directory where to save ID times .mat files
 %IDTimesDir = 'E:\WC\IDTimes';
 
-maxDetEdit = 3; % number of TPWS folders (i.e. TPWS4 is 4)
+maxDetEdit = 2; % number of TPWS folders (i.e. TPWS4 is 4)
 %saveTable = 'E:\WC\SeasonalityAnalysis\Pm_Effort.xlsx';
 %saveTable = 'I:\Shared drives\Pt. Sur\Analyzed data\Sperm whales\SeasonalityAnalysis\Pm_Effort.xlsx';
 saveTable = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev,'\Pm_Effort.xlsx'];

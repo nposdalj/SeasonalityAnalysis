@@ -88,6 +88,16 @@ HOKE_dates = [datenum([2008 09 15]), datenum([2009 06 06 14 13 13])];
 HOKE_depl = 1;
 HOKE_site(1:length(HOKE_depl),1) = {'HOKE'};
 HOKE_latLongs = [32.1,-126.91];
+%% Equator
+Equator_dates = [datenum([2012 03 06 00 00 00]), datenum([2012 06 17 05 35 00])];
+Equator_depl = 1;
+Equator_site(1:length(Equator_depl),1) = {'Equator'};
+Equator_latLongs = [32.1,-126.91];
+%% LSM
+LSM_dates = [datenum([2009 05 18 00 00 00]), datenum([2009 08 15 10 33 45])];
+LSM_depl = 1;
+LSM_site(1:length(LSM_depl),1) = {'LSM'};
+LSM_latLongs = [32.1,-126.91];
 %% DCPP01C
 DCPP01C_dates = [datenum([2012 11 07 02 00 00]), datenum([2013 03 19 22 48 45])];
 DCPP01C_depl = 1;
@@ -184,7 +194,7 @@ Tinian_latLongs = [15.03906667, -145.76; %2
 
 %% Wake
 Wake_dates = [datenum([2010,01,31]), datenum([2010,05,04]); %1
-    datenum([2011,03,25]), datenum([2011,03,27]); %3
+    datenum([2011,03,25]), datenum([2011,05,27]); %3
     datenum([2012,02,25]), datenum([2013,01,03]); %4
     datenum([2014,06,20]), datenum([2015,05,08]); %5
     datenum([2015,05,05]), datenum([2016,05,24]); %6
@@ -359,21 +369,72 @@ PAL_latLongs = [58.645683,-148.07; %02
 58.6695,-148.03; %09
 58.6695,-148.0338889]; %10
 
+%% PHR
+PHR_dates = [datenum([2009 10 20 00 00 00]), datenum([2010 05 24 00 42 30]); %PHR01
+    datenum([2010 06 01 00 00 00]), datenum([2010 09 17 12 10 00]); %PHR02
+    datenum([2011 04 12 00 00 00]), datenum([2011 07 29 10 50 00]); %PHR04
+    datenum([2011 08 15 12 00 00]), datenum([2012 01 07 10 03 45]); %PHR05
+    datenum([2014 09 12 00 00 00]), datenum([2015 07 16 15 20 00]); %PHR08
+    datenum([2015 10 15 00 00 00]), datenum([2016 08 14 02 33 45]); %PHR09
+    datenum([2016 08 20 00 00 00]), datenum([2017 03 14 15 03 45]); %PHR10
+    datenum([2017 08 20 00 00 00]), datenum([2018 03 05 15 01 20]); %PHR11
+    datenum([2018 10 15 00 00 00]), datenum([2019 06 10 08 32 30])]; %PHR12
+
+PHR_depl = [1,2,4,5,8,9,10,11,12];
+
+PHR_site(1:length(PHR_depl),1) = {'PHR'};
+
+%DONT FIX THIS ONE
+PHR_latLongs = [58.645683,-148.07; %02
+58.671333,-148.02; %03
+58.673483,-148.00; %05
+58.671867,-148.02; %05
+58.671,-148.02; %06
+58.670817,-148.02; %07
+58.65525,-148.09; %08
+58.6695,-148.03; %09
+58.6695,-148.0338889]; %10
+%% Hawaii
+Hawaii_dates = [datenum([2011 07 13]), datenum([2012 02 19]); %cb01
+datenum([2012 05 03]), datenum([2013 02 21]); %cb02
+datenum([2013 06 06]), datenum([2013 09 05]); %cb03
+datenum([2013 09 05]), datenum([2014 04 28]); %cb04
+datenum([2014 04 29]), datenum([2014 09 09]); %cb05
+datenum([2014 09 09]), datenum([2015 05 02]); %cb06
+datenum([2015 05 01]), datenum([2015 09 06]); %cb07
+datenum([2017 04 30 12 00 00]), datenum([2017 09 12 12 06 21]); %cb08
+datenum([2017 09 14 12 00 00]), datenum([2018 06 16 14 53 48]);%cb09
+datenum([2019 04 25 08 00 00]), datenum([2019 09 27 03 27 30])]; %cb10
+
+Hawaii_depl = [5,6,7,8,9,10,11,16,17,18,19,20,22,23,26,27,28,29,30];
+
+Hawaii_site(1:length(Hawaii_depl),1) = {'Hawaii'};
+
+Hawaii_latLongs = [58.645683,-148.07; %01 in decimals
+58.671333,-148.02; %02
+58.673483,-148.00; %03
+58.671867,-148.02; %04
+58.671,-148.02; %05
+58.670817,-148.02; %06
+58.65525,-148.09; %07
+58.6695,-148.03; %08
+58.6695,-148.0338889; %09
+58.66961667,-148.03];%10
 %% concatenate all information
 edgeffort = [CB_dates; QN_dates; AB_dates; PT_dates; CORC_dates;...
     HOKE_dates; ALEUT_dates; DCPP01C_dates; ALEUT01KS_dates; OCNMSQC_dates; KOA_dates; GI_dates;...
     EI_dates; Saipan_dates; Tinian_dates; Wake_dates; OC_dates; GS_dates; NC_dates; JAX_dates; HZ_dates; BC_dates;...
-    BP_dates; BS_dates; WC_dates; CA_dates; CCE_dates; PS_dates; PAL_dates];
+    BP_dates; BS_dates; WC_dates; CA_dates; CCE_dates; PS_dates; PAL_dates; Equator_dates; LSM_dates; PHR_dates];
 latLongs = [CB_latLongs; QN_latLongs; AB_latLongs; PT_latLongs;...
     CORC_latLongs; HOKE_latLongs; ALEUT_latLongs; DCPP01C_latLongs; ALEUT01KS_latLongs; OCNMSQC_latLongs;...
     KOA_latLongs; GI_latLongs; EI_latLongs; Saipan_latLongs; Tinian_latLongs; Wake_latLongs; OC_latLongs; GS_latLongs;...
     NC_latLongs; JAX_latLongs; HZ_latLongs; BC_latLongs; BP_latLongs; BS_latLongs; WC_latLongs; CA_latLongs; CCE_latLongs;...
-    PS_latLongs; PAL_latLongs];
+    PS_latLongs; PAL_latLongs; Equator_latLongs; LSM_latLongs; PHR_latLongs];
 depl = [CB_depl'; QN_depl'; AB_depl'; PT_depl'; CORC_depl'; HOKE_depl';...
     ALEUT_depl'; DCPP01C_depl'; ALEUT01KS_depl';OCNMSQC_depl'; KOA_depl';GI_depl'; EI_depl'; Saipan_depl';...
     Tinian_depl'; Wake_depl'; OC_depl'; GS_depl'; NC_depl'; JAX_depl'; HZ_depl'; BC_depl'; BP_depl'; BS_depl'; WC_depl';...
-    CA_depl'; CCE_depl'; PS_depl'; PAL_depl'];
+    CA_depl'; CCE_depl'; PS_depl'; PAL_depl';Equator_depl'; LSM_depl'; PHR_depl'];
 site = [CB_site; QN_site; AB_site; PT_site; CORC_site; HOKE_site;...
     ALEUT_site; DCPP01C_site; ALEUT01KS_site; OCNMSQC_site; KOA_site; GI_site; EI_site; Saipan_site;...
     Tinian_site; Wake_site; OC_site; GS_site; NC_site; JAX_site; HZ_site; BC_site; BP_site; BS_site; WC_site;...
-    CA_site; CCE_site; PS_site; PAL_site];
+    CA_site; CCE_site; PS_site; PAL_site; Equator_site; LSM_site; PHR_site];
