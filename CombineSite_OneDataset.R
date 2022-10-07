@@ -5,7 +5,7 @@ library(tidyverse)
 library(anytime)
 library(lubridate)
 
-GDrive = 'I'
+GDrive = 'G'
 #Sites = c('CB','PT','QN','AB','KOA','BD','KS') #The GOA and BSAI Sites
 #Regions = c("GOA","BSAI") #GOA AND BSAI Region
 Sites = c('BS','BP','NC','BC','GS','JAX','HZ','OC','WC')

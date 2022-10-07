@@ -8,7 +8,7 @@ library(plyr)
 library(plotrix)
 
 #User Directory
-GDrive = 'I'
+GDrive = 'G'
 FileDir = paste(GDrive,":/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/BigModel/",sep="")
 fileName = paste(FileDir,'BigModel_gamgeeOutput.RData',sep="")
 fileNameSex = paste(FileDir,'BigModel_gamgeeOutput_sexClasses.RData',sep="")
@@ -16,8 +16,10 @@ load(fileName)
 saveDir = paste(GDrive,":/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",sep="")
 PlotDir = paste(GDrive,":/My Drive/GofAK_TPWS_metadataReduced/Plots/",sep="")
 
-Sites = c('CB','PT','QN','AB','KOA','BD','KS') #The GOA and BSAI Sites
-Regions = c("GOA","BSAI") #GOA AND BSAI Region
+#Sites = c('CB','PT','QN','AB','KOA','BD','KS') #The GOA and BSAI Sites
+#Regions = c("GOA","BSAI") #GOA AND BSAI Region
+
+Sites = c('BP') #WAT
 
 #Add month
 SiteHourTableB$Month = as.factor(month(SiteHourTableB$date))

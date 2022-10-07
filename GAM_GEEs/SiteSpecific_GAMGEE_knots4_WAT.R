@@ -5,6 +5,7 @@
         #Site specific models: CB, PT, QN, BD (more than 270 d of recording)
         #Region specific models: BSAI + GOA
         #Big model: all 7 sites
+        #Change
 
 # All the libraries have to be installed prior to their utilization (see R help on library installation)
 
@@ -26,13 +27,14 @@ library(car)            # to run an ANOVA
 library(splines2)       # to use mSpline for the GEEs
 library(ggfortify)      # extract confidence interval for ACF plots
 
-site = 'BS' #specify the site of interest
+site = 'HZ' #specify the site of interest
 
 # Step 1: Load the Data -----------------------------------------------------------
-dir = paste("H:/My Drive/WAT_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites")
-saveDir = paste("H:/My Drive/WAT_TPWS_metadataReduced/Plots/",site, sep="")
-saveWorkspace = paste("H:/My Drive/WAT_TPWS_metadataReduced/SeasonalityAnalysis/",site,'/',sep="")
-fileName = paste("H:/My Drive/WAT_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites/AllSitesGrouped_Binary_GAMGEE_ROW.csv",sep="") #setting the directory
+GDir = 'G'
+dir = paste(GDir,":/My Drive/WAT_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites",sep="")
+saveDir = paste(GDir,":/My Drive/WAT_TPWS_metadataReduced/Plots/",site, sep="")
+saveWorkspace = paste(GDir,":/My Drive/WAT_TPWS_metadataReduced/SeasonalityAnalysis/",site,'/',sep="")
+fileName = paste(GDir,":/My Drive/WAT_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites/AllSitesGrouped_Binary_GAMGEE_ROW.csv",sep="") #setting the directory
 HourTable = read.csv(fileName)
 HourTable = na.omit(HourTable)
 HourTable$date = as.Date(HourTable$tbin)
@@ -208,9 +210,9 @@ plot(perf, colorize=TRUE, print.cutoffs.at=c(0.1,0.2,0.3,0.4,0.5))
 
 y<-as.data.frame(perf@y.values)
 x<-as.data.frame(perf@x.values)
-fi <- atan(y/x) - pi/4                                             # to calculate the angle between the 45° line and the line joining the origin with the point (x;y) on the ROC curve
+fi <- atan(y/x) - pi/4                                             # to calculate the angle between the 45? line and the line joining the origin with the point (x;y) on the ROC curve
 L <- sqrt(x^2+y^2)                                                 # to calculate the length of the line joining the origin to the point (x;y) on the ROC curve
-d <- L*sin(fi)                                                     # to calculate the distance between the 45° line and the ROC curve
+d <- L*sin(fi)                                                     # to calculate the distance between the 45? line and the ROC curve
 
 #Find max and position of max
 max = max(d,na.rm=TRUE)
@@ -218,7 +220,7 @@ names(d)[1] <- 'Col1'
 position = which.max(d$Col1)
 
 alpha<-as.data.frame(perf@alpha.values)                            # the alpha values represent the corresponding cut-offs
-cutoff = alpha[position,]                                                       # to identify the alpha value (i.e. the cut-off) that corresponds to the maximum distance between the 45° line and the curve
+cutoff = alpha[position,]                                                       # to identify the alpha value (i.e. the cut-off) that corresponds to the maximum distance between the 45? line and the curve
 
 # This value can now be used to build the confusion matrix:
 
