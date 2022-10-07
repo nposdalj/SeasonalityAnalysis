@@ -2,8 +2,8 @@ clearvars
 close all
 
 %% Parameters defined by user
-filePrefix = 'Palmyra'; % File name to match. 
-siteabrev = 'Palmyra'; %abbreviation of site.
+filePrefix = 'K'; % File name to match. 
+siteabrev = 'Kauai'; %abbreviation of site.
 region = 'CentralPac'; %region
 sp = 'Pm'; % your species code
 itnum = '2'; % which iteration you are looking for (which TPWS folder)

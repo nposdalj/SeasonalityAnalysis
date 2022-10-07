@@ -11,18 +11,18 @@ close all
 %NP
 
 %% Parameters defined by user
-filePrefix = 'Palmyra'; % File name to match 
-siteabrev = 'Palmyra'; %abbreviation of site.
+filePrefix = 'Kona'; % File name to match 
+siteabrev = 'Kona'; %abbreviation of site.
 sp = 'Pm'; % your species code
 srate = 200; % sample rate
 region = 'CentralPac';
 GDrive = 'I';
-NumSamples = 100; %Number of random duty cycles you want it to test
+NumSamples = 45; %Number of random duty cycles you want it to test
 DutyCont = 0; %Make this equal to '1' if the Duty cycle is at the beginning or end of a deployment
 %and it's continuous; make this equal to '0' if only 1 deployment isn't duty cycled and that's 
 %the one you want to test on
 MinRec = 5; %How many minutes did the duty cycle record for
-MinPer = 20; %what was the cycle interval
+MinPer = 25; %what was the cycle interval
 tpwsPath = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\TPWS_125\',siteabrev]; %directory of TPWS files
 dir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev]; %seasonality analysis directory
 effortXls = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev,'\Pm_Effort.xlsx']; % specify excel file with effort times
@@ -39,8 +39,8 @@ if DutyCont == 1 %duty cycle is continous and you want to remove that single dep
 else
     %only one deployment IS NOT duty cycled and that's the one you want to
     %test on
-    startTime = datetime(2007,09,22);
-    endTime = datetime(2008,02,13); 
+    startTime = datetime(2014,03,25);
+    endTime = datetime(2019,09,29); 
 end
 SecRec = MinRec *60;
 SecPer = MinPer * 60;
@@ -211,8 +211,10 @@ disp(Avg_DutyCycle)
 %PHR (5/20) - 0.25
 %PHR (5/8) - 0.62
 %Hawaii (5/5) -
-%Hawaii (5/15) -
+%Hawaii (5/15) - 0.33
 %Hawaii (5/12) -
 %Hawaii (5/25) -
 %Hawaii (5/8) -
+%Kauai (5/20) - 0.26
+%Kauai (5/7) - 0.71
 

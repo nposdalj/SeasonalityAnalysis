@@ -77,6 +77,18 @@ PT_latLongs = [56.24345, -142.75; %pt01
 56.243917, -142.75; %pt02
 56.242917, -142.75; %pt03
 56.243333, -142.75]; %pt04
+%% Kauai site info
+
+Kauai_dates = [datenum([2009 10 08]), datenum([2010 05 13 01 00 00]); %03
+    datenum([2010 06 04]), datenum([2010 08 20 01 43 00]); %02
+    datenum([2016 07 09]), datenum([2017 08 09 00 58 15])]; %05
+
+Kauai_depl = [1,2,5];
+Kauai_site(1:length(Kauai_depl),1) = {'Kauai'};
+
+Kauai_latLongs = [56.24345, -142.75; %pt01
+56.243917, -142.75; %pt02
+56.242917, -142.75]; %pt03
 %% CORC
 
 CORC_dates = [datenum([2014 04 30 23 59 59]), datenum([2015 12 04 12 00 00])];
@@ -395,16 +407,25 @@ PHR_latLongs = [58.645683,-148.07; %02
 58.6695,-148.03; %09
 58.6695,-148.0338889]; %10
 %% Hawaii
-Hawaii_dates = [datenum([2011 07 13]), datenum([2012 02 19]); %cb01
-datenum([2012 05 03]), datenum([2013 02 21]); %cb02
-datenum([2013 06 06]), datenum([2013 09 05]); %cb03
-datenum([2013 09 05]), datenum([2014 04 28]); %cb04
-datenum([2014 04 29]), datenum([2014 09 09]); %cb05
-datenum([2014 09 09]), datenum([2015 05 02]); %cb06
-datenum([2015 05 01]), datenum([2015 09 06]); %cb07
-datenum([2017 04 30 12 00 00]), datenum([2017 09 12 12 06 21]); %cb08
-datenum([2017 09 14 12 00 00]), datenum([2018 06 16 14 53 48]);%cb09
-datenum([2019 04 25 08 00 00]), datenum([2019 09 27 03 27 30])]; %cb10
+Hawaii_dates = [datenum([2009 02 10]), datenum([2009 04 01 17 19 16]); %05
+datenum([2009 04 23]), datenum([2009 08 18 17 48 35]); %06
+datenum([2009 10 25]), datenum([2009 12 15 22 16 20]); %07
+datenum([2009 12 20]), datenum([2010 03 05 16 03 47]); %08
+datenum([2010 05 01]), datenum([2010 06 16 16 56 41]); %09
+datenum([2010 09 30]), datenum([2011 03 12 11 55 45]); %10
+datenum([2011 05 12]), datenum([2011 10 22 08 18 30]); %11
+datenum([2013 10 23]), datenum([2014 03 25 00 00 00]); %16
+datenum([2014 03 25]), datenum([2014 07 14 05 57 34]);%17
+datenum([2014 07 28]), datenum([2014 10 12 16 41 46]); %18
+datenum([2014 12 06]), datenum([2015 03 06 14 34 52]); %19
+datenum([2015 04 25]), datenum([2015 08 18 00 38 13]); %20
+datenum([2015 11 07]), datenum([2016 02 27 00 00 00]); %22
+datenum([2016 07 04]), datenum([2016 09 14 02 45 06]); %23
+datenum([2017 07 12]), datenum([2017 10 25 01 08 51]); %26
+datenum([2017 10 26]), datenum([2018 04 25 02 51 21]); %27
+datenum([2018 04 29]), datenum([2018 11 19 00 00 00]); %28
+datenum([2018 11 23]), datenum([2019 03 31 00 00 00]); %29
+datenum([2019 04 04]), datenum([2019 09 29 00 00 00])]; %30
 
 Hawaii_depl = [5,6,7,8,9,10,11,16,17,18,19,20,22,23,26,27,28,29,30];
 
@@ -419,22 +440,32 @@ Hawaii_latLongs = [58.645683,-148.07; %01 in decimals
 58.65525,-148.09; %07
 58.6695,-148.03; %08
 58.6695,-148.0338889; %09
+58.6695,-148.0338889; %09
+58.6695,-148.0338889; %09
+58.6695,-148.0338889; %09
+58.6695,-148.0338889; %09
+58.6695,-148.0338889; %09
+58.6695,-148.0338889; %09
+58.6695,-148.0338889; %09
+58.6695,-148.0338889; %09
+58.6695,-148.0338889; %09
 58.66961667,-148.03];%10
 %% concatenate all information
 edgeffort = [CB_dates; QN_dates; AB_dates; PT_dates; CORC_dates;...
     HOKE_dates; ALEUT_dates; DCPP01C_dates; ALEUT01KS_dates; OCNMSQC_dates; KOA_dates; GI_dates;...
     EI_dates; Saipan_dates; Tinian_dates; Wake_dates; OC_dates; GS_dates; NC_dates; JAX_dates; HZ_dates; BC_dates;...
-    BP_dates; BS_dates; WC_dates; CA_dates; CCE_dates; PS_dates; PAL_dates; Equator_dates; LSM_dates; PHR_dates];
+    BP_dates; BS_dates; WC_dates; CA_dates; CCE_dates; PS_dates; PAL_dates; Equator_dates; LSM_dates; PHR_dates; Hawaii_dates;...
+    Kauai_dates];
 latLongs = [CB_latLongs; QN_latLongs; AB_latLongs; PT_latLongs;...
     CORC_latLongs; HOKE_latLongs; ALEUT_latLongs; DCPP01C_latLongs; ALEUT01KS_latLongs; OCNMSQC_latLongs;...
     KOA_latLongs; GI_latLongs; EI_latLongs; Saipan_latLongs; Tinian_latLongs; Wake_latLongs; OC_latLongs; GS_latLongs;...
     NC_latLongs; JAX_latLongs; HZ_latLongs; BC_latLongs; BP_latLongs; BS_latLongs; WC_latLongs; CA_latLongs; CCE_latLongs;...
-    PS_latLongs; PAL_latLongs; Equator_latLongs; LSM_latLongs; PHR_latLongs];
+    PS_latLongs; PAL_latLongs; Equator_latLongs; LSM_latLongs; PHR_latLongs; Hawaii_latLongs; Kauai_latLongs];
 depl = [CB_depl'; QN_depl'; AB_depl'; PT_depl'; CORC_depl'; HOKE_depl';...
     ALEUT_depl'; DCPP01C_depl'; ALEUT01KS_depl';OCNMSQC_depl'; KOA_depl';GI_depl'; EI_depl'; Saipan_depl';...
     Tinian_depl'; Wake_depl'; OC_depl'; GS_depl'; NC_depl'; JAX_depl'; HZ_depl'; BC_depl'; BP_depl'; BS_depl'; WC_depl';...
-    CA_depl'; CCE_depl'; PS_depl'; PAL_depl';Equator_depl'; LSM_depl'; PHR_depl'];
+    CA_depl'; CCE_depl'; PS_depl'; PAL_depl';Equator_depl'; LSM_depl'; PHR_depl'; Hawaii_depl'; Kauai_depl'];
 site = [CB_site; QN_site; AB_site; PT_site; CORC_site; HOKE_site;...
     ALEUT_site; DCPP01C_site; ALEUT01KS_site; OCNMSQC_site; KOA_site; GI_site; EI_site; Saipan_site;...
     Tinian_site; Wake_site; OC_site; GS_site; NC_site; JAX_site; HZ_site; BC_site; BP_site; BS_site; WC_site;...
-    CA_site; CCE_site; PS_site; PAL_site; Equator_site; LSM_site; PHR_site];
+    CA_site; CCE_site; PS_site; PAL_site; Equator_site; LSM_site; PHR_site; Hawaii_site; Kauai_site];

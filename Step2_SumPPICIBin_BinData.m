@@ -2,8 +2,8 @@ clearvars
 close all
 
 %% Parameters defined by user
-filePrefix = 'Wake'; % File name to match. 
-siteabrev = 'Wake'; %abbreviation of site.
+filePrefix = 'Kauai'; % File name to match. 
+siteabrev = 'Kauai'; %abbreviation of site.
 region = 'CentralPac'; %region
 sp = 'Pm'; % your species code
 GDrive = 'I'; %Google Drive
@@ -41,6 +41,11 @@ if DutyCy == 1
  %   endTime2 = datetime(2013,05,14); %Tinian
  %   startTime3 = datetime(2013,07,23); %Tinian
  %   endTime3 = datetime(2019,05,12); %Tinian
+ elseif DutyCy == 2 %Kauai
+    startTime1 = datetime(2009,10,08); %Kauai
+    endTime1 = datetime(2010,05,13); %Kauai
+    startTime2 = datetime(2016,07,09); %Kauai
+    endTime2 = datetime(2017,08,09); %Kauai
 elseif DutyCy == 3 %Wake
     startTime1 = datetime(2010,01,31); %Wake
     endTime1 = datetime(2010,04,25); %Wake
@@ -131,6 +136,15 @@ if DutyCy == 1
     startVal = find(DutyCycleIdxStart == 0,1);
     DutyCycleIdxEnd =  hourlyTab.tbin > endTime;
     endVal = find(DutyCycleIdxEnd == 1,1);
+elseif DutyCy == 2
+    DutyCycleIdxStart1 =  hourlyTab.tbin < startTime1;
+    startVal1 = find(DutyCycleIdxStart1 == 0,1);
+    DutyCycleIdxEnd1 =  hourlyTab.tbin > endTime1;
+    endVal1 = find(DutyCycleIdxEnd1 == 1,1);
+    DutyCycleIdxStart2 =  hourlyTab.tbin < startTime2;
+    startVal2 = find(DutyCycleIdxStart2 == 0,1);
+    DutyCycleIdxEnd2 =  hourlyTab.tbin > endTime2;
+    endVal2 = find(DutyCycleIdxEnd2 == 1,1);
 elseif DutyCy == 3
     DutyCycleIdxStart1 =  hourlyTab.tbin < startTime1;
     startVal1 = find(DutyCycleIdxStart1 == 0,1);
@@ -213,6 +227,11 @@ elseif strcmp(siteabrev,'QC');
 elseif strcmp(siteabrev,'Palmyra');
     hourlyTab.Effort_Bin = floor(hourlyTab.Effort_Bin * 0.25); %No continous data so I linear boosted by the duty cycle
     hourlyTab.Effort_Sec = hourlyTab.Effort_Bin * 5 * 60; %convert from bins into efforts in seconds per day
+elseif strcmp(siteabrev,'Kauai');
+    hourlyTab.Effort_Bin(startVal1:endVal1) = hourlyTab.Effort_Bin(startVal1:endVal1) * (0.26); %for Kauai01 I evaluated the duty cycle using Kauai02 (continous deployment) and I should adjust by 26%
+    hourlyTab.Effort_Sec(startVal1:endVal1) = hourlyTab.Effort_Bin(startVal1:endVal1) * 5 * 60; %convert from bins into efforts in seconds per day
+    hourlyTab.Effort_Bin(startVal2:endVal2) = hourlyTab.Effort_Bin(startVal2:endVal2) * (0.71); %for Kaua05 I evaluated the duty cycle using Kauai02 (continous deployment) and I should adjust by 71%
+    hourlyTab.Effort_Sec(startVal2:endVal2) = hourlyTab.Effort_Bin(startVal2:endVal2) * 5 * 60; %convert from bins into efforts in seconds per day
 elseif strcmp(siteabrev,'PS1');
     hourlyTab.Effort_Bin(startVal1:endVal1) = hourlyTab.Effort_Bin(startVal1:endVal1) * (0.33); %for PS1_01 and 02 I evaluated the duty cycle using PS 12 (continous deployment) and I should adjust by 33%
     hourlyTab.Effort_Sec(startVal1:endVal1) = hourlyTab.Effort_Bin(startVal1:endVal1) * 5 * 60; %convert from bins into efforts in seconds per day
@@ -317,6 +336,15 @@ if DutyCy == 1
     startVal = find(DutyCycleIdxStart == 0,1);
     DutyCycleIdxEnd =  dayTable.tbin > endTime;
     endVal = find(DutyCycleIdxEnd == 1,1);
+elseif DutyCy == 2
+    DutyCycleIdxStart1 =  dayTable.tbin < startTime1;
+    startVal1 = find(DutyCycleIdxStart1 == 0,1);
+    DutyCycleIdxEnd1 =  dayTable.tbin > endTime1;
+    endVal1 = find(DutyCycleIdxEnd1 == 1,1);
+    DutyCycleIdxStart2 =  dayTable.tbin < startTime2;
+    startVal2 = find(DutyCycleIdxStart2 == 0,1);
+    DutyCycleIdxEnd2 =  dayTable.tbin > endTime2;
+    endVal2 = find(DutyCycleIdxEnd2 == 1,1);
 elseif DutyCy == 3
     DutyCycleIdxStart1 =  dayTable.tbin < startTime1;
     startVal1 = find(DutyCycleIdxStart1 == 0,1);
@@ -396,6 +424,11 @@ elseif strcmp(siteabrev,'CA');
 elseif strcmp(siteabrev,'QC');
     dayTable.Effort_Bin(startVal:endVal) = dayTable.Effort_Bin(startVal:endVal) * (0.33); %for QC06 I evaluated the duty cycle using continous deployments and I should adjust by 33%
     dayTable.Effort_Sec(startVal:endVal) = dayTable.Effort_Bin(startVal:endVal) * 5 * 60; %convert from bins into efforts in seconds per day
+elseif strcmp(siteabrev,'Kauai');
+    dayTable.Effort_Bin(startVal1:endVal1) = dayTable.Effort_Bin(startVal1:endVal1) * (0.26); %for Kauai01 I evaluated the duty cycle using Kauai02 (continous deployment) and I should adjust by 26%
+    dayTable.Effort_Sec(startVal1:endVal1) = dayTable.Effort_Bin(startVal1:endVal1) * 5 * 60; %convert from bins into efforts in seconds per day
+    dayTable.Effort_Bin(startVal2:endVal2) = dayTable.Effort_Bin(startVal2:endVal2) * (0.71); %for Kaua05 I evaluated the duty cycle using Kauai02 (continous deployment) and I should adjust by 71%
+    dayTable.Effort_Sec(startVal2:endVal2) = dayTable.Effort_Bin(startVal2:endVal2) * 5 * 60; %convert from bins into efforts in seconds per day
 elseif strcmp(siteabrev,'PS1');
     dayTable.Effort_Bin(startVal1:endVal1) = dayTable.Effort_Bin(startVal1:endVal1) * (0.33); %for PS1_01 and 02 I evaluated the duty cycle using PS 12 (continous deployment) and I should adjust by 33%
     dayTable.Effort_Sec(startVal1:endVal1) = dayTable.Effort_Bin(startVal1:endVal1) * 5 * 60; %convert from bins into efforts in seconds per day

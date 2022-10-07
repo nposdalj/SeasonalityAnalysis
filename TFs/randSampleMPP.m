@@ -7,11 +7,11 @@
 % This code was provided by KEF and modified by NP 08312022
 close all;clear all; clc;
 %% User Definied Parameters
-siteabrevv = {'CA','GI','PS1','PS2','QC'}; %abbreviation of site.
+siteabrevv = {'Kona'}; %abbreviation of site.
 GDrive = 'I'; %directory for Google Drive
-region = 'CCE';
+region = 'CentralPac';
 sp = 'Pm'; % your species code
-itnum = '3'; % which iteration you are looking for (which TPWS folder)
+itnum = '2'; % which iteration you are looking for (which TPWS folder)
 NN = 100000; %random clicks to choose from each deployment
 RLmin = 125; %Recieved level threshold of your data
 RLmax = 160; %Max recieved level you're intersted in plotting
@@ -145,9 +145,29 @@ for itr = 1:50
 end
 end
 
-
 figure
-if length(siteDisk) > 9
+if length(siteDisk) > 12
+    for i = 1:length(siteDisk)
+    subplot(5,5,counterI)
+    spMean{i} = mean(histSubset{i});
+    spStd{i} = std(histSubset{i});
+    semilogy(rlVec,histSubset{i})
+    hold on
+    plot(rlVec,spMean{i},'-k','Linewidth',2)
+    plot(rlVec,spMean{i}+spStd{i},'--k','Linewidth',2)
+    plot(rlVec,spMean{i}-spStd{i},'--k','Linewidth',2)
+    grid on
+    ylabel('log10(counts)')
+    xlabel('RL(dB_P_P)')
+    plot([125,125],[1,10000],'--r')
+    plot([125,125],[1,10000],'--r')
+    ylim([1,40000])
+    xlim([125 150])
+    xlim([RLmin,RLmax])
+    title(['Recieved Level for ',siteDisk{i}])
+    counterI = counterI+1;
+    end
+elseif length(siteDisk) > 9 && length(siteDisk) < 12
 for i = 1:length(siteDisk)
     subplot(3,4,counterI)
     spMean{i} = mean(histSubset{i});

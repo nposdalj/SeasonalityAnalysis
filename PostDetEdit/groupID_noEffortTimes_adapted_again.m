@@ -1,10 +1,10 @@
 %% Clear all variables
 close all;clear all;clc;
 %% select directory where ship files are located
-siteabrev = 'Palmyra';
-siteNameMatch = 'Palmyra';
+siteabrev = 'Kauai';
+siteNameMatch = 'Kauai';
 region = 'CentralPac'; %all of the WAT data has a space between the site and the deployment #
-shipDataType = 1; % 1 - old ship data, %2 - new ship data
+shipDataType = 2; % 1 - old ship data, %2 - new ship data
 ShipIDReDo = 0; % If you want to re-run ship and ID times, change this to 1
 GDrive = 'I';
 
