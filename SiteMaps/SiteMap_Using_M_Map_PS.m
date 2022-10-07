@@ -1,6 +1,8 @@
 %% This code was modified by NP on 4/4/2022 from the M_Map website to plot bathymetry in the GOA/BSAI
  % Designed to work in R2016b
 %source - https://www.eoas.ubc.ca/~rich/map.html#examples
+%To use this code, you need to have m_map added to the Matlab path located
+%on Natalie's Google drive I:\My Drive\m_map
 close all;clear all;clc;
 %% Load Site data
 % load lat and longs for each site
