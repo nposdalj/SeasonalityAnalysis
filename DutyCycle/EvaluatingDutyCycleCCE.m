@@ -99,7 +99,7 @@ clear SecData clickTable data tbin vTT
 
 All_Clicks = [];
 for j = 1:NumSamples
-    disp(['Evaluating sample # ',j,' out of ',NumSamples])
+    disp(['Evaluating sample # ',num2str(j),' out of ',num2str(NumSamples)])
     %make an array of zeros that's the length of one duty cycle 
     Z_array = zeros(SecPer,1); %array of zeros the length of 1 period
     Z_array(R(j),1) = 1; %replace a random value with a 1

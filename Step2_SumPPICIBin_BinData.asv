@@ -2,8 +2,8 @@ clearvars
 close all
 
 %% Parameters defined by user
-filePrefix = 'CB'; % File name to match. 
-siteabrev = 'CB'; %abbreviation of site.
+filePrefix = 'BD'; % File name to match. 
+siteabrev = 'BD'; %abbreviation of site.
 region = 'GofAK'; %region
 sp = 'Pm'; % your species code
 GDrive = 'I'; %Google Drive
@@ -25,8 +25,8 @@ tpwsPath(1) = GDrive;
 %% Set up duty cycled dates
 % If only one or two deployments are duty cycled, adjust accordingly
 if DutyCy == 1
-    startTime = datetime(2012,05,03);
-    endTime = datetime(2013,02,21);
+    startTime = datetime(2011,05,31);
+    endTime = datetime(2012,);
 %elseif DutyCy == 3 %PS1
  %   startTime1 = datetime(2006,10,03); %PS1
  %   endTime1 = datetime(2007,06,03); %PS1
