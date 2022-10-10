@@ -210,11 +210,10 @@ disp(Avg_DutyCycle)
 %PHR (5/30) - 0.17
 %PHR (5/20) - 0.25
 %PHR (5/8) - 0.62
-%Hawaii (5/5) -
 %Hawaii (5/15) - 0.33
 %Hawaii (5/12) - 0.42
 %Hawaii (5/25) - 0.20
-%Hawaii (5/8) - 
+%Hawaii (5/8) - 0.63
 %Kauai (5/20) - 0.26
 %Kauai (5/7) - 0.71
 

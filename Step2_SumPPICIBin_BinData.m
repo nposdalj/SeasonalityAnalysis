@@ -2,13 +2,13 @@ clearvars
 close all
 
 %% Parameters defined by user
-filePrefix = 'Kauai'; % File name to match. 
-siteabrev = 'Kauai'; %abbreviation of site.
+filePrefix = 'Hawaii'; % File name to match. 
+siteabrev = 'Kona'; %abbreviation of site.
 region = 'CentralPac'; %region
 sp = 'Pm'; % your species code
 GDrive = 'I'; %Google Drive
 saveDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev]; %specify directory to save files
-DutyCy = 3; %if this data only has 1 deployment that is duty cycled make it equal to 1
+DutyCy = 5; %if this data only has 1 deployment that is duty cycled make it equal to 1
 %otherwise, make it equal to the number of deployments that have different
 %duty cycles that must be accounted for; if this data is NOT duty cycled, 
 %or if the entire deployment is duty cycled, make it equal to 0
@@ -84,6 +84,17 @@ elseif DutyCy == 6 %PS2
     endTime5 = datetime(2010,11,02);
     startTime6 = datetime(2011,06,21);
     endTime6 = datetime(2012,04,07);
+    elseif DutyCy == 5 %Kona
+    startTime1 = datetime(2009,04,23);
+    endTime1 = datetime(2009,08,18);
+    startTime2 = datetime(2009,12,20);
+    endTime2 = datetime(2010,03,05);
+    startTime3 = datetime(2010,05,01);
+    endTime3 = datetime(2010,06,16);
+    startTime4 = datetime(2010,09,30);
+    endTime4 = datetime(2011,10,22);
+    startTime5 = datetime(2013,10,22);
+    endTime5 = datetime(22014,03,25);
 end
 %% Remove bin data with less than 5 clicks
 binData(binData.Count < 5,:) = []; %identify any bins with less than 5 clicks and delete them
@@ -175,7 +186,28 @@ elseif DutyCy == 4
     startVal4 = find(DutyCycleIdxStart4 == 0,1);
     DutyCycleIdxEnd4 =  hourlyTab.tbin > endTime4;
     endVal4 = find(DutyCycleIdxEnd4 == 1,1);
-elseif DutyCy == 6
+elseif DutyCy == 5
+    DutyCycleIdxStart1 =  hourlyTab.tbin < startTime1;
+    startVal1 = find(DutyCycleIdxStart1 == 0,1);
+    DutyCycleIdxEnd1 =  hourlyTab.tbin > endTime1;
+    endVal1 = find(DutyCycleIdxEnd1 == 1,1);
+    DutyCycleIdxStart2 =  hourlyTab.tbin < startTime2;
+    startVal2 = find(DutyCycleIdxStart2 == 0,1);
+    DutyCycleIdxEnd2 =  hourlyTab.tbin > endTime2;
+    endVal2 = find(DutyCycleIdxEnd2 == 1,1);
+    DutyCycleIdxStart3 =  hourlyTab.tbin < startTime3;
+    startVal3 = find(DutyCycleIdxStart3 == 0,1);
+    DutyCycleIdxEnd3 =  hourlyTab.tbin > endTime3;
+    endVal3 = find(DutyCycleIdxEnd3 == 1,1);
+    DutyCycleIdxStart4 =  hourlyTab.tbin < startTime4;
+    startVal4 = find(DutyCycleIdxStart4 == 0,1);
+    DutyCycleIdxEnd4 =  hourlyTab.tbin > endTime4;
+    endVal4 = find(DutyCycleIdxEnd4 == 1,1);
+    DutyCycleIdxStart5 =  hourlyTab.tbin < startTime5;
+    startVal5 = find(DutyCycleIdxStart5 == 0,1);
+    DutyCycleIdxEnd5 =  hourlyTab.tbin > endTime5;
+    endVal5 = find(DutyCycleIdxEnd5 == 1,1);
+    elseif DutyCy == 6
     DutyCycleIdxStart1 =  hourlyTab.tbin < startTime1;
     startVal1 = find(DutyCycleIdxStart1 == 0,1);
     DutyCycleIdxEnd1 =  hourlyTab.tbin > endTime1;
@@ -264,8 +296,19 @@ elseif strcmp(siteabrev,'PS2');
     hourlyTab.Effort_Sec(startVal4:endVal4) = hourlyTab.Effort_Bin(startVal4:endVal4) * 5 * 60; %convert from bins into efforts in seconds per day
     hourlyTab.Effort_Bin(startVal5:endVal5) = hourlyTab.Effort_Bin(startVal5:endVal5) * (0.2); %for PS2_09 I evaluated the duty cycle using PS 14-15 (continous deployment) and I should adjust by 50%
     hourlyTab.Effort_Sec(startVal5:endVal5) = hourlyTab.Effort_Bin(startVal5:endVal5) * 5 * 60; %convert from bins into efforts in seconds per day
-    hourlyTab.Effort_Bin(startVal6:endVal6) = hourlyTab.Effort_Bin(startVal6:endVal6) * (0.5); %for PS2_11 I evaluated the duty cycle using PS 14-15 (continous deployment) and I should adjust by 50%
+    hourlyTab.Effort_Bin(startVal6:endVal6) = hourlyTab.Effort_Bin(startVal6:endVal6) * (0.5); %for PS2_11 I evaluated the duty cycle using PS 14-15 (continous deployment) and I should adjust by 33%
     hourlyTab.Effort_Sec(startVal6:endVal6) = hourlyTab.Effort_Bin(startVal6:endVal6) * 5 * 60; %convert from bins into efforts in seconds per day
+elseif strcmp(siteabrev,'Kona');
+    hourlyTab.Effort_Bin(startVal1:endVal1) = hourlyTab.Effort_Bin(startVal1:endVal1) * (0.33); %for Hawaii05 I evaluated the duty cycle using Hawaii17-30 (continous deployment) and I should adjust by 33%
+    hourlyTab.Effort_Sec(startVal1:endVal1) = hourlyTab.Effort_Bin(startVal1:endVal1) * 5 * 60; %convert from bins into efforts in seconds per day
+    hourlyTab.Effort_Bin(startVal2:endVal2) = hourlyTab.Effort_Bin(startVal2:endVal2) * (0.42); %for Hawaii08 I evaluated the duty cycle using Hawaii17-30 (continous deployment) and I should adjust by 42%
+    hourlyTab.Effort_Sec(startVal2:endVal2) = hourlyTab.Effort_Bin(startVal2:endVal2) * 5 * 60; %convert from bins into efforts in seconds per day
+    hourlyTab.Effort_Bin(startVal3:endVal3) = hourlyTab.Effort_Bin(startVal3:endVal3) * (0.20); %for Hawaii09 I evaluated the duty cycle using Hawaii17-30 (continous deployment) and I should adjust by 20%
+    hourlyTab.Effort_Sec(startVal3:endVal3) = hourlyTab.Effort_Bin(startVal3:endVal3) * 5 * 60; %convert from bins into efforts in seconds per day
+    hourlyTab.Effort_Bin(startVal4:endVal4) = hourlyTab.Effort_Bin(startVal4:endVal4) * (0.63); %for Hawaii10-11 I evaluated the duty cycle using Hawaii17-30 (continous deployment) and I should adjust by 63%
+    hourlyTab.Effort_Sec(startVal4:endVal4) = hourlyTab.Effort_Bin(startVal4:endVal4) * 5 * 60; %convert from bins into efforts in seconds per day
+    hourlyTab.Effort_Bin(startVal5:endVal5) = hourlyTab.Effort_Bin(startVal5:endVal5) * (0.26); %for Hawaii16 I evaluated the duty cycle using Hawaii17-30 (continous deployment) and I should adjust by 26%
+    hourlyTab.Effort_Sec(startVal5:endVal5) = hourlyTab.Effort_Bin(startVal5:endVal5) * 5 * 60; %convert from bins into efforts in seconds per day
 elseif strcmp(siteabrev,'PHR');
     hourlyTab.Effort_Bin(startVal1:endVal1) = hourlyTab.Effort_Bin(startVal1:endVal1) * (0.25); %for PHR01 I evaluated the duty cycle using PHR02 and 04 (continous deployment) and I should adjust by 25%
     hourlyTab.Effort_Sec(startVal1:endVal1) = hourlyTab.Effort_Bin(startVal1:endVal1) * 5 * 60; %convert from bins into efforts in seconds per day
@@ -375,6 +418,27 @@ elseif DutyCy == 4
     startVal4 = find(DutyCycleIdxStart4 == 0,1);
     DutyCycleIdxEnd4 =  dayTable.tbin > endTime4;
     endVal4 = find(DutyCycleIdxEnd4 == 1,1);
+elseif DutyCy == 5
+    DutyCycleIdxStart1 =  dayTable.tbin < startTime1;
+    startVal1 = find(DutyCycleIdxStart1 == 0,1);
+    DutyCycleIdxEnd1 =  dayTable.tbin > endTime1;
+    endVal1 = find(DutyCycleIdxEnd1 == 1,1);
+    DutyCycleIdxStart2 =  dayTable.tbin < startTime2;
+    startVal2 = find(DutyCycleIdxStart2 == 0,1);
+    DutyCycleIdxEnd2 =  dayTable.tbin > endTime2;
+    endVal2 = find(DutyCycleIdxEnd2 == 1,1);
+    DutyCycleIdxStart3 =  dayTable.tbin < startTime3;
+    startVal3 = find(DutyCycleIdxStart3 == 0,1);
+    DutyCycleIdxEnd3 =  dayTable.tbin > endTime3;
+    endVal3 = find(DutyCycleIdxEnd3 == 1,1);
+    DutyCycleIdxStart4 =  dayTable.tbin < startTime4;
+    startVal4 = find(DutyCycleIdxStart4 == 0,1);
+    DutyCycleIdxEnd4 =  dayTable.tbin > endTime4;
+    endVal4 = find(DutyCycleIdxEnd4 == 1,1);
+    DutyCycleIdxStart5 =  dayTable.tbin < startTime5;
+    startVal5 = find(DutyCycleIdxStart5 == 0,1);
+    DutyCycleIdxEnd5 =  dayTable.tbin > endTime5;
+    endVal5 = find(DutyCycleIdxEnd5 == 1,1);
 elseif DutyCy == 6
     DutyCycleIdxStart1 =  dayTable.tbin < startTime1;
     startVal1 = find(DutyCycleIdxStart1 == 0,1);
@@ -453,6 +517,17 @@ elseif strcmp(siteabrev,'Wake');
     dayTable.Effort_Sec(startVal2:endVal2) = dayTable.Effort_Bin(startVal2:endVal2) * 5 * 60; %convert from bins into efforts in seconds per day
     dayTable.Effort_Bin(startVal3:endVal3) = dayTable.Effort_Bin(startVal3:endVal3) * (0.17); %No continous data so I linear boosted by the duty cycle
     dayTable.Effort_Sec(startVal3:endVal3) = dayTable.Effort_Bin(startVal3:endVal3) * 5 * 60; %convert from bins into efforts in seconds per day
+elseif strcmp(siteabrev,'Kona');
+    dayTable.Effort_Bin(startVal1:endVal1) = dayTable.Effort_Bin(startVal1:endVal1) * (0.33); %for Hawaii05 I evaluated the duty cycle using Hawaii17-30 (continous deployment) and I should adjust by 33%
+    dayTable.Effort_Sec(startVal1:endVal1) = dayTable.Effort_Bin(startVal1:endVal1) * 5 * 60; %convert from bins into efforts in seconds per day
+    dayTable.Effort_Bin(startVal2:endVal2) = dayTable.Effort_Bin(startVal2:endVal2) * (0.42); %for Hawaii08 I evaluated the duty cycle using Hawaii17-30 (continous deployment) and I should adjust by 42%
+    dayTable.Effort_Sec(startVal2:endVal2) = dayTable.Effort_Bin(startVal2:endVal2) * 5 * 60; %convert from bins into efforts in seconds per day
+    dayTable.Effort_Bin(startVal3:endVal3) = dayTable.Effort_Bin(startVal3:endVal3) * (0.20); %for Hawaii09 I evaluated the duty cycle using Hawaii17-30 (continous deployment) and I should adjust by 20%
+    dayTable.Effort_Sec(startVal3:endVal3) = dayTable.Effort_Bin(startVal3:endVal3) * 5 * 60; %convert from bins into efforts in seconds per day
+    dayTable.Effort_Bin(startVal4:endVal4) = dayTable.Effort_Bin(startVal4:endVal4) * (0.63); %for Hawaii10-11 I evaluated the duty cycle using Hawaii17-30 (continous deployment) and I should adjust by 63%
+    dayTable.Effort_Sec(startVal4:endVal4) = dayTable.Effort_Bin(startVal4:endVal4) * 5 * 60; %convert from bins into efforts in seconds per day
+    dayTable.Effort_Bin(startVal5:endVal5) = dayTable.Effort_Bin(startVal5:endVal5) * (0.26); %for Hawaii16 I evaluated the duty cycle using Hawaii17-30 (continous deployment) and I should adjust by 26%
+    dayTable.Effort_Sec(startVal5:endVal5) = dayTable.Effort_Bin(startVal5:endVal5) * 5 * 60; %convert from bins into efforts in seconds per day
 elseif strcmp(siteabrev,'PS2');
     dayTable.Effort_Bin(startVal1:endVal1) = dayTable.Effort_Bin(startVal1:endVal1) * (0.33); %for PS2_05 I evaluated the duty cycle using PS 14-15 (continous deployment) and I should adjust by 33%
     dayTable.Effort_Sec(startVal1:endVal1) = dayTable.Effort_Bin(startVal1:endVal1) * 5 * 60; %convert from bins into efforts in seconds per day
