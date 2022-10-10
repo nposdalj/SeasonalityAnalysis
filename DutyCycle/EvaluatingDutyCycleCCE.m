@@ -27,6 +27,7 @@ dir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',
 effortXls = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev,'\Pm_Effort.xlsx']; % specify excel file with effort times
 saveDir = [GDrive,':\My Drive\GofAK_TPWS_metadataReduced\Plots\',siteabrev]; %specify directory to save files
 load([dir,'\',siteabrev,'_workspace125.mat']); %load workspace from sumPPICIbin_seasonality code
+disp('Done loading workspace')
 %% Which deployments are duty cycled
 %The goal of this section is to remove the duty cycled data so that you
 %only have continuous data to test the duty cyle regime on
@@ -55,6 +56,7 @@ SecData.Properties.VariableNames{'GroupCount'} = 'Count'; % #clicks per bin
 SecData.max_PPall = [];
 
 %Calculate 1-second bin effort
+disp('Calculating 1 second bin effort, this may take awhile')
 if er > 1
     MinbinEffort = intervalTo1SecBinTimetable(effort.Start,effort.End,p); % convert intervals in bins when there is multiple lines of effort
 else
@@ -97,6 +99,7 @@ clear SecData clickTable data tbin vTT
 
 All_Clicks = [];
 for j = 1:NumSamples
+    disp(['Evaluating sample # ',j,' out of ',NumSamples])
     %make an array of zeros that's the length of one duty cycle 
     Z_array = zeros(SecPer,1); %array of zeros the length of 1 period
     Z_array(R(j),1) = 1; %replace a random value with a 1
