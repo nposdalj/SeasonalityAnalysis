@@ -8,24 +8,28 @@ close all
 %NP
 
 %% Parameters defined by user
-filePrefix = 'ALEUT'; % File name to match 
-siteabrev = 'BD'; %abbreviation of site.
+filePrefix = 'GofAK_CB'; % File name to match 
+siteabrev = 'CB'; %abbreviation of site.
 sp = 'Pm'; % your species code
-itnum = '2'; % which iteration you are looking for
+itnum = '3'; % which iteration you are looking for
+region = 'GofAK';
+GDrive = 'I';
 srate = 200; % sample rate
-tpwsPath = 'I:\My Drive\GofAK_TPWS_metadataReduced\TPWS_125\BD'; %directory of TPWS files
-dir = 'I:\My Drive\GofAK_TPWS_metadataReduced\SeasonalityAnalysis\BD'; %seasonality analysis directory
-effortXls = 'I:\My Drive\GofAK_TPWS_metadataReduced\ICIgrams\Pm_Effort_BD.xlsx'; % specify excel file with effort times
-saveDir = 'I:\My Drive\GofAK_TPWS_metadataReduced\Plots\BD'; %specify directory to save files
+tpwsPath = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\TPWS_125\',siteabrev]; %directory of TPWS files
+dir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev]; %seasonality analysis directory
+effortXls = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\Pm_Effort.xlsx']; % specify excel file with effort times
+saveDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\Plots\',siteabrev]; %specify directory to save files
 load([dir,'\',siteabrev,'_workspace125.mat']); %load workspace from sumPPICIbin_seasonality code
 %% Which deployments are duty cycled
 clearvars -except vTT tbin TTall PPall effort er p binEffort
-startTime = datetime(2011,05,31);
-endTime = datetime(2012,08,26); 
-SecRec = 300;
-SecPer = 600;
-NumSamples = 100;
+startTime = datetime(2013,09,05);
+endTime = datetime(2017,09,11); 
+MinRec = 10;
+MinPer = 12;
+NumSamples = 80;
 %% Evaluating the duty cycle by shifting the 15 minute listening period by 1 minute - THIS IS THE ONE I ENDED UP USING
+SecRec = MinRec *60;
+SecPer = MinPer * 60;
 %within the entire 20 minute cycle. This will result in 20 samples.
 %group data by 1 second bins
 tbin = datetime(vTT);
@@ -168,3 +172,5 @@ Day_2016 = nanmean(All_Clicks_Bin_Effort_Days.DutyPercent);
 Avg_DutyCycle = ['The average duty cycle was ',num2str(Day_2016)];
 disp(Avg_DutyCycle)
 
+%BD (5/10) - 0.49
+%CB (10/12) - 0.83

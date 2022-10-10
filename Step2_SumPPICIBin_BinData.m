@@ -2,13 +2,13 @@ clearvars
 close all
 
 %% Parameters defined by user
-filePrefix = 'Hawaii'; % File name to match. 
-siteabrev = 'Kona'; %abbreviation of site.
+filePrefix = 'CSM'; % File name to match. 
+siteabrev = 'CSM'; %abbreviation of site.
 region = 'CentralPac'; %region
 sp = 'Pm'; % your species code
 GDrive = 'I'; %Google Drive
 saveDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev]; %specify directory to save files
-DutyCy = 5; %if this data only has 1 deployment that is duty cycled make it equal to 1
+DutyCy = 1; %if this data only has 1 deployment that is duty cycled make it equal to 1
 %otherwise, make it equal to the number of deployments that have different
 %duty cycles that must be accounted for; if this data is NOT duty cycled, 
 %or if the entire deployment is duty cycled, make it equal to 0
@@ -25,8 +25,8 @@ tpwsPath(1) = GDrive;
 %% Set up duty cycled dates
 % If only one or two deployments are duty cycled, adjust accordingly
 if DutyCy == 1
-    startTime = datetime(2007,07,02);
-    endTime = datetime(2008,06,16);
+    startTime = datetime(2005,04,26);
+    endTime = datetime(2006,05,10);
 %elseif DutyCy == 3 %PS1
  %   startTime1 = datetime(2006,10,03); %PS1
  %   endTime1 = datetime(2007,06,03); %PS1
@@ -236,14 +236,14 @@ end
 
 %dealing with duty cycled data
 if strcmp(siteabrev,'CSM');
-    hourlyTab.Effort_Bin = floor(hourlyTab.Effort_Bin * .2); %for Cross_01 and 02 only, 5 on 20 off (25 minute cycle)-- meaning you're recording 20% (0.2) of the time
-    hourlyTab.Effort_Sec = hourlyTab.Effort_Bin * 5 * 60; %convert from bins into efforts in seconds per day
+    hourlyTab.Effort_Bin(startVal:endVal) = hourlyTab.Effort_Bin(startVal:endVal) * (0.2); %for Cross_01 and 02 only, 5 on 20 off (25 minute cycle)-- meaning you're recording 20% (0.2) of the time
+    hourlyTab.Effort_Sec(startVal:endVal) = hourlyTab.Effort_Bin(startVal:endVal) * 5 * 60; %convert from bins into efforts in seconds per day
 elseif strcmp(siteabrev,'LSM');
     hourlyTab.Effort_Bin = floor(hourlyTab.Effort_Bin * .5); %for LSM only, 5 on 5 off (10 minute cycle)-- meaning you're recording 50% (0.5) of the time
     hourlyTab.Effort_Sec = hourlyTab.Effort_Bin * 5 * 60; %convert from bins into efforts in seconds per day
 elseif strcmp(siteabrev,'PG');
-    hourlyTab.Effort_Bin = floor(hourlyTab.Effort_Bin * .333); %for Pagan_01 only, 5 on 10 off (15 minute cycle)-- meaning you're recording 33% (0.33) of the time
-    hourlyTab.Effort_Sec = hourlyTab.Effort_Bin * 5 * 60; %convert from bins into efforts in seconds per day
+    hourlyTab.Effort_Bin(startVal:endVal) = hourlyTab.Effort_Bin(startVal:endVal) * (0.33); %for Pagan_01 only, 5 on 10 off (15 minute cycle)-- meaning you're recording 33% (0.33) of the time
+    hourlyTab.Effort_Sec(startVal:endVal) = hourlyTab.Effort_Bin(startVal:endVal) * 5 * 60; %convert from bins into efforts in seconds per day
 elseif strcmp(siteabrev,'CORC');
     hourlyTab.Effort_Bin = floor(hourlyTab.Effort_Bin * .5); %for CORC_01 and 02 only, 15 on 15 off (30 minute cycle)-- meaning you're recording 50% (0.5) of the time
     hourlyTab.Effort_Sec = hourlyTab.Effort_Bin * 5 * 60; %convert from bins into efforts in seconds per day
@@ -255,6 +255,12 @@ elseif strcmp(siteabrev,'CA');
     hourlyTab.Effort_Sec = hourlyTab.Effort_Bin * 5 * 60; %convert from bins into efforts in seconds per day
 elseif strcmp(siteabrev,'QC');
     hourlyTab.Effort_Bin(startVal:endVal) = hourlyTab.Effort_Bin(startVal:endVal) * (0.33); %for QC06 I evaluated the duty cycle using continous deployments and I should adjust by 33%
+    hourlyTab.Effort_Sec(startVal:endVal) = hourlyTab.Effort_Bin(startVal:endVal) * 5 * 60; %convert from bins into efforts in seconds per day
+elseif strcmp(siteabrev,'BD');
+    hourlyTab.Effort_Bin(startVal:endVal) = hourlyTab.Effort_Bin(startVal:endVal) * (0.49); %for BD02,  I evaluated the duty cycle using continous deployments and I should adjust by 49%
+    hourlyTab.Effort_Sec(startVal:endVal) = hourlyTab.Effort_Bin(startVal:endVal) * 5 * 60; %convert from bins into efforts in seconds per day
+elseif strcmp(siteabrev,'CB');
+    hourlyTab.Effort_Bin(startVal:endVal) = hourlyTab.Effort_Bin(startVal:endVal) * (0.83); %for CB02,  I evaluated the duty cycle using continous deployments and I should adjust by %
     hourlyTab.Effort_Sec(startVal:endVal) = hourlyTab.Effort_Bin(startVal:endVal) * 5 * 60; %convert from bins into efforts in seconds per day
 elseif strcmp(siteabrev,'Palmyra');
     hourlyTab.Effort_Bin = floor(hourlyTab.Effort_Bin * 0.25); %No continous data so I linear boosted by the duty cycle
@@ -468,14 +474,20 @@ end
 
 %dealing with duty cycled data
 if strcmp(siteabrev,'CSM');
-    dayTable.Effort_Bin = floor(dayTable.Effort_Bin * .2); %for Cross_01 and 02 only, 5 on 20 off (25 minute cycle)-- meaning you're recording 20% (0.2) of the time
-    dayTable.Effort_Sec = dayTable.Effort_Bin * 5 * 60; %convert from bins into efforts in seconds per day
+    dayTable.Effort_Bin(startVal:endVal) = dayTable.Effort_Bin(startVal:endVal) * (0.2); %for Cross_01 and 02 only, 5 on 20 off (25 minute cycle)-- meaning you're recording 20% (0.2) of the time
+    dayTable.Effort_Sec(startVal:endVal) = dayTable.Effort_Bin(startVal:endVal) * 5 * 60; %convert from bins into efforts in seconds per day
 elseif strcmp(siteabrev,'LSM');
     dayTable.Effort_Bin = floor(dayTable.Effort_Bin * .5); %for LSM only, 5 on 5 off (10 minute cycle)-- meaning you're recording 50% (0.5) of the time
     dayTable.Effort_Sec = dayTable.Effort_Bin * 5 * 60; %convert from bins into efforts in seconds per day
 elseif strcmp(siteabrev,'PG');
-    dayTable.Effort_Bin = floor(dayTable.Effort_Bin * .333); %for Pagan_01 only, 5 on 10 off (15 minute cycle)-- meaning you're recording 33% (0.33) of the time
-    dayTable.Effort_Sec = dayTable.Effort_Bin * 5 * 60; %convert from bins into efforts in seconds per day
+    dayTable.Effort_Bin(startVal:endVal) = dayTable.Effort_Bin(startVal:endVal) * (0.33); %for Pagan_01 only, 5 on 10 off (15 minute cycle)-- meaning you're recording 33% (0.33) of the time
+    dayTable.Effort_Sec(startVal:endVal) = dayTable.Effort_Bin(startVal:endVal) * 5 * 60; %convert from bins into efforts in seconds per day
+elseif strcmp(siteabrev,'BD');
+    dayTable.Effort_Bin(startVal:endVal) = dayTable.Effort_Bin(startVal:endVal) * (0.49); %for BD02,  I evaluated the duty cycle using continous deployments and I should adjust by 49%
+    dayTable.Effort_Sec(startVal:endVal) = dayTable.Effort_Bin(startVal:endVal) * 5 * 60; %convert from bins into efforts in seconds per day
+elseif strcmp(siteabrev,'CB');
+    dayTable.Effort_Bin(startVal:endVal) = dayTable.Effort_Bin(startVal:endVal) * (0.83); %for CB02,  I evaluated the duty cycle using continous deployments and I should adjust by %
+    dayTable.Effort_Sec(startVal:endVal) = dayTable.Effort_Bin(startVal:endVal) * 5 * 60; %convert from bins into efforts in seconds per day
 elseif strcmp(siteabrev,'HOKE');
     dayTable.Effort_Bin = floor(dayTable.Effort_Bin * (5/35)); %for Pagan_01 only, 5 on 10 off (15 minute cycle)-- meaning you're recording 33% (0.33) of the time
     dayTable.Effort_Sec = dayTable.Effort_Bin * 5 * 60; %convert from bins into efforts in seconds per day
