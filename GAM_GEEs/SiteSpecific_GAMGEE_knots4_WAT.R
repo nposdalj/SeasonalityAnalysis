@@ -27,7 +27,7 @@ library(car)            # to run an ANOVA
 library(splines2)       # to use mSpline for the GEEs
 library(ggfortify)      # extract confidence interval for ACF plots
 
-site = 'HZ' #specify the site of interest
+site = 'GS' #specify the site of interest #Hz, OC, NC, WC, GS, JAX, BC
 
 # Step 1: Load the Data -----------------------------------------------------------
 GDir = 'G'
@@ -54,7 +54,7 @@ SiteHourTable$TimeLost = max(SiteHourTable$Effort_Bin) - SiteHourTable$Effort_Bi
 # Each record in the dataset corresponds to an hour of recording, which constitutes the unit of analysis. 
 # The column "PreAbs" represents the binary response variable (0: no animal in acoustic contact; 1: acoustic contact).
 # The column "Site" corresponds to the recording site.
-# The column "Region" corresponds to the recording region (GOA or BSAI).
+# The column "Region" corresponds to the recording region (WAT)
 # The column Julian represents the day of the year and the column year represents the year of recording.
 # The column TimeLost represents the amount of time that we didn't record in each one hour bin
 
@@ -70,9 +70,9 @@ BlockMod<-glm(PreAbs~
 ACF = acf(residuals(BlockMod))
 CI = ggfortify:::confint.acf(ACF)
 ACFidx = which(ACF[["acf"]] < CI, arr.ind=TRUE)
-ACFval = ACFidx[1]
+ACFval = ACFidx[1] #<---- check this value to make sure it's reasonable (<600)
 
-#create the blocks based on the full timesereies
+#create the blocks based on the full timeseries
 startDate = SiteHourTable$tbin[1]
 endDate = SiteHourTable$tbin[nrow(SiteHourTable)]
 timeseries = data.frame(date=seq(startDate, endDate, by="hours"))
@@ -111,10 +111,10 @@ summary(BlockMod)
   GLM1 = glm(PreAbs ~ bs(Julian) + TimeLost + as.factor(Year), family = binomial, data = SiteHourTableB)
   VIF(GLM1)
   
- # BP
-  # bs(Julian)      1.248195  3        1.037641
-  # TimeLost        1.003835  1        1.001916
-  # as.factor(Year) 1.252221  3        1.038198
+#BP
+#bs(Julian)      1.248195  3        1.037641
+#TimeLost        1.003835  1        1.001916
+#as.factor(Year) 1.252221  3        1.038198
   
 #BS
 #bs(Julian)      1.231767  3        1.035352
@@ -135,8 +135,10 @@ POD0<-geeglm(PreAbs ~ 1, family = binomial, corstr="ar1", id=Blocks, data=SiteHo
 
 # Step 6: Determine which covariates are most relevant --------------------
 #and which can be removed (on the basis of previous collinearity work). 
-#The reduced model with the lowest QIC is the one to use in the following step.
-  #Year as factor)
+
+#The model with the lowest QIC is the final model.
+#Model order - the variable, when removed, that increases the QIC the most goes first
+
   #The initial full model is:
   POD3a = geeglm(PreAbs ~ AvgDayMat+as.factor(Year),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
   #without AvgDayMat
@@ -165,10 +167,11 @@ POD0<-geeglm(PreAbs ~ 1, family = binomial, corstr="ar1", id=Blocks, data=SiteHo
 
 #Year as factor
 if (site == 'BP'){
-  #BS
   dimnames(AvgDayMat)<-list(NULL,c("ADBM1", "ADBM2"))
   PODFinal = geeglm(PreAbs ~ as.factor(Year)+AvgDayMat,family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
-} else {
+} 
+  
+if (site == 'BS') {
   dimnames(AvgDayMat)<-list(NULL,c("ADBM1", "ADBM2"))
   PODFinal = geeglm(PreAbs ~ AvgDayMat+as.factor(Year),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
 }
@@ -186,6 +189,7 @@ anova(PODFinal)
   # Df   X2 P(>|Chi|)    
   # AvgDayMat        2 33.9   4.4e-08 ***
   #   as.factor(Year)  3 33.0   3.2e-07 ***
+  
   # BP
   # Df     X2 P(>|Chi|)    
   # AvgDayMat        2 38.548 4.261e-09 ***
@@ -231,20 +235,6 @@ DATA$plotID<-1:dim(SiteHourTableB)[1]                                    # the f
 DATA$Observed<-SiteHourTableB$PreAbs                                           # the second column reports the observed response (0s and 1s)
 DATA$Predicted<-predict(PODFinal,type="response")                 # the third column reports the predictions
 cmx(DATA, threshold = cutoff)                                   # the identified cut-off must be used here
-
-#Confusion matrix:
-
-# BS
-# observed
-# predicted     1     0
-# 1   857  6364
-# 0  1030 19147
-
-# BP
-# observed
-# predicted     1     0
-# 1  1053 11484
-# 0   653 13877
 
 # The area under the curve (auc) can also be used as an rough indication of model performance:
   
