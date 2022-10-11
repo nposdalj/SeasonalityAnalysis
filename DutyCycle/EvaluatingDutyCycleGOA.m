@@ -5,56 +5,43 @@ close all
 %07/21/2021 to evaluate the effect of duty cycle on
 %the GofAK_CB02 and ALEUT03BD data sets.
 
-%This code was modified again to work with CCE data on 7/11/2022.
-
 %NP
 
 %% Parameters defined by user
-filePrefix = 'PS'; % File name to match 
-siteabrev = 'PS2'; %abbreviation of site.
+filePrefix = 'GofAK_CB'; % File name to match 
+siteabrev = 'CB'; %abbreviation of site.
 sp = 'Pm'; % your species code
-srate = 200; % sample rate
-region = 'CCE';
+itnum = '3'; % which iteration you are looking for
+region = 'GofAK';
 GDrive = 'I';
-NumSamples = 100; %Number of random duty cycles you want it to test
-DutyCont = 0; %If the Duty cycle is at the beginning or end of a deployment
-%and it's continuous (1) if only 1 deployment isn't duty cycled and that's 
-%the one you want to test on (0)
-MinRec = 5; %How many minutes did the duty cycle record for
-MinPer = 25; %what was the cycle interval
+srate = 200; % sample rate
 tpwsPath = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\TPWS_125\',siteabrev]; %directory of TPWS files
 dir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev]; %seasonality analysis directory
-effortXls = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev,'\Pm_Effort.xlsx']; % specify excel file with effort times
-saveDir = [GDrive,':\My Drive\GofAK_TPWS_metadataReduced\Plots\',siteabrev]; %specify directory to save files
+effortXls = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\Pm_Effort.xlsx']; % specify excel file with effort times
+saveDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\Plots\',siteabrev]; %specify directory to save files
 load([dir,'\',siteabrev,'_workspace125.mat']); %load workspace from sumPPICIbin_seasonality code
+disp('Done loading workspace')
 %% Which deployments are duty cycled
-%The goal of this section is to remove the duty cycled data so that you
-%only have continuous data to test the duty cyle regime on
-clearvars -except vTT tbin TTall PPall effort er p binEffort DutyCont MinRec MinPer NumSamples
-%If the duty cycled data is one after the other
-if DutyCont == 1 %duty cycle is continous and you want to remove that single deployment
-    startTime = datetime(2006,10,03);
-    endTime = datetime(2012,09,13); 
-else
-    %only one deployment IS NOT duty cycled and that's the one you want to
-    %test on
-    startTime = datetime(2018,11,14);
-    endTime = datetime(2020,1,25); 
-end
+clearvars -except vTT tbin TTall PPall effort er p binEffort
+startTime = datetime(2013,09,05);
+endTime = datetime(2017,09,11); 
+MinRec = 10;
+MinPer = 12;
+NumSamples = 80;
+%% Evaluating the duty cycle by shifting the 15 minute listening period by 1 minute - THIS IS THE ONE I ENDED UP USING
 SecRec = MinRec *60;
 SecPer = MinPer * 60;
-%% Evaluating the duty cycle by shifting the listening period by 1 minute - THIS IS THE ONE I ENDED UP USING
 %within the entire 20 minute cycle. This will result in 20 samples.
 %group data by 1 second bins
 tbin = datetime(vTT);
 tbin = dateshift(tbin, 'start','second');
 data = timetable(tbin,TTall,PPall);
-clear TTall PPall
 SecData = varfun(@max,data,'GroupingVariable','tbin','InputVariable','PPall');
 SecData.Properties.VariableNames{'GroupCount'} = 'Count'; % #clicks per bin
 SecData.max_PPall = [];
 
 %Calculate 1-second bin effort
+disp('Calculating 1 second bin effort, this may take awhile')
 if er > 1
     MinbinEffort = intervalTo1SecBinTimetable(effort.Start,effort.End,p); % convert intervals in bins when there is multiple lines of effort
 else
@@ -62,25 +49,16 @@ else
 end
 
 clickTable = synchronize(SecData,MinbinEffort);
-clear MinbinEffort
 
 %Remove duty cycled portion
-if DutyCont == 1
-    SecData_1 = clickTable;
-    SecData_2 = clickTable;
-    SecData_1(SecData_1.tbin > startTime,:) = [];
-    SecData_2(SecData_2.tbin < endTime,:)=[];
-    SecData_cont = [SecData_1;SecData_2];
-    [SDC,~] = size(SecData_cont);
-    clear SecData_1
-    clear SecData_2
-else
-    SecData_1 = clickTable;
-    SecData_1(SecData_1.tbin < startTime | SecData_1.tbin > endTime,:) = [];
-    SecData_cont = SecData_1;
-    [SDC,~] = size(SecData_cont);
-    clear SecData_1
-end
+SecData_1 = clickTable;
+SecData_2 = clickTable;
+SecData_1(SecData_1.tbin > startTime,:) = [];
+SecData_2(SecData_2.tbin < endTime,:)=[];
+SecData_cont = [SecData_1;SecData_2];
+[SDC,~] = size(SecData_cont);
+clear SecData_1
+clear SecData_2
 
 %make it divisble by the duty cycle
 divis = floor(SDC/SecPer);
@@ -92,11 +70,9 @@ clear SecData_cont
 %choose 100 random samples
 R = randperm(SecPer,100); %choose 100 random numbers
 
-%clear extra things to make room
-clear SecData clickTable data tbin vTT
-
 All_Clicks = [];
 for j = 1:NumSamples
+    disp(['Evaluating sample # ',num2str(j),' out of ',num2str(NumSamples)])
     %make an array of zeros that's the length of one duty cycle 
     Z_array = zeros(SecPer,1); %array of zeros the length of 1 period
     Z_array(R(j),1) = 1; %replace a random value with a 1
@@ -119,12 +95,11 @@ for j = 1:NumSamples
     end
 end
 
-%Group the duty cycled data back into 5 min bins -- change to 1 hour bin
-%for Michaela
+%Group the duty cycled data back into 5 min bins
 All_Clicks_Bin = retime(All_Clicks, 'minutely','sum');
 vTT = datevec(All_Clicks_Bin.tbin);
 All_Clicks_Bin.tbin = datetime([vTT(:,1:4), floor(vTT(:,5)/p.binDur)*p.binDur, ...
-    zeros(length(vTT),1)]); %5 minute bins -- change to 1 hour bin for Michaela
+    zeros(length(vTT),1)]);
 binEffort_1 = binEffort;
 binEffort_2 = binEffort;
 binEffort_1(binEffort_1.tbin > startTime,:) = [];
@@ -200,11 +175,5 @@ Day_2016 = nanmean(All_Clicks_Bin_Effort_Days.DutyPercent);
 Avg_DutyCycle = ['The average duty cycle was ',num2str(Day_2016)];
 disp(Avg_DutyCycle)
 
-%QC (5/35) - 0.33
-%PS1 (5/15) - 0.33
-%PS1 (5/20) - 0.25
-%PS1 (5/10) - 0.499 or 0.50
-%PS2 (5/15) - 0.33
-%PS2 (5/10) - 0.50
-%PS2 (5/25) - 0.20
-
+%BD (5/10) - 0.49
+%CB (10/12) - 0.83

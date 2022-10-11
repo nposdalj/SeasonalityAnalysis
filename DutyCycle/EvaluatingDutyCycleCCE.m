@@ -6,28 +6,28 @@ close all
 %the GofAK_CB02 and ALEUT03BD data sets.
 
 %This code was modified again to work with CCE data on 7/11/2022.
-%And again on 10/4/2022 to work with Central Pacific Data
 
 %NP
 
 %% Parameters defined by user
-filePrefix = 'Kona'; % File name to match 
-siteabrev = 'Kona'; %abbreviation of site.
+filePrefix = 'PS'; % File name to match 
+siteabrev = 'PS2'; %abbreviation of site.
 sp = 'Pm'; % your species code
 srate = 200; % sample rate
-region = 'CentralPac';
+region = 'CCE';
 GDrive = 'I';
-NumSamples = 45; %Number of random duty cycles you want it to test
-DutyCont = 0; %Make this equal to '1' if the Duty cycle is at the beginning or end of a deployment
-%and it's continuous; make this equal to '0' if only 1 deployment isn't duty cycled and that's 
-%the one you want to test on
+NumSamples = 100; %Number of random duty cycles you want it to test
+DutyCont = 0; %If the Duty cycle is at the beginning or end of a deployment
+%and it's continuous (1) if only 1 deployment isn't duty cycled and that's 
+%the one you want to test on (0)
 MinRec = 5; %How many minutes did the duty cycle record for
-MinPer = 8; %what was the cycle interval
+MinPer = 25; %what was the cycle interval
 tpwsPath = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\TPWS_125\',siteabrev]; %directory of TPWS files
 dir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev]; %seasonality analysis directory
 effortXls = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev,'\Pm_Effort.xlsx']; % specify excel file with effort times
 saveDir = [GDrive,':\My Drive\GofAK_TPWS_metadataReduced\Plots\',siteabrev]; %specify directory to save files
 load([dir,'\',siteabrev,'_workspace125.mat']); %load workspace from sumPPICIbin_seasonality code
+disp('Done loading workspace')
 %% Which deployments are duty cycled
 %The goal of this section is to remove the duty cycled data so that you
 %only have continuous data to test the duty cyle regime on
@@ -39,8 +39,8 @@ if DutyCont == 1 %duty cycle is continous and you want to remove that single dep
 else
     %only one deployment IS NOT duty cycled and that's the one you want to
     %test on
-    startTime = datetime(2014,03,25);
-    endTime = datetime(2019,09,29); 
+    startTime = datetime(2018,11,14);
+    endTime = datetime(2020,1,25); 
 end
 SecRec = MinRec *60;
 SecPer = MinPer * 60;
@@ -56,6 +56,7 @@ SecData.Properties.VariableNames{'GroupCount'} = 'Count'; % #clicks per bin
 SecData.max_PPall = [];
 
 %Calculate 1-second bin effort
+disp('Calculating 1 second bin effort, this may take awhile')
 if er > 1
     MinbinEffort = intervalTo1SecBinTimetable(effort.Start,effort.End,p); % convert intervals in bins when there is multiple lines of effort
 else
@@ -98,6 +99,7 @@ clear SecData clickTable data tbin vTT
 
 All_Clicks = [];
 for j = 1:NumSamples
+    disp(['Evaluating sample # ',num2str(j),' out of ',num2str(NumSamples)])
     %make an array of zeros that's the length of one duty cycle 
     Z_array = zeros(SecPer,1); %array of zeros the length of 1 period
     Z_array(R(j),1) = 1; %replace a random value with a 1
@@ -120,7 +122,8 @@ for j = 1:NumSamples
     end
 end
 
-%Group the duty cycled data back into 5 min bins
+%Group the duty cycled data back into 5 min bins -- change to 1 hour bin
+%for Michaela
 All_Clicks_Bin = retime(All_Clicks, 'minutely','sum');
 vTT = datevec(All_Clicks_Bin.tbin);
 All_Clicks_Bin.tbin = datetime([vTT(:,1:4), floor(vTT(:,5)/p.binDur)*p.binDur, ...
@@ -207,14 +210,4 @@ disp(Avg_DutyCycle)
 %PS2 (5/15) - 0.33
 %PS2 (5/10) - 0.50
 %PS2 (5/25) - 0.20
-%PHR (5/30) - 0.17
-%PHR (5/20) - 0.25
-%PHR (5/8) - 0.62
-%Hawaii (5/5) -
-%Hawaii (5/15) - 0.33
-%Hawaii (5/12) - 0.42
-%Hawaii (5/25) - 0.20
-%Hawaii (5/8) - 
-%Kauai (5/20) - 0.26
-%Kauai (5/7) - 0.71
 

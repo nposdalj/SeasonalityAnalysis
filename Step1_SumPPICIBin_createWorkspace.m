@@ -2,9 +2,9 @@ clearvars
 close all
 
 %% Parameters defined by user
-filePrefix = 'K'; % File name to match. 
-siteabrev = 'Kauai'; %abbreviation of site.
-region = 'CentralPac'; %region
+filePrefix = 'GofAK'; % File name to match. 
+siteabrev = 'CB'; %abbreviation of site.
+region = 'GofAK'; %region
 sp = 'Pm'; % your species code
 itnum = '2'; % which iteration you are looking for (which TPWS folder)
 GDrive = 'I'; %Google Drive
