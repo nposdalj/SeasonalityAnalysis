@@ -7,15 +7,15 @@
 % This code was provided by KEF and modified by NP 08312022
 close all;clear all; clc;
 %% User Definied Parameters
-siteabrevv = {'CB'}; %abbreviation of site.
+siteabrevv = {'PS1'}; %abbreviation of site.
 GDrive = 'I'; %directory for Google Drive
-region = 'GofAK';
+region = 'CCE';
 sp = 'Pm'; % your species code
 itnum = '2'; % which iteration you are looking for (which TPWS folder)
 NN = 100000; %random clicks to choose from each deployment
 RLmin = 125; %Recieved level threshold of your data
 RLmax = 160; %Max recieved level you're intersted in plotting
-ReRun = 1; %If workspace exists, load that instead of re-running (0) or create new workspace regardless if one already exists (1)
+ReRun = 0; %If workspace exists, load that instead of re-running (0) or create new workspace regardless if one already exists (1)
 %% Calculate variable sizes
 [~,gg] = size(siteabrevv);
 rlVec = RLmin:1:RLmax;
@@ -29,11 +29,13 @@ ifoundx = 0;
 %% Load workspaces
 for ss = 1:gg
 siteabrev = siteabrevv{ss}; %choose site
+disp(['Loading data from site ',siteabrev])
 tpwsDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\TPWS_125\',siteabrev]; %directory of TPWS files
 dataDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev]; %specify directory where workspaces are saved
 effortXls = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev,'\Pm_Effort.xlsx'];% specify excel file with effort times
 saveDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\Plots\',siteabrev]; % add desired saveDir back in here
 file = dir([dataDir,['\',siteabrev,'_simulatedRL.mat']]); %if workspace exists, it would be saved here
+if ReRun == 1 || ReRun == 0 && isempty(file)
 %% Create empty variables
 counterI = 1;
 %% define subfolder that fit specified iteration
@@ -102,9 +104,7 @@ SiteICI = cell(1,qq);
 histSubset = cell(1,qq);
 spMean = cell(1,qq);
 spStd = cell(1,qq);
-
-if ReRun == 1 || ReRun == 0 && isempty(file)
-    disp(['Loading data from site ',siteabrev])
+    
 for i = 1:length(siteDisk)
     disp(['loading times from: ', siteDisk{i}]);
     index = strfind(siteDiskList, siteDisk{i});
@@ -290,7 +290,6 @@ end
 %% save .mat files for future need
 save([dataDir,['\',siteabrev,'_simulatedRL.mat']],'spStd','histSubset','spMean','SiteMPP','SiteICI','SiteMTT','rlVec','N','NN','-v7.3')
 elseif ReRun == 0 && ~isempty(file)
-    disp(['Loading workspace from site ',siteabrev])
     load([dataDir,['\',siteabrev,'_simulatedRL.mat']])
 end
 %% Do it again but remove the deployments with less data 
@@ -426,19 +425,17 @@ end
 
 %delete PS01 and PS13
 tfnumx = tfnum;
-tfnumx(:,6:7) = [];
-tfnumx(:,1) = [];
-
-c = distinguishable_colors(length(siteDiskk)); %more colors
+tfnumx(6:7,:) = [];
+c = distinguishable_colors(length(siteDisk)); %more colors
 
 %legend table
 legmat = [];
 for iR = 1:length(siteDiskk)
-    legmat{iR} = [cell2mat(siteDisk(iR)),' ',num2str(tfnum(iR)),' n = ',num2str(length(SiteMPPx{iR}))];
+    legmat{iR} = [cell2mat(siteDisk(iR)),' ',num2str(tfnum(iR)),' n = ',num2str(length(SiteMPP{iR}))];
 end
 
 figure
-for iR = 1:length(siteDiskk)
+for iR = 1:length(siteDisk)
     spMean{iR} = mean(histSubset{iR});
     spStd{iR} = std(histSubset{iR});
     y = log10(spMean{iR});
@@ -461,12 +458,12 @@ end
     legend(legmat,'Location','Best')
     xlabel('Recieved Level')
     ylabel('Log(Counts)')
-    plotName = [saveDir,'\',region,'_',siteabrev,'_StackedRecievedLevel_higherDet'];
+    plotName = [saveDir,'\',region,'_',siteabrev,'_StackedRecievedLevel'];
     saveas(gcf,[plotName,'.png'])
     saveas(gcf,[plotName,'.fig'])
     close all
 %% save .mat files for future need
-save([dataDir,['\',siteabrev,'_simulatedRL_higherDet.mat']],'spStd','histSubset','spMean','SiteMPPx','siteDiskk','SiteICI','SiteMTT','rlVec','N','NN','-v7.3')
+save([dataDir,['\',siteabrev,'_simulatedRL.mat']],'spStd','histSubset','spMean','SiteMPP','SiteICI','SiteMTT','rlVec','N','NN','-v7.3')
 end
     
 end
