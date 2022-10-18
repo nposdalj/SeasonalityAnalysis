@@ -23,7 +23,6 @@ library(regclass)
 library(mgcv)
 library(ChemoSpecUtils)
 library(car)            # to run an ANOVA
-library(splines2)       # to use mSpline for the GEEs
 library(ggfortify)      # extract confidence interval for ACF plots
 
 site = 'CB' #specify the site of interest
