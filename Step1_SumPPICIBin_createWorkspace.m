@@ -2,12 +2,12 @@ clearvars
 close all
 
 %% Parameters defined by user
-filePrefix = 'GofAK'; % File name to match. 
-siteabrev = 'CB'; %abbreviation of site.
-region = 'GofAK'; %region
+filePrefix = 'PS'; % File name to match. 
+siteabrev = 'PS2'; %abbreviation of site.
+region = 'CCE'; %region
 sp = 'Pm'; % your species code
-itnum = '2'; % which iteration you are looking for (which TPWS folder)
-GDrive = 'I'; %Google Drive
+itnum = '3'; % which iteration you are looking for (which TPWS folder)
+GDrive = 'G'; %Google Drive
 
 tpwsPath = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\TPWS_125\',siteabrev]; %directory of TPWS files
 effortXls = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev,'\Pm_Effort.xlsx'];% specify excel file with effort times
