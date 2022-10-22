@@ -343,7 +343,7 @@ datenum([2009 02 01]), datenum([2009 04 30]); %PS06
 datenum([2009 05 01]), datenum([2009 09 22]); %PS07
 datenum([2009 09 23]), datenum([2010 01 06]); %PS08
 datenum([2010 02 26]), datenum([2010 11 02]); %PS09
-datenum([2011 06 21]), datenum([2011 11 29]); %PS11
+datenum([2011 06 21]), datenum([2012 04 12]); %PS11
 datenum([2018 11 14]), datenum([2019 06 10]); %PS14
 datenum([2019 06 11]), datenum([2020 01 25])]; %PS15
 

@@ -1,19 +1,21 @@
 clearvars
 close all
 %% Parameters defined by user
-filePrefix = 'Wake'; % File name to match. 
-siteabrev = 'Wake'; %abbreviation of site.
-titleNAME = 'Wake Atoll';
+filePrefix = 'CA'; % File name to match. 
+siteabrev = 'CA'; %abbreviation of site.
+titleNAME = 'Gulf of California';
+region = 'CCE';
+GDrive = 'G';
 sp = 'Pm'; % your species code
-tpwsPath = ['G:\My Drive\CentralPac_TPWS_metadataReduced\Wake\TPWS_125\TPWS2\TPWS3\']; %directory of TPWS files
+tpwsPath = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\',siteabrev,'\TPWS_125\TPWS2\TPWS3\']; %directory of TPWS files
 %% load data from step 3
-filename = ['G:\My Drive\CentralPac_TPWS_metadataReduced\Wake\Seasonality\',siteabrev,'_workspaceStep3'];
+filename = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\',siteabrev,'\SeasonalityAnalysis\',siteabrev,'_workspaceStep3'];
 load(filename);
-saveDir = 'G:\My Drive\CentralPac_TPWS_metadataReduced\Wake\Seasonality'; %specify directory to save files
+saveDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\',siteabrev,'\Plots'; %specify directory to save files
 %% define pie chart colors
-blue = [0.2081    0.1663    0.5292];
+blue = [0.2081, 0.1663, 0.5292];
 cyan = [0.0383, 0.6742, 0.7435];
-yellow = [0.9763    0.9831    0.0538];
+yellow = [0.9763, 0.9831, 0.0538];
 tilecolor = [blue; cyan; yellow];
 %% pie chart for F/J/M presence at each site (year round) - counting sum of hours NO TEXT
 figure

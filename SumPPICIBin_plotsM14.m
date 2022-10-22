@@ -1,10 +1,10 @@
 clearvars
 close all
 %% Parameters defined by user
-filePrefix = 'Tinian'; % File name to match. 
-siteabrev = 'Tinian'; %abbreviation of site.
-region = 'CentralPac'; %region
-PlotSiteName = 'Tinian';
+filePrefix = 'QC'; % File name to match. 
+siteabrev = 'QC'; %abbreviation of site.
+region = 'CCE'; %region
+PlotSiteName = 'Olympic Coast National Marine Sanctuary - Quinault Canyon';
 sp = 'Pm'; % your species code
 GDrive = 'G'; %Google Drive
 saveDirr = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev]; %specify directory to save files
