@@ -1,15 +1,14 @@
 %% clear workspace
-%This script has to be run in 2020b or later.
 clear all;close all;clc;
-
+% Needs to be run in 2018B or later
 %% load data
-siteName = 'PT';
-GDrive = 'I';
-region = 'GofAK'; %region
+siteName = 'QC';
+GDrive = 'G';
+region = 'CCE'; %region
 NumBub = 3;
 DataDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteName];
 saveDirectory = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\Plots\',siteName];
-dates = [2012 2013 2014];
+dates = [2014 2015];
 %% Retime data weekly
 GDrive_correctII = GDrive; % Store correct GDrive to overwrite some path names later
 load([DataDir,'\',siteName,'_workspaceStep2.mat']);
@@ -34,7 +33,7 @@ WeekData.wN = weeknum(WeekData.tbin,2,1); % Day of week begins on Monday and use
 %deal with leap years, merge last day to week 52
 leap = find(WeekData.wN == 53);
 for l = 1:length(leap)
-   WeekData(leap(l)-1,6:7) = varfun(@nanmean,WeekData(leap(l)-1:leap(l),6:7));
+   WeekData(leap(l)-1,6:7) = varfun(@(x)mean(x,'omitnan'),WeekData(leap(l)-1:leap(l),6:7));
    WeekData(leap(l),:) = [];
 end
 % correct year for leap year

@@ -2,11 +2,11 @@ clearvars
 close all
 
 %% Parameters defined by user
-filePrefix = 'CB'; % File name to match. 
-siteabrev = 'CB'; %abbreviation of site.
-region = 'GofAK'; %region
+filePrefix = 'QC'; % File name to match. 
+siteabrev = 'QC'; %abbreviation of site.
+region = 'CCE'; %region
 sp = 'Pm'; % your species code
-GDrive = 'I'; %Google Drive
+GDrive = 'G'; %Google Drive
 saveDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev]; %specify directory to save files
 DutyCy = 1; %if this data only has 1 deployment that is duty cycled make it equal to 1
 %otherwise, make it equal to the number of deployments that have different
@@ -15,7 +15,7 @@ DutyCy = 1; %if this data only has 1 deployment that is duty cycled make it equa
 %% load workspace
 GDrive_correct = GDrive; % Preserve correct GDrive as it was entered above
 load([saveDir,'\',siteabrev,'_workspace125.mat']);
-GDrive = 'I'; %Correct GDrive for SWAL1
+GDrive = 'G'; %Correct GDrive for SWAL1
 
 % Overwrite some path names
 GDrive = GDrive_correct; %Correct GDrive if overwritten by loading workspace
@@ -25,15 +25,17 @@ tpwsPath(1) = GDrive;
 %% Set up duty cycled dates
 % If only one or two deployments are duty cycled, adjust accordingly
 if DutyCy == 1
-    startTime = datetime(2012,05,03);
-    endTime = datetime(2013,02,21);
-%elseif DutyCy == 3 %PS1
- %   startTime1 = datetime(2006,10,03); %PS1
- %   endTime1 = datetime(2007,06,03); %PS1
- %   startTime2 = datetime(2007,07,19); %PS1
- %   endTime2 = datetime(2008,07,08); %PS1
- %   startTime3 = datetime(2012,07,03); %PS1
- %   endTime3 = datetime(2012,08,26); %PS1
+%    startTime = datetime(2015,05,25);
+%    endTime = datetime(2017,04,11);
+    startTime = datetime(2007,07,05); %QC
+    endTime = datetime(2008,06,15); %QC
+elseif DutyCy == 3 %PS1
+   startTime1 = datetime(2006,10,03); %PS1
+   endTime1 = datetime(2007,06,03); %PS1
+   startTime2 = datetime(2007,07,19); %PS1
+   endTime2 = datetime(2008,07,08); %PS1
+   startTime3 = datetime(2012,07,03); %PS1
+   endTime3 = datetime(2012,08,26); %PS1
 %elseif DutyCy == 3 %Tinian
  %   startTime1 = datetime(2011,04,13); %Tinian
  %   endTime1 = datetime(2011,11,22); %Tinian
@@ -46,13 +48,13 @@ if DutyCy == 1
     endTime1 = datetime(2010,05,13); %Kauai
     startTime2 = datetime(2016,07,09); %Kauai
     endTime2 = datetime(2017,08,09); %Kauai
-elseif DutyCy == 3 %Wake
-    startTime1 = datetime(2010,01,31); %Wake
-    endTime1 = datetime(2010,04,25); %Wake
-    startTime2 = datetime(2011,03,25); %Wake
-    endTime2 = datetime(2011,05,27); %Wake
-    startTime3 = datetime(2012,02,25); %Wake
-    endTime3 = datetime(2017,10,28); %Wake
+% elseif DutyCy == 3 %Wake
+%     startTime1 = datetime(2010,01,31); %Wake
+%     endTime1 = datetime(2010,04,25); %Wake
+%     startTime2 = datetime(2011,03,25); %Wake
+%     endTime2 = datetime(2011,05,27); %Wake
+%     startTime3 = datetime(2012,02,25); %Wake
+%     endTime3 = datetime(2017,10,28); %Wake
 %elseif DutyCy == 4 %PHR
  %   startTime1 = datetime(2009,10,20);%PHR
  %   endTime1 = datetime(2010,05,23);%PHR
@@ -241,7 +243,7 @@ if strcmp(siteabrev,'CSM');
 elseif strcmp(siteabrev,'LSM');
     hourlyTab.Effort_Bin = floor(hourlyTab.Effort_Bin * .5); %for LSM only, 5 on 5 off (10 minute cycle)-- meaning you're recording 50% (0.5) of the time
     hourlyTab.Effort_Sec = hourlyTab.Effort_Bin * 5 * 60; %convert from bins into efforts in seconds per day
-elseif strcmp(siteabrev,'PG');
+elseif strcmp(siteabrev,'Pagan');
     hourlyTab.Effort_Bin(startVal:endVal) = hourlyTab.Effort_Bin(startVal:endVal) * (0.33); %for Pagan_01 only, 5 on 10 off (15 minute cycle)-- meaning you're recording 33% (0.33) of the time
     hourlyTab.Effort_Sec(startVal:endVal) = hourlyTab.Effort_Bin(startVal:endVal) * 5 * 60; %convert from bins into efforts in seconds per day
 elseif strcmp(siteabrev,'CORC');

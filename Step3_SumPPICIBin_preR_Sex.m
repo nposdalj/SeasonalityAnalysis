@@ -2,12 +2,12 @@ clearvars
 close all
 
 %% Parameters defined by user
-filePrefix = 'NC'; % File name to match. 
-genderFileName = 'NC'; %File name to match gender file
-siteabrev = 'NC'; %abbreviation of site
-region = 'WAT';
+filePrefix = 'QC'; % File name to match. 
+genderFileName = 'QC'; %File name to match gender file
+siteabrev = 'QC'; %abbreviation of site
+region = 'CCE';
 sp = 'Pm'; % your species code
-GDrive = 'I'; %Google Drive
+GDrive = 'G'; %Google Drive
 
 effortXls = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev,'\Pm_Effort.xlsx']; % specify excel file with effort times
 saveDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev]; %specify directory to save files
@@ -35,8 +35,8 @@ sexData = retime(sexData,'daily','sum');
 sexbinPresence = synchronize (sexData, sexBinEffort);
 sexbinPresence.maxPP = [];
 sexbinPresence.meanICI = [];
-sexbinPresence.BigMale = [];
-sexbinPresence.Other = [];
+sexbinPresence.OtherA = [];
+sexbinPresence.OtherB = [];
 sexbinPresence.Count = [];
 %% accounting for effort/dutycycle
 %Proportion of hours

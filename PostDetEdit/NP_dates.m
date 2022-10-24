@@ -318,43 +318,47 @@ CA_depl = [10,11];
 CA_site(1:length(CA_depl),1) = {'GofCA'};
 CA_latLongs = [39.938, - 76;
 40.195, - 76];
-%% PS
-PS_dates = [datenum([2006 10 03]), datenum([2007 01 16]); %PS01
+%% PS1
+PS1_dates = [datenum([2006 10 03]), datenum([2007 01 16]); %PS01
 datenum([2007 01 25]), datenum([2007 06 03]); %PS02
 datenum([2007 07 19]), datenum([2007 10 29]); %PS03
 datenum([2008 01 25]), datenum([2008 07 08]); %PS04
-datenum([2008 08 04]), datenum([2009 01 06]); %PS05
+datenum([2011 11 30]), datenum([2012 06 24]); %PS12
+datenum([2012 07 03]), datenum([2012 08 26])]; %PS13
+
+PS1_depl = [1,2,3,4,12,13];
+
+PS1_site(1:length(PS1_depl),1) = {'PS'};
+
+%DONT FIX THIS ONE
+PS1_latLongs = [58.645683,-148.07; %01 in decimals
+58.671333,-148.02; %02
+58.673483,-148.00; %03
+58.671867,-148.02; %04
+58.66961667,-148.03;
+58.66961667,-148.03];%10
+%% PS2
+PS2_dates = [datenum([2008 08 04]), datenum([2009 01 06]); %PS05
 datenum([2009 02 01]), datenum([2009 04 30]); %PS06
 datenum([2009 05 01]), datenum([2009 09 22]); %PS07
 datenum([2009 09 23]), datenum([2010 01 06]); %PS08
 datenum([2010 02 26]), datenum([2010 11 02]); %PS09
-%datenum([2011 06 21]), datenum([2012 04 07]); %PS11
-datenum([2011 06 21]), datenum([2011 11 29]); %PS11
-datenum([2011 11 30]), datenum([2012 06 24]); %PS12
-datenum([2012 07 03]), datenum([2012 08 26]); %PS13
+datenum([2011 06 21]), datenum([2012 04 12]); %PS11
 datenum([2018 11 14]), datenum([2019 06 10]); %PS14
 datenum([2019 06 11]), datenum([2020 01 25])]; %PS15
 
-PS_depl = [1,2,3,4,5,6,7,8,9,11,12,13,14,15];
+PS2_depl = [5,6,7,8,9,11,14,15];
 
-PS_site(1:length(PS_depl),1) = {'PS'};
+PS2_site(1:length(PS2_depl),1) = {'PS'};%% PS
 
 %DONT FIX THIS ONE
-PS_latLongs = [58.645683,-148.07; %01 in decimals
-58.671333,-148.02; %02
-58.673483,-148.00; %03
-58.671867,-148.02; %04
-58.671,-148.02; %05
+PS2_latLongs = [58.671,-148.02; %05
 58.670817,-148.02; %06
 58.65525,-148.09; %07
 58.6695,-148.03; %08
 58.6695,-148.0338889; %09
 58.66961667,-148.03;
-58.66961667,-148.03;
-58.66961667,-148.03;
-58.66961667,-148.03;
-58.66961667,-148.03];%10
-
+58.66961667,-148.03;];%10
 %% Palmyra
 PAL_dates = [datenum([2006 10 19 04 00 00]), datenum([2007 03 23 14 00 00]); %PAL02
     datenum([2007 04 09 00 00 00]), datenum([2007 09 20 21 25 00]); %PAL03
@@ -450,22 +454,32 @@ Hawaii_latLongs = [58.645683,-148.07; %01 in decimals
 58.6695,-148.0338889; %09
 58.6695,-148.0338889; %09
 58.66961667,-148.03];%10
+%% CSM
+CSM_dates = [datenum([2005,4,26,0,00,00]), datenum([2005,09,12,10,37,27]);
+    datenum([2005,11,20,00,00,00]), datenum([2006,05,11,00,09,28]);
+    datenum([2016,07,17,19,59,59]), datenum([2016,07,24,14,12,29])];
+CSM_depl = [1,2,3];
+CSM_site(1:length(CSM_depl),1) = {'CSM'};
+CSM_latLongs = [39.938, - 76;
+40.021, -76;
+40.195, - 76;
+40.195, - 76];
 %% concatenate all information
 edgeffort = [CB_dates; QN_dates; AB_dates; PT_dates; CORC_dates;...
     HOKE_dates; ALEUT_dates; DCPP01C_dates; ALEUT01KS_dates; OCNMSQC_dates; KOA_dates; GI_dates;...
     EI_dates; Saipan_dates; Tinian_dates; Wake_dates; OC_dates; GS_dates; NC_dates; JAX_dates; HZ_dates; BC_dates;...
-    BP_dates; BS_dates; WC_dates; CA_dates; CCE_dates; PS_dates; PAL_dates; Equator_dates; LSM_dates; PHR_dates; Hawaii_dates;...
-    Kauai_dates];
+    BP_dates; BS_dates; WC_dates; CA_dates; CCE_dates; PS1_dates; PS2_dates; PAL_dates; Equator_dates; LSM_dates; PHR_dates; Hawaii_dates;...
+    Kauai_dates; CSM_dates];
 latLongs = [CB_latLongs; QN_latLongs; AB_latLongs; PT_latLongs;...
     CORC_latLongs; HOKE_latLongs; ALEUT_latLongs; DCPP01C_latLongs; ALEUT01KS_latLongs; OCNMSQC_latLongs;...
     KOA_latLongs; GI_latLongs; EI_latLongs; Saipan_latLongs; Tinian_latLongs; Wake_latLongs; OC_latLongs; GS_latLongs;...
     NC_latLongs; JAX_latLongs; HZ_latLongs; BC_latLongs; BP_latLongs; BS_latLongs; WC_latLongs; CA_latLongs; CCE_latLongs;...
-    PS_latLongs; PAL_latLongs; Equator_latLongs; LSM_latLongs; PHR_latLongs; Hawaii_latLongs; Kauai_latLongs];
+    PS1_latLongs; PS2_latLongs;; PAL_latLongs; Equator_latLongs; LSM_latLongs; PHR_latLongs; Hawaii_latLongs; Kauai_latLongs; CSM_latLongs];
 depl = [CB_depl'; QN_depl'; AB_depl'; PT_depl'; CORC_depl'; HOKE_depl';...
     ALEUT_depl'; DCPP01C_depl'; ALEUT01KS_depl';OCNMSQC_depl'; KOA_depl';GI_depl'; EI_depl'; Saipan_depl';...
     Tinian_depl'; Wake_depl'; OC_depl'; GS_depl'; NC_depl'; JAX_depl'; HZ_depl'; BC_depl'; BP_depl'; BS_depl'; WC_depl';...
-    CA_depl'; CCE_depl'; PS_depl'; PAL_depl';Equator_depl'; LSM_depl'; PHR_depl'; Hawaii_depl'; Kauai_depl'];
+    CA_depl'; CCE_depl'; PS1_depl';PS2_depl'; PAL_depl';Equator_depl'; LSM_depl'; PHR_depl'; Hawaii_depl'; Kauai_depl'; CSM_depl'];
 site = [CB_site; QN_site; AB_site; PT_site; CORC_site; HOKE_site;...
     ALEUT_site; DCPP01C_site; ALEUT01KS_site; OCNMSQC_site; KOA_site; GI_site; EI_site; Saipan_site;...
     Tinian_site; Wake_site; OC_site; GS_site; NC_site; JAX_site; HZ_site; BC_site; BP_site; BS_site; WC_site;...
-    CA_site; CCE_site; PS_site; PAL_site; Equator_site; LSM_site; PHR_site; Hawaii_site; Kauai_site];
+    CA_site; CCE_site; PS1_site;PS2_site; PAL_site; Equator_site; LSM_site; PHR_site; Hawaii_site; Kauai_site; CSM_site];
