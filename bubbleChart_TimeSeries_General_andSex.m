@@ -1,14 +1,15 @@
 %% clear workspace
+%This script has to be run in 2020b or later.
 clear all;close all;clc;
 
 %% load data
-siteName = 'BC';
-GDrive = 'H';
-region = 'WAT'; %region
+siteName = 'PT';
+GDrive = 'I';
+region = 'GofAK'; %region
 NumBub = 3;
 DataDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteName];
 saveDirectory = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\Plots\',siteName];
-dates = [2006 2007 2008 2009 2010 2011 2012 2013 2014 2015 2016 2017 2018 2019 2020];
+dates = [2012 2013 2014];
 %% Retime data weekly
 GDrive_correctII = GDrive; % Store correct GDrive to overwrite some path names later
 load([DataDir,'\',siteName,'_workspaceStep2.mat']);

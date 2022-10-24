@@ -1,117 +1,25 @@
 clearvars
 close all
 %% Parameters defined by user
-filePrefix = 'CORC'; % File name to match. 
-siteabrev = 'CORC'; %abbreviation of site.
-key = 'CORC_'; %after what identifying marker is the deployment number
-PlotSiteName = 'CORC- Offshore Mooring';
+filePrefix = 'PT'; % File name to match. 
+siteabrev = 'PT'; %abbreviation of site.
+region = 'GofAK'; %region
 sp = 'Pm'; % your species code
-itnum = '2'; % which iteration you are looking for
-srate = 200; % sample rate
-tpwsPath = 'G:\My Drive\CCE_TPWS_metadataReduced\CORC\TPWS_125'; %directory of TPWS files
-effortXls = 'G:\My Drive\CCE_TPWS_metadataReduced\CORC\Pm_Effort.xlsx'; % specify excel file with effort times
-saveDir = 'G:\My Drive\CCE_TPWS_metadataReduced\CORC\Seasonality'; %specify directory to save files
-%RC_data = 1; %If you're using RCs data, make this equal to 1, otherwise make it equal to 0.
-%% define subfolder that fit specified iteration
-if itnum > 1
-   for id = 2: str2num(itnum) % iterate id times according to itnum
-       subfolder = ['TPWS',num2str(id)];
-       tpwsPath = (fullfile(tpwsPath,subfolder));
-   end
-end
-%% Find all TPWS files that fit your specifications (does not look in subdirectories)
-% Concatenate parts of file name
-% if isempty(sp)
-%     detfn = [filePrefix,'.*','TPWS',itnum,'.mat'];
-% else
-%     detfn = [filePrefix,'.*',sp,'.*TPWS',itnum,'.mat'];
-% end
+GDrive = 'I'; %Google Drive
+PlotSiteName =  'GofAK - PT';
+saveDirr = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev]; %specify directory to save files
+saveDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\Plots\',siteabrev,'\']; %specify directory to save files
+%% load workspace
+GDrive_correct = GDrive; % Preserve correct GDrive as it was entered above
+load([saveDirr,'\',siteabrev,'_workspace125.mat']);
+GDrive = 'I'; %Correct GDrive for SWAL1
+saveDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\Plots\',siteabrev,'\']; %specify directory to save files
 
-if exist('RC_data','var')
-    detfn = [filePrefix,'.*','Delphin_','.*TPWS',itnum,'.*','.mat'];
-% else
-% if isempty(p.speName)
-%     detfn = [p.filePrefix,'.*','TPWS',p.iterationNum,'.mat'];
-else
-    detfn = [filePrefix,'.*',sp,'.*TPWS',itnum,'.mat'];
-end
-
-% Get a list of all the files in the start directory
-fileList = cellstr(ls(tpwsPath));
-
-% Find the file name that matches the filePrefix
-fileMatchIdx = find(~cellfun(@isempty,regexp(fileList,detfn))>0);
-if isempty(fileMatchIdx)
-    % if no matches, throw error
-    error('No files matching filePrefix found!')
-end
-%% Get effort times matching prefix file
-%when multiple sites in the effort table
-allEfforts = readtable(effortXls); %read effort table
-site = siteabrev; %abbreviation used in effort table
-
-siteNUM = unique(allEfforts.Sites);
-[sr,~] = size(siteNUM);
-
-if sr > 1
-    effTable = allEfforts(ismember(allEfforts.Sites,site),:); %effort is for multiple sites
-else
-    effTable = allEfforts; %effort is for one site only
-end
-
-% make Variable Names consistent
-startVar = find(~cellfun(@isempty,regexp(effTable.Properties.VariableNames,'Start.*Effort'))>0,1,'first');
-endVar = find(~cellfun(@isempty,regexp(effTable.Properties.VariableNames,'End.*Effort'))>0,1,'first');
-effTable.Properties.VariableNames{startVar} = 'Start';
-effTable.Properties.VariableNames{endVar} = 'End';
-
-Start = datetime(x2mdate(effTable.Start),'ConvertFrom','datenum');
-End = datetime(x2mdate(effTable.End),'ConvertFrom','datenum');
-
-effort = timetable(Start,End);
-%% Concatenate all detections from the same site
-concatFiles = fileList(fileMatchIdx);
-%% get default parameters
-p = sp_setting_defaults('sp',sp,'analysis','SumPPICIBin');
-%% Concatenate variables
-PPall = []; TTall = []; ICIall = []; % initialize matrices
-for idsk = 1 : length(concatFiles)
-    % Load file
-    fprintf('Loading %d/%d file %s\n',idsk,length(concatFiles),fullfile(tpwsPath,concatFiles{idsk}))
-    D = load(fullfile(tpwsPath,concatFiles{idsk}));
-    
-    % find times outside effort (sometimes there are detections
-    % which are from the audio test at the beggining of the wav file)
-    within = cell2mat(arrayfun(@(x)sum(isbetween(x,datenum(effort.Start),datenum(effort.End))),D.MTT,'uni',false));
-    goodIdx = find(within ~= 0);
-    MTT = D.MTT;
-    MPP = D.MPP;
-    MTT = D.MTT(goodIdx); % only keep the good detections
-    MPP = D.MPP(goodIdx);
-    MPP(:,2) = idsk;
-    
-    % concatenate
-    TTall = [TTall; MTT];   % group start times
-    PPall = [PPall; MPP];   % group peak-to-peak
-    
-    % Inter-Click Interval
-    ici = diff(MTT)*24*60*60*1000; % in ms
-    ICIall = [ICIall;[ici; nan]];  % group inter-click interval
-end
-%% After parfor data may not be sorted. Sort all the variables.
-[~,sorted] = sort(TTall);
-TTall = TTall(sorted);
-PPall_deplo = PPall;
-PPall = PPall(sorted);
-ICIall = ICIall(sorted);
-%% Create timetable per click
-tbin = datetime(TTall,'ConvertFrom','datenum');
-clickData = timetable(tbin,PPall,ICIall);
-clear tbin
-%% Convert times to bin vector times
-vTT = datevec(TTall);
-tbin = datetime([vTT(:,1:4), floor(vTT(:,5)/p.binDur)*p.binDur, ...
-    zeros(length(vTT),1)]);
+% Overwrite some path names
+GDrive = GDrive_correct; %Correct GDrive if overwritten by loading workspace
+effortXls(1) = GDrive;
+saveDirr(1) = GDrive;
+tpwsPath(1) = GDrive;
 %% create table and get click counts and max pp per bin
 data = timetable(tbin,TTall,PPall);
 binData = varfun(@max,data,'GroupingVariable','tbin','InputVariable','PPall');
@@ -432,7 +340,6 @@ end
 % Save plot
 weeklyfn2 = [filePrefix,'_',p.speName,'_weeklypresence'];
 saveas(gcf,fullfile(saveDir,weeklyfn2),'png')
-
 %% Plot time series peak-peak of all deployments
 figure(7)
 plot(data.tbin,data.PPall,'.')
@@ -441,7 +348,6 @@ xlabel('Time')
 ylabel('Peak-Peak Amplitude (dB)')
 timeseries_fn1 = [filePrefix,'_',p.speName,'_TimeSeries_PeakPeak'];
 saveas(gcf,fullfile(saveDir,timeseries_fn1),'png');
-
 %% Plot average peak frequency in bins vs. time of all deployments
 figure(8)
 plot(binData_MEAN.tbin,binData_MEAN.meanPP,'.')
@@ -451,49 +357,3 @@ xlabel('Time')
 ylabel('Averag Peak-Peak Amplitude per Bin (dB)')
 timeseries_fn2 = [filePrefix,'_',p.speName,'_TimeSeries_AveragePPbin'];
 saveas(gcf,fullfile(saveDir,timeseries_fn2),'png');
-
-%% Plots to delete later - these were for the lab presentation on 10/19/2020
-% figure; bar(binData.tbin,binData.Count)
-% ylabel('# of Clicks in a 5-min Bin')
-% title('Number of clicks in each 5-minute bin')
-% figure;bar(dayData.tbin,dayData.Count_Click)
-% ylabel('Daily # of Clicks')
-% title('Number of clicks each day')
-% figure;bar(dayData.tbin,dayData.Count_Bin)
-% ylabel('Daily # of 5-min bins')
-% title('Number of 5-min bins each day')
-% 
-% %plotting on top of one another
-% figure
-% bar(binData.tbin,binData.Count)
-% hold on
-% bar(binData_RC.tbin,binData_RC.Count)
-% ylabel('# of Clicks in a 5-min Bin')
-% title('Number of clicks in each 5-minute bin')
-% legend
-% 
-% figure
-% bar(dayData.tbin,dayData.Count_Click)
-% hold on
-% bar(dayData_RC.tbin,dayData_RC.Count_Click,'r')
-% ylabel('Daily # of Clicks')
-% title('Number of clicks each day')
-% legend('Pm detector','De detector')
-% 
-% figure
-% bar(dayData.tbin,dayData.Count_Bin)
-% hold on
-% bar(dayData_RC.tbin,dayData_RC.Count_Bin,'r')
-% ylabel('Daily # of 5-min bins')
-% title('Number of 5-min bins each day')
-% legend('Pm detector','De detector')
-% 
-% %Plotting difference
-% dayDiff_Click = dayData.Count_Click - dayData_RC.Count_Click;
-% dayDiff_Bin = dayData.Count_Bin - dayData_RC.Count_Bin;
-% figure;bar(dayData.tbin,dayDiff_Click)
-% ylabel('Difference in Daily # of Clicks')
-% title('Difference in the # of clicks each day')
-% figure;bar(dayData.tbin,dayDiff_Bin)
-% ylabel('Difference in Daily # of 5-min bins')
-% title('Difference in the # of 5-min bins each day')

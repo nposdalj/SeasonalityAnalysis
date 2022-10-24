@@ -7,11 +7,11 @@
 % This code was provided by KEF and modified by NP 08312022
 close all;clear all; clc;
 %% User Definied Parameters
-siteabrevv = {'CB'}; %abbreviation of site.
+siteabrevv = {'QN'}; %abbreviation of site.
 GDrive = 'I'; %directory for Google Drive
 region = 'GofAK';
 sp = 'Pm'; % your species code
-itnum = '2'; % which iteration you are looking for (which TPWS folder)
+itnum = '3'; % which iteration you are looking for (which TPWS folder)
 NN = 100000; %random clicks to choose from each deployment
 RLmin = 125; %Recieved level threshold of your data
 RLmax = 160; %Max recieved level you're intersted in plotting
