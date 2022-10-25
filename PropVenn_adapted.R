@@ -5,12 +5,12 @@ library("dplyr")
 
 #load data
 GDrive =  'I'
-Region = 'WAT'
+Region = 'CCE'
 dir = paste(GDrive,":/My Drive/",Region,"_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites",sep="")
 #Site Names
 #SiteNames = c('CB','PT','QN','BD','AB','KOA','KS')
-SiteNames = c('BS','BP','NC','BC','GS')
-saveDir = paste(GDrive,":/My Drive/",Region,"_TPWS_metadataReduced/Plots",sep="")
+SiteNames = c('CA','CCE','CORC','DCPP01C','GI','HOKE','PS1','PS2','QC')
+saveDir = paste(GDrive,":/My Drive/",Region,"_TPWS_metadataReduced/Plots/",sep="")
 
 #General Data
 fileName1 = paste(GDrive,":/My Drive/",Region,"_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites/AllSitesGrouped_GAMGEE_ROW.csv",sep="")#setting the directory

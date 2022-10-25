@@ -2,12 +2,13 @@ clearvars
 close all
 
 %% Parameters defined by user
-filePrefix = 'QC'; % File name to match. 
-genderFileName = 'QC'; %File name to match gender file
-siteabrev = 'QC'; %abbreviation of site
+filePrefix = 'PS2'; % File name to match. 
+genderFileName = 'PS2'; %File name to match gender file
+siteabrev = 'PS2'; %abbreviation of site
 region = 'CCE';
 sp = 'Pm'; % your species code
-GDrive = 'G'; %Google Drive
+GDrive = 'I'; %Google Drive
+MaxICI = 2000;
 
 effortXls = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev,'\Pm_Effort.xlsx']; % specify excel file with effort times
 saveDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev]; %specify directory to save files
@@ -15,16 +16,36 @@ dayBinCSV= [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalys
 %% Load sex specific data from ICIgrams
 filename = [saveDir,'\',genderFileName,'_',sp,'_gender.mat'];
 load(filename);
-sexData = binData; %change file name so it doesn't match general sperm whale data
+sexData = binData; %not to get in the way of other bin data
 %% load workspace 2
-GDrive_correct = GDrive; % Preserve correct GDrive as it was entered above
 load([saveDir,'\',siteabrev,'_workspaceStep2.mat']);
 
 % Overwrite some path names
-GDrive = GDrive_correct; %Correct GDrive if overwritten by loading workspace
+GDrive = 'I'; %Correct GDrive if overwritten by loading workspace
 effortXls(1) = GDrive;
 saveDir(1) = GDrive;
 tpwsPath(1) = GDrive;
+%% Adjust bin data not to include less than 5 clicks or ICIs over 2000 ms
+dataICIgram_noNaN = dataICIgram;
+dataICIgram_noNaN(isnan(dataICIgram_noNaN.ICISel),:) = []; %remove NaNs
+idx_ICItoohigh = find(dataICIgram_noNaN.ICISel > MaxICI);
+dataICIgram_noNaN(idx_ICItoohigh, :) = [];
+
+dataICIgramPP = varfun(@max,dataICIgram_noNaN,'GroupingVariable','tbin','InputVariable','PPall');
+dataICIgramPP.Properties.VariableNames{'GroupCount'} = 'Count'; % #clicks per bin
+dataICIgramPP.Properties.VariableNames{'max_PPall'} = 'maxPP';
+
+dataICIgramPF = varfun(@mean,dataICIgram_noNaN,'GroupingVariable','tbin','InputVariable',{'PeakFrall','ICISel'});
+dataICIgramPF.Properties.VariableNames{'GroupCount'} = 'Count'; % #clicks per bin
+dataICIgramPF.Properties.VariableNames{'mean_PeakFrall'} = 'avgPeakFr';
+dataICIgramPF.Properties.VariableNames{'mean_ICISel'} = 'meanICI';
+
+dataICIgramFin = synchronize(dataICIgramPP,dataICIgramPF(:,2:3)); %merge two tables
+dataICIgramFin(dataICIgramFin.Count < 5,:) = []; %identify any bins with less than 5 clicks and delete them
+
+%merge original bin data and cleaned up dataICIgram table
+sexData = synchronize(dataICIgramFin,sexData(:,4:8));
+sexData(isnan(sexData.Count),:) = []; %remove NaNs
 %% Extract effort from workspace 2 dayTable that already accounts for duty cycle, etc.
 sexBinEffort = dayBinTAB(:,{'tbin','Effort_Bin','Effort_Sec','MaxEffort_Bin','MaxEffort_Sec'});
 sexBinEffort = table2timetable(sexBinEffort);
@@ -118,36 +139,36 @@ if length(MD) < 365
 else
     sexbinPresence.day = categorical(sexbinPresence.day);
     %mean for females
-    [mean, sem, std, var, range] = grpstats(sexbinPresence.FeHoursProp, sexbinPresence.day, {'mean','sem','std','var','range'}); %takes the mean of each day of the year
-    meantable = array2table(mean);
+    [meann, sem, std, var, range] = grpstats(sexbinPresence.FeHoursProp, sexbinPresence.day, {'mean','sem','std','var','range'}); %takes the mean of each day of the year
+    meantable = array2table(meann);
     semtable = array2table(sem);
     stdtable = array2table(std);
     vartable = array2table(var);
     rangetable = array2table(range);
-    newcol_mean = (1:length(mean))';
-    meanarrayFE365 = [newcol_mean mean sem std var range];
+    newcol_mean = (1:length(meann))';
+    meanarrayFE365 = [newcol_mean meann sem std var range];
     meantabFE365 = array2table(meanarrayFE365);
     meantabFE365.Properties.VariableNames = {'Day' 'HoursPropFE' 'SEM' 'Std' 'Var' 'Range'};
     %mean for juveniles
-    [mean, sem, std, var, range] = grpstats(sexbinPresence.JuHoursProp, sexbinPresence.day, {'mean','sem','std','var','range'}); %takes the mean of each day of the year
-    meantable = array2table(mean);
+    [meann, sem, std, var, range] = grpstats(sexbinPresence.JuHoursProp, sexbinPresence.day, {'mean','sem','std','var','range'}); %takes the mean of each day of the year
+    meantable = array2table(meann);
     semtable = array2table(sem);
     stdtable = array2table(std);
     vartable = array2table(var);
     rangetable = array2table(range);
-    newcol_mean = (1:length(mean))';
-    meanarrayJU365 = [newcol_mean mean sem std var range];
+    newcol_mean = (1:length(meann))';
+    meanarrayJU365 = [newcol_mean meann sem std var range];
     meantabJU365 = array2table(meanarrayJU365);
     meantabJU365.Properties.VariableNames = {'Day' 'HoursPropJU' 'SEM' 'Std' 'Var' 'Range'};
     %mean for males
-    [mean, sem, std, var, range] = grpstats(sexbinPresence.MaHoursProp, sexbinPresence.day, {'mean','sem','std','var','range'}); %takes the mean of each day of the year
-    meantable = array2table(mean);
+    [meann, sem, std, var, range] = grpstats(sexbinPresence.MaHoursProp, sexbinPresence.day, {'mean','sem','std','var','range'}); %takes the mean of each day of the year
+    meantable = array2table(meann);
     semtable = array2table(sem);
     stdtable = array2table(std);
     vartable = array2table(var);
     rangetable = array2table(range);
-    newcol_mean = (1:length(mean))';
-    meanarrayMA365 = [newcol_mean mean sem std var range];
+    newcol_mean = (1:length(meann))';
+    meanarrayMA365 = [newcol_mean meann sem std var range];
     meantabMA365 = array2table(meanarrayMA365);
     meantabMA365.Properties.VariableNames = {'Day' 'HoursPropMA' 'SEM' 'Std' 'Var' 'Range'};    
 
@@ -210,7 +231,7 @@ sexHourEffort = hourlytab(:,{'tbin','Effort_Bin','Effort_Sec','MaxEffort_Bin','M
 sexHourEffort = table2timetable(sexHourEffort);
 
 %hourly
-Click = retime(sexDEdata(:,4:6),'hourly','sum'); % #5-min bins per hour
+Click = retime(sexDEdata(:,5:7),'hourly','sum'); % #5-min bins per hour
 sexhourlyTab = synchronize(Click,sexHourEffort);
 
 %Females

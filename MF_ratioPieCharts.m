@@ -5,13 +5,13 @@ filePrefix = 'CA'; % File name to match.
 siteabrev = 'CA'; %abbreviation of site.
 titleNAME = 'Gulf of California';
 region = 'CCE';
-GDrive = 'G';
+GDrive = 'I';
 sp = 'Pm'; % your species code
 tpwsPath = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\',siteabrev,'\TPWS_125\TPWS2\TPWS3\']; %directory of TPWS files
 %% load data from step 3
 filename = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\',siteabrev,'\SeasonalityAnalysis\',siteabrev,'_workspaceStep3'];
 load(filename);
-saveDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\',siteabrev,'\Plots'; %specify directory to save files
+saveDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\',siteabrev,'\Plots']; %specify directory to save files
 %% define pie chart colors
 blue = [0.2081, 0.1663, 0.5292];
 cyan = [0.0383, 0.6742, 0.7435];

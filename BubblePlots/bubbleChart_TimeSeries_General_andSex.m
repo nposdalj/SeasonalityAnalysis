@@ -2,13 +2,13 @@
 clear all;close all;clc;
 % Needs to be run in 2018B or later
 %% load data
-siteName = 'QC';
-GDrive = 'G';
+siteName = 'CCE';
+GDrive = 'I';
 region = 'CCE'; %region
 NumBub = 3;
 DataDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteName];
 saveDirectory = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\Plots\',siteName];
-dates = [2014 2015];
+dates = [2009 2010];
 %% Retime data weekly
 GDrive_correctII = GDrive; % Store correct GDrive to overwrite some path names later
 load([DataDir,'\',siteName,'_workspaceStep2.mat']);
@@ -91,9 +91,9 @@ dataWeek.year = year(dataWeek.tbin);
 WeekData.year = year(WeekData.tbin); % All this is done so that you can generate the plots without an extra year on top :)
 %% Checking to see how much was missed
 if strcmp(siteName,'BD') % AD: Does this need to be changed depending on the site under investigation?
-    CombinedWeek = dataWeek(:,20:22);
+    CombinedWeek = dataWeek(:,21:23);
 else
-CombinedWeek = dataWeek(:,19:21);
+CombinedWeek = dataWeek(:,20:22);
 end
 CombinedWeek.NormBin = WeekData.NormBin;
 CombinedWeek.Added = CombinedWeek.FemaleNormBin + CombinedWeek.JuvenileNormBin + CombinedWeek.MaleNormBin;

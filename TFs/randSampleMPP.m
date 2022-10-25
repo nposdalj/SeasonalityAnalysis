@@ -7,11 +7,12 @@
 % This code was provided by KEF and modified by NP 08312022
 close all;clear all; clc;
 %% User Definied Parameters
-siteabrevv = {'QN'}; %abbreviation of site.
+siteabrevv = {'QC'}; %abbreviation of site.
+TFsiteabrev = 'OCNMS_QC';
 GDrive = 'I'; %directory for Google Drive
-region = 'GofAK';
+region = 'CCE';
 sp = 'Pm'; % your species code
-itnum = '3'; % which iteration you are looking for (which TPWS folder)
+itnum = '2'; % which iteration you are looking for (which TPWS folder)
 NN = 100000; %random clicks to choose from each deployment
 RLmin = 125; %Recieved level threshold of your data
 RLmax = 160; %Max recieved level you're intersted in plotting
@@ -244,7 +245,7 @@ saveas(gcf,[plotName,'.fig'])
 
 %Find matching TF to include in the plot
 for itab = 1:stxt(1)
-    ifound = strfind(dtable.Data_ID(itab),siteabrevv);
+    ifound = strfind(dtable.Data_ID(itab),TFsiteabrev);
     if cell2mat(ifound) >0
         ifoundx = ifoundx + 1;
         tfnum(ifoundx) = str2double(dtable.PreAmp(itab));
@@ -434,7 +435,7 @@ c = distinguishable_colors(length(siteDiskk)); %more colors
 %legend table
 legmat = [];
 for iR = 1:length(siteDiskk)
-    legmat{iR} = [cell2mat(siteDisk(iR)),' ',num2str(tfnum(iR)),' n = ',num2str(length(SiteMPPx{iR}))];
+    legmat{iR} = [cell2mat(siteDiskk(iR)),' ',num2str(tfnum(iR)),' n = ',num2str(length(SiteMPPx{iR}))];
 end
 
 figure
