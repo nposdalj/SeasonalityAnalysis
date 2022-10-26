@@ -2,13 +2,13 @@
 clear all;close all;clc;
 % Needs to be run in 2018B or later
 %% load data
-siteName = 'CCE';
+siteName = 'Wake';
 GDrive = 'I';
-region = 'CCE'; %region
+region = 'CentralPac'; %region
 NumBub = 3;
 DataDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteName];
 saveDirectory = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\Plots\',siteName];
-dates = [2009 2010];
+dates = [2010:2019];
 %% Retime data weekly
 GDrive_correctII = GDrive; % Store correct GDrive to overwrite some path names later
 load([DataDir,'\',siteName,'_workspaceStep2.mat']);
@@ -75,15 +75,15 @@ adjYear = find(dataWeek.diffYear == 1 & dataWeek.wN == 52);
 dataWeek.Year(adjYear) = dataWeek.Year(adjYear-1); 
 
 % convert bins to minutes
-dataWeek.FemaleNormBin = dataWeek.FemaleNormBin *5;
-dataWeek.JuvenileNormBin = dataWeek.JuvenileNormBin *5;
+dataWeek.SocialGroupNormBin = dataWeek.SocialGroupNormBin *5;
+dataWeek.MidSizeNormBin = dataWeek.MidSizeNormBin *5;
 dataWeek.MaleNormBin = dataWeek.MaleNormBin *5;
 
 %% Delete first week for specific sites
 if (strcmp(siteName,'KOA') | strcmp(siteName,'QN') | strcmp(siteName,'BD') | strcmp(siteName,'KS') | strcmp(siteName,'CB') | strcmp(siteName,'CA')... % GOA
         | strcmp(siteName,'CCE') | strcmp(siteName,'GI') | strcmp(siteName,'HOKE') | strcmp(siteName,'CORC')...
         | strcmp(siteName,'NC') | strcmp(siteName,'BC') | strcmp(siteName,'GS') | strcmp(siteName,'BP') | strcmp(siteName,'BS')... % WAT
-        | strcmp(siteName,'WC') | strcmp(siteName,'OC') | strcmp(siteName,'HZ') | strcmp(siteName,'JAX'))
+        | strcmp(siteName,'WC') | strcmp(siteName,'OC') | strcmp(siteName,'HZ') | strcmp(siteName,'JAX') | strcmp(siteName,'Kauai'))
     WeekData(1,:) = [];
     dataWeek(1,:) = [];
 end
@@ -96,19 +96,19 @@ else
 CombinedWeek = dataWeek(:,20:22);
 end
 CombinedWeek.NormBin = WeekData.NormBin;
-CombinedWeek.Added = CombinedWeek.FemaleNormBin + CombinedWeek.JuvenileNormBin + CombinedWeek.MaleNormBin;
+CombinedWeek.Added = CombinedWeek.SocialGroupNormBin + CombinedWeek.MidSizeNormBin + CombinedWeek.MaleNormBin;
 CombinedWeek.Difference = CombinedWeek.NormBin - CombinedWeek.Added;
 CombinedWeek.Difference( CombinedWeek.Difference <= 0 ) = 0;
 %% Find Max Bubble Size and Distribution
 %Find max
-Femax = max(dataWeek.FemaleNormBin);
-Jumax = max(dataWeek.JuvenileNormBin);
+Femax = max(dataWeek.SocialGroupNormBin);
+Jumax = max(dataWeek.MidSizeNormBin);
 Mamax = max(dataWeek.MaleNormBin);
 Comax = max(CombinedWeek.Difference);
 MAX = max([Femax, Jumax, Mamax, Comax]);
 MIN = min([Femax, Jumax, Mamax, Comax]);
 
-TotalData = [dataWeek.FemaleNormBin; dataWeek.JuvenileNormBin; dataWeek.MaleNormBin; CombinedWeek.Difference]; %combine values
+TotalData = [dataWeek.SocialGroupNormBin; dataWeek.MidSizeNormBin; dataWeek.MaleNormBin; CombinedWeek.Difference]; %combine values
 %delete NAs and zeros
 nanRows = isnan(TotalData);
 zeroRows = TotalData==0;
@@ -171,9 +171,9 @@ yticks(dates)
 subplot(3,1,2)
 years = unique(dataWeek.Year);
 blue = '#fc8d62';%'#349987';
-keep = ~isnan(dataWeek.JuvenileNormBin) & dataWeek.JuvenileNormBin > 0;
-%absence = dataWeek.JuvenileNormBin == 0; % How it was before
-absence = dataWeek.JuvenileNormBin == 0 & WeekData.Noeffort == 0; % Edit by AD
+keep = ~isnan(dataWeek.MidSizeNormBin) & dataWeek.MidSizeNormBin > 0;
+%absence = dataWeek.MidSizeNormBin == 0; % How it was before
+absence = dataWeek.MidSizeNormBin == 0 & WeekData.Noeffort == 0; % Edit by AD
 for y = 1:length(years)
     hold on
     idxYear = dataWeek.Year == years(y);
@@ -183,14 +183,14 @@ for y = 1:length(years)
     scatter(dataWeek.wN(idxYear & absence),dataWeek.Year(idxYear & absence),3,...
         'o','MarkerEdgeColor',blue)
     bubblechart(dataWeek.wN(idxYear  & keep),dataWeek.Year(idxYear  & keep),...
-        round(dataWeek.JuvenileNormBin(idxYear  & keep)),blue)
+        round(dataWeek.MidSizeNormBin(idxYear  & keep)),blue)
 end
 blgd= bubblelegend('Avg. daily minutes');
 blgd.Location = 'northeastoutside';
 blgd.NumBubbles = NumBub;
 bubblesize([2 15])
 set(gca,'ydir','reverse')
-bubblelim([1 round(max(dataWeek.JuvenileNormBin))]);
+bubblelim([1 round(max(dataWeek.MidSizeNormBin))]);
 xlim([0,53])
 % ylim([2016.75,2017.25])
 ylabel('Mid-size')
@@ -263,9 +263,9 @@ yticks(dates)
 % Social Group
 subplot(4,1,2)
 blue = '#66c2a5';%'#2e59a8';
-keep = ~isnan(dataWeek.FemaleNormBin) & dataWeek.FemaleNormBin > 0;
-%absence = dataWeek.FemaleNormBin == 0; % How it was before
-absence = dataWeek.FemaleNormBin == 0 & WeekData.Noeffort == 0; % Edit by AD
+keep = ~isnan(dataWeek.SocialGroupNormBin) & dataWeek.SocialGroupNormBin > 0;
+%absence = dataWeek.SocialGroupNormBin == 0; % How it was before
+absence = dataWeek.SocialGroupNormBin == 0 & WeekData.Noeffort == 0; % Edit by AD
 for y = 1:length(years)
     hold on
     idxYear = dataWeek.Year == years(y);
@@ -275,14 +275,14 @@ for y = 1:length(years)
     scatter(dataWeek.wN(idxYear & absence),dataWeek.Year(idxYear & absence),3,...
         'o','MarkerEdgeColor',blue)
     bubblechart(dataWeek.wN(idxYear & keep),dataWeek.Year(idxYear & keep),...
-        round(dataWeek.FemaleNormBin(idxYear & keep)),blue)
+        round(dataWeek.SocialGroupNormBin(idxYear & keep)),blue)
 end
 bubblesize([2 15])
 blgd= bubblelegend('Avg. daily minutes');
 blgd.Location = 'northeastoutside';
 blgd.NumBubbles = NumBub;
 set(gca,'ydir','reverse')
-bubblelim([1 round(max(dataWeek.FemaleNormBin))]);
+bubblelim([1 round(max(dataWeek.SocialGroupNormBin))]);
 xlim([0,53])
 % ylim([2016.75,2017.25])
 ylabel('Social Groups')
@@ -291,9 +291,9 @@ yticks(dates)
 
 subplot(4,1,3)
 blue = '#fc8d62';%'#349987';
-keep = ~isnan(dataWeek.JuvenileNormBin) & dataWeek.JuvenileNormBin > 0;
-%absence = dataWeek.JuvenileNormBin == 0; % How it was before
-absence = dataWeek.JuvenileNormBin == 0 & WeekData.Noeffort == 0; % Edit by AD
+keep = ~isnan(dataWeek.MidSizeNormBin) & dataWeek.MidSizeNormBin > 0;
+%absence = dataWeek.MidSizeNormBin == 0; % How it was before
+absence = dataWeek.MidSizeNormBin == 0 & WeekData.Noeffort == 0; % Edit by AD
 for y = 1:length(years)
     hold on
     idxYear = dataWeek.Year == years(y);
@@ -303,14 +303,14 @@ for y = 1:length(years)
     scatter(dataWeek.wN(idxYear & absence),dataWeek.Year(idxYear & absence),3,...
         'o','MarkerEdgeColor',blue)
     bubblechart(dataWeek.wN(idxYear  & keep),dataWeek.Year(idxYear  & keep),...
-        round(dataWeek.JuvenileNormBin(idxYear  & keep)),blue)
+        round(dataWeek.MidSizeNormBin(idxYear  & keep)),blue)
 end
 blgd= bubblelegend('Avg. daily minutes');
 blgd.Location = 'northeastoutside';
 blgd.NumBubbles = NumBub;
 bubblesize([2 15])
 set(gca,'ydir','reverse')
-bubblelim([1 round(max(dataWeek.JuvenileNormBin))]);
+bubblelim([1 round(max(dataWeek.MidSizeNormBin))]);
 xlim([0,53])
 % ylim([2016.75,2017.25])
 ylabel('Mid-size')
@@ -362,9 +362,9 @@ fBubble = figure('Position',[296 417 766 378.5000],'DefaultAxesFontSize',12,'Def
 subplot(3,1,1)
 years = unique(dataWeek.year);
 blue = '#fc8d62';%'#349987';
-keep = ~isnan(dataWeek.JuvenileNormBin) & dataWeek.JuvenileNormBin > 0;
-%absence = dataWeek.JuvenileNormBin == 0; % How it was before
-absence = dataWeek.JuvenileNormBin == 0 & WeekData.Noeffort == 0; % Edit by AD
+keep = ~isnan(dataWeek.MidSizeNormBin) & dataWeek.MidSizeNormBin > 0;
+%absence = dataWeek.MidSizeNormBin == 0; % How it was before
+absence = dataWeek.MidSizeNormBin == 0 & WeekData.Noeffort == 0; % Edit by AD
 for y = 1:length(years)
     hold on
     idxYear = dataWeek.Year == years(y);
@@ -374,7 +374,7 @@ for y = 1:length(years)
     scatter(dataWeek.wN(idxYear & absence),dataWeek.Year(idxYear & absence),3,...
         'o','MarkerEdgeColor',blue)
     bubblechart(dataWeek.wN(idxYear  & keep),dataWeek.Year(idxYear  & keep),...
-        round(dataWeek.JuvenileNormBin(idxYear  & keep)),blue)
+        round(dataWeek.MidSizeNormBin(idxYear  & keep)),blue)
 end
 blgd= bubblelegend('Avg. daily minutes');
 blgd.Location = 'northeastoutside';
@@ -453,9 +453,9 @@ years = unique(dataWeek.Year);
 % Social Group
 subplot(4,1,1)
 blue = '#66c2a5';%'#2e59a8';
-keep = ~isnan(dataWeek.FemaleNormBin) & dataWeek.FemaleNormBin > 0;
-%absence = dataWeek.FemaleNormBin == 0; % How it was before
-absence = dataWeek.FemaleNormBin == 0 & WeekData.Noeffort == 0; % Edit by AD
+keep = ~isnan(dataWeek.SocialGroupNormBin) & dataWeek.SocialGroupNormBin > 0;
+%absence = dataWeek.SocialGroupNormBin == 0; % How it was before
+absence = dataWeek.SocialGroupNormBin == 0 & WeekData.Noeffort == 0; % Edit by AD
 for y = 1:length(years)
     hold on
     idxYear = dataWeek.Year == years(y);
@@ -465,14 +465,14 @@ for y = 1:length(years)
     scatter(dataWeek.wN(idxYear & absence),dataWeek.Year(idxYear & absence),3,...
         'o','MarkerEdgeColor',blue)
     bubblechart(dataWeek.wN(idxYear & keep),dataWeek.Year(idxYear & keep),...
-        round(dataWeek.FemaleNormBin(idxYear & keep)),blue)
+        round(dataWeek.SocialGroupNormBin(idxYear & keep)),blue)
 end
 bubblesize([2 15])
 blgd= bubblelegend('Avg. daily minutes');
 blgd.Location = 'northeastoutside';
 blgd.NumBubbles = NumBub;
 set(gca,'ydir','reverse')
-%bubblelim([1 round(max(dataWeek.FemaleNormBin))]);
+%bubblelim([1 round(max(dataWeek.SocialGroupNormBin))]);
 bubblelim([1 round(CutOff)]);
 xlim([0,53])
 % ylim([2016,2017])
@@ -482,9 +482,9 @@ yticks(dates)
 
 subplot(4,1,2)
 blue = '#fc8d62';%'#349987';
-keep = ~isnan(dataWeek.JuvenileNormBin) & dataWeek.JuvenileNormBin > 0;
-%absence = dataWeek.JuvenileNormBin == 0; % How it was before
-absence = dataWeek.JuvenileNormBin == 0 & WeekData.Noeffort == 0; % Edit by AD
+keep = ~isnan(dataWeek.MidSizeNormBin) & dataWeek.MidSizeNormBin > 0;
+%absence = dataWeek.MidSizeNormBin == 0; % How it was before
+absence = dataWeek.MidSizeNormBin == 0 & WeekData.Noeffort == 0; % Edit by AD
 for y = 1:length(years)
     hold on
     idxYear = dataWeek.Year == years(y);
@@ -494,14 +494,14 @@ for y = 1:length(years)
     scatter(dataWeek.wN(idxYear & absence),dataWeek.Year(idxYear & absence),3,...
         'o','MarkerEdgeColor',blue)
     bubblechart(dataWeek.wN(idxYear  & keep),dataWeek.Year(idxYear  & keep),...
-        round(dataWeek.JuvenileNormBin(idxYear  & keep)),blue)
+        round(dataWeek.MidSizeNormBin(idxYear  & keep)),blue)
 end
 blgd= bubblelegend('Avg. daily minutes');
 blgd.Location = 'northeastoutside';
 blgd.NumBubbles = NumBub;
 bubblesize([2 15])
 set(gca,'ydir','reverse')
-% bubblelim([1 round(max(dataWeek.JuvenileNormBin))]);
+% bubblelim([1 round(max(dataWeek.MidSizeNormBin))]);
 bubblelim([1 round(CutOff)]);
 xlim([0,53])
 % ylim([2016.75,2017.25])

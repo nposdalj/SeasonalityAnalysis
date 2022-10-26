@@ -9,9 +9,12 @@ GDrive = 'I'
 #Sites = c('CB','PT','QN','AB','KOA','BD','KS') #The GOA and BSAI Sites
 #Regions = c("GOA","BSAI") #GOA AND BSAI Region
 #Sites = c('BS','BP','NC','BC','GS','JAX','HZ','OC','WC')
-Sites = c('CA','CCE','CORC','DCPP01C','GI','HOKE','PS1','PS2','QC')
-Regions = c('CCE')
-region = 'CCE'
+#Sites = c('CA','CCE','CORC','DCPP01C','GI','HOKE','PS1','PS2','QC')
+#Regions = c('CCE')
+#region = 'CCE'
+Sites = c('CSM','Equator','Kauai','King','Kona','LSM','Pagan','Palmyra','PHR','Saipan','Tinian','Wake')
+Regions = c('CentralPac')
+region = 'CentralPac'
 
 fileDir = paste(GDrive,":/My Drive/",region,"_TPWS_metadataReduced/SeasonalityAnalysis/",Sites, sep="")#setting the directory
 saveDir = paste(GDrive,":/My Drive/",region,"_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites/",sep="")

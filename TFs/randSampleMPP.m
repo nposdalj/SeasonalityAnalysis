@@ -7,12 +7,12 @@
 % This code was provided by KEF and modified by NP 08312022
 close all;clear all; clc;
 %% User Definied Parameters
-siteabrevv = {'QC'}; %abbreviation of site.
-TFsiteabrev = 'OCNMS_QC';
+siteabrevv = {'Wake'}; %abbreviation of site.
+TFsiteabrev = 'Wake';
 GDrive = 'I'; %directory for Google Drive
-region = 'CCE';
+region = 'CentralPac';
 sp = 'Pm'; % your species code
-itnum = '2'; % which iteration you are looking for (which TPWS folder)
+itnum = '3'; % which iteration you are looking for (which TPWS folder)
 NN = 100000; %random clicks to choose from each deployment
 RLmin = 125; %Recieved level threshold of your data
 RLmax = 160; %Max recieved level you're intersted in plotting
@@ -436,6 +436,359 @@ c = distinguishable_colors(length(siteDiskk)); %more colors
 legmat = [];
 for iR = 1:length(siteDiskk)
     legmat{iR} = [cell2mat(siteDiskk(iR)),' ',num2str(tfnum(iR)),' n = ',num2str(length(SiteMPPx{iR}))];
+end
+
+figure
+for iR = 1:length(siteDiskk)
+    spMean{iR} = mean(histSubset{iR});
+    spStd{iR} = std(histSubset{iR});
+    y = log10(spMean{iR});
+    ystd1 = log10(spMean{iR}+spStd{iR});
+    ystd2 = log10(spMean{iR}-spStd{iR});
+    badY = isinf(y);
+    y(badY)=[];
+    ystd1(badY)=[];
+    ystd2(badY)=[];
+    h = plot(rlVec(~badY),y);
+    hold on
+    x2 = [rlVec(~badY),fliplr(rlVec(~badY))];
+    inBetween = ([ystd1,fliplr(ystd2)]);
+    fill(x2, inBetween,c(iR,:),'edgecolor','none','facealpha',.5);
+    delete(h)
+end
+    title(['Recieved Level at ',region,' ',siteabrev,' N = ',num2str(N)])
+    xlim([125,150])
+    grid on
+    legend(legmat,'Location','Best')
+    xlabel('Recieved Level')
+    ylabel('Log(Counts)')
+    plotName = [saveDir,'\',region,'_',siteabrev,'_StackedRecievedLevel_higherDet'];
+    saveas(gcf,[plotName,'.png'])
+    saveas(gcf,[plotName,'.fig'])
+    close all
+%% save .mat files for future need
+save([dataDir,['\',siteabrev,'_simulatedRL_higherDet.mat']],'spStd','histSubset','spMean','SiteMPPx','siteDiskk','SiteICI','SiteMTT','rlVec','N','NN','-v7.3')
+end
+
+if strcmp('Kona',siteabrevv)
+    %Remove 8,9,11
+    SiteMPPx = SiteMPP;
+    SiteMPPx(:,7) = [];
+    SiteMPPx(:,5) = [];
+    SiteMPPx(:,4) = [];
+
+    siteDiskk = siteDisk;
+    siteDiskk(7,:) = [];
+    siteDiskk(5,:) = [];
+    siteDiskk(4,:) = [];
+    
+    N = round(min(cellfun(@(c) size(c,1), SiteMPPx))/1.3); %come up with a sample size that's 1.3 the size of the min number of clicks
+    
+    [qq,~] = size(siteDiskk);
+    SiteMPP = cell(1,qq);
+    SiteMTT = cell(1,qq);
+    SiteICI = cell(1,qq);
+    histSubset = cell(1,qq);
+    spMean = cell(1,qq);
+    spStd = cell(1,qq);
+
+for i = 1:length(siteDiskk)
+%Find min length of SiteMPP to adjust N accordingly
+for itr = 1:50
+    p = randsample(length(SiteMPPx{i}),N); %choose N random click samples
+    histSubset{i} = [histSubset{i};hist(SiteMPPx{i}(p),rlVec)];
+end
+end
+
+counterI = 1;
+figure
+if length(siteDiskk) > 12
+    for i = 1:length(siteDiskk)
+    subplot(5,5,counterI)
+    spMean{i} = mean(histSubset{i});
+    spStd{i} = std(histSubset{i});
+    semilogy(rlVec,histSubset{i})
+    hold on
+    plot(rlVec,spMean{i},'-k','Linewidth',2)
+    plot(rlVec,spMean{i}+spStd{i},'--k','Linewidth',2)
+    plot(rlVec,spMean{i}-spStd{i},'--k','Linewidth',2)
+    grid on
+    ylabel('log10(counts)')
+    xlabel('RL(dB_P_P)')
+    plot([125,125],[1,10000],'--r')
+    plot([125,125],[1,10000],'--r')
+    ylim([1,40000])
+    xlim([125 150])
+    xlim([RLmin,RLmax])
+    title(['Recieved Level for ',siteDiskk{i}])
+    counterI = counterI+1;
+    end
+elseif length(siteDiskk) > 9 && length(siteDiskk) < 12
+for i = 1:length(siteDiskk)
+    subplot(3,4,counterI)
+    spMean{i} = mean(histSubset{i});
+    spStd{i} = std(histSubset{i});
+    semilogy(rlVec,histSubset{i})
+    hold on
+    plot(rlVec,spMean{i},'-k','Linewidth',2)
+    plot(rlVec,spMean{i}+spStd{i},'--k','Linewidth',2)
+    plot(rlVec,spMean{i}-spStd{i},'--k','Linewidth',2)
+    grid on
+    ylabel('log10(counts)')
+    xlabel('RL(dB_P_P)')
+    plot([125,125],[1,10000],'--r')
+    plot([125,125],[1,10000],'--r')
+    ylim([1,40000])
+    xlim([125 150])
+    xlim([RLmin,RLmax])
+    title(['Recieved Level for ',siteDiskk{i}])
+    counterI = counterI+1;
+end
+elseif length(siteDiskk) > 4 && length(siteDiskk) < 10
+    for i = 1:length(siteDiskk)
+    subplot(3,3,counterI)
+    spMean{i} = mean(histSubset{i});
+    spStd{i} = std(histSubset{i});
+    semilogy(rlVec,histSubset{i})
+    hold on
+    plot(rlVec,spMean{i},'-k','Linewidth',2)
+    plot(rlVec,spMean{i}+spStd{i},'--k','Linewidth',2)
+    plot(rlVec,spMean{i}-spStd{i},'--k','Linewidth',2)
+    grid on
+    ylabel('log10(counts)')
+    xlabel('RL(dB_P_P)')
+    plot([125,125],[1,10000],'--r')
+    plot([125,125],[1,10000],'--r')
+    ylim([1,40000])
+    xlim([125 150])
+    xlim([RLmin,RLmax])
+    title(['Recieved Level for ',siteDiskk{i}])
+    counterI = counterI+1;
+    end
+else
+for i = 1:length(siteDiskk)
+    subplot(2,2,counterI)
+    spMean{i} = mean(histSubset{i});
+    spStd{i} = std(histSubset{i});
+    semilogy(rlVec,histSubset{i})
+    hold on
+    plot(rlVec,spMean{i},'-k','Linewidth',2)
+    plot(rlVec,spMean{i}+spStd{i},'--k','Linewidth',2)
+    plot(rlVec,spMean{i}-spStd{i},'--k','Linewidth',2)
+    grid on
+    ylabel('log10(counts)')
+    xlabel('RL(dB_P_P)')
+    plot([125,125],[1,10000],'--r')
+    plot([125,125],[1,10000],'--r')
+    ylim([1,40000])
+    xlim([125 150])
+    xlim([RLmin,RLmax])
+    title(['Recieved Level for ',siteDiskk{i}])
+    counterI = counterI+1;
+end
+end
+plotName = [saveDir,'\',region,'_',siteabrev,'_SubPlotRecievedLevel_higherDet'];
+saveas(gcf,[plotName,'.png'])
+saveas(gcf,[plotName,'.fig'])
+
+%Find matching TF to include in the plot
+tfnum = [];
+ifoundx = 0;
+for itab = 1:stxt(1)
+    ifound = strfind(dtable.Data_ID(itab),TFsiteabrev);
+    if cell2mat(ifound) >0
+        ifoundx = ifoundx + 1;
+        tfnum(ifoundx) = str2double(dtable.PreAmp(itab));
+    end
+end
+
+%delete 8,9,11
+tfnumx = tfnum;
+tfnumx(:,7) = [];
+tfnumx(:,5) = [];
+tfnumx(:,4) = [];
+
+c = distinguishable_colors(length(siteDiskk)); %more colors
+
+%legend table
+legmat = [];
+for iR = 1:length(siteDiskk)
+    legmat{iR} = [cell2mat(siteDiskk(iR)),' ',num2str(tfnumx(iR)),' n = ',num2str(length(SiteMPPx{iR}))];
+end
+
+figure
+for iR = 1:length(siteDiskk)
+    spMean{iR} = mean(histSubset{iR});
+    spStd{iR} = std(histSubset{iR});
+    y = log10(spMean{iR});
+    ystd1 = log10(spMean{iR}+spStd{iR});
+    ystd2 = log10(spMean{iR}-spStd{iR});
+    badY = isinf(y);
+    y(badY)=[];
+    ystd1(badY)=[];
+    ystd2(badY)=[];
+    h = plot(rlVec(~badY),y);
+    hold on
+    x2 = [rlVec(~badY),fliplr(rlVec(~badY))];
+    inBetween = ([ystd1,fliplr(ystd2)]);
+    fill(x2, inBetween,c(iR,:),'edgecolor','none','facealpha',.5);
+    delete(h)
+end
+    title(['Recieved Level at ',region,' ',siteabrev,' N = ',num2str(N)])
+    xlim([125,150])
+    grid on
+    legend(legmat,'Location','Best')
+    xlabel('Recieved Level')
+    ylabel('Log(Counts)')
+    plotName = [saveDir,'\',region,'_',siteabrev,'_StackedRecievedLevel_higherDet'];
+    saveas(gcf,[plotName,'.png'])
+    saveas(gcf,[plotName,'.fig'])
+    close all
+%% save .mat files for future need
+save([dataDir,['\',siteabrev,'_simulatedRL_higherDet.mat']],'spStd','histSubset','spMean','SiteMPPx','siteDiskk','SiteICI','SiteMTT','rlVec','N','NN','-v7.3')
+end
+
+if strcmp('Palmyra',siteabrevv)
+    %Remove 5,6
+    SiteMPPx = SiteMPP;
+    SiteMPPx(:,4) = [];
+    SiteMPPx(:,3) = [];
+
+    siteDiskk = siteDisk;
+    siteDiskk(4,:) = [];
+    siteDiskk(3,:) = [];
+    
+    N = round(min(cellfun(@(c) size(c,1), SiteMPPx))/1.3); %come up with a sample size that's 1.3 the size of the min number of clicks
+    
+    [qq,~] = size(siteDiskk);
+    SiteMPP = cell(1,qq);
+    SiteMTT = cell(1,qq);
+    SiteICI = cell(1,qq);
+    histSubset = cell(1,qq);
+    spMean = cell(1,qq);
+    spStd = cell(1,qq);
+
+for i = 1:length(siteDiskk)
+%Find min length of SiteMPP to adjust N accordingly
+for itr = 1:50
+    p = randsample(length(SiteMPPx{i}),N); %choose N random click samples
+    histSubset{i} = [histSubset{i};hist(SiteMPPx{i}(p),rlVec)];
+end
+end
+
+counterI = 1;
+figure
+if length(siteDiskk) > 12
+    for i = 1:length(siteDiskk)
+    subplot(5,5,counterI)
+    spMean{i} = mean(histSubset{i});
+    spStd{i} = std(histSubset{i});
+    semilogy(rlVec,histSubset{i})
+    hold on
+    plot(rlVec,spMean{i},'-k','Linewidth',2)
+    plot(rlVec,spMean{i}+spStd{i},'--k','Linewidth',2)
+    plot(rlVec,spMean{i}-spStd{i},'--k','Linewidth',2)
+    grid on
+    ylabel('log10(counts)')
+    xlabel('RL(dB_P_P)')
+    plot([125,125],[1,10000],'--r')
+    plot([125,125],[1,10000],'--r')
+    ylim([1,40000])
+    xlim([125 150])
+    xlim([RLmin,RLmax])
+    title(['Recieved Level for ',siteDiskk{i}])
+    counterI = counterI+1;
+    end
+elseif length(siteDiskk) > 9 && length(siteDiskk) < 12
+for i = 1:length(siteDiskk)
+    subplot(3,4,counterI)
+    spMean{i} = mean(histSubset{i});
+    spStd{i} = std(histSubset{i});
+    semilogy(rlVec,histSubset{i})
+    hold on
+    plot(rlVec,spMean{i},'-k','Linewidth',2)
+    plot(rlVec,spMean{i}+spStd{i},'--k','Linewidth',2)
+    plot(rlVec,spMean{i}-spStd{i},'--k','Linewidth',2)
+    grid on
+    ylabel('log10(counts)')
+    xlabel('RL(dB_P_P)')
+    plot([125,125],[1,10000],'--r')
+    plot([125,125],[1,10000],'--r')
+    ylim([1,40000])
+    xlim([125 150])
+    xlim([RLmin,RLmax])
+    title(['Recieved Level for ',siteDiskk{i}])
+    counterI = counterI+1;
+end
+elseif length(siteDiskk) > 4 && length(siteDiskk) < 10
+    for i = 1:length(siteDiskk)
+    subplot(3,3,counterI)
+    spMean{i} = mean(histSubset{i});
+    spStd{i} = std(histSubset{i});
+    semilogy(rlVec,histSubset{i})
+    hold on
+    plot(rlVec,spMean{i},'-k','Linewidth',2)
+    plot(rlVec,spMean{i}+spStd{i},'--k','Linewidth',2)
+    plot(rlVec,spMean{i}-spStd{i},'--k','Linewidth',2)
+    grid on
+    ylabel('log10(counts)')
+    xlabel('RL(dB_P_P)')
+    plot([125,125],[1,10000],'--r')
+    plot([125,125],[1,10000],'--r')
+    ylim([1,40000])
+    xlim([125 150])
+    xlim([RLmin,RLmax])
+    title(['Recieved Level for ',siteDiskk{i}])
+    counterI = counterI+1;
+    end
+else
+for i = 1:length(siteDiskk)
+    subplot(2,2,counterI)
+    spMean{i} = mean(histSubset{i});
+    spStd{i} = std(histSubset{i});
+    semilogy(rlVec,histSubset{i})
+    hold on
+    plot(rlVec,spMean{i},'-k','Linewidth',2)
+    plot(rlVec,spMean{i}+spStd{i},'--k','Linewidth',2)
+    plot(rlVec,spMean{i}-spStd{i},'--k','Linewidth',2)
+    grid on
+    ylabel('log10(counts)')
+    xlabel('RL(dB_P_P)')
+    plot([125,125],[1,10000],'--r')
+    plot([125,125],[1,10000],'--r')
+    ylim([1,40000])
+    xlim([125 150])
+    xlim([RLmin,RLmax])
+    title(['Recieved Level for ',siteDiskk{i}])
+    counterI = counterI+1;
+end
+end
+plotName = [saveDir,'\',region,'_',siteabrev,'_SubPlotRecievedLevel_higherDet'];
+saveas(gcf,[plotName,'.png'])
+saveas(gcf,[plotName,'.fig'])
+
+%Find matching TF to include in the plot
+tfnum = [];
+ifoundx = 0;
+for itab = 1:stxt(1)
+    ifound = strfind(dtable.Data_ID(itab),TFsiteabrev);
+    if cell2mat(ifound) >0
+        ifoundx = ifoundx + 1;
+        tfnum(ifoundx) = str2double(dtable.PreAmp(itab));
+    end
+end
+
+%delete 5,6
+tfnumx = tfnum;
+tfnumx(:,4) = [];
+tfnumx(:,3) = [];
+
+c = distinguishable_colors(length(siteDiskk)); %more colors
+
+%legend table
+legmat = [];
+for iR = 1:length(siteDiskk)
+    legmat{iR} = [cell2mat(siteDiskk(iR)),' ',num2str(tfnumx(iR)),' n = ',num2str(length(SiteMPPx{iR}))];
 end
 
 figure

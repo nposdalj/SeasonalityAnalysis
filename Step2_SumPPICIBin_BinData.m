@@ -2,20 +2,20 @@ clearvars
 close all
 
 %% Parameters defined by user
-filePrefix = 'QC'; % File name to match. 
-siteabrev = 'QC'; %abbreviation of site.
-region = 'CCE'; %region
+filePrefix = 'Wake'; % File name to match. 
+siteabrev = 'Wake'; %abbreviation of site.
+region = 'CentralPac'; %region
 sp = 'Pm'; % your species code
-GDrive = 'G'; %Google Drive
+GDrive = 'I'; %Google Drive
 saveDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev]; %specify directory to save files
-DutyCy = 1; %if this data only has 1 deployment that is duty cycled make it equal to 1
+DutyCy = 3; %if this data only has 1 deployment that is duty cycled make it equal to 1
 %otherwise, make it equal to the number of deployments that have different
 %duty cycles that must be accounted for; if this data is NOT duty cycled, 
 %or if the entire deployment is duty cycled, make it equal to 0
 %% load workspace
 GDrive_correct = GDrive; % Preserve correct GDrive as it was entered above
 load([saveDir,'\',siteabrev,'_workspace125.mat']);
-GDrive = 'G'; %Correct GDrive for SWAL1
+GDrive = 'I'; %Correct GDrive for SWAL1
 
 % Overwrite some path names
 GDrive = GDrive_correct; %Correct GDrive if overwritten by loading workspace
@@ -27,43 +27,47 @@ tpwsPath(1) = GDrive;
 if DutyCy == 1
 %    startTime = datetime(2015,05,25);
 %    endTime = datetime(2017,04,11);
-    startTime = datetime(2007,07,05); %QC
-    endTime = datetime(2008,06,15); %QC
-elseif DutyCy == 3 %PS1
-   startTime1 = datetime(2006,10,03); %PS1
-   endTime1 = datetime(2007,06,03); %PS1
-   startTime2 = datetime(2007,07,19); %PS1
-   endTime2 = datetime(2008,07,08); %PS1
-   startTime3 = datetime(2012,07,03); %PS1
-   endTime3 = datetime(2012,08,26); %PS1
-%elseif DutyCy == 3 %Tinian
- %   startTime1 = datetime(2011,04,13); %Tinian
- %   endTime1 = datetime(2011,11,22); %Tinian
- %   startTime2 = datetime(2012,06,23); %Tinian
- %   endTime2 = datetime(2013,05,14); %Tinian
- %   startTime3 = datetime(2013,07,23); %Tinian
- %   endTime3 = datetime(2019,05,12); %Tinian
+%     startTime = datetime(2007,07,05); %QC
+%     endTime = datetime(2008,06,15); %QC
+%     startTime = datetime(2005,04,26); %CSM
+%     endTime = datetime(2006,05,11); %CSM
+    startTime = datetime(2006,10,19); %Palmyra
+    endTime = datetime(2009,11,12); %Palmyra
+% elseif DutyCy == 3 %PS1
+%    startTime1 = datetime(2006,10,03); %PS1
+%    endTime1 = datetime(2007,06,03); %PS1
+%    startTime2 = datetime(2007,07,19); %PS1
+%    endTime2 = datetime(2008,07,08); %PS1
+%    startTime3 = datetime(2012,07,03); %PS1
+%    endTime3 = datetime(2012,08,26); %PS1
+% elseif DutyCy == 3 %Tinian
+%    startTime1 = datetime(2011,04,13); %Tinian
+%    endTime1 = datetime(2011,11,22); %Tinian
+%    startTime2 = datetime(2012,06,23); %Tinian
+%    endTime2 = datetime(2013,05,14); %Tinian
+%    startTime3 = datetime(2013,07,23); %Tinian
+%    endTime3 = datetime(2019,05,12); %Tinian
  elseif DutyCy == 2 %Kauai
     startTime1 = datetime(2009,10,08); %Kauai
     endTime1 = datetime(2010,05,13); %Kauai
     startTime2 = datetime(2016,07,09); %Kauai
     endTime2 = datetime(2017,08,09); %Kauai
-% elseif DutyCy == 3 %Wake
-%     startTime1 = datetime(2010,01,31); %Wake
-%     endTime1 = datetime(2010,04,25); %Wake
-%     startTime2 = datetime(2011,03,25); %Wake
-%     endTime2 = datetime(2011,05,27); %Wake
-%     startTime3 = datetime(2012,02,25); %Wake
-%     endTime3 = datetime(2017,10,28); %Wake
-%elseif DutyCy == 4 %PHR
- %   startTime1 = datetime(2009,10,20);%PHR
- %   endTime1 = datetime(2010,05,23);%PHR
- %   startTime2 = datetime(2011,08,15);%PHR
- %   endTime2 = datetime(2012,01,07);%PHR
- %   startTime3 = datetime(2014,09,12);%PHR
- %   endTime3 = datetime(2015,07,16);%PHR
- %   startTime4 = datetime(2015,10,15);%PHR
- %   endTime4 = datetime(2019,06,10);%PHR
+elseif DutyCy == 3 %Wake
+    startTime1 = datetime(2010,01,31); %Wake
+    endTime1 = datetime(2010,04,25); %Wake
+    startTime2 = datetime(2011,03,25); %Wake
+    endTime2 = datetime(2011,05,27); %Wake
+    startTime3 = datetime(2012,02,25); %Wake
+    endTime3 = datetime(2017,10,28); %Wake
+% elseif DutyCy == 4 %PHR
+%    startTime1 = datetime(2009,10,20);%PHR
+%    endTime1 = datetime(2010,05,23);%PHR
+%    startTime2 = datetime(2011,08,15);%PHR
+%    endTime2 = datetime(2012,01,07);%PHR
+%    startTime3 = datetime(2014,09,12);%PHR
+%    endTime3 = datetime(2015,07,16);%PHR
+%    startTime4 = datetime(2015,10,15);%PHR
+%    endTime4 = datetime(2019,06,10);%PHR
 elseif DutyCy == 4 %Saipan
     startTime1 = datetime(2010,03,05);%Saipan
     endTime1 = datetime(2010,08,25);%Saipan
@@ -244,8 +248,8 @@ elseif strcmp(siteabrev,'LSM');
     hourlyTab.Effort_Bin = floor(hourlyTab.Effort_Bin * .5); %for LSM only, 5 on 5 off (10 minute cycle)-- meaning you're recording 50% (0.5) of the time
     hourlyTab.Effort_Sec = hourlyTab.Effort_Bin * 5 * 60; %convert from bins into efforts in seconds per day
 elseif strcmp(siteabrev,'Pagan');
-    hourlyTab.Effort_Bin(startVal:endVal) = hourlyTab.Effort_Bin(startVal:endVal) * (0.33); %for Pagan_01 only, 5 on 10 off (15 minute cycle)-- meaning you're recording 33% (0.33) of the time
-    hourlyTab.Effort_Sec(startVal:endVal) = hourlyTab.Effort_Bin(startVal:endVal) * 5 * 60; %convert from bins into efforts in seconds per day
+    hourlyTab.Effort_Bin = floor(hourlyTab.Effort_Bin * .33); %for Pagan_01 only, 5 on 10 off (15 minute cycle)-- meaning you're recording 33% (0.33) of the time
+     hourlyTab.Effort_Sec = hourlyTab.Effort_Bin * 5 * 60; %convert from bins into efforts in seconds per day
 elseif strcmp(siteabrev,'CORC');
     hourlyTab.Effort_Bin = floor(hourlyTab.Effort_Bin * .5); %for CORC_01 and 02 only, 15 on 15 off (30 minute cycle)-- meaning you're recording 50% (0.5) of the time
     hourlyTab.Effort_Sec = hourlyTab.Effort_Bin * 5 * 60; %convert from bins into efforts in seconds per day
@@ -481,9 +485,9 @@ if strcmp(siteabrev,'CSM');
 elseif strcmp(siteabrev,'LSM');
     dayTable.Effort_Bin = floor(dayTable.Effort_Bin * .5); %for LSM only, 5 on 5 off (10 minute cycle)-- meaning you're recording 50% (0.5) of the time
     dayTable.Effort_Sec = dayTable.Effort_Bin * 5 * 60; %convert from bins into efforts in seconds per day
-elseif strcmp(siteabrev,'PG');
-    dayTable.Effort_Bin(startVal:endVal) = dayTable.Effort_Bin(startVal:endVal) * (0.33); %for Pagan_01 only, 5 on 10 off (15 minute cycle)-- meaning you're recording 33% (0.33) of the time
-    dayTable.Effort_Sec(startVal:endVal) = dayTable.Effort_Bin(startVal:endVal) * 5 * 60; %convert from bins into efforts in seconds per day
+elseif strcmp(siteabrev,'Pagan');
+    dayTable.Effort_Bin = floor(dayTable.Effort_Bin * .33); %for Pagan_01 only, 5 on 10 off (15 minute cycle)-- meaning you're recording 33% (0.33) of the time
+    dayTable.Effort_Sec = dayTable.Effort_Bin * 5 * 60; %convert from bins into efforts in seconds per day
 elseif strcmp(siteabrev,'BD');
     dayTable.Effort_Bin(startVal:endVal) = dayTable.Effort_Bin(startVal:endVal) * (0.49); %for BD02,  I evaluated the duty cycle using continous deployments and I should adjust by 49%
     dayTable.Effort_Sec(startVal:endVal) = dayTable.Effort_Bin(startVal:endVal) * 5 * 60; %convert from bins into efforts in seconds per day

@@ -1,12 +1,12 @@
 clearvars
 close all
 %% Parameters defined by user
-filePrefix = 'PT'; % File name to match. 
-siteabrev = 'PT'; %abbreviation of site.
-region = 'GofAK'; %region
+filePrefix = 'Wake'; % File name to match. 
+siteabrev = 'Wake'; %abbreviation of site.
+region = 'CentralPac'; %region
 sp = 'Pm'; % your species code
 GDrive = 'I'; %Google Drive
-PlotSiteName =  'GofAK - PT';
+PlotSiteName =  'Wake';
 saveDirr = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev]; %specify directory to save files
 saveDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\Plots\',siteabrev,'\']; %specify directory to save files
 %% load workspace
