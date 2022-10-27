@@ -12,7 +12,6 @@
 library(geepack)         # for the GEEs (Wald's hypothesis tests allowed)
 library(splines)         # to construct the B-splines within a GEE-GLM
 library(tidyverse)       # because it literally does everything
-library(rjags)           # replacement for geeglm which is out of date
 library(ROCR)            # to build the ROC curve
 library(PresenceAbsence) # to build the confusion matrix
 library(ggplot2)         # to build the partial residual plots
@@ -27,7 +26,7 @@ library(car)            # to run an ANOVA
 library(splines2)       # to use mSpline for the GEEs
 library(ggfortify)      # extract confidence interval for ACF plots
 
-site = 'GS' #specify the site of interest #Hz, OC, NC, WC, GS, JAX, BC
+site = 'NC' #specify the site of interest #Hz, OC, NC, WC, GS, JAX, BC
 
 # Step 1: Load the Data -----------------------------------------------------------
 GDir = 'G'
@@ -67,7 +66,7 @@ BlockMod<-glm(PreAbs~
                as.factor(Year)
              ,data=SiteHourTable,family=binomial)
 
-ACF = acf(residuals(BlockMod))
+ACF = acf(residuals(BlockMod),lag.max = 1000)
 CI = ggfortify:::confint.acf(ACF)
 ACFidx = which(ACF[["acf"]] < CI, arr.ind=TRUE)
 ACFval = ACFidx[1] #<---- check this value to make sure it's reasonable (<600)
@@ -79,7 +78,7 @@ timeseries = data.frame(date=seq(startDate, endDate, by="hours"))
 preBlock = rep(1:(floor(nrow(timeseries)/ACFval)), times=1, each=ACFval)
 divdiff = nrow(timeseries) - length(preBlock)
 last = tail(preBlock, n = 1)+1
-lastVec = rep(last,each = divdiff)
+lastVec = rep(last,each = divdiff) 
 timeseries$block = c(preBlock,lastVec)
 names(timeseries)[1] = 'tbin'
 SiteHourTableB = left_join(SiteHourTable,timeseries,by="tbin")
@@ -105,6 +104,11 @@ summary(BlockMod)
 #TimeLost              0.06  1      0.802    
 #as.factor(Year)     164.22  3     <2e-16 ***
 
+#BC
+# bs(Julian, k = 4)  1382.12  4  < 2.2e-16 ***
+# TimeLost             27.76  1  1.376e-07 ***
+# as.factor(Year)    1003.91  3  < 2.2e-16 ***
+
 # Step 4: Data Exploration and Initial Analysis ---------------------------
 # Follow data exploration protocols suggested by Zuur et al. (2010), Zuur (2012), to generate pair plots, box plots, and assess collinearity between covariates in the dataset using Varinace Inflation Factors (vif).
 # Basic model for VIF analysis:
@@ -120,6 +124,11 @@ summary(BlockMod)
 #bs(Julian)      1.231767  3        1.035352
 #TimeLost        1.007290  1        1.003638
 #as.factor(Year) 1.238047  3        1.036230
+  
+#BC
+# bs(Julian)      1.428575  3        1.061249
+# TimeLost        1.005951  1        1.002971
+# as.factor(Year) 1.426685  3        1.061015
 
 
 # Step 5: Model Selection - Covariate/variable Preparation -------------------------
