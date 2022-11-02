@@ -1,14 +1,33 @@
 clearvars
-close all
+close all; clear all;clc;
 
+% Step 3 - Similar to Step 2 but for sex specific groupings
+% Groups data into 5-min bins and daily data accounting for effort(including duty cycle)...
+% deals with duty cycle by either taking the proportion of presence based on effort or normalizes...
+    % presence based on effort (usually these are pretty similar)
+    
+% Saves everything as workspaceStep3 to be used for subsequent steps
+
+%IMPORTANT OUTPUTS:
+% sexbinPresence - data binned in daily bins
+% sexhourlyTab - data binned in 1-hr bins
+% meantabFE365 - data averaged by Julian days for social groups
+% meantabJU365 - data averaged by Julian days for mid-size
+% meantabMA365 - data averaged by Julian days males
+%.csv Outputs for future statistical analysis in R
+    % bin Data - '*_binPresence.csv' %daily data
+    % '_365GroupedMeanSocialGroup.csv']); %table with the mean for each day of the year
+    % '*_365GroupedMeanMidSize.csv']); %table with the mean for each day of the year
+    % '*_365GroupedMeanMale.csv']); %table with the mean for each day of the year
+    % '*_binData_forGAMGEE_sexClasses.csv' %hourly bin data for modeling
 %% Parameters defined by user
-filePrefix = 'Wake'; % File name to match. 
-genderFileName = 'Wake'; %File name to match gender file
-siteabrev = 'Wake'; %abbreviation of site
+%Site names and data paths
+filePrefix = 'CSM'; % File name to match. 
+genderFileName = 'CSM'; %File name to match gender file
+siteabrev = 'CSM'; %abbreviation of site
 region = 'CentralPac';
 sp = 'Pm'; % your species code
 GDrive = 'I'; %Google Drive
-MaxICI = 2000;
 
 effortXls = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev,'\Pm_Effort.xlsx']; % specify excel file with effort times
 saveDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev]; %specify directory to save files
@@ -19,6 +38,7 @@ load(filename);
 sexData = binData; %not to get in the way of other bin data
 %% load workspace 2
 load([saveDir,'\',siteabrev,'_workspaceStep2.mat']);
+p = sp_setting_defaults('sp',sp,'analysis','SumPPICIBin'); % get default parameters -- make sure these match for your species
 
 % Overwrite some path names
 GDrive = 'I'; %Correct GDrive if overwritten by loading workspace
@@ -26,7 +46,9 @@ effortXls(1) = GDrive;
 saveDir(1) = GDrive;
 tpwsPath(1) = GDrive;
 %% Adjust bin data not to include less than 5 clicks or ICIs over 2000 ms
-if any(isnan(sexData.SocialGroup))
+%This should have been done in previous steps but some of the old data
+%needs adjusting still so I've kept this here
+if any(isnan(sexData.SocialGroup)) %Identifies if this is 'new' data or 'old'
 dataICIgram_noNaN = dataICIgram;
 dataICIgram_noNaN(isnan(dataICIgram_noNaN.ICISel),:) = []; %remove NaNs
 idx_ICItoohigh = find(dataICIgram_noNaN.ICISel > MaxICI);
@@ -50,20 +72,24 @@ sexData(isnan(sexData.Count),:) = []; %remove NaNs
 else
 end
 %% Extract effort from workspace 2 dayTable that already accounts for duty cycle, etc.
+dayBinTAB = timetable2table(dayTable);
 sexBinEffort = dayBinTAB(:,{'tbin','Effort_Bin','Effort_Sec','MaxEffort_Bin','MaxEffort_Sec'});
 sexBinEffort = table2timetable(sexBinEffort);
 %% group data by days and add effort
 %Retime sex data daily
-sexDEdata = sexData;
+sexDEdata = sexData; %save just in case
 sexData = retime(sexData,'daily','sum');
 sexbinPresence = synchronize (sexData, sexBinEffort);
+
+% Exclude columns that we don't care about
 sexbinPresence.maxPP = [];
+sexbinPresence.avgPeakFr = [];
 sexbinPresence.meanICI = [];
 sexbinPresence.OtherA = [];
 sexbinPresence.OtherB = [];
 sexbinPresence.Count = [];
-%% accounting for effort/dutycycle
-%Proportion of hours
+%% Two ways to account for effort
+%PROPORTION OF HOURS WITH CLICKS
 sexbinPresence.FeMinutes = sexbinPresence.SocialGroup *5;
 sexbinPresence.JuMinutes = sexbinPresence.MidSize *5;
 sexbinPresence.MaMinutes = sexbinPresence.Male *5;
@@ -74,7 +100,7 @@ sexbinPresence.FeHoursProp = sexbinPresence.FeHours ./(sexbinPresence.Effort_Sec
 sexbinPresence.JuHoursProp = sexbinPresence.JuHours ./(sexbinPresence.Effort_Sec ./ (60*60));
 sexbinPresence.MaHoursProp = sexbinPresence.MaHours ./(sexbinPresence.Effort_Sec ./ (60*60));
 
-%normalize bin counts for each sex based on bin effort
+%NORMALIZING BIN COUNT ACCORDING TO EFFORT
 sexbinPresence.NormEffort_Bin = sexbinPresence.Effort_Bin./sexbinPresence.MaxEffort_Bin; %what proportion of the day was there effort
 sexbinPresence.NormEffort_Sec = sexbinPresence.Effort_Sec./sexbinPresence.MaxEffort_Sec; %what proportion of the day was there effort
 sexbinPresence.SocialGroupNormBin = round(sexbinPresence.SocialGroup ./ sexbinPresence.NormEffort_Bin); %what would the normalized bin count be given the amount of effort for SocialGroups
@@ -83,7 +109,7 @@ sexbinPresence.MaleNormBin = round(sexbinPresence.Male ./ sexbinPresence.NormEff
 sexbinPresence.SocialGroupHoursNorm = round(sexbinPresence.SocialGroupNormBin ./ sexbinPresence.NormEffort_Bin); %convert the number of 5-min bins per day to hours
 sexbinPresence.MidSizeHoursNorm = round(sexbinPresence.MidSizeNormBin ./ sexbinPresence.NormEffort_Bin); %convert the number of 5-min bins per day to hours
 sexbinPresence.MaleHoursNorm = round(sexbinPresence.MaleNormBin ./ sexbinPresence.NormEffort_Bin); %convert the number of 5-min bins per day to hours
-%% find month and season
+%% Find month and season
 [p,~]=size(sexbinPresence);
 sexbinPresence.Season = zeros(p,1);
 sexbinPresence.month = month(sexbinPresence.tbin);
@@ -102,7 +128,7 @@ sexbinPresence.Season(springidxD) = 4;
 %add year and day to data
 sexbinPresence.Year = year(sexbinPresence.tbin);
 sexbinPresence.day = day(sexbinPresence.tbin,'dayofyear');
-
+%% Replace NANs where there was recording effort but no detections (this usually happens in the beginning or end of the recordings)
 NANidx = ismissing(sexbinPresence(:,{'SocialGroupNormBin'}));
 sexbinPresence{:,{'SocialGroupNormBin'}}(NANidx) = 0; %if there was effort, but no detections change the NormBin column to zero
 sexbinPresence{:,{'FeHoursProp'}}(NANidx) = 0; %if there was effort, but no detections change the HoursProp column to zero
@@ -115,11 +141,11 @@ sexbinPresence{:,{'MidSizeHoursNorm'}}(NANidx) = 0; %if there was effort, but no
 
 NANidx = ismissing(sexbinPresence(:,{'MaleNormBin'}));
 sexbinPresence{:,{'MaleNormBin'}}(NANidx) = 0; %if there was effort, but no detections change the NormBin column to zero
-sexbinPresence{:,{'JuHoursProp'}}(NANidx) = 0; %if there was effort, but no detections change the HoursProp column to zero
-sexbinPresence{:,{'MidSizeHoursNorm'}}(NANidx) = 0; %if there was effort, but no detections change the HoursNorm column to zero
+sexbinPresence{:,{'MaHoursProp'}}(NANidx) = 0; %if there was effort, but no detections change the HoursProp column to zero
+sexbinPresence{:,{'MaleHoursNorm'}}(NANidx) = 0; %if there was effort, but no detections change the HoursNorm column to zero
 
 writetable(timetable2table(sexbinPresence), [saveDir,'\', siteabrev, '_binPresence.csv']); %table with bin presence for each sex (timeseries)
-%% day table with days grouped together (summed and averaged) ** USE THIS **
+%% Day table with days grouped together (summed and averaged)
 [MD,~] = findgroups(sexbinPresence.day);
 
 if length(MD) < 365
