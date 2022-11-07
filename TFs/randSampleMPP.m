@@ -7,10 +7,10 @@
 % This code was provided by KEF and modified by NP 08312022
 close all;clear all; clc;
 %% User Definied Parameters
-siteabrevv = {'Wake'}; %abbreviation of site.
-TFsiteabrev = 'Wake';
-GDrive = 'I'; %directory for Google Drive
-region = 'CentralPac';
+siteabrevv = {'PS1'}; %abbreviation of site.
+TFsiteabrev = 'PS1';
+GDrive = 'G'; %directory for Google Drive
+region = 'CCE';
 sp = 'Pm'; % your species code
 itnum = '3'; % which iteration you are looking for (which TPWS folder)
 NN = 100000; %random clicks to choose from each deployment
@@ -41,37 +41,18 @@ counterI = 1;
 if itnum > 1
    for id = 2: str2num(itnum) % iterate id times according to itnum
        subfolder = ['TPWS',num2str(id)];
-       tpwsPath = (fullfile(tpwsDir,subfolder));
+       tpwsDir = (fullfile(tpwsDir,subfolder));
    end
 end
 %% Find all TPWS files that fit your specifications (does not look in subdirectories)
 % Concatenate parts of file name
-detfn = [region,'_',siteabrev,'.*',sp,'.*TPWS',itnum,'.mat'];
+detfn = ['.*',sp,'.*TPWS',itnum,'.mat'];
 
 % Get a list of all the files in the start directory
-fileList = cellstr(ls(tpwsPath));
+fileList = cellstr(ls(tpwsDir));
 
 % Find the file name that matches the filePrefix
 fileMatchIdx = find(~cellfun(@isempty,regexp(fileList,detfn))>0);
-
-if isempty(fileMatchIdx)
-    itnum = '2'; % which iteration you are looking for (which TPWS folder)
-    % define subfolder that fit specified iteration
-    if itnum > 1
-        for id = 2: str2num(itnum) % iterate id times according to itnum
-            subfolder = ['TPWS',num2str(id)];
-            tpwsPath = (fullfile(tpwsDir,subfolder));
-        end
-    % Concatenate parts of file name
-    detfn = ['.*',sp,'.*TPWS',itnum,'.mat'];
-
-    % Get a list of all the files in the start directory
-    fileList = cellstr(ls(tpwsPath));
-
-    % Find the file name that matches the filePrefix
-    fileMatchIdx = find(~cellfun(@isempty,regexp(fileList,detfn))>0);
-end
-end
 %% Get effort times matching prefix file
 allEfforts = readtable(effortXls); %read effort table
 effTable = allEfforts; %effort is for one site only
@@ -115,8 +96,8 @@ PPall = []; TTall = []; ICIall = []; PeakFrall = [];% initialize matrices
 for idsk = 1 : length(siteDiskIdx)
     % Load file
     disk = siteDiskIdx(idsk);
-    fprintf('Loading %d/%d file %s\n',idsk,length(siteDiskIdx),fullfile(tpwsPath,concatFiles{disk}))
-    D = load(fullfile(tpwsPath,concatFiles{disk}));
+    fprintf('Loading %d/%d file %s\n',idsk,length(siteDiskIdx),fullfile(tpwsDir,concatFiles{disk}))
+    D = load(fullfile(tpwsDir,concatFiles{disk}));
     
     % find times outside effort (sometimes there are detections
     % which are from the audio test at the beggining of the wav file)
