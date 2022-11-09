@@ -2,13 +2,13 @@
 clear all;close all;clc;
 % Needs to be run in 2018B or later
 %% load data
-siteName = 'Wake';
+siteName = 'OC';
 GDrive = 'I';
-region = 'CentralPac'; %region
+region = 'WAT'; %region
 NumBub = 3;
 DataDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteName];
 saveDirectory = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\Plots\',siteName];
-dates = [2010:2019];
+dates = [2015:2019];
 %% Retime data weekly
 GDrive_correctII = GDrive; % Store correct GDrive to overwrite some path names later
 load([DataDir,'\',siteName,'_workspaceStep2.mat']);
@@ -78,7 +78,6 @@ dataWeek.Year(adjYear) = dataWeek.Year(adjYear-1);
 dataWeek.SocialGroupNormBin = dataWeek.SocialGroupNormBin *5;
 dataWeek.MidSizeNormBin = dataWeek.MidSizeNormBin *5;
 dataWeek.MaleNormBin = dataWeek.MaleNormBin *5;
-
 %% Delete first week for specific sites
 if (strcmp(siteName,'KOA') | strcmp(siteName,'QN') | strcmp(siteName,'BD') | strcmp(siteName,'KS') | strcmp(siteName,'CB') | strcmp(siteName,'CA')... % GOA
         | strcmp(siteName,'CCE') | strcmp(siteName,'GI') | strcmp(siteName,'HOKE') | strcmp(siteName,'CORC')...
@@ -93,7 +92,7 @@ WeekData.year = year(WeekData.tbin); % All this is done so that you can generate
 if strcmp(siteName,'BD') % AD: Does this need to be changed depending on the site under investigation?
     CombinedWeek = dataWeek(:,21:23);
 else
-CombinedWeek = dataWeek(:,20:22);
+CombinedWeek = dataWeek(:,19:21);
 end
 CombinedWeek.NormBin = WeekData.NormBin;
 CombinedWeek.Added = CombinedWeek.SocialGroupNormBin + CombinedWeek.MidSizeNormBin + CombinedWeek.MaleNormBin;

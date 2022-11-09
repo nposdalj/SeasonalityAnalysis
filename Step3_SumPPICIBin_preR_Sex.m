@@ -22,10 +22,10 @@ close all; clear all;clc;
     % '*_binData_forGAMGEE_sexClasses.csv' %hourly bin data for modeling
 %% Parameters defined by user
 %Site names and data paths
-filePrefix = 'CSM'; % File name to match. 
-genderFileName = 'CSM'; %File name to match gender file
-siteabrev = 'CSM'; %abbreviation of site
-region = 'CentralPac';
+filePrefix = 'OC'; % File name to match. 
+genderFileName = 'OC'; %File name to match gender file
+siteabrev = 'OC'; %abbreviation of site
+region = 'WAT';
 sp = 'Pm'; % your species code
 GDrive = 'I'; %Google Drive
 
@@ -33,9 +33,9 @@ effortXls = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnaly
 saveDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev]; %specify directory to save files
 dayBinCSV= [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev,'\',siteabrev,'_dayData_forGLMR125.csv']; % specify csv document with general PM information
 %% Load sex specific data from ICIgrams
-filename = [saveDir,'\',genderFileName,'_',sp,'_gender.mat'];
+filename = [saveDir,'\',genderFileName,'_',sp,'_gender_filled.mat'];
 load(filename);
-sexData = binData; %not to get in the way of other bin data
+sexData = binData_mod; %not to get in the way of other bin data
 %% load workspace 2
 load([saveDir,'\',siteabrev,'_workspaceStep2.mat']);
 p = sp_setting_defaults('sp',sp,'analysis','SumPPICIBin'); % get default parameters -- make sure these match for your species
@@ -84,7 +84,7 @@ sexbinPresence = synchronize (sexData, sexBinEffort);
 % Exclude columns that we don't care about
 sexbinPresence.maxPP = [];
 sexbinPresence.avgPeakFr = [];
-sexbinPresence.meanICI = [];
+sexbinPresence.mean_ICISel = [];
 sexbinPresence.OtherA = [];
 sexbinPresence.OtherB = [];
 sexbinPresence.Count = [];

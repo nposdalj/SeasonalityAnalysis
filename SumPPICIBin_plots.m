@@ -5,20 +5,20 @@ close all;clear all;clc;
 % Accounts for effort but doesn't normalize bin or click count
 %% Parameters defined by user
 %Site names and paths
-filePrefix = 'CSM'; % File name to match. 
-siteabrev = 'CSM'; %abbreviation of site.
-region = 'CentralPac'; %region
+filePrefix = 'OC'; % File name to match. 
+siteabrev = 'OC'; %abbreviation of site.
+region = 'WAT'; %region
 sp = 'Pm'; % your species code
 GDrive = 'I'; %Google Drive
-PlotSiteName =  'Cross Seamount';
+PlotSiteName =  'Oceanographers Canyon';
 saveDirr = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev]; %specify directory to save files
 saveDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\Plots\',siteabrev,'\']; %specify directory to save files
-p = sp_setting_defaults('sp',sp,'analysis','SumPPICIBin'); % get default parameters -- make sure these match for your species
 %% load workspace
 GDrive_correct = GDrive; % Preserve correct GDrive as it was entered above
 load([saveDirr,'\',siteabrev,'_workspaceStep2.mat']);
 GDrive = 'I'; %Correct GDrive for SWAL1
 saveDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\Plots\',siteabrev,'\']; %specify directory to save files
+p = sp_setting_defaults('sp',sp,'analysis','SumPPICIBin'); % get default parameters -- make sure these match for your species
 
 % Overwrite some path names
 GDrive = GDrive_correct; %Correct GDrive if overwritten by loading workspace
@@ -26,6 +26,7 @@ effortXls(1) = GDrive;
 saveDirr(1) = GDrive;
 tpwsPath(1) = GDrive;
 %% Group data by week for plotting
+dayTable(:,{'Season','month','Year','day'}) = [];
 weekData = retime(dayTable,'weekly','mean');
 weekEffort = retime(dayTable,'weekly','sum');
 weekTable = retime(dayTable,'weekly','sum');
