@@ -9,7 +9,7 @@ close all;clear all; clc;
 %% User Definied Parameters
 siteabrevv = {'PS1'}; %abbreviation of site.
 TFsiteabrev = 'PS1';
-GDrive = 'G'; %directory for Google Drive
+GDrive = 'I'; %directory for Google Drive
 region = 'CCE';
 sp = 'Pm'; % your species code
 itnum = '3'; % which iteration you are looking for (which TPWS folder)
