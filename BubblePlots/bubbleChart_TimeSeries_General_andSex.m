@@ -2,13 +2,13 @@
 clear all;close all;clc;
 % Needs to be run in 2018B or later
 %% load data
-siteName = 'OC';
+siteName = 'CB';
 GDrive = 'I';
-region = 'WAT'; %region
+region = 'GofAK'; %region
 NumBub = 3;
 DataDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteName];
 saveDirectory = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\Plots\',siteName];
-dates = [2015:2019];
+dates = [2011:2019];
 %% Retime data weekly
 GDrive_correctII = GDrive; % Store correct GDrive to overwrite some path names later
 load([DataDir,'\',siteName,'_workspaceStep2.mat']);

@@ -14,8 +14,8 @@ close all; clear all;clc;
 % dataICIgram - all clicks that have an ICI wihin the thresholds set --> used for ICIgrams
 % binDataICIgram - ICIgram data grouped in 5 min bins
 %% Parameters defined by user
-SITE = {'NC'};
-region = 'WAT'; %region
+SITE = {'BD','KS'};
+region = 'GofAK'; %region
 sp = 'Pm'; % your species code
 GDrive = 'I'; %Google Drive
 
