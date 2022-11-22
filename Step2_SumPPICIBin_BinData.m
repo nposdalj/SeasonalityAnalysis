@@ -23,7 +23,7 @@ region = 'GofAK'; %region
 sp = 'Pm'; % your species code
 GDrive = 'I'; %Google Drive
 saveDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev]; %specify directory to save files
-DutyCy = 0; %if this data only has 1 deployment that is duty cycled make it equal to 1 otherwise, make it equal to the number...
+DutyCy = 1; %if this data only has 1 deployment that is duty cycled make it equal to 1 otherwise, make it equal to the number...
 % of deployments that have different duty cycles that must be accounted for; if this data is NOT duty cycled,...
 % or if the entire deployment is duty cycled, make it equal to 0
 %% load workspace
@@ -48,6 +48,12 @@ if DutyCy == 1
     elseif strcmp(siteabrev,'Palmyra')
         startTime = datetime(2006,10,19); %Palmyra
         endTime = datetime(2009,11,12); %Palmyra
+    elseif strcmp(siteabrev,'BD')
+        startTime = datetime(2011,05,31); 
+        endTime = datetime(2012,08,11);
+    elseif strcmp(siteabrev,'CB')
+        startTime = datetime(2012,05,03);
+        endTime = datetime(2013,02,21);
     end
 elseif DutyCy == 3
     if strcmp(siteabrev,'PS1')
