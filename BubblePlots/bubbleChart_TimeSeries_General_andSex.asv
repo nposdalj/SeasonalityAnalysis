@@ -2,7 +2,7 @@
 clear all;close all;clc;
 % Needs to be run in 2018B or later
 %% load data
-siteName = 'CB';
+siteName = 'BD';
 GDrive = 'I';
 region = 'GofAK'; %region
 NumBub = 3;
@@ -82,7 +82,6 @@ dataWeek.MaleNormBin = dataWeek.MaleNormBin *5;
 %% Delete first week for specific sites so they don't show up in the plots
 dataWeek.year = year(dataWeek.tbin);
 [DWyear,occurrenceDW] = unique(dataWeek.year);
-if height(DWyear) > 1
 if occurrenceDW(2) == 2
     dataWeek(1,:) = [];
 end
@@ -91,7 +90,6 @@ WeekData.year = year(WeekData.tbin);
 [WDyear,occurrenceWD] = unique(WeekData.year);
 if occurrenceWD(2) == 2
     WeekData(1,:) = [];
-end
 end
 %% Checking to see how much was missed
 CombinedWeek = dataWeek(:,19:21);
@@ -200,7 +198,7 @@ for y = 1:length(years)
         round(WeekData.NormBin(idxYear & keep)),black)
 end
 bubblesize([2 15])
-blgd= bubblelegend('Mean daily min');
+blgd= bubblelegend('Avg. daily minutes');
 blgd.Location = 'northeastoutside';
 blgd.NumBubbles = NumBub;
 set(gca,'ydir','reverse')
@@ -230,7 +228,7 @@ for y = 1:length(years)
     bubblechart(dataWeek.wN(idxYear  & keep),dataWeek.Year(idxYear  & keep),...
         round(dataWeek.MidSizeNormBin(idxYear  & keep)),blue)
 end
-blgd= bubblelegend('Mean daily min');
+blgd= bubblelegend('Avg. daily minutes');
 blgd.Location = 'northeastoutside';
 blgd.NumBubbles = NumBub;
 bubblesize([2 15])
@@ -260,7 +258,7 @@ for y = 1:length(years)
     bubblechart(dataWeek.wN(idxYear & keep),dataWeek.Year(idxYear & keep),...
         round(dataWeek.MaleNormBin(idxYear & keep)),blue)
 end
-blgd= bubblelegend('Mean daily min');
+blgd= bubblelegend('Avg. daily minutes');
 blgd.Location = 'northeastoutside';
 blgd.NumBubbles = NumBub;
 bubblesize([2 15])
@@ -296,7 +294,7 @@ for y = 1:length(years)
         round(WeekData.NormBin(idxYear & keep)),black)
 end
 bubblesize([2 15])
-blgd= bubblelegend('Mean daily min');
+blgd= bubblelegend('Avg. daily minutes');
 blgd.Location = 'northeastoutside';
 blgd.NumBubbles = NumBub;
 set(gca,'ydir','reverse')
@@ -327,7 +325,7 @@ for y = 1:length(years)
         round(dataWeek.SocialGroupNormBin(idxYear & keep)),blue)
 end
 bubblesize([2 15])
-blgd= bubblelegend('Mean daily min');
+blgd= bubblelegend('Avg. daily minutes');
 blgd.Location = 'northeastoutside';
 blgd.NumBubbles = NumBub;
 set(gca,'ydir','reverse')
@@ -356,7 +354,7 @@ for y = 1:length(years)
     bubblechart(dataWeek.wN(idxYear  & keep),dataWeek.Year(idxYear  & keep),...
         round(dataWeek.MidSizeNormBin(idxYear  & keep)),blue)
 end
-blgd= bubblelegend('Mean daily min');
+blgd= bubblelegend('Avg. daily minutes');
 blgd.Location = 'northeastoutside';
 blgd.NumBubbles = NumBub;
 bubblesize([2 15])
@@ -386,7 +384,7 @@ for y = 1:length(years)
     bubblechart(dataWeek.wN(idxYear & keep),dataWeek.Year(idxYear & keep),...
         round(dataWeek.MaleNormBin(idxYear & keep)),blue)
 end
-blgd= bubblelegend('Mean daily min');
+blgd= bubblelegend('Avg. daily minutes');
 blgd.Location = 'northeastoutside';
 blgd.NumBubbles = NumBub;
 bubblesize([2 15])
@@ -431,7 +429,7 @@ for y = 1:length(years)
     bubblechart(dataWeek.wN(idxYear  & keep),dataWeek.Year(idxYear  & keep),...
         round(dataWeek.MidSizeNormBin(idxYear  & keep)),blue)
 end
-blgd= bubblelegend('Mean daily min');
+blgd= bubblelegend('Avg. daily minutes');
 blgd.Location = 'northeastoutside';
 blgd.NumBubbles = NumBub;
 bubblesize([2 15])
@@ -461,7 +459,7 @@ for y = 1:length(years)
     bubblechart(dataWeek.wN(idxYear & keep),dataWeek.Year(idxYear & keep),...
         round(dataWeek.MaleNormBin(idxYear & keep)),blue)
 end
-blgd= bubblelegend('Mean daily min');
+blgd= bubblelegend('Avg. daily minutes');
 blgd.Location = 'northeastoutside';
 blgd.NumBubbles = NumBub;
 bubblesize([2 15])
@@ -492,7 +490,7 @@ for y = 1:length(years)
         round(WeekData.NormBin(idxYear & keep)),black)
 end
 bubblesize([2 8])
-blgd= bubblelegend('Mean daily min');
+blgd= bubblelegend('Avg. daily minutes');
 blgd.Location = 'northeastoutside';
 blgd.NumBubbles = NumBub;
 set(gca,'ydir','reverse')
@@ -502,7 +500,7 @@ else
     bubblelim([1 round(max(CombinedWeek.Difference))]);
 end
 xlim([0,53])
-ylabel('Uncategorized')
+ylabel('Difference')
 xlabel('Week of the year')
 set(gca,'xticklabel',[])
 yticks(dates)
@@ -528,7 +526,7 @@ for y = 1:length(years)
         round(dataWeek.SocialGroupNormBin(idxYear & keep)),blue)
 end
 bubblesize([2 15])
-blgd= bubblelegend('Mean daily min');
+blgd= bubblelegend('Avg. daily minutes');
 blgd.Location = 'northeastoutside';
 blgd.NumBubbles = NumBub;
 set(gca,'ydir','reverse')
@@ -557,7 +555,7 @@ for y = 1:length(years)
     bubblechart(dataWeek.wN(idxYear  & keep),dataWeek.Year(idxYear  & keep),...
         round(dataWeek.MidSizeNormBin(idxYear  & keep)),blue)
 end
-blgd= bubblelegend('Mean daily min');
+blgd= bubblelegend('Avg. daily minutes');
 blgd.Location = 'northeastoutside';
 blgd.NumBubbles = NumBub;
 bubblesize([2 15])
@@ -587,7 +585,7 @@ for y = 1:length(years)
     bubblechart(dataWeek.wN(idxYear & keep),dataWeek.Year(idxYear & keep),...
         round(dataWeek.MaleNormBin(idxYear & keep)),blue)
 end
-blgd= bubblelegend('Mean daily min');
+blgd= bubblelegend('Avg. daily minutes');
 blgd.Location = 'northeastoutside';
 blgd.NumBubbles = NumBub;
 bubblesize([2 15])
@@ -618,7 +616,7 @@ for y = 1:length(years)
         round(WeekData.NormBin(idxYear & keep)),black)
 end
 bubblesize([2 15])
-blgd= bubblelegend('Mean daily min');
+blgd= bubblelegend('Avg. daily minutes');
 blgd.Location = 'northeastoutside';
 blgd.NumBubbles = NumBub;
 set(gca,'ydir','reverse')
@@ -628,7 +626,7 @@ else
     bubblelim([1 round(max(CombinedWeek.Difference))]);
 end
 xlim([0,53])
-ylabel('Uncategorized')
+ylabel('Difference')
 xlabel('Week of the year')
 set(gca,'xticklabel',[])
 yticks(dates)
@@ -649,20 +647,30 @@ paramfile = fullfile(saveDirectory,txtFileName);
 fileid = fopen(paramfile, 'w');
 fclose(fileid);
 fileid = fopen(paramfile, 'at');
+Femax = max(dataWeek.SocialGroupNormBin);
+Jumax = max(dataWeek.MidSizeNormBin);
+Mamax = max(dataWeek.MaleNormBin);
+Comax = max(CombinedWeek.Difference);
+Gemax = max(CombinedWeek.NormBin);
 fprintf(fileid, ['Bubble Plot Time Series Information for Site ' siteName...
-   '\n\nSocial Groups had a maximum mean daily presence (min) per week of \t' num2str(Femax)...
-   '\n\nSocial Groups had a total mean daily presence (min) per week of \t' num2str(mean(dataWeek.SocialGroupNormBin,'omitnan')) '\n(Excludes NaNs)\t'...
-   '\n\nWeeks when Social Groups were present had a total mean daily presence (min) per week of \t' num2str(mean(TotalDataSG)) '\n(Excludes NaNs and Zeros)\t'...
-   '\n\nMid Size had a maximum mean daily presence (min) per week of \t' num2str(Jumax)...
-   '\n\nMid Size had a total mean daily presence (min) per week of \t' num2str(mean(dataWeek.MidSizeNormBin,'omitnan')) '\n(Excludes NaNs)\t'...
-   '\n\nWeeks when Mid Size were present had a total mean daily presence (min) per week of \t' num2str(mean(TotalDataMS)) '\n(Excludes NaNs and Zeros)\t'...
-   '\n\nMales had a maximum mean daily presence (min) per week of \t' num2str(Mamax)...
-   '\n\nMales had a total mean daily presence (min) per week of \t' num2str(mean(dataWeek.MaleNormBin,'omitnan')) '\n(Excludes NaNs)\t'...
-   '\n\nWeeks when Males were present had a total mean daily presence (min) per week of \t' num2str(mean(TotalDataM)) '\n(Excludes NaNs and Zeros)\t'...   
-   '\n\nAll sperm whales had a maximum mean daily presence (min) per week of \t' num2str(Gemax)...
-   '\n\nAll sperm whales had a total mean daily presence (min) per week of \t' num2str(mean(WeekData.NormBin,'omitnan')) '\n(Excludes NaNs)\t'...
-   '\n\nWeeks when all sperm whales were present had a total mean daily presence (min) per week of \t' num2str(mean(TotalDataG)) '\n(Excludes NaNs and Zeros)\t'...
-   '\n\nUncategorized had a maximum mean daily presence (min) per week of \t' num2str(Comax)...
-   '\n\nUncategorized had a total mean daily presence (min) per week of \t' num2str(mean(CombinedWeek.Difference,'omitnan')) '\n(Excludes NaNs)\t'...
-   '\n\nWeeks when uncategorized were present had a total mean daily presence (min) per week of \t' num2str(mean(TotalDataD)) '\n(Excludes NaNs and Zeros)\t']);
+   '\n\nSocial Groups had a maximum mean daily presence (min) per week of \t' Femax...
+   '\n\nSocial Groups had a total mean daily presence (min) per week of \t' mean(dataWeek.SocialGroupNormBin,'omitnan') '\n(Excludes NaNs)\t'...
+   '\n\nWeeks when Social Groups were present had a total mean daily presence (min) per week of \t' mean(TotalDataSG) '\n(Excludes NaNs and Zeros)\t'...
+   '\n\nMid Size had a maximum mean daily presence (min) per week of \t' Femax...
+   '\n\nMid Size had a total mean daily presence (min) per week of \t' mean(dataWeek.SocialGroupNormBin,'omitnan') '\n(Excludes NaNs)\t'...
+   '\n\nWeeks when Mid Size were present had a total mean daily presence (min) per week of \t' mean(TotalDataSG) '\n(Excludes NaNs and Zeros)\t'...
+   '\n\nMales had a maximum mean daily presence (min) per week of \t' Femax...
+   '\n\nSocial Groups had a total mean daily presence (min) per week of \t' mean(dataWeek.SocialGroupNormBin,'omitnan') '\n(Excludes NaNs)\t'...
+   '\n\nWeeks when Social Groups were present had a total mean daily presence (min) per week of \t' mean(TotalDataSG) '\n(Excludes NaNs and Zeros)\t'...
+   '\n\nSSP INPUT\nFile Name\t' SSPfile, '\nSSP Type\t' SSPtype '\nMonth\t' SSPmoReporting...
+   '\n\nHYDROPHONE PARAMETERS\nSL\t' num2str(SL) '\nSD\t' num2str(SD) '\nhlat\t' num2str(hlat) '\nhlon\t' num2str(hlon) '\nhdepth\t' num2str(hdepth) '\nFrequency\t' num2str(freq{freqi})...
+   '\n\nACOUSTO ELASTIC HALF-SPACE\nCompressional Speed\t' num2str(AEHS.compSpeed) '\nShear Speed\t' num2str(AEHS.shearSpeed) '\nDensity\t' num2str(AEHS.density) '\nCompressional Attenuation\t' num2str(AEHS.compAtten)...
+   '\n\nRANGE & RESOLUTION\nRange\t' num2str(total_range) '\nRange Step\t' num2str(rangeStep) '\nNumber of Radials\t' num2str(numRadials) '\nRad Step\t' num2str(radStep) '\nDepth Step\t' num2str(depthStep)...
+   '\n\nPLOT GENERATION\nGenerate Polar Plots\t' num2str(generate_PolarPlots) '\nGenerate Radial Plots\t' num2str(generate_RadialPlots)...
+   '\nRL Threshold\t' num2str(RL_threshold) '\nRL Plot Maximum\t' num2str(RL_plotMax) '\nDepth Levels\t' num2str(makePolarPlots)... % '\nRadial Plots\t' num2str(makeRadialPlots)...
+   '\n\n\nSSP\nDepth\tSound Speed']);
+SSP_Reporting = (table2array(SSP)).';
+fprintf(fileid, '\n%4.0f\t%4.11f', SSP_Reporting);
 fclose(fileid);
+copyfile(paramfile,fullfile(saveDir_subFi, txtFileName)) % Copy to saveDir_sub
+copyfile(paramfile,fullfile(plotDirFi, txtFileName)); % Copy to plotDir
