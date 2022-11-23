@@ -14,7 +14,8 @@ GDrive_correctII = GDrive; % Store correct GDrive to overwrite some path names l
 load([DataDir,'\',siteName,'_workspaceStep2.mat']);
 clear mean
 
-dates = unique(dayTable.Year)'; %unique dates for plot
+datesALL = unique(dayTable.Year)'; %unique dates for plot
+dates = datesALL(1):datesALL(end); %fill in missing years
 
 %Add first week of the year and last to account for x's
 %Find the first and last day of the year
