@@ -2,9 +2,9 @@
 clear all;close all;clc;
 % Needs to be run in 2018B or later
 %% load data
-siteName = 'CB';
+siteName = 'JAX';
 GDrive = 'I';
-region = 'GofAK'; %region
+region = 'WAT'; %region
 NumBub = 3;
 DataDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteName];
 saveDirectory = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\Plots\',siteName];

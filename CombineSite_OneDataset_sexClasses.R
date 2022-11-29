@@ -5,17 +5,21 @@ library(tidyverse)
 library(anytime)
 library(lubridate)
 
-GDrive="I"
-#Sites = c('CB','PT','QN','AB','KOA','BD','KS') #The GOA and BSAI Sites
-#Regions = c("GOA","BSAI") #GOA AND BSAI Region
+GDrive = 'I'
+
+#Sites
+Sites = c('CB','PT','QN','AB','KOA','BD','KS') #The GOA and BSAI Sites
 #Sites = c('BS','BP','NC','BC','GS','JAX','HZ','OC','WC')
-#Regions = c('WAT')
 #Sites = c('CA','CCE','CORC','DCPP01C','GI','HOKE','PS1','PS2','QC')
+#Sites = c('CSM','Equator','Kauai','King','Kona','LSM','Pagan','Palmyra','PHR','Saipan','Tinian','Wake')
+
+#Regions
+#Regions = c('CentralPac')
+#region = 'CentralPac'
 #Regions = c('CCE')
 #region = 'CCE'
-Sites = c('CSM','Equator','Kauai','King','Kona','LSM','Pagan','Palmyra','PHR','Saipan','Tinian','Wake')
-Regions = c('CentralPac')
-region = 'CentralPac'
+Regions = c("GOA","BSAI") #GOA AND BSAI Region
+region = 'GofAK'
 
 fileDir = paste(GDrive,":/My Drive/",region,"_TPWS_metadataReduced/SeasonalityAnalysis/",Sites, sep="")#setting the directory
 saveDir = paste(GDrive,":/My Drive/",region,"_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites/",sep="")
