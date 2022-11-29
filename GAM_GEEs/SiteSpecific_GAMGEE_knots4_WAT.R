@@ -27,7 +27,7 @@ library(splines2)       # to use mSpline for the GEEs
 library(ggfortify)      # extract confidence interval for ACF plots
 library(lubridate)      # to adjust dates
 
-site = 'BS' #specify the site of interest # JAX, BC
+site = 'JAX' #specify the site of interest 
 
 # Step 1: Load the Data -----------------------------------------------------------
 GDir = 'G'
@@ -135,6 +135,11 @@ summary(BlockMod)
 #   TimeLost                 5  1      0.031 *  
 #   as.factor(Year)        290  3     <2e-16 ***
 
+# JAX
+# bs(Julian, k = 4)    118.4  4     <2e-16 ***
+# TimeLost               0.1  1       0.76    
+# as.factor(Year)      103.2  3     <2e-16 ***
+
 # Step 4: Data Exploration and Initial Analysis ---------------------------
 # Follow data exploration protocols suggested by Zuur et al. (2010), Zuur (2012), to generate pair plots, box plots, and assess collinearity between covariates in the dataset using Varinace Inflation Factors (vif).
 # Basic model for VIF analysis:
@@ -180,6 +185,11 @@ summary(BlockMod)
 # bs(Julian)      1.65  3            1.09
 # TimeLost        1.00  1            1.00
 # as.factor(Year) 1.65  3            1.09
+  
+# JAX
+# bs(Julian)      2.55  3            1.17
+# TimeLost        1.00  1            1.00
+# as.factor(Year) 2.55  3            1.17
 
 # Step 5: Model Selection - Covariate/variable Preparation -------------------------
 
@@ -225,7 +235,10 @@ POD0<-geeglm(PreAbs ~ 1, family = binomial, corstr="ar1", id=Blocks, data=SiteHo
   # model order adjusted to match BS, JD  and Year have same values
   
   # BC
-  
+  # QIC            QIC.1           QIC.2            QIC.3
+  # model3A             POD0            POD3a           POD3b            POD3c
+  # QIC3A   33127.7674172908 30806.6812723813 32296.702835807 31803.1418968153
+  # Final Model: jday then year
   
   # NC
   # QIC            QIC.1           QIC.2            QIC.3
@@ -257,6 +270,12 @@ POD0<-geeglm(PreAbs ~ 1, family = binomial, corstr="ar1", id=Blocks, data=SiteHo
   # QIC3A   16364.2045633377 15909.9719423346 16271.4510039233 16103.6826382639
   #Final model includes year and j day, order: j day then year
   
+  # JAX
+  # QIC            QIC.1            QIC.2            QIC.3
+  # model3A             POD0            POD3a            POD3b            POD3c
+  # QIC3A   6000.25899926762 5860.23861537633 5953.00008800914 5925.57746064399
+  # Final model: jday then year
+  
 
 # Step 7: Finalize Model ----------------------------------------
   
@@ -266,12 +285,14 @@ if (site == 'BP'){
   dimnames(AvgDayMat)<-list(NULL,c("ADBM1", "ADBM2"))
   PODFinal = geeglm(PreAbs ~ as.factor(Year)+AvgDayMat,family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
 } 
-  
 if (site == 'BS') {
   dimnames(AvgDayMat)<-list(NULL,c("ADBM1", "ADBM2"))
   PODFinal = geeglm(PreAbs ~ as.factor(Year)+AvgDayMat,family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
 }
-
+if (site == 'BC'){
+  dimnames(AvgDayMat)<-list(NULL,c("ADBM1", "ADBM2"))
+  PODFinal = geeglm(PreAbs ~ AvgDayMat+as.factor(Year),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
+}
 if (site == 'NC'){
   dimnames(AvgDayMat)<-list(NULL,c("ADBM1", "ADBM2"))
   PODFinal = geeglm(PreAbs ~ AvgDayMat+as.factor(Year),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
@@ -289,6 +310,10 @@ if (site == 'WC'){
   PODFinal = geeglm(PreAbs ~ as.factor(Year)+AvgDayMat,family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
 }
 if (site == 'GS'){
+  dimnames(AvgDayMat)<-list(NULL,c("ADBM1", "ADBM2"))
+  PODFinal = geeglm(PreAbs ~ AvgDayMat+as.factor(Year),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
+}
+if (site == 'JAX'){
   dimnames(AvgDayMat)<-list(NULL,c("ADBM1", "ADBM2"))
   PODFinal = geeglm(PreAbs ~ AvgDayMat+as.factor(Year),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
 }
@@ -311,10 +336,14 @@ anova(PODFinal)
   # as.factor(Year)  3 34.8   1.4e-07 ***
   # AvgDayMat        2 25.1   3.6e-06 ***
   
-  # NC *
-  # Df      X2 P(>|Chi|)   
-  # as.factor(Year)  4 13.2050  0.010317 * 
-  #   AvgDayMat        2  9.9977  0.006746 **
+  # BC
+  # AvgDayMat        2  67.5   2.1e-15 ***
+  # as.factor(Year)  3 109.2   < 2e-16 ***
+  
+  # NC 
+  # Df    X2 P(>|Chi|)   
+  # AvgDayMat        2  8.98    0.0112 * 
+  # as.factor(Year)  4 15.52    0.0037 **
   
   # HZ 
   # Df   X2 P(>|Chi|)    
@@ -325,14 +354,20 @@ anova(PODFinal)
   # AvgDayMat        2 28.050 8.108e-07 ***
   #   as.factor(Year)  4 10.987   0.02671 * 
   
-  # WC *
-  # AvgDayMat        2 30.5   2.3e-07 ***
-  #   as.factor(Year)  3 58.6   1.2e-12 ***
+  # WC 
+  # Df   X2 P(>|Chi|)    
+  # as.factor(Year)  3 46.0   5.7e-10 ***
+  # AvgDayMat        2 34.7   2.9e-08 ***
   
   # GS
   # Df   X2 P(>|Chi|)    
   # AvgDayMat        2 21.8   1.9e-05 ***
   #   as.factor(Year)  3 25.1   1.4e-05 ***
+  
+  # JAX
+  # AvgDayMat        2 20.5   3.6e-05 ***
+  # as.factor(Year)  3 17.3   0.00062 ***
+  
 #Save model output
 filename = paste(saveWorkspace,site,'_SiteSpecificModelSummary.txt',sep="")
 sink(filename)
