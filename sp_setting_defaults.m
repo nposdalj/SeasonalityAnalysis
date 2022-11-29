@@ -188,7 +188,7 @@ elseif (strcmp(sp,'PM') || strcmp(sp,'pm') || strcmp(sp,'Pm'))
     dfManual = 100;
     minBout = 75; minDur = 60; 
     slope = 1.05;
-    iciRange = [300, 3000];
+    iciRange = [300, 2000];
     frRange = [fLow fHi];
     N = 512;
 else

@@ -8,11 +8,17 @@ library(lubridate)
 GDrive="I"
 #Sites = c('CB','PT','QN','AB','KOA','BD','KS') #The GOA and BSAI Sites
 #Regions = c("GOA","BSAI") #GOA AND BSAI Region
-Sites = c('BS','BP','NC','BC','GS','JAX','HZ','OC','WC')
-Regions = c('WAT')
+#Sites = c('BS','BP','NC','BC','GS','JAX','HZ','OC','WC')
+#Regions = c('WAT')
+#Sites = c('CA','CCE','CORC','DCPP01C','GI','HOKE','PS1','PS2','QC')
+#Regions = c('CCE')
+#region = 'CCE'
+Sites = c('CSM','Equator','Kauai','King','Kona','LSM','Pagan','Palmyra','PHR','Saipan','Tinian','Wake')
+Regions = c('CentralPac')
+region = 'CentralPac'
 
-fileDir = paste(GDrive,":/My Drive/WAT_TPWS_metadataReduced/SeasonalityAnalysis/",Sites, sep="")#setting the directory
-saveDir = paste(GDrive,":/My Drive/WAT_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites/",sep="")
+fileDir = paste(GDrive,":/My Drive/",region,"_TPWS_metadataReduced/SeasonalityAnalysis/",Sites, sep="")#setting the directory
+saveDir = paste(GDrive,":/My Drive/",region,"_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites/",sep="")
 filename = paste(fileDir,"/",Sites,"_binPresence.csv",sep="")
 filename2 = paste(fileDir,"/",Sites,"_binData_forGAMGEE_sexClasses.csv",sep="")
 
@@ -23,7 +29,7 @@ DayTab = data.frame(matrix(ncol = 0, nrow=0))
 for (i in 1:length(Sites)){
   dayBinTAB = read.csv(filename[i])
   modDayBinTAB = dayBinTAB %>%
-    dplyr::select(tbin, FemaleHoursNorm,JuvenileHoursNorm, MaleHoursNorm)
+    dplyr::select(tbin, SocialGroupHoursNorm,MidSizeHoursNorm, MaleHoursNorm)
   name = Sites[i]
   #names(modDayBinTAB)[names(modDayBinTAB) == "HoursNorm"] = name
   if (i == 1){
@@ -50,7 +56,7 @@ DayTab = data.frame(matrix(ncol = 0, nrow=0))
 for (i in 1:length(Sites)){
   dayBinTAB = read.csv(filename[i])
   modDayBinTAB = dayBinTAB %>%
-    dplyr::select(tbin, FemaleHoursNorm,JuvenileHoursNorm, MaleHoursNorm, Effort_Bin, Effort_Sec)
+    dplyr::select(tbin, SocialGroupHoursNorm,MidSizeHoursNorm, MaleHoursNorm, Effort_Bin, Effort_Sec)
   name = Sites[i]
   modDayBinTAB$Site = name
   modDayBinTAB$ID = i
@@ -73,9 +79,9 @@ DayTab$Julian = format(DayTab$tbin,"%j")
 DayTab$Year = format(DayTab$tbin,"%Y")
 
 #PreAbs
-#DayTab$FemaleHoursNorm %>% mutate_if(is.numeric, ~1 * (. > 0)) #replaces NA values with 0
-DayTab$PreAbsF = ifelse(DayTab$FemaleHoursNorm>0,1,0)
-DayTab$PreAbsJ = ifelse(DayTab$JuvenileHoursNorm>0,1,0)
+#DayTab$SocialGroupHoursNorm %>% mutate_if(is.numeric, ~1 * (. > 0)) #replaces NA values with 0
+DayTab$PreAbsF = ifelse(DayTab$SocialGroupHoursNorm>0,1,0)
+DayTab$PreAbsJ = ifelse(DayTab$MidSizeHoursNorm>0,1,0)
 DayTab$PreAbsM = ifelse(DayTab$MaleHoursNorm>0,1,0)
 
 #Export grouped table as .csv
@@ -89,7 +95,7 @@ HourTab = data.frame(matrix(ncol = 0, nrow=0))
 for (i in 1:length(Sites)){
   HourBinTab = read.csv(filename2[i])
   modHourBinTAB = HourBinTab %>%
-    dplyr::select(tbin, Female,Juvenile, Male, Effort_Bin, Effort_Sec)
+    dplyr::select(tbin, SocialGroup,MidSize, Male, Effort_Bin, Effort_Sec)
   name = Sites[i]
   #names(modHourBinTAB)[names(modHourBinTAB) == "PreAbs"] = name
   if (i == 1){

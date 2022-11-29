@@ -1,19 +1,20 @@
 clearvars
 close all
 %% Parameters defined by user
-filePrefix = 'WAT_BS'; % File name to match. 
-siteabrev = 'BS'; %abbreviation of site.
-titleNAME = 'Western Atlantic- Blake Spur';
+filePrefix = 'CA'; % File name to match. 
+siteabrev = 'CA'; %abbreviation of site.
+titleNAME = 'Gulf of California';
 sp = 'Pm'; % your species code
-tpwsPath = ['H:\My Drive\WAT_TPWS_metadataReduced\TPWS_125\',filePrefix,'\TPWS_125\TPWS2\TPWS3\']; %directory of TPWS files
+GDrive = 'I';
+tpwsPath = [GDrive,':\My Drive\WAT_TPWS_metadataReduced\TPWS_125\',filePrefix,'\TPWS_125\TPWS2\TPWS3\']; %directory of TPWS files
 %% load data from step 2
-filename = ['H:\My Drive\WAT_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev,'\',siteabrev,'_workspaceStep2'];
+filename = [GDrive,':\My Drive\WAT_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev,'\',siteabrev,'_workspaceStep2'];
 load(filename);
 All = meantab365.HoursProp;
 %% load data from step 3
-filename = ['H:\My Drive\WAT_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev,'\',siteabrev,'_workspaceStep3'];
+filename = [GDrive,':\My Drive\WAT_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev,'\',siteabrev,'_workspaceStep3'];
 load(filename);
-saveDir = ['H:\My Drive\WAT_TPWS_metadataReduced\SeasonalityAnalysis']; %specify directory to save files
+saveDir = [GDrive,':\My Drive\WAT_TPWS_metadataReduced\SeasonalityAnalysis']; %specify directory to save files
 %% combine tables into one
 if strcmp(siteabrev,'KOA') == 1 || strcmp(siteabrev,'KS')
 meanTAB = array2table([meantab365.Day All meantab365.HoursPropJU meantab365.HoursPropMA]);

@@ -6,21 +6,27 @@ close all
 %% Parameters defined by user
 %sitename = 'BP'; %specify site; must rerun thru line 96 for each site. After each run comment the site (lines 128-132) to avoid replacing
 sites = {'BC','BP','BS','GS','NC'}; %all sites of interest listed in order they appear
-GDrive = 'I';
+GDrive = 'P';
 Region = 'WAT';
 %% Loop through each site
+GDrive_correctII = GDrive; % Store correct GDrive
 for i = 1:length(sites)
     site = sites{i};
     FileDir = [GDrive,':\My Drive\',Region,'_TPWS_metadataReduced\SeasonalityAnalysis\',site];
     load([FileDir,'\',site,'_workspaceStep3.mat']);
-    GDrive = 'I';
+    
+    GDrive = GDrive_correctII; % Restore correct GDrive
+    dayBinCSV(1) = GDrive; effortXls(1) = GDrive; FileDir(1) = GDrive;
+    filename(1) = GDrive; saveDir(1) = GDrive; tpwsPath(1) = GDrive;
+    
     site = sites{i};
-    filePath = ['I:\My Drive\WAT_TPWS_metadataReduced\SeasonalityAnalysis\',site]; %specify directory to save files
+    filePath = [GDrive ':\My Drive\' Region '_TPWS_metadataReduced\SeasonalityAnalysis\',site]; %specify directory to save files
+    disp(['Loaded Workspace3 for Site ' site])
 end
 %% Find all files that fit your specifications for sites with less than a year
 files = dir([filePath,'\',site,'_days365GroupedMean_forGLMR125.csv']);
 n = length(files);
-x = cell(1, numel(files)); 
+x = cell(1, numel(files));
 %load all of the tables
 for i=1:n
     fn = fullfile({files(i).folder},{files(i).name});
@@ -30,10 +36,10 @@ end
 
 %add a new column for each table with the site name
 for i=1:n
-siteName = {files(i).name};
-newSiteName = extractBefore(siteName,'_');
-gg = height(x{1,i}); %length of table
-x{1,i}.Site = repmat(newSiteName,gg,1);
+    siteName = {files(i).name};
+    newSiteName = extractBefore(siteName,'_');
+    gg = height(x{1,i}); %length of table
+    x{1,i}.Site = repmat(newSiteName,gg,1);
 end
 
 %combine all the tables into one
@@ -41,9 +47,9 @@ table_short = vertcat(x{:});
 %% Find all files that fit your specifications for sites with more than a year
 
 %Females
-files = dir([filePath,'\',sitename,'_365GroupedMeanFemale.csv']);
+files = dir([filePath,'\',char(siteName),'_365GroupedMeanFemale.csv']);
 n = length(files);
-x = cell(1, numel(files)); 
+x = cell(1, numel(files));
 %load all of the tables
 for i=1:n
     fn = fullfile({files(i).folder},{files(i).name});
@@ -53,19 +59,19 @@ end
 
 %add a new column for each table with the site name
 for i=1:n
-siteName = {files(i).name};
-newSiteName = extractBefore(siteName,'_');
-gg = height(x{1,i}); %length of table
-x{1,i}.Site = repmat(newSiteName,gg,1);
+    siteName = {files(i).name};
+    newSiteName = extractBefore(siteName,'_');
+    gg = height(x{1,i}); %length of table
+    x{1,i}.Site = repmat(newSiteName,gg,1);
 end
 
 %combine all the tables into one
 table_females = vertcat(x{:});
 
 %Juveniles
-files = dir([filePath,'\',sitename,'_365GroupedMeanJuvenile.csv']);
+files = dir([filePath,'\',siteName,'_365GroupedMeanJuvenile.csv']);
 n = length(files);
-x = cell(1, numel(files)); 
+x = cell(1, numel(files));
 %load all of the tables
 for i=1:n
     fn = fullfile({files(i).folder},{files(i).name});
@@ -75,19 +81,19 @@ end
 
 %add a new column for each table with the site name
 for i=1:n
-siteName = {files(i).name};
-newSiteName = extractBefore(siteName,'_');
-gg = height(x{1,i}); %length of table
-x{1,i}.Site = repmat(newSiteName,gg,1);
+    siteName = {files(i).name};
+    newSiteName = extractBefore(siteName,'_');
+    gg = height(x{1,i}); %length of table
+    x{1,i}.Site = repmat(newSiteName,gg,1);
 end
 
 %combine all the tables into one
 table_juveniles = vertcat(x{:});
 
 %Males
-files = dir([filePath,'\',sitename,'_365GroupedMeanMale.csv']);
+files = dir([filePath,'\',siteName,'_365GroupedMeanMale.csv']);
 n = length(files);
-x = cell(1, numel(files)); 
+x = cell(1, numel(files));
 %load all of the tables
 for i=1:n
     fn = fullfile({files(i).folder},{files(i).name});
@@ -97,10 +103,10 @@ end
 
 %add a new column for each table with the site name
 for i=1:n
-siteName = {files(i).name};
-newSiteName = extractBefore(siteName,'_');
-gg = height(x{1,i}); %length of table
-x{1,i}.Site = repmat(newSiteName,gg,1);
+    siteName = {files(i).name};
+    newSiteName = extractBefore(siteName,'_');
+    gg = height(x{1,i}); %length of table
+    x{1,i}.Site = repmat(newSiteName,gg,1);
 end
 
 %combine all the tables into one
@@ -112,7 +118,7 @@ persimmon = [0.9882 0.5529 0.3843];  % for mid-size animals
 slate = [0.5529 0.6275 0.7961];      % for males
 tilecolor = [slate; persimmon; mint; gray];
 %% Stacked bar plot for all sites
-%find proportion for sites with less than a year of data 
+%find proportion for sites with less than a year of data
 table_short.Fem = table_short.HoursPropFE > 0;
 table_short.Juv = table_short.HoursPropJU > 0;
 table_short.Mal = table_short.HoursPropMA > 0;
