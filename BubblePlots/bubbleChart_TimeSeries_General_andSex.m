@@ -2,9 +2,9 @@
 clear all;close all;clc;
 % Needs to be run in 2018B or later
 %% load data
-siteName = 'JAX';
+siteName = 'CB';
 GDrive = 'I';
-region = 'WAT'; %region
+region = 'GofAK'; %region
 NumBub = 3;
 DataDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteName];
 saveDirectory = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\Plots\',siteName];
@@ -87,6 +87,7 @@ if height(DWyear) > 1
 if occurrenceDW(2) == 2
     dataWeek(1,:) = [];
 end
+dataWeek.Year = year(dataWeek.tbin);
 
 WeekData.year = year(WeekData.tbin);
 [WDyear,occurrenceWD] = unique(WeekData.year);
@@ -94,6 +95,7 @@ if occurrenceWD(2) == 2
     WeekData(1,:) = [];
 end
 end
+WeekData.year = year(WeekData.tbin);
 %% Checking to see how much was missed
 CombinedWeek = dataWeek(:,19:21);
 CombinedWeek.NormBin = WeekData.NormBin;
@@ -404,12 +406,15 @@ yticks(dates)
 end
 %% save plot
 set(gcf,'Position',[-1165         552         812         476])
-%weeklyfn = [saveDirectory,'\',siteName,'_BubbleTimeSeries.pdf'];
 if Scale == 1
     weeklyfn = [saveDirectory,'\',siteName,'_BubbleTimeSeriesScaled.png'];
     exportgraphics(gcf,weeklyfn,'ContentType','vector','Resolution',300);
+    weeklyfn = [saveDirectory,'\',siteName,'_BubbleTimeSeriesScaled.pdf'];
+    exportgraphics(gcf,weeklyfn,'ContentType','vector','Resolution',300);
 else
     weeklyfn = [saveDirectory,'\',siteName,'_BubbleTimeSeries.png'];
+    exportgraphics(gcf,weeklyfn,'ContentType','vector','Resolution',300);
+    weeklyfn = [saveDirectory,'\',siteName,'_BubbleTimeSeries.pdf'];
     exportgraphics(gcf,weeklyfn,'ContentType','vector','Resolution',300);
 end
 %% Plotting the difference instead of the 'general pattern'
@@ -636,12 +641,15 @@ yticks(dates)
 end
 %% save plot
 set(gcf,'Position',[-1165         552         812         476])
-%weeklyfn = [saveDirectory,'\',siteName,'_BubbleTimeSeriesDifference.pdf'];
 if Scale == 1
     weeklyfn = [saveDirectory,'\',siteName,'_BubbleTimeSeriesDifferenceScaled.png'];
     exportgraphics(gcf,weeklyfn,'ContentType','vector','Resolution',300);
+    weeklyfn = [saveDirectory,'\',siteName,'_BubbleTimeSeriesDifferenceScaled.pdf'];
+    exportgraphics(gcf,weeklyfn,'ContentType','vector','Resolution',300);
 else
     weeklyfn = [saveDirectory,'\',siteName,'_BubbleTimeSeriesDifference.png'];
+    exportgraphics(gcf,weeklyfn,'ContentType','vector','Resolution',300);
+    weeklyfn = [saveDirectory,'\',siteName,'_BubbleTimeSeriesDifference.pdf'];
     exportgraphics(gcf,weeklyfn,'ContentType','vector','Resolution',300);
 end
 %% save text file with max and mins for publication if needed
