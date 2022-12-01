@@ -2,7 +2,7 @@
 clear all;close all;clc;
 % Needs to be run in 2018B or later
 %% load data
-siteName = 'CB';
+siteName = 'KOA';
 GDrive = 'I';
 region = 'GofAK'; %region
 NumBub = 3;

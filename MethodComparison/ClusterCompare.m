@@ -4,7 +4,6 @@ close all;clear all;clc;
 % This code will load Rebecca's ID frome her clustering work, filter out
 % the PM click times (ID = 19) and compare it with the click times I have
 % for the WAT data
-
 %% User Defined Directories
 region = 'WAT'; 
 filePrefix = 'WAT_GS';
