@@ -92,7 +92,7 @@ for (i in 1:length(SiteNames)){
 # Pie Charts --------------------------------------------------------------
 for (i in 1:length(SiteNames)){
   site = SiteNames[i]
-  title = paste(saveDir,"/",site,"/PropVenn", site,".pdf",sep="")
+  title = paste(saveDir,"/",site,"/PropVennDaily", site,".pdf",sep="")
   pdf(title)
   plot(euler(SiteRatioPercent[[i]]),fills = c('#66c2a5','#fc8d62','#8da0cb'), labels = FALSE, quantities = list(cex=3),
        main = paste("Proportional Venn Diagram for ",site,sep = ""))

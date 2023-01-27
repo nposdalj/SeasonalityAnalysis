@@ -21,8 +21,9 @@ library(splines2)       # to use mSpline for the GEEs
 library(scales)
 library(magick)
 library(cowplot)
+
 #load functions
-source('C:/Users/HARP/Documents/GitHub/SeasonalityAnalysis/GAM_GEEs/GAMGEE_Plotting_Functions_RealProbs_HistAbove.R')  #on Nat's computer
+source('C:/Users/nposd/Documents/GitHub/SeasonalityAnalysis/GAM_GEEs/WAT/General/Plotting?GAMGEE_Plotting_Functions_RealProbs_HistAbove.R')  #on Nat's computer
 
 # Load Workspace --------------------------------------------------
 site = 'JAX'
@@ -33,8 +34,9 @@ fileName = paste(saveWorkspace,site,'_SiteSpecific_gamgeeOutput.RData',sep="")
 load(fileName)
 saveDir = paste(GDrive,":/My Drive/WAT_TPWS_metadataReduced/Plots/",site,'/',sep="")
 
-#If it's a leap year, delete julian day 366 for plotting
-SiteHourTableB = SiteHourTable[!(SiteHourTableB$Julian==366),]
+SiteHourTableB = SiteHourTable[!(SiteHourTableB$Julian==366),] #If it's a leap year, delete julian day 366 for plotting
+
+SiteHourTableB$Year = as.factor(SiteHourTableB$Year) #Change year to categorical variable for plotting histograms
 
 #Only includes 2016-2019
 if (site == 'BC' || site == 'GS' || site == 'BP' || site == 'BS' || site == 'WC' || site == 'JAX'){

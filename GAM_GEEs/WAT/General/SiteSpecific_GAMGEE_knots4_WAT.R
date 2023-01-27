@@ -1,11 +1,9 @@
 ### Modelling habitat preference of sperm whales using Generalized Additive Models with Generalized Estimating Equations ###
 ### Script adapted from Pirotta et al. (2011) and Benjamins ###  
-### Example from the GofAK + BSAI ###
-### 7 Models total:
-        #Site specific models: CB, PT, QN, BD (more than 270 d of recording)
-        #Region specific models: BSAI + GOA
-        #Big model: all 7 sites
-        #Change
+### 9 Models total:
+        #Site specific models: 'HZ','OC','NC','BC','WC','GS','BP','BS','JAX'
+        #Region specific models: North + South
+        #Big model: all 9 sites
 
 # All the libraries have to be installed prior to their utilization (see R help on library installation)
 

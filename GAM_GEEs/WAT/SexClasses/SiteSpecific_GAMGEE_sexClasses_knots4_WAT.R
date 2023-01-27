@@ -1,10 +1,9 @@
 ### Modelling habitat preference of sperm whales using Generalized Additive Models with Generalized Estimating Equations ###
 ### Script adapted from Pirotta et al. (2011) and Benjamins ###  
-### Example from the GofAK + BSAI ###
-### 7 Models total:
-        #Site specific models: CB, PT, QN, BD (more than 270 d of recording)
-        #Region specific models: BSAI + GOA
-        #Big model: all 7 sites
+### 9 Models total:
+  #Site specific models: 'HZ','OC','NC','BC','WC','GS','BP','BS','JAX'
+  #Region specific models: North + South
+  #Big model: all 9 sites
 
 # All the libraries have to be installed prior to their utilization (see R help on library installation)
 
@@ -26,14 +25,15 @@ library(car) #for ANOVA
 library(splines2)       # to use mSpline for the GEEs
 library(ggfortify)      # extract confidence interval for ACF plots
 
-site = 'BP' #specify the site of interest
+site = 'HZ' #specify the site of interest
+GDrive = 'I'
 
 # Step 1: Load the data ---------------------------------------------------
 #Hourly data
-dir = paste("H:/My Drive/WAT_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites")
-saveDir = paste("H:/My Drive/WAT_TPWS_metadataReduced/Plots/",site, sep="")
-saveWorkspace = paste("H:/My Drive/WAT_TPWS_metadataReduced/SeasonalityAnalysis/",site,'/',sep="")
-fileName = paste("H:/My Drive/WAT_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites/AllSitesGrouped_Binary_GAMGEE_ROW_sexClasses.csv",sep="") #setting the directory
+dir = paste(GDrive,":/My Drive/WAT_TPWS_metadataReduced/SeasonalityAnalysis/AllSites",sep="")
+saveDir = paste(GDrive,":/My Drive/WAT_TPWS_metadataReduced/Plots/",site, sep="")
+saveWorkspace = paste(GDrive,":/My Drive/WAT_TPWS_metadataReduced/SeasonalityAnalysis/",site,'/',sep="")
+fileName = paste(GDrive,":/My Drive/WAT_TPWS_metadataReduced/SeasonalityAnalysis/AllSites/AllSitesGrouped_Binary_GAMGEE_ROW_sexClasses.csv",sep="") #setting the directory
 HourTable = read.csv(fileName)
 HourTable = na.omit(HourTable)
 HourTable$date = as.Date(HourTable$tbin)
@@ -153,37 +153,22 @@ difference = diff(SiteHourTableB$BlocksM) #find difference between rows
 # Step 3: ANOVA to Check for Significance of Variables --------------------
 #ANOVA with car package
 Anova(BlockModF)
-#BS
-# bs(Julian, k = 4)  315.203  4     <2e-16 ***
-#   TimeLost             2.203  1     0.1377    
-# as.factor(Year)    145.975  3     <2e-16 ***            
-
-# BP
-# bs(Julian, k = 4)   5.9524  4  0.2027284    
-# TimeLost            0.0610  1  0.8048444    
-# as.factor(Year)    18.7502  3  0.0003079 ***
+#HZ
+#bs(Julian, k = 4)      886  4    < 2e-16 ***
+#TimeLost                19  1    1.1e-05 ***
+#as.factor(Year)        482  4    < 2e-16 ***
 
 Anova(BlockModJ)
-#BS
-# bs(Julian, k = 4)   63.683  4  4.875e-13 ***
-#   TimeLost             0.025  1      0.874    
-# as.factor(Year)     32.818  3  3.519e-07 ***   
-
-# BP
-# bs(Julian, k = 4)   28.781  4  8.662e-06 ***
-#   TimeLost             0.004  1      0.951    
-# as.factor(Year)     53.271  3  1.605e-11 ***
+#HZ
+#bs(Julian, k = 4)      919  4     <2e-16 ***
+#TimeLost                17  1      3e-05 ***
+#as.factor(Year)        238  4     <2e-16 ***
   
 Anova(BlockModM)
-#BS
-# bs(Julian, k = 4)   51.177  4  2.050e-10 ***
-#   TimeLost             2.656  1     0.1031    
-# as.factor(Year)     30.143  3  1.288e-06 ***  
-
-# BP
-# bs(Julian, k = 4)   8.7419  4    0.06789 .
-# TimeLost            0.0053  1    0.94212  
-# as.factor(Year)     4.4330  3    0.21835
+#HZ
+#bs(Julian, k = 4)      840  4    < 2e-16 ***
+#TimeLost                 8  1    0.00361 ** 
+#as.factor(Year)         23  4    0.00015 ***
 
 # Step 4: Data Exploration and Initial Analysis ------------------------------------------------------------------
 # Follow data exploration protocols suggested by Zuur et al. (2010), Zuur (2012), to generate pair plots, box plots, and assess collinearity between covariates in the dataset using Varinace Inflation Factors (vif).
@@ -201,36 +186,18 @@ VIF(GLMF)
 VIF(GLMJ)
 VIF(GLMM)
 
-#BS
-# Julian          1.217689  1        1.103490
-# TimeLost        1.002285  1        1.001142
-# as.factor(Year) 1.219425  3        1.033616
-# > VIF(GLMJ)
-# GVIF Df GVIF^(1/(2*Df))
-# Julian          1.158186  1        1.076190
-# TimeLost        1.008378  1        1.004180
-# as.factor(Year) 1.165561  3        1.025863
-# > VIF(GLMM)
-# GVIF Df GVIF^(1/(2*Df))
-# Julian          1.184702  1        1.088440
-# TimeLost        1.000000  1        1.000000
-# as.factor(Year) 1.184703  3        1.028651
+#HZ
+#Julian          1.44  1            1.20
+#TimeLost        1.00  1            1.00
+#as.factor(Year) 1.44  4            1.05
 
-# BP
-# GVIF Df GVIF^(1/(2*Df))
-# Julian          1.171332  1        1.082281
-# TimeLost        1.003916  1        1.001956
-# as.factor(Year) 1.175118  3        1.027260
-# > VIF(GLMJ)
-# GVIF Df GVIF^(1/(2*Df))
-# Julian          1.204697  1        1.097587
-# TimeLost        1.005297  1        1.002645
-# as.factor(Year) 1.210257  3        1.032317
-# > VIF(GLMM)
-# GVIF Df GVIF^(1/(2*Df))
-# Julian          1.195259  1        1.093279
-# TimeLost        1.006110  1        1.003050
-# as.factor(Year) 1.201668  3        1.031092
+#Julian          1.54  1            1.24
+#TimeLost        1.00  1            1.00
+#as.factor(Year) 1.54  4            1.06
+
+#Julian          1.26  1            1.12
+#TimeLost        1.00  1            1.00
+#as.factor(Year) 1.26  4            1.03
 
 # Step 5: Model Selection - Covariate Preparation -------------------------
 # Construct variance-covariance matrices for cyclic covariates:
@@ -278,20 +245,12 @@ QIC3fA = c(QIC(POD0f)[1],QIC(POD3fa)[1],QIC(POD3fb)[1],QIC(POD3fc)[1])
 QICmod3fA<-data.frame(rbind(model3fA,QIC3fA))
 QICmod3fA
 
-#BS
-# QIC            QIC.1            QIC.2            QIC.3
-# model3fA            POD0f           POD3fa           POD3fb           POD3fc
-# QIC3fA   6136.67469957528 5906.17843149104 6066.63829299727 6022.37873715983
-
+#HZ
+#QIC            QIC.1            QIC.2            QIC.3
+#model3fA           POD0f           POD3fa           POD3fb           POD3fc
+#QIC3fA   35534.540037402 34652.3272649365 35308.9594610671 34995.1320247913
 #Full model is best
-#Model Julian Day, then Year
-
-# BP
-# QIC            QIC.1            QIC.2            QIC.3
-# model3fA            POD0f           POD3fa           POD3fb           POD3fc
-# QIC3fA   1914.25301463175 1901.64260358257 1901.07525715018 1918.13397791587
-
-#Removed Julian Day
+#Model Order - Julian Day, Year
 
 #Juveniles
 #The initial full model is:
@@ -300,126 +259,78 @@ POD3ja = geeglm(PreAbsJ ~ AvgDayMatJ+as.factor(Year),family = binomial, corstr="
 POD3jb = geeglm(PreAbsJ ~ as.factor(Year),family = binomial, corstr="ar1", id=BlocksJ, data=SiteHourTableB)
 #without Year
 POD3jc = geeglm(PreAbsJ ~ AvgDayMatJ,family = binomial, corstr="ar1", id=BlocksJ, data=SiteHourTableB)
-#without Timelost
 
 model3jA = c("POD0j","POD3ja","POD3jb","POD3jc")
 QIC3jA = c(QIC(POD0j)[1],QIC(POD3ja)[1],QIC(POD3jb)[1],QIC(POD3jc)[1])
 QICmod3jA<-data.frame(rbind(model3jA,QIC3jA))
 QICmod3jA
-#BS
-# QIC            QIC.1            QIC.2            QIC.3
-# model3jA            POD0j           POD3ja           POD3jb           POD3jc
-# QIC3jA   4707.00633358017 4600.55806473249 4661.69244221802 4625.81267598397
-
+#HZ
+#QIC            QIC.1            QIC.2            QIC.3
+#model3jA            POD0j           POD3ja           POD3jb           POD3jc
+#QIC3jA   16161.0497192109 15108.4668660763 15926.9380495206 15356.2833301027
 #Full model is best
-#Model Julian Day, then Year
-
-# BP
-# QIC            QIC.1            QIC.2            QIC.3
-# model3jA            POD0j           POD3ja           POD3jb           POD3jc
-# QIC3jA   4392.93809386802 4333.86068548319 4332.62650691385 4385.11854988794
-
-#Remove Julian Day
+#Model Order - Julian Day, Year
 
 #Males
-
 #The initial full model is:
 POD3ma = geeglm(PreAbsM ~ AvgDayMatM+as.factor(Year),family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB)
 #without AvgDayMat
 POD3mb = geeglm(PreAbsM ~ as.factor(Year),family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB)
 #without Year
 POD3mc = geeglm(PreAbsM ~ AvgDayMatM,family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB)
-#without Timelost
 
 model3mA = c("POD0m","POD3ma","POD3mb","POD3mc")
 QIC3mA = c(QIC(POD0m)[1],QIC(POD3ma)[1],QIC(POD3mb)[1],QIC(POD3mc)[1])
 QICmod3mA<-data.frame(rbind(model3mA,QIC3mA))
 QICmod3mA
-#BS
-# QIC            QIC.1            QIC.2            QIC.3
-# model3mA           POD0m           POD3ma           POD3mb           POD3mc
-# QIC3mA   1684.5685099588 1617.37236841053 1656.79343969806 1640.64959354614
-
+#HZ
+#QIC            QIC.1            QIC.2            QIC.3
+#model3mA            POD0m           POD3ma           POD3mb           POD3mc
+#QIC3mA   7185.54933472434 5989.75261850721 6772.72891517581 5999.97795529014
 #Full model is best
-#Model Julian Day, then Year
-
-# BP
-# QIC            QIC.1            QIC.2            QIC.3
-# model3mA           POD0m           POD3ma           POD3mb           POD3mc
-# QIC3mA   1400.0922407837 1400.44708639046 1402.33490193696 1398.27844615502
-
-#remove year
+#Model Order - Julian Day, Year
 
 # Step 7: Finalize Model --------------------------------------------------
 #Females
- if(site=="BS"){
- #BS
-  dimnames(AvgDayMatF)<-list(NULL,c("ADBM1", "ADBM2"))
-  PODFinalF = geeglm(PreAbsF ~ AvgDayMatF+as.factor(Year),family = binomial, corstr="ar1", id=BlocksF, data=SiteHourTableB)
-}else{
-  #BP
-  PODFinalF = geeglm(PreAbsF ~ as.factor(Year),family = binomial, corstr="ar1", id=BlocksF, data=SiteHourTableB)
- }
+dimnames(AvgDayMatF)<-list(NULL,c("ADBM1", "ADBM2"))
+PODFinalF = geeglm(PreAbsF ~ AvgDayMatF+as.factor(Year),family = binomial, corstr="ar1", id=BlocksF, data=SiteHourTableB)
+
 #Juveniles
-if(site=="BS"){
-  #BS
-  dimnames(AvgDayMatJ)<-list(NULL,c("ADBM1", "ADBM2"))
-  PODFinalJ = geeglm(PreAbsJ ~  AvgDayMatJ+as.factor(Year),family = binomial, corstr="ar1", id=BlocksJ, data=SiteHourTableB)
-}else{
-  #BP
-  PODFinalJ = geeglm(PreAbsJ ~  as.factor(Year),family = binomial, corstr="ar1", id=BlocksJ, data=SiteHourTableB)
-}
+dimnames(AvgDayMatJ)<-list(NULL,c("ADBM1", "ADBM2"))
+PODFinalJ = geeglm(PreAbsJ ~  AvgDayMatJ+as.factor(Year),family = binomial, corstr="ar1", id=BlocksJ, data=SiteHourTableB)
+
 #Males
- if(site=="BS"){
-  #BS
-  dimnames(AvgDayMatM)<-list(NULL,c("ADBM1", "ADBM2"))
-  PODFinalM = geeglm(PreAbsM ~ AvgDayMatM + as.factor(Year),family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB)
-}else{
-  #BP
-  dimnames(AvgDayMatM)<-list(NULL,c("ADBM1", "ADBM2"))
-  PODFinalM = geeglm(PreAbsM ~ AvgDayMatM ,family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB)
-}
+dimnames(AvgDayMatM)<-list(NULL,c("ADBM1", "ADBM2"))
+PODFinalM = geeglm(PreAbsM ~ AvgDayMatM + as.factor(Year),family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB)
+
 # STEP 8: Interpreting the summary of the model --------------------------
 # How to intepret model results
 # Standard error - robust estimate - provides reasonable variance estimates even when the specified correlation model is in correct
 # Wald - square of the z-statistic reproted by the gee function
 # P - values are the upper tailed probabilities from the chi-squared random variable with 1 degree of freedom...
 # distribution and test whether the true parameter value is different from zero
+
 anova(PODFinalF)
-#BS
-  # Df     X2 P(>|Chi|)    
-  # AvgDayMatF       2 16.738  0.000232 ***
-  #   as.factor(Year)  3 11.338  0.010034 *  
-# BP
-# Df   X2 P(>|Chi|)
-# as.factor(Year)  3 4.58      0.21
+#HZ
+#AvgDayMatF       2 14.90   0.00058 ***
+#as.factor(Year)  4  6.48   0.16598    
+
+anova(PODFinalJ)
+#HZ
+#AvgDayMatJ       2 193.5   < 2e-16 ***
+#as.factor(Year)  4  34.5   5.8e-07 ***
   
-anova(PODFinalJ)
-#BS
-# Df      X2 P(>|Chi|)   
-# AvgDayMatJ       2 12.6271  0.001812 **
-#   as.factor(Year)  3  4.0919  0.251710   
-# BP
-# Df   X2 P(>|Chi|)  
-# as.factor(Year)  3 8.25     0.041 *
-# 
 anova(PODFinalM)
-#BS
-# Df     X2 P(>|Chi|)   
-# AvgDayMatM       2 9.2645  0.009733 **
-#   as.factor(Year)  3 9.7511  0.020804 * 
-# BP
-# Df     X2 P(>|Chi|)  
-# AvgDayMatM  2 2.19      0.33
+#HZ
+#AvgDayMatM       2 160.2    <2e-16 ***
+#as.factor(Year)  4   6.4      0.17    
 
-#FINAL REMOVAL OF NON SIGNIFICANT VARIABLES
-if (site=='BS'){ 
-  PODFinalJ = geeglm(PreAbsJ ~  AvgDayMatJ,family = binomial, corstr="ar1", id=BlocksJ, data=SiteHourTableB)
+#Remove any insignificant variables
+if (site == 'HZ'){
+  #Remove Year from Female and Male models
+  PODFinalF = geeglm(PreAbsF ~ AvgDayMatF,family = binomial, corstr="ar1", id=BlocksF, data=SiteHourTableB)
+  PODFinalM = geeglm(PreAbsM ~ AvgDayMatM,family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB)
 }
-anova(PODFinalJ)
-
-#BS
-# AvgDayMatJ  2 12.627  0.001812 **
 
 filename = paste(saveWorkspace,site,'_SiteSpecific_sexClasses_ModelSummary.txt',sep="")
 sink(filename)

@@ -8,8 +8,8 @@ library(lubridate)
 GDrive = 'I'
 
 #Sites
-Sites = c('CB','PT','QN','AB','KOA','BD','KS') #The GOA and BSAI Sites
-#Sites = c('BS','BP','NC','BC','GS','JAX','HZ','OC','WC')
+#Sites = c('CB','PT','QN','AB','KOA','BD','KS') #The GOA and BSAI Sites
+Sites = c('HZ','OC','NC','BC','WC','GS','BP','BS','JAX')
 #Sites = c('CA','CCE','CORC','DCPP01C','GI','HOKE','PS1','PS2','QC')
 #Sites = c('CSM','Equator','Kauai','King','Kona','LSM','Pagan','Palmyra','PHR','Saipan','Tinian','Wake')
 
@@ -18,11 +18,13 @@ Sites = c('CB','PT','QN','AB','KOA','BD','KS') #The GOA and BSAI Sites
 #region = 'CentralPac'
 #Regions = c('CCE')
 #region = 'CCE'
-Regions = c("GOA","BSAI") #GOA AND BSAI Region
-region = 'GofAK'
+#Regions = c("GOA","BSAI") #GOA AND BSAI Region
+#region = 'GofAK'
+region = 'WAT'
+Regions = c("North","South")
 
 fileDir = paste(GDrive,":/My Drive/",region,"_TPWS_metadataReduced/SeasonalityAnalysis/",Sites, sep="")#setting the directory
-saveDir = paste(GDrive,":/My Drive/",region,"_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites/",sep="")
+saveDir = paste(GDrive,":/My Drive/",region,"_TPWS_metadataReduced/SeasonalityAnalysis/AllSites/",sep="")
 filename = paste(fileDir,"/",Sites,"_binPresence.csv",sep="")
 filename2 = paste(fileDir,"/",Sites,"_binData_forGAMGEE_sexClasses.csv",sep="")
 
@@ -66,7 +68,7 @@ for (i in 1:length(Sites)){
   modDayBinTAB$ID = i
   if (between(i,1,5)){
     modDayBinTAB$Region = Regions[1]}
-  if (between(i,6,7)){
+  if (between(i,6,9)){
     modDayBinTAB$Region = Regions[2]}
   if (i == 1){
     DayTab = modDayBinTAB
@@ -129,7 +131,7 @@ for (i in 1:length(Sites)){
   modHourBinTAB$ID = i
   if (between(i,1,5)){
     modHourBinTAB$Region = Regions[1]}
-  if (between(i,6,7)){
+  if (between(i,6,9)){
     modHourBinTAB$Region = Regions[2]}
   if (i == 1){
     HourTab = modHourBinTAB
