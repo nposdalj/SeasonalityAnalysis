@@ -355,7 +355,7 @@ ggPlot_Year <- function(model, table,site){
   counts$days = round(counts$freq/12)
   counts$label = '*'
   counts$label[counts$days > 365] <- ' ' 
-  counts = counts[-c(6),]
+  #counts = counts[-c(6),]
   
   #Histogram for Year observations
   # Year = seq(from = 2010,to = 2019,by = 1)
@@ -431,7 +431,7 @@ ggPlot_Year_WAT <- function(model, table,site){
   counts$days = round(counts$freq/12)
   counts$label = '*'
   counts$label[counts$days > 365] <- ' ' 
-  counts = counts[-c(6),]
+  #counts = counts[-c(6),]
   
   #Histogram for Year observations
   # Year = seq(from = 2016,to = 2019,by = 1)
@@ -504,7 +504,7 @@ ggPlot_Year_WATS <- function(model, table,site){
   counts$days = round(counts$freq/12)
   counts$label = '*'
   counts$label[counts$days > 365] <- ' ' 
-  counts = counts[-c(6),]
+  #counts = counts[-c(6),]
   
   # #Histogram for Year observations
   # Year = seq(from = 2016,to = 2019,by = 1)
@@ -576,7 +576,7 @@ ggPlot_Year_WAT_2015 <- function(model, table,site){
   counts$days = round(counts$freq/12)
   counts$label = '*'
   counts$label[counts$days > 365] <- ' ' 
-  counts = counts[-c(6),]
+  #counts = counts[-c(6),]
   
   #Histogram for Year observations
   # Year = seq(from = 2015,to = 2019,by = 1)
@@ -649,7 +649,7 @@ ggPlot_Year_WAT_BigM <- function(model, table,site){
   counts$days = round(counts$freq/12)
   counts$label = '*'
   counts$label[counts$days > 365] <- ' ' 
-  counts = counts[-c(6),]
+  #counts = counts[-c(6),]
   
   #Histogram for Year observations
   #Year = seq(from = 2015,to = 2019,by = 1)
@@ -722,7 +722,7 @@ ggPlot_Year_First_WAT <- function(model, table,site){
   counts$days = round(counts$freq/12)
   counts$label = '*'
   counts$label[counts$days > 365] <- ' ' 
-  counts = counts[-c(6),]
+  #counts = counts[-c(6),]
   
   #Histogram for Year observations
   # Year = seq(from = 2016,to = 2019,by = 1)
@@ -794,7 +794,7 @@ ggPlot_Year_First_WAT_2015 <- function(model, table,site){
   counts$days = round(counts$freq/12)
   counts$label = '*'
   counts$label[counts$days > 365] <- ' ' 
-  counts = counts[-c(6),]
+  #counts = counts[-c(6),]
   
   # #Histogram for Year observations
   # Year = seq(from = 2015,to = 2019,by = 1)
@@ -867,7 +867,7 @@ ggPlot_Year_Regional <- function(model, table,site){
   counts$days = round(counts$freq/12)
   counts$label = '*'
   counts$label[counts$days > 365] <- ' ' 
-  counts = counts[-c(6),]
+  #counts = counts[-c(6),]
   
   #Histogram for Year observations
   # Year = seq(from = 2015,to = 2019,by = 1)
@@ -940,7 +940,7 @@ ggPlot_Year_Big <- function(model, table,site){
   counts$days = round(counts$freq/12)
   counts$label = '*'
   counts$label[counts$days > 365] <- ' ' 
-  counts = counts[-c(6),]
+  #counts = counts[-c(6),]
   
   #Histogram for Year observations
   # Year = seq(from = 2009,to = 2019,by = 1)

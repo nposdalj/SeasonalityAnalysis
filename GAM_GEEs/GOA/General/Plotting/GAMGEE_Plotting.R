@@ -26,15 +26,15 @@ library(cowplot)
 source('C:/Users/nposd/Documents/GitHub/SeasonalityAnalysis/GAM_GEEs/GAMGEE_Plotting_Functions_RealProbs_HistAbove.R')
 
 # Load Workspace --------------------------------------------------
-#site = 'Big'
+site = 'Big'
 GDrive = 'I'
-region = 'GOA'
+#region = 'GOA'
 if (exists("site")){
   if (site == 'Big'){
-    saveWorkspace = paste(GDrive,":/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/BigModel/",sep="")
+    saveWorkspace = paste(GDrive,":/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/AllSites/",sep="")
     fileName = paste(saveWorkspace,'BigModel_gamgeeOutput_modified.RData',sep="")
     load(fileName)
-    saveDir = paste(GDrive,":/My Drive/GofAK_TPWS_metadataReduced/Plots/BigModel/",sep="")
+    saveDir = paste(GDrive,":/My Drive/GofAK_TPWS_metadataReduced/Plots/AllSites/",sep="")
   }else{
     saveWorkspace = paste(GDrive,":/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",site,'/',sep="")
     fileName = paste(saveWorkspace,site,'_SiteSpecific_gamgeeOutput_modified.RData',sep="")
@@ -50,8 +50,9 @@ if (exists("region")){
   saveDir = paste(GDrive,":/My Drive/GofAK_TPWS_metadataReduced/Plots/",region,'/',sep="")
 }
 
-#If it's a leap year, delete julian day 366 for plotting
-SiteHourTableB = SiteHourTable[!(SiteHourTableB$Julian==366),]
+SiteHourTableB = SiteHourTable[!(SiteHourTableB$Julian==366),] #If it's a leap year, delete julian day 366 for plotting
+
+SiteHourTableB$Year = as.factor(SiteHourTableB$Year) #Change year to categorical variable for plotting histograms
 
 # Plot Julian Day ---------------------------------------------------------
 if (exists("site")){

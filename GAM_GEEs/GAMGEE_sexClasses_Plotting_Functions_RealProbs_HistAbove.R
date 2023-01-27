@@ -299,16 +299,25 @@ ggPlot_Year <- function(model, table,site){
   BootstrapCoefs2<-BootstrapParameters2[, c(1,start:end)]
   
   #Histogram for Year observations
-  Year = seq(from = 2010,to = 2019,by = 1)
-  fullhist = hist(SiteHourTableB$Year,Year)
-  yhist = fullhist$counts
-  plothist = data.frame(x=Year[-1],y=yhist)
-  plothist$x = as.character(plothist$x)
-  plothist$y = as.numeric(plothist$y)
-  plothist$days = round(plothist$y/24)
-  plothist$label = '*'
-  plothist$label[plothist$days > 365] <- ' ' 
-  plothist = plothist[-c(6),]
+  counts = count(SiteHourTableB$Year)
+  counts$x = as.character(counts$x)
+  counts$freq = as.numeric(counts$freq)
+  counts$days = round(counts$freq/12)
+  counts$label = '*'
+  counts$label[counts$days > 365] <- ' ' 
+  #counts = counts[-c(6),]
+  
+  #Histogram for Year observations
+  # Year = seq(from = 2016,to = 2019,by = 1)
+  # fullhist = hist(SiteHourTableB$Year,Year)
+  # yhist = fullhist$counts
+  # plothist = data.frame(x=Year[-1],y=yhist)
+  # plothist$x = as.character(plothist$x)
+  # plothist$y = as.numeric(plothist$y)
+  # plothist$days = round(plothist$y/12)
+  # plothist$label = '*'
+  # plothist$label[plothist$days > 365] <- ' ' 
+  # plothist = plothist[-c(6),]
   
   #Center intercept (1st level of year factor) at 0 and show other levels relative to it
   AdjustedSiteCoefs = data.frame(  c(
@@ -337,8 +346,8 @@ ggPlot_Year <- function(model, table,site){
            y = "s(Year)")
   
   xens = axis_canvas(pmain, axis = "x")+
-    geom_bar(data = plothist,
-             aes(x,y),
+    geom_bar(data = counts,
+             aes(x,freq),
              fill = 4,
              alpha = 0.2,
              #position = "dodge",
@@ -366,16 +375,25 @@ ggPlot_Year_AfterJD <- function(model,table,site){
   BootstrapCoefs2<-BootstrapParameters2[, c(1,start:end)]
   
   #Histogram for Year observations
-  Year = seq(from = 2010,to = 2019,by = 1)
-  fullhist = hist(SiteHourTableB$Year,Year)
-  yhist = fullhist$counts
-  plothist = data.frame(x=Year[-1],y=yhist)
-  plothist$x = as.character(plothist$x)
-  plothist$y = as.numeric(plothist$y)
-  plothist$days = round(plothist$y/12)
-  plothist$label = '*'
-  plothist$label[plothist$days > 365] <- ' ' 
-  plothist = plothist[-c(6),]
+  counts = count(SiteHourTableB$Year)
+  counts$x = as.character(counts$x)
+  counts$freq = as.numeric(counts$freq)
+  counts$days = round(counts$freq/12)
+  counts$label = '*'
+  counts$label[counts$days > 365] <- ' ' 
+  #counts = counts[-c(6),]
+  
+  #Histogram for Year observations
+  # Year = seq(from = 2016,to = 2019,by = 1)
+  # fullhist = hist(SiteHourTableB$Year,Year)
+  # yhist = fullhist$counts
+  # plothist = data.frame(x=Year[-1],y=yhist)
+  # plothist$x = as.character(plothist$x)
+  # plothist$y = as.numeric(plothist$y)
+  # plothist$days = round(plothist$y/12)
+  # plothist$label = '*'
+  # plothist$label[plothist$days > 365] <- ' ' 
+  # plothist = plothist[-c(6),]
   
   #Center intercept (1st level of year factor) at 0 and show other levels relative to it
   AdjustedSiteCoefs = data.frame(  c(
@@ -405,8 +423,8 @@ ggPlot_Year_AfterJD <- function(model,table,site){
            y = "s(Year)")
   
   xens = axis_canvas(pmain, axis = "x")+
-    geom_bar(data = plothist,
-             aes(x,y),
+    geom_bar(data = counts,
+             aes(x,freq),
              fill = 4,
              alpha = 0.2,
              #position = "dodge",
@@ -433,16 +451,25 @@ ggPlot_Year_Big <- function(model, table,site){
   BootstrapCoefs2<-BootstrapParameters2[, c(1,start:end)]
   
   #Histogram for Year observations
-  Year = seq(from = 2009,to = 2019,by = 1)
-  fullhist = hist(SiteHourTableB$Year,Year)
-  yhist = fullhist$counts
-  plothist = data.frame(x=Year[-1],y=yhist)
-  plothist$x = as.character(plothist$x)
-  plothist$y = as.numeric(plothist$y)
-  plothist$days = round(plothist$y/12)
-  plothist$label = '*'
-  plothist$label[plothist$days > 365] <- ' ' 
-  plothist = plothist[-c(7),]
+  counts = count(SiteHourTableB$Year)
+  counts$x = as.character(counts$x)
+  counts$freq = as.numeric(counts$freq)
+  counts$days = round(counts$freq/12)
+  counts$label = '*'
+  counts$label[counts$days > 365] <- ' ' 
+  #counts = counts[-c(6),]
+  
+  #Histogram for Year observations
+  # Year = seq(from = 2016,to = 2019,by = 1)
+  # fullhist = hist(SiteHourTableB$Year,Year)
+  # yhist = fullhist$counts
+  # plothist = data.frame(x=Year[-1],y=yhist)
+  # plothist$x = as.character(plothist$x)
+  # plothist$y = as.numeric(plothist$y)
+  # plothist$days = round(plothist$y/12)
+  # plothist$label = '*'
+  # plothist$label[plothist$days > 365] <- ' ' 
+  # plothist = plothist[-c(6),]
   
   #Center intercept (1st level of year factor) at 0 and show other levels relative to it
   AdjustedSiteCoefs = data.frame(  c(
@@ -473,8 +500,8 @@ ggPlot_Year_Big <- function(model, table,site){
            y = "s(Year)")
   
   xens = axis_canvas(pmain, axis = "x")+
-    geom_bar(data = plothist,
-             aes(x,y),
+    geom_bar(data = counts,
+             aes(x,freq),
              fill = 4,
              alpha = 0.2,
              #position = "dodge",
@@ -669,16 +696,25 @@ ggPlot_Year_WAT <- function(model, table,site){
   BootstrapCoefs2<-BootstrapParameters2[, c(1,start:end)]
   
   #Histogram for Year observations
-  Year = seq(from = 2016,to = 2019,by = 1)
-  fullhist = hist(SiteHourTableB$Year,Year)
-  yhist = fullhist$counts
-  plothist = data.frame(x=Year[-1],y=yhist)
-  plothist$x = as.character(plothist$x)
-  plothist$y = as.numeric(plothist$y)
-  plothist$days = round(plothist$y/12)
-  plothist$label = '*'
-  plothist$label[plothist$days > 365] <- ' ' 
-  plothist = plothist[-c(6),]
+  counts = count(SiteHourTableB$Year)
+  counts$x = as.character(counts$x)
+  counts$freq = as.numeric(counts$freq)
+  counts$days = round(counts$freq/12)
+  counts$label = '*'
+  counts$label[counts$days > 365] <- ' ' 
+  #counts = counts[-c(6),]
+  
+  #Histogram for Year observations
+  # Year = seq(from = 2016,to = 2019,by = 1)
+  # fullhist = hist(SiteHourTableB$Year,Year)
+  # yhist = fullhist$counts
+  # plothist = data.frame(x=Year[-1],y=yhist)
+  # plothist$x = as.character(plothist$x)
+  # plothist$y = as.numeric(plothist$y)
+  # plothist$days = round(plothist$y/12)
+  # plothist$label = '*'
+  # plothist$label[plothist$days > 365] <- ' ' 
+  # plothist = plothist[-c(6),]
   
   #Center intercept (1st level of year factor) at 0 and show other levels relative to it
   AdjustedSiteCoefs = data.frame(  c(
@@ -704,8 +740,8 @@ ggPlot_Year_WAT <- function(model, table,site){
            y = "s(Year)")
   
   xens = axis_canvas(pmain, axis = "x")+
-    geom_bar(data = plothist,
-             aes(x,y),
+    geom_bar(data = counts,
+             aes(x,freq),
              fill = 4,
              alpha = 0.2,
              #position = "dodge",
@@ -732,16 +768,25 @@ ggPlot_Year_WAT_first <- function(model, table,site){
   BootstrapCoefs2<-BootstrapParameters2[, c(1,start:end)]
   
   #Histogram for Year observations
-  Year = seq(from = 2016,to = 2019,by = 1)
-  fullhist = hist(SiteHourTableB$Year,Year)
-  yhist = fullhist$counts
-  plothist = data.frame(x=Year[-1],y=yhist)
-  plothist$x = as.character(plothist$x)
-  plothist$y = as.numeric(plothist$y)
-  plothist$days = round(plothist$y/12)
-  plothist$label = '*'
-  plothist$label[plothist$days > 365] <- ' ' 
-  plothist = plothist[-c(6),]
+  counts = count(SiteHourTableB$Year)
+  counts$x = as.character(counts$x)
+  counts$freq = as.numeric(counts$freq)
+  counts$days = round(counts$freq/12)
+  counts$label = '*'
+  counts$label[counts$days > 365] <- ' ' 
+  #counts = counts[-c(6),]
+  
+  #Histogram for Year observations
+  # Year = seq(from = 2016,to = 2019,by = 1)
+  # fullhist = hist(SiteHourTableB$Year,Year)
+  # yhist = fullhist$counts
+  # plothist = data.frame(x=Year[-1],y=yhist)
+  # plothist$x = as.character(plothist$x)
+  # plothist$y = as.numeric(plothist$y)
+  # plothist$days = round(plothist$y/12)
+  # plothist$label = '*'
+  # plothist$label[plothist$days > 365] <- ' ' 
+  # plothist = plothist[-c(6),]
   
   #Center intercept (1st level of year factor) at 0 and show other levels relative to it
   AdjustedSiteCoefs = data.frame(  c(
@@ -767,8 +812,8 @@ ggPlot_Year_WAT_first <- function(model, table,site){
            y = "s(Year)")
   
   xens = axis_canvas(pmain, axis = "x")+
-    geom_bar(data = plothist,
-             aes(x,y),
+    geom_bar(data = counts,
+             aes(x,freq),
              fill = 4,
              alpha = 0.2,
              #position = "dodge",

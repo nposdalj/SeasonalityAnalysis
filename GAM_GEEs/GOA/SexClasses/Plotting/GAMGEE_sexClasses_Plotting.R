@@ -24,14 +24,14 @@ library(ggExtra)
 source('C:/Users/nposd/Documents/GitHub/SeasonalityAnalysis/GAM_GEEs/GAMGEE_sexClasses_Plotting_Functions_RealProbs_HistAbove.R')
 
 # Load Workspace --------------------------------------------------
-#site = 'Big'
-region = 'GOA'
+site = 'CB'
+#region = 'GOA'
 GDrive = 'I'
 sexGroups = c('Social Groups','Mid-Size','Males')
 
 if (exists("site")){
   if (site == 'Big'){
-    saveWorkspace = paste(GDrive,":/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/BigModel/",sep="")
+    saveWorkspace = paste(GDrive,":/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/AllSites/",sep="")
     fileName = paste(saveWorkspace,'BigModel_gamgeeOutput_sexClasses_modified.RData',sep="")
     load(fileName)
   }else{
@@ -48,8 +48,9 @@ if (exists("region")){
   site = region
 }
 
-#If it's a leap year, delete julian day 366 for plotting
-SiteHourTableB = SiteHourTable[!(SiteHourTableB$Julian==366),]
+SiteHourTableB = SiteHourTable[!(SiteHourTableB$Julian==366),] #If it's a leap year, delete julian day 366 for plotting
+
+SiteHourTableB$Year = as.factor(SiteHourTableB$Year) #Change year to categorical variable for plotting histograms
 
 for (i in 1:length(sexGroups)){
   sex = sexGroups[i]
