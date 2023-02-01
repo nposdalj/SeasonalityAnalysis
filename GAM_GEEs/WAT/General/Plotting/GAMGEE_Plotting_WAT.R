@@ -26,7 +26,7 @@ library(cowplot)
 source('C:/Users/nposd/Documents/GitHub/SeasonalityAnalysis/GAM_GEEs/GAMGEE_Plotting_Functions_RealProbs_HistAbove.R')  #on Nat's computer
 
 # Load Workspace --------------------------------------------------
-site = 'BP'
+site = 'OC'
 GDrive = 'I'
 varOrder = cbind('Julian Day','Year') #Variables in the final model and their order (ex: (1)'Julian Day','Year' (2)'Year,'Julian Day', (3)'Julian Day', (4)'Year')
 saveWorkspace = paste(GDrive,":/My Drive/WAT_TPWS_metadataReduced/SeasonalityAnalysis/",site,'/',sep="")

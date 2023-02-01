@@ -26,7 +26,7 @@ library(splines2)       # to use mSpline for the GEEs
 library(ggfortify)      # extract confidence interval for ACF plots
 
 site = 'HZ' #specify the site of interest
-GDrive = 'I'
+GDrive = 'G'
 
 # Step 1: Load the data ---------------------------------------------------
 #Hourly data
@@ -376,19 +376,6 @@ DATA$plotID<-1:dim(SiteHourTableB)[1]                                    # the f
 DATA$Observed<-SiteHourTableB$PreAbsF                                          # the second column reports the observed response (0s and 1s)
 DATA$Predicted<-predict(PODFinalF,type="response")                 # the third column reports the predictions
 cmx(DATA, threshold = cutoff)                                   # the identified cut-off must be used here
-
-#Confusion matrix:
-#BS - Female
-# observed
-# predicted     1     0
-# 1   507 10562
-# 0   141 16188
-
-# BP - Female
-# observed
-# predicted     1     0
-# 1    53  3013
-# 0   102 23899
   
 # The area under the curve (auc) can also be used as an rough indication of model performance:
   
@@ -429,19 +416,6 @@ DATA$Observed<-SiteHourTableB$PreAbsJ                                          #
 DATA$Predicted<-predict(PODFinalJ,type="response")                 # the third column reports the predictions
 cmx(DATA, threshold = cutoff)                                   # the identified cut-off must be used here
 
-#Confusion matrix:
-#BS - Juvenile
-# observed
-# predicted     1     0
-# 1   232  8228
-# 0   232 18706
-
-# BP - Juvenile
-# observed
-# predicted     1     0
-# 1   232 10078
-# 0   195 16562
-
 # The area under the curve (auc) can also be used as an rough indication of model performance:
 
 auc <- performance(pred, measure="auc")
@@ -481,18 +455,6 @@ DATA$Observed<-SiteHourTableB$PreAbsM                                          #
 DATA$Predicted<-predict(PODFinalM,type="response")                 # the third column reports the predictions
 cmx(DATA, threshold = cutoff)                                   # the identified cut-off must be used here
 
-#Confusion matrix:
-#BS - Males
-# observed
-# predicted     1     0
-# 1    67  5985
-# 0    66 21280
-
-#BP - Males 
-# observed
-# predicted     1     0
-# 1    60 11076
-# 0    47 15884
 
 # The area under the curve (auc) can also be used as an rough indication of model performance:
 
