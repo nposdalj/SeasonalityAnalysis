@@ -10,7 +10,6 @@
 library(geepack)         # for the GEEs (Wald's hypothesis tests allowed)
 library(splines)         # to construct the B-splines within a GEE-GLM
 library(tidyverse)       # because it literally does everything
-library(rjags)           # replacement for geeglm which is out of date
 library(ROCR)            # to build the ROC curve
 library(PresenceAbsence) # to build the confusion matrix
 library(ggplot2)         # to build the partial residual plots
@@ -25,8 +24,8 @@ library(car) #for ANOVA
 library(splines2)       # to use mSpline for the GEEs
 library(ggfortify)      # extract confidence interval for ACF plots
 
-site = 'HZ' #specify the site of interest
-GDrive = 'I'
+site = 'NC' #specify the site of interest
+GDrive = 'G'
 
 # Step 1: Load the data ---------------------------------------------------
 #Hourly data
@@ -158,17 +157,47 @@ Anova(BlockModF)
 #TimeLost                19  1    1.1e-05 ***
 #as.factor(Year)        482  4    < 2e-16 ***
 
+#OC
+# bs(Julian, k = 4)  155.671  4  < 2.2e-16 ***
+# TimeLost            27.626  1  1.472e-07 ***
+# as.factor(Year)    161.145  4  < 2.2e-16 ***
+
+#NC
+# bs(Julian, k = 4)      286  4    < 2e-16 ***
+# TimeLost                31  1    2.9e-08 ***
+# as.factor(Year)        636  4    < 2e-16 ***
+
 Anova(BlockModJ)
 #HZ
 #bs(Julian, k = 4)      919  4     <2e-16 ***
 #TimeLost                17  1      3e-05 ***
 #as.factor(Year)        238  4     <2e-16 ***
-  
+
+#OC
+# bs(Julian, k = 4)  2042.34  4  < 2.2e-16 ***
+# TimeLost             15.56  1  7.995e-05 ***
+# as.factor(Year)     542.68  4  < 2.2e-16 ***
+
+#NC
+# bs(Julian, k = 4)     1846  4    < 2e-16 ***
+# TimeLost                12  1    0.00062 ***
+# as.factor(Year)        209  4    < 2e-16 ***
+
 Anova(BlockModM)
 #HZ
 #bs(Julian, k = 4)      840  4    < 2e-16 ***
 #TimeLost                 8  1    0.00361 ** 
 #as.factor(Year)         23  4    0.00015 ***
+
+#OC
+# bs(Julian, k = 4)   717.50  4     <2e-16 ***
+# TimeLost              1.31  1     0.2525    
+# as.factor(Year)     128.16  4     <2e-16 ***
+
+#NC
+# bs(Julian, k = 4)     1015  4    < 2e-16 ***
+# TimeLost                 1  1        0.3    
+# as.factor(Year)         57  4    1.5e-11 ***
 
 # Step 4: Data Exploration and Initial Analysis ------------------------------------------------------------------
 # Follow data exploration protocols suggested by Zuur et al. (2010), Zuur (2012), to generate pair plots, box plots, and assess collinearity between covariates in the dataset using Varinace Inflation Factors (vif).
@@ -198,6 +227,32 @@ VIF(GLMM)
 #Julian          1.26  1            1.12
 #TimeLost        1.00  1            1.00
 #as.factor(Year) 1.26  4            1.03
+
+#OC
+# Julian          1.232183  1        1.110037
+# TimeLost        1.002017  1        1.001008
+# as.factor(Year) 1.231875  4        1.026410
+# 
+# Julian          1.173532  1        1.083297
+# TimeLost        1.003268  1        1.001633
+# as.factor(Year) 1.172871  4        1.020132
+# 
+# Julian          1.143291  1        1.069248
+# TimeLost        1.004415  1        1.002205
+# as.factor(Year) 1.141632  4        1.016695
+
+#NC
+# Julian          1.31  1            1.14
+# TimeLost        1.00  1            1.00
+# as.factor(Year) 1.31  4            1.03
+
+# Julian          1.24  1            1.11
+# TimeLost        1.00  1            1.00
+# as.factor(Year) 1.23  4            1.03
+
+# Julian          1.23  1            1.11
+# TimeLost        1.00  1            1.00
+# as.factor(Year) 1.23  4            1.03
 
 # Step 5: Model Selection - Covariate Preparation -------------------------
 # Construct variance-covariance matrices for cyclic covariates:
@@ -252,6 +307,20 @@ QICmod3fA
 #Full model is best
 #Model Order - Julian Day, Year
 
+#OC
+# QIC            QIC.1            QIC.2            QIC.3
+# model3fA            POD0f           POD3fa           POD3fb           POD3fc
+# QIC3fA   33540.8939891145 33357.6299158409 33457.3594848748 33288.0598266738
+#Full model is best
+#Model Order - Julian Day, Year
+
+#NC
+# QIC            QIC.1            QIC.2            QIC.3
+# model3fA            POD0f           POD3fa           POD3fb           POD3fc
+# QIC3fA   34424.5812332557 33816.3590822841 34055.8707388389 34327.7762331342
+#Full model is best
+#Model Order - Julian Day, Year
+
 #Juveniles
 #The initial full model is:
 POD3ja = geeglm(PreAbsJ ~ AvgDayMatJ+as.factor(Year),family = binomial, corstr="ar1", id=BlocksJ, data=SiteHourTableB)
@@ -271,6 +340,20 @@ QICmod3jA
 #Full model is best
 #Model Order - Julian Day, Year
 
+#OC
+# QIC            QIC.1            QIC.2            QIC.3
+# model3jA            POD0j           POD3ja           POD3jb           POD3jc
+# QIC3jA   18227.6382129555 15985.1146704017 17916.2396399579 16535.1316953002
+#Full model best
+#order-jday then year
+
+#NC
+# QIC            QIC.1            QIC.2            QIC.3
+# model3jA            POD0j           POD3ja           POD3jb           POD3jc
+# QIC3jA   23447.3543208099 21956.2110368831 23483.3995161646 22028.5210385183
+#Full model is best
+#Model Order - Julian Day, Year
+
 #Males
 #The initial full model is:
 POD3ma = geeglm(PreAbsM ~ AvgDayMatM+as.factor(Year),family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB)
@@ -287,6 +370,20 @@ QICmod3mA
 #QIC            QIC.1            QIC.2            QIC.3
 #model3mA            POD0m           POD3ma           POD3mb           POD3mc
 #QIC3mA   7185.54933472434 5989.75261850721 6772.72891517581 5999.97795529014
+#Full model is best
+#Model Order - Julian Day, Year
+
+#OC
+# QIC            QIC.1            QIC.2            QIC.3
+# model3mA            POD0m           POD3ma           POD3mb           POD3mc
+# QIC3mA   4555.64015796564 3801.42159750823 4578.63152492947 3894.85147323616
+#Full model is best
+#Model Order - Julian Day, Year
+
+#NC
+# QIC            QIC.1            QIC.2            QIC.3
+# model3mA            POD0m           POD3ma           POD3mb           POD3mc
+# QIC3mA   6662.91974809815 5548.08846446073 6531.07402564486 5589.48961523317
 #Full model is best
 #Model Order - Julian Day, Year
 
@@ -315,18 +412,52 @@ anova(PODFinalF)
 #AvgDayMatF       2 14.90   0.00058 ***
 #as.factor(Year)  4  6.48   0.16598    
 
+#OC
+# AvgDayMatF       2 14.7717   0.00062 ***
+# as.factor(Year)  4  5.9087   0.20607    
+
+#NC
+# AvgDayMatF       2 11.1    0.0039 ** 
+# as.factor(Year)  4 60.7   2.1e-12 ***
+
 anova(PODFinalJ)
 #HZ
 #AvgDayMatJ       2 193.5   < 2e-16 ***
 #as.factor(Year)  4  34.5   5.8e-07 ***
-  
+
+#OC
+# AvgDayMatJ       2 117.031 < 2.2e-16 ***
+# as.factor(Year)  4  41.201 2.443e-08 ***
+
+#NC
+# AvgDayMatJ       2 94.2    <2e-16 ***
+# as.factor(Year)  4 12.3     0.015 *  
+
 anova(PODFinalM)
 #HZ
 #AvgDayMatM       2 160.2    <2e-16 ***
 #as.factor(Year)  4   6.4      0.17    
 
+#OC
+# AvgDayMatM       2 49.657 1.649e-11 ***
+# as.factor(Year)  4 32.667 1.397e-06 ***
+
+#NC
+# AvgDayMatM       2 52.6   3.8e-12 ***
+# as.factor(Year)  4 13.8    0.0079 ** 
+
 #Remove any insignificant variables
 if (site == 'HZ'){
+  #Remove Year from Female and Male models
+  PODFinalF = geeglm(PreAbsF ~ AvgDayMatF,family = binomial, corstr="ar1", id=BlocksF, data=SiteHourTableB)
+  PODFinalM = geeglm(PreAbsM ~ AvgDayMatM,family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB)
+}
+if (site == 'OC'){
+  #Remove Year from Female and Male models
+  PODFinalF = geeglm(PreAbsF ~ AvgDayMatF,family = binomial, corstr="ar1", id=BlocksF, data=SiteHourTableB)
+  PODFinalM = geeglm(PreAbsM ~ AvgDayMatM,family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB)
+}
+if (site == 'NC'){
   #Remove Year from Female and Male models
   PODFinalF = geeglm(PreAbsF ~ AvgDayMatF,family = binomial, corstr="ar1", id=BlocksF, data=SiteHourTableB)
   PODFinalM = geeglm(PreAbsM ~ AvgDayMatM,family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB)
@@ -355,9 +486,9 @@ plot(perf, colorize=TRUE, print.cutoffs.at=c(0.1,0.2,0.3,0.4,0.5))
 
 y<-as.data.frame(perf@y.values)
 x<-as.data.frame(perf@x.values)
-fi <- atan(y/x) - pi/4                                             # to calculate the angle between the 45° line and the line joining the origin with the point (x;y) on the ROC curve
+fi <- atan(y/x) - pi/4                                             # to calculate the angle between the 45? line and the line joining the origin with the point (x;y) on the ROC curve
 L <- sqrt(x^2+y^2)                                                 # to calculate the length of the line joining the origin to the point (x;y) on the ROC curve
-d <- L*sin(fi)                                                     # to calculate the distance between the 45° line and the ROC curve
+d <- L*sin(fi)                                                     # to calculate the distance between the 45? line and the ROC curve
 
 #Find max and position of max
 max = max(d,na.rm=TRUE)
@@ -365,7 +496,7 @@ names(d)[1] <- 'Col1'
 position = which.max(d$Col1)
 
 alpha<-as.data.frame(perf@alpha.values)                            # the alpha values represent the corresponding cut-offs
-cutoff = alpha[position,]                                                       # to identify the alpha value (i.e. the cut-off) that corresponds to the maximum distance between the 45° line and the curve
+cutoff = alpha[position,]                                                       # to identify the alpha value (i.e. the cut-off) that corresponds to the maximum distance between the 45? line and the curve
 
 # This value can now be used to build the confusion matrix:
 
@@ -406,9 +537,9 @@ plot(perf, colorize=TRUE, print.cutoffs.at=c(0.1,0.2,0.3,0.4,0.5))
 
 y<-as.data.frame(perf@y.values)
 x<-as.data.frame(perf@x.values)
-fi <- atan(y/x) - pi/4                                             # to calculate the angle between the 45° line and the line joining the origin with the point (x;y) on the ROC curve
+fi <- atan(y/x) - pi/4                                             # to calculate the angle between the 45? line and the line joining the origin with the point (x;y) on the ROC curve
 L <- sqrt(x^2+y^2)                                                 # to calculate the length of the line joining the origin to the point (x;y) on the ROC curve
-d <- L*sin(fi)                                                     # to calculate the distance between the 45° line and the ROC curve
+d <- L*sin(fi)                                                     # to calculate the distance between the 45? line and the ROC curve
 
 #Find max and position of max
 max = max(d,na.rm=TRUE)
@@ -417,7 +548,7 @@ position = which.max(d$Col1)
 
 
 alpha<-as.data.frame(perf@alpha.values)                            # the alpha values represent the corresponding cut-offs
-cutoff = alpha[position,]                                                       # to identify the alpha value (i.e. the cut-off) that corresponds to the maximum distance between the 45° line and the curve
+cutoff = alpha[position,]                                                       # to identify the alpha value (i.e. the cut-off) that corresponds to the maximum distance between the 45? line and the curve
 
 # This value can now be used to build the confusion matrix:
 
@@ -458,9 +589,9 @@ plot(perf, colorize=TRUE, print.cutoffs.at=c(0.1,0.2,0.3,0.4,0.5))
 
 y<-as.data.frame(perf@y.values)
 x<-as.data.frame(perf@x.values)
-fi <- atan(y/x) - pi/4                                             # to calculate the angle between the 45° line and the line joining the origin with the point (x;y) on the ROC curve
+fi <- atan(y/x) - pi/4                                             # to calculate the angle between the 45? line and the line joining the origin with the point (x;y) on the ROC curve
 L <- sqrt(x^2+y^2)                                                 # to calculate the length of the line joining the origin to the point (x;y) on the ROC curve
-d <- L*sin(fi)                                                     # to calculate the distance between the 45° line and the ROC curve
+d <- L*sin(fi)                                                     # to calculate the distance between the 45? line and the ROC curve
 
 #Find max and position of max
 max = max(d,na.rm=TRUE)
@@ -469,7 +600,7 @@ position = which.max(d$Col1)
 
 
 alpha<-as.data.frame(perf@alpha.values)                            # the alpha values represent the corresponding cut-offs
-cutoff = alpha[position,]                                                       # to identify the alpha value (i.e. the cut-off) that corresponds to the maximum distance between the 45° line and the curve
+cutoff = alpha[position,]                                                       # to identify the alpha value (i.e. the cut-off) that corresponds to the maximum distance between the 45? line and the curve
 
 # This value can now be used to build the confusion matrix:
 
