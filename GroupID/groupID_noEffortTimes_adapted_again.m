@@ -2,15 +2,15 @@
 close all;clear all;clc;
 %% select directory where ship files are located
 %Site name
-siteabrev = 'Wake';
-siteNameMatch = 'Wake';
-region = 'CentralPac'; %all of the WAT data has a space between the site and the deployment #
+siteabrev = 'HAT';
+siteNameMatch = 'HAT';
+region = 'WAT'; %all of the WAT data has a space between the site and the deployment #
 shipDataType = 2; % 1 - old ship data, %2 - new ship data
-maxDetEdit = 2; % number of TPWS folders (i.e. TPWS4 is 4)
+maxDetEdit = 3; % number of TPWS folders (i.e. TPWS4 is 4)
 ShipIDReDo = 0; % If you want to re-run ship and ID times, change this to 1
 
 % Data directories
-GDrive = 'I';
+GDrive = 'G';
 shipDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\metadata_reduced\',siteabrev];
 shipTimesDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\ShipTimes\',siteabrev]; % directory where to save ship times .mat files
 IDDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\TPWS_125\',siteabrev];
@@ -56,6 +56,10 @@ for n = 1:length(site)
             deplCompare = siteNameMatch;
         elseif strcmp(siteNameMatch,'HOKE');
             deplCompare = siteNameMatch;
+        elseif strcmp(siteNameMatch,'NFC');
+            deplCompare = ['NFC_A_',strdepl];
+        elseif strcmp(siteNameMatch,'HAT');
+            deplCompare = ['HAT_B_',strdepl];
         else
             deplCompare = [loc strdepl];
         end
