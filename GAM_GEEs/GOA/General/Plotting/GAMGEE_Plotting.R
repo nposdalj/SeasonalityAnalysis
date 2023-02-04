@@ -22,12 +22,14 @@ library(splines2)       # to use mSpline for the GEEs
 library(scales)
 library(magick)
 library(cowplot)
+library(ggExtra)
+
 #load functions
 source('C:/Users/nposd/Documents/GitHub/SeasonalityAnalysis/GAM_GEEs/GAMGEE_Plotting_Functions_RealProbs_HistAbove.R')
 
 # Load Workspace --------------------------------------------------
-site = 'Big'
-GDrive = 'I'
+site = 'CB'
+GDrive = 'G'
 #region = 'GOA'
 if (exists("site")){
   if (site == 'Big'){

@@ -4,26 +4,27 @@ library("tidyverse")
 library("dplyr")
 
 #load data
-GDrive =  'I'
-Region = c('GofAK')
+GDrive =  'G'
+Region = c('WAT')
 dir = paste(GDrive,":/My Drive/",Region,"_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites",sep="")
 
 #Site Names
-SiteNames = c('CB','PT','QN','BD','AB','KOA','KS')
+#SiteNames = c('CB','PT','QN','BD','AB','KOA','KS')
 #SiteNames = c('CA','CCE','CORC','DCPP01C','GI','HOKE','PS1','PS2','QC')
 #SiteNames = c('CSM','Equator','Kauai','King','Kona','LSM','Pagan','Palmyra','PHR','Saipan','Tinian','Wake')
+SiteNames = c('HZ','OC','NC','BC','WC','GS','BP','BS','JAX')
 
 saveDir = paste(GDrive,":/My Drive/",Region,"_TPWS_metadataReduced/Plots/",sep="")
 
 #General Data
-fileName1 = paste(GDrive,":/My Drive/",Region,"_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites/AllSitesGrouped_GAMGEE_ROW.csv",sep="")#setting the directory
+fileName1 = paste(GDrive,":/My Drive/",Region,"_TPWS_metadataReduced/SeasonalityAnalysis/AllSites/AllSitesGrouped_GAMGEE_ROW.csv",sep="")#setting the directory
 DayTable = read.csv(fileName1) #no effort days deleted
 #DayTable$Region = 'CCE'
 DayTable = na.omit(DayTable)
 DayTable$tbin = as.Date(DayTable$tbin)
 
 #Sex Specific Data
-fileName2 = paste(GDrive,":/My Drive/",Region,"_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites/AllSitesGrouped_GAMGEE_ROW_sexClasses.csv",sep="")#setting the directory
+fileName2 = paste(GDrive,":/My Drive/",Region,"_TPWS_metadataReduced/SeasonalityAnalysis/AllSites/AllSitesGrouped_GAMGEE_ROW_sexClasses.csv",sep="")#setting the directory
 SexDayTable = read.csv(fileName2) #no effort days deleted
 #SexDayTable$Region = 'CCE'
 SexDayTable = na.omit(SexDayTable)

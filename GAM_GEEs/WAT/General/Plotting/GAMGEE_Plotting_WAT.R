@@ -27,7 +27,7 @@ source('C:/Users/nposd/Documents/GitHub/SeasonalityAnalysis/GAM_GEEs/GAMGEE_Plot
 
 # Load Workspace --------------------------------------------------
 site = 'OC'
-GDrive = 'I'
+GDrive = 'G'
 varOrder = cbind('Julian Day','Year') #Variables in the final model and their order (ex: (1)'Julian Day','Year' (2)'Year,'Julian Day', (3)'Julian Day', (4)'Year')
 saveWorkspace = paste(GDrive,":/My Drive/WAT_TPWS_metadataReduced/SeasonalityAnalysis/",site,'/',sep="")
 fileName = paste(saveWorkspace,site,'_SiteSpecific_gamgeeOutput.RData',sep="")

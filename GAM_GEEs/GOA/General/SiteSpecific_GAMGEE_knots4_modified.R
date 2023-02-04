@@ -25,8 +25,8 @@ library(ChemoSpecUtils)
 library(car)            # to run an ANOVA
 library(ggfortify)      # extract confidence interval for ACF plots
 
-site = 'CB' #specify the site of interest
-GDrive = 'I'
+site = 'PT' #specify the site of interest
+GDrive = 'G'
 
 # Step 1: Load the Data -----------------------------------------------------------
 dir = paste(GDrive,":/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/BigModel")
