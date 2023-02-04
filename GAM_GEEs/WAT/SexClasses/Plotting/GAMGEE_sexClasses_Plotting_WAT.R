@@ -22,6 +22,7 @@ library(scales)
 library(magick)
 library(cowplot)
 library(ggExtra)
+library(plyr)
 
 #load functions
 source('C:/Users/Harp/Documents/GitHub/SeasonalityAnalysis/GAM_GEEs/GAMGEE_sexClasses_Plotting_Functions_RealProbs_HistAbove.R')

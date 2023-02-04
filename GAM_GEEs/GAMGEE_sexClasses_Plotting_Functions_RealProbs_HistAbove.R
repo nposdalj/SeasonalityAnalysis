@@ -766,7 +766,7 @@ ggPlot_Year_WATT <- function(model, table,site){
   BootstrapCoefs2<-BootstrapParameters2[, c(1,start:end)]
   
   #Histogram for Year observations
-  counts = count(SiteHourTableB$Year)
+  counts = count(table$Year)
   counts$x = as.character(counts$x)
   counts$freq = as.numeric(counts$freq)
   counts$days = round(counts$freq/12)
