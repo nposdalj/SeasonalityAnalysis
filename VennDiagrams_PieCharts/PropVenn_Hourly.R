@@ -4,26 +4,27 @@ library("tidyverse")
 library("dplyr")
 
 #load data
-GDrive =  'I'
-Region = c('GofAK')
+GDrive =  'G'
+Region = c('WAT')
 dir = paste(GDrive,":/My Drive/",Region,"_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites",sep="")
 
 #Site Names
-SiteNames = c('CB','PT','QN','BD','AB','KOA','KS')
+#SiteNames = c('CB','PT','QN','BD','AB','KOA','KS')
 #SiteNames = c('CA','CCE','CORC','DCPP01C','GI','HOKE','PS1','PS2','QC')
 #SiteNames = c('CSM','Equator','Kauai','King','Kona','LSM','Pagan','Palmyra','PHR','Saipan','Tinian','Wake')
+SiteNames = c('HZ','OC','NC','BC','WC','GS','BP','BS','JAX')
 
 saveDir = paste(GDrive,":/My Drive/",Region,"_TPWS_metadataReduced/Plots/",sep="")
 
 #General Data
-fileName1 = paste(GDrive,":/My Drive/",Region,"_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites/AllSitesGrouped_Binary_GAMGEE_ROW.csv",sep="")#setting the directory
+fileName1 = paste(GDrive,":/My Drive/",Region,"_TPWS_metadataReduced/SeasonalityAnalysis/AllSites/AllSitesGrouped_Binary_GAMGEE_ROW.csv",sep="")#setting the directory
 HourTable = read.csv(fileName1) #no effort days deleted
 #HourTable$Region = 'CCE'
 HourTable = na.omit(HourTable)
 HourTable$tbin = as.Date(HourTable$tbin)
 
 #Sex Specific Data
-fileName2 = paste(GDrive,":/My Drive/",Region,"_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites/AllSitesGrouped_Binary_GAMGEE_ROW_sexClasses.csv",sep="")#setting the directory
+fileName2 = paste(GDrive,":/My Drive/",Region,"_TPWS_metadataReduced/SeasonalityAnalysis/AllSites/AllSitesGrouped_Binary_GAMGEE_ROW_sexClasses.csv",sep="")#setting the directory
 SexHourTable = read.csv(fileName2) #no effort days deleted
 #SexHourTable$Region = 'CCE'
 SexHourTable = na.omit(SexHourTable)
@@ -61,14 +62,15 @@ SexHourTable$M = replace(SexHourTable$M, which(SexHourTable$JM ==1 | SexHourTabl
 for (i in 1:length(SiteNames)){
   site = SiteNames[i]
   SiteHourTable = dplyr::filter(SexHourTable, grepl(site,Site))
+  siteHourTableGen = dplyr::filter(HourTable, grepl(site,Site))
   
-  #Find Total Days and Days with Presence in General
-  TotalDays = nrow(SiteHourTable)
-  PresentDays = apply(SiteHourTable,2,function(x) sum(x > 0))
+  #Find Total Hours and Hours with Presence in General
+  TotalHours = nrow(SiteHourTable)
+  PresentHours = apply(SiteHourTable,2,function(x) sum(x > 0))
     if (i == 1){
-    SumTable = data.frame("site" = site, "TotalDays" = TotalDays, "PresentDays" = PresentDays[10])
+    SumTable = data.frame("site" = site, "TotalHours" = TotalHours, "PresentHours" = sum(siteHourTableGen$PreAbs))
   }else{
-    SumTableTemp = data.frame("site" = site, "TotalDays" = TotalDays, "PresentDays" = PresentDays[10])
+    SumTableTemp = data.frame("site" = site, "TotalHours" = TotalHours, "PresentHours" = sum(siteHourTableGen$PreAbs))
     SumTable = rbind(SumTable, SumTableTemp)
   }
   
@@ -103,14 +105,16 @@ for (i in 1:length(SiteNames)){
 # Relative Bars & Effort -----------------------------------------------------------
 
 #Relative Effort
-MaxEffort = max(SumTable$TotalDays)
-SumTable$RelativeEffort = SumTable$TotalDays/MaxEffort
+MaxEffort = max(SumTable$TotalHours)
+SumTable$RelativeEffort = SumTable$TotalHours/MaxEffort
 
 #Relative Presence
-SumTable$RelativePresence = SumTable$PresentDays/SumTable$TotalDays
+MaxPresence = max(SumTable$PresentHours)
+SumTable$Relative_toEachOther_Presence = SumTable$PresentHours/MaxPresence
+SumTable$Relative_toEffort_Presence = SumTable$PresentHours/SumTable$TotalHours
 
 #Stacked bar plot for relative effort
-title = paste(saveDir,"/RelativeEffort",".pdf",sep="")
+title = paste(saveDir,"/RelativeEffortHours",".pdf",sep="")
 pdf(title)
 p = ggplot(SumTable, aes(x=site, y=RelativeEffort)) +
   geom_bar(stat="identity", fill="lightgrey")+
@@ -128,10 +132,29 @@ p+ theme(
 )
 dev.off()
 
-#Stacked bar plot for relative presence
-title = paste(saveDir,"/RelativePresence",".pdf",sep="")
+#Stacked bar plot for relative to each other presence
+title = paste(saveDir,"/Relative_toEachOther_PresenceHours",".pdf",sep="")
 pdf(title)
-p = ggplot(SumTable, aes(x=site, y=RelativePresence)) +
+p = ggplot(SumTable, aes(x=site, y=Relative_toEachOther_Presence)) +
+  geom_bar(stat="identity", fill="darkgray")+
+  theme_minimal()
+p+ theme(
+  # Remove panel border
+  panel.border = element_blank(),  
+  # Remove panel grid lines
+  panel.grid.major = element_blank(),
+  panel.grid.minor = element_blank(),
+  # Remove panel background
+  panel.background = element_blank(),
+  # Add axis line
+  axis.line = element_line(colour = "grey")
+)
+dev.off()
+
+#Stacked bar plot for relative to effort presence
+title = paste(saveDir,"/Relative_toEffort_PresenceHours",".pdf",sep="")
+pdf(title)
+p = ggplot(SumTable, aes(x=site, y=Relative_toEffort_Presence)) +
   geom_bar(stat="identity", fill="darkgray")+
   theme_minimal()
 p+ theme(

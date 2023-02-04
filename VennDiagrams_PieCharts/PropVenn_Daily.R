@@ -62,14 +62,15 @@ SexDayTable$M = replace(SexDayTable$M, which(SexDayTable$JM ==1 | SexDayTable$FM
 for (i in 1:length(SiteNames)){
   site = SiteNames[i]
   SiteDayTable = dplyr::filter(SexDayTable, grepl(site,Site))
+  SiteDayTableGen = dplyr::filter(DayTable, grepl(site,Site))
   
   #Find Total Days and Days with Presence in General
-  TotalDays = nrow(SiteDayTable)
+  TotalDays = nrow(SiteDayTableGen)
   PresentDays = apply(SiteDayTable,2,function(x) sum(x > 0))
     if (i == 1){
-    SumTable = data.frame("site" = site, "TotalDays" = TotalDays, "PresentDays" = PresentDays[10])
+    SumTable = data.frame("site" = site, "TotalDays" = TotalDays, "PresentDays" = sum(SiteDayTableGen$PreAbs))
   }else{
-    SumTableTemp = data.frame("site" = site, "TotalDays" = TotalDays, "PresentDays" = PresentDays[10])
+    SumTableTemp = data.frame("site" = site, "TotalDays" = TotalDays, "PresentDays" = sum(SiteDayTableGen$PreAbs))
     SumTable = rbind(SumTable, SumTableTemp)
   }
   
@@ -108,10 +109,12 @@ MaxEffort = max(SumTable$TotalDays)
 SumTable$RelativeEffort = SumTable$TotalDays/MaxEffort
 
 #Relative Presence
-SumTable$RelativePresence = SumTable$PresentDays/SumTable$TotalDays
+MaxPresence = max(SumTable$PresentDays)
+SumTable$Relative_toEachOther_Presence = SumTable$PresentDays/MaxPresence
+SumTable$Relative_toEffort_Presence = SumTable$PresentDays/SumTable$TotalDays
 
 #Stacked bar plot for relative effort
-title = paste(saveDir,"/RelativeEffort",".pdf",sep="")
+title = paste(saveDir,"/RelativeEffortDays",".pdf",sep="")
 pdf(title)
 p = ggplot(SumTable, aes(x=site, y=RelativeEffort)) +
   geom_bar(stat="identity", fill="lightgrey")+
@@ -129,10 +132,29 @@ p+ theme(
 )
 dev.off()
 
-#Stacked bar plot for relative presence
-title = paste(saveDir,"/RelativePresence",".pdf",sep="")
+#Stacked bar plot for relative to each other presence
+title = paste(saveDir,"/Relative_toEachOther_PresenceDays",".pdf",sep="")
 pdf(title)
-p = ggplot(SumTable, aes(x=site, y=RelativePresence)) +
+p = ggplot(SumTable, aes(x=site, y=Relative_toEachOther_Presence)) +
+  geom_bar(stat="identity", fill="darkgray")+
+  theme_minimal()
+p+ theme(
+  # Remove panel border
+  panel.border = element_blank(),  
+  # Remove panel grid lines
+  panel.grid.major = element_blank(),
+  panel.grid.minor = element_blank(),
+  # Remove panel background
+  panel.background = element_blank(),
+  # Add axis line
+  axis.line = element_line(colour = "grey")
+)
+dev.off()
+
+#Stacked bar plot for relative to effort presence
+title = paste(saveDir,"/Relative_toEffort_PresenceDays",".pdf",sep="")
+pdf(title)
+p = ggplot(SumTable, aes(x=site, y=Relative_toEffort_Presence)) +
   geom_bar(stat="identity", fill="darkgray")+
   theme_minimal()
 p+ theme(
