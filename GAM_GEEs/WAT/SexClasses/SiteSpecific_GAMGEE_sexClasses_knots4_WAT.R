@@ -23,8 +23,9 @@ library(ChemoSpecUtils)
 library(car) #for ANOVA
 library(splines2)       # to use mSpline for the GEEs
 library(ggfortify)      # extract confidence interval for ACF plots
+library(dplyr)
 
-site = 'NC' #specify the site of interest
+site = 'BC' #specify the site of interest
 GDrive = 'G'
 
 # Step 1: Load the data ---------------------------------------------------
@@ -108,7 +109,7 @@ divdiff = nrow(timeseriesF) - length(preBlock)
 last = tail(preBlock, n = 1)+1
 lastVec = rep(last,each = divdiff)
 timeseriesF$blockF = c(preBlock,lastVec)
-timeseriesF = rename(timeseriesF, tbin = date)
+timeseriesF = dplyr::rename(timeseriesF, tbin = date)
 SiteHourTableB = left_join(SiteHourTable,timeseriesF,by="tbin")
 
 #Make blocks continuous 
@@ -124,7 +125,7 @@ divdiff = nrow(timeseriesJ) - length(preBlock)
 last = tail(preBlock, n = 1)+1
 lastVec = rep(last,each = divdiff)
 timeseriesJ$blockJ = c(preBlock,lastVec)
-timeseriesJ = rename(timeseriesJ, tbin = date)
+timeseriesJ = dplyr::rename(timeseriesF, tbin = date)
 SiteHourTableB = left_join(SiteHourTableB,timeseriesJ,by="tbin")
 
 #Make blocks continuous 
@@ -140,7 +141,7 @@ divdiff = nrow(timeseriesM) - length(preBlock)
 last = tail(preBlock, n = 1)+1
 lastVec = rep(last,each = divdiff)
 timeseriesM$blockM = c(preBlock,lastVec)
-timeseriesM = rename(timeseriesM, tbin = date)
+timeseriesM = dplyr::rename(timeseriesF, tbin = date)
 SiteHourTableB = left_join(SiteHourTableB,timeseriesM,by="tbin")
 
 #Make blocks continuous 
