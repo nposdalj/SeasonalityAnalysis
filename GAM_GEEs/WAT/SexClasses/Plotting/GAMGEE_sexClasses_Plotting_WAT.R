@@ -11,7 +11,6 @@ library(PresenceAbsence) # to build the confusion matrix
 library(ggplot2)         # to build the partial residual plots
 library(mvtnorm)         # to build the partial residual plots
 library(gridExtra)       # to build the partial residual plots
-library(SimDesign)
 library(lubridate)
 library(regclass)
 library(mgcv)
@@ -28,7 +27,7 @@ library(plyr)
 source('C:/Users/Harp/Documents/GitHub/SeasonalityAnalysis/GAM_GEEs/GAMGEE_sexClasses_Plotting_Functions_RealProbs_HistAbove.R')
 
 # Load Workspace --------------------------------------------------
-site = 'HZ'
+site = 'WC'
 GDrive = 'G'
 saveWorkspace = paste(GDrive,":/My Drive/WAT_TPWS_metadataReduced/SeasonalityAnalysis/",site,'/',sep="")
 fileName = paste(saveWorkspace,site,'_SiteSpecific_gamgeeOutput_sexClasses.RData',sep="")
@@ -57,13 +56,20 @@ if (sex == 'Social Groups'){
 }
 
 # Plot Julian Day ---------------------------------------------------------
+  if (site == 'BC' & sex == 'Social Groups' | site == 'WC' & sex == 'Social Groups'){
+    ggPlot_JD_AfterYear_WAT(PODFinal,SiteHourTableB,sex)
+  }else{
     ggPlot_JD_sex(PODFinal,SiteHourTableB,sex)
+  }
 
 # Plot Year ---------------------------------------------------------------
-  if (site == 'HZ'& sex == 'Social Groups' | site == 'HZ' & sex == 'Males' | site == 'OC' & sex == 'Social Groups'){
+  if (site == 'HZ' & sex == 'Social Groups' | site == 'HZ' & sex == 'Males' | site == 'OC' & sex == 'Social Groups' | 
+      site == 'BC' & sex == 'Mid-Size' | site == 'WC' & sex == 'Males'){
     #skip this
     print('Skip this')
-  }else{
+  }else if (site == 'BC' & sex == 'Social Groups' | site == 'WC' & sex == 'Social Groups'){
+    ggPlot_Year_WAT_first(PODFinal,SiteHourTableB,sex)
+  }else{    
     if (length(unique(SiteHourTableB$Year)) > 4){
     ggPlot_Year_WATT(PODFinal,SiteHourTableB,sex)
     }else{

@@ -58,6 +58,65 @@ ggPlot_JD_sex <- function(model, table,sex){
   
 }
 
+ggPlot_JD_AfterYear_WAT <- function(model, table,sex){
+  BootstrapParameters3<-rmvnorm(10000, coef(model),summary(model)$cov.unscaled)
+  start=5; finish=6; Variable=table$Julian;  
+  PlottingVar3<-seq(min(Variable), max(Variable), length=5000)
+  CenterVar3<-model.matrix(model)[,start:finish]*coef(model)[c(start:finish)]
+  BootstrapCoefs3<-BootstrapParameters3[,c(start:finish)]
+  Basis3<-gam(rbinom(5000,1,0.5)~s(PlottingVar3, bs="cc", k=4), fit=F, family=binomial, knots=list(PlottingVar2=seq(1,365,length=4)))$X[,2:3]
+  RealFit3<-Basis3%*%coef(model)[c(start:finish)] #COEFFICIENTS TO PLOT
+  RealFitCenter3<-RealFit3-mean(CenterVar3)
+  BootstrapFits3<-Basis3%*%t(BootstrapCoefs3)
+  quant.func3<-function(x){quantile(x,probs=c(0.025, 0.975))}
+  cis3<-apply(BootstrapFits3, 1, quant.func3)-mean(CenterVar3)
+  
+  #Histogram for Jday observations
+  Jday = seq(from = 0,to = 365,by = 1)
+  fullhist = hist(SiteHourTableB$Julian,Jday)
+  yhist = fullhist$counts
+  plothist = data.frame(x=Jday[-1],y=yhist)
+  
+  #Figure out y-scale labels based on plotting julian day as a coefficient
+  plotDF_labels = data.frame(PlottingVar3, RealFitCenter3)
+  colnames(plotDF_labels) = c("Jday", "Fit")
+  
+  pmain = ggplot(plotDF_labels, aes(Jday, Fit),
+  ) + geom_smooth(fill = "grey", colour = "black", aes(ymin=cis3[1,], ymax=cis3[2,]), stat ="identity",size = 1
+  ) + coord_cartesian(ylim = c(min(cis3[1,]), max(cis3[2,]))
+  ) + labs(x = "Julian Day",
+           y = "s(Julian Day)"
+  ) + scale_x_continuous(breaks = seq(20,350,length.out = 12),labels = c('J','F','M','A','M','J','J','A','S','O','N','D')
+  ) + theme(axis.line = element_line(),
+            panel.background = element_blank(),
+            text = element_text(size = 25)
+  )
+  
+  xens = axis_canvas(pmain, axis = "x")+
+    geom_bar(data = plothist,
+             aes(x,y),
+             fill = 4,
+             alpha = 0.2,
+             position = "dodge",
+             stat = "identity",
+             width = 1
+    )
+  p1 = insert_xaxis_grob(pmain,xens,grid::unit(.2, "null"), position = "top")
+  ggdraw(p1)
+  
+  ggtitle = paste(saveDir,"/Julian Day - ", site,'_',sex,".pdf",sep="")
+  
+  ggsave(
+    ggtitle, width = 7, height = 6, units = "in",
+    device = "pdf") # save figure
+  while (dev.cur() > 1) {
+    dev.off()
+  } # close graphics device
+  print("Plot Saved")
+  
+}
+
+
 
 # Plot Julian Day with ggplot (When Julian day is after year for GOA (Mid-Size) or CB)  ---------------------------------------------
 ggPlot_JD_AfterYear <- function(model, table,sex){
