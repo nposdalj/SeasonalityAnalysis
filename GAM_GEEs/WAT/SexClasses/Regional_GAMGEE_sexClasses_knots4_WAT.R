@@ -44,9 +44,7 @@ SiteHourTable = dplyr::filter(HourTable, grepl(region,Region))
 SiteHourTable$Hour = hour(SiteHourTable$tbin)
 SiteHourTable$Effort_Bin[SiteHourTable$Effort_Bin > 12] = 12
 SiteHourTable = subset(SiteHourTable, Region == region)#subset the table for the site only
-
-#If it's a leap year, delete julian day 366
-SiteHourTable = SiteHourTable[!(SiteHourTable$Julian==366),]
+SiteHourTable = SiteHourTable[!(SiteHourTable$Julian==366),] #If it's a leap year, delete julian day 366
 
 #Time lost variable
 SiteHourTable$TimeLost = max(SiteHourTable$Effort_Bin) - SiteHourTable$Effort_Bin
@@ -54,7 +52,7 @@ SiteHourTable$TimeLost = max(SiteHourTable$Effort_Bin) - SiteHourTable$Effort_Bi
 # Each record in the dataset corresponds to an hour of recording, which constitutes the unit of analysis. 
 # The column "PreAbs" represents the binary response variable (0: no animal in acoustic contact; 1: acoustic contact).
 # The column "Site" corresponds to the recording site.
-# The column "Region" corresponds to the recording region (GOA or BSAI).
+# The column "Region" corresponds to the recording region
 # The column Julian represents the day of the year and the column year represents the year of recording.
 
 
@@ -85,21 +83,24 @@ BlockModM<-glm(PreAbsM~
                ,data=SiteHourTable,family=binomial)
 
 #Social Groups
-ACFF = acf(residuals(BlockModF), lag.max = 2000, ylim=c(0,0.1))
+ACFF = acf(residuals(BlockModF), lag.max = 1000, ylim=c(-0.1,0.1))
 CIF = ggfortify:::confint.acf(ACFF)
-ACFidxF = which(ACFF[["acf"]] < CIF, arr.ind=TRUE)
+CIF_neg = CIF*-1
+ACFidxF = which(ACFF[["acf"]] < CIF & ACFF[["acf"]] > CIF_neg , arr.ind=TRUE)
 ACFvalF = ACFidxF[1]
 
 #Mid Size
 ACFJ = acf(residuals(BlockModJ), lag.max = 2000, ylim=c(0,0.1))
 CIJ = ggfortify:::confint.acf(ACFJ)
-ACFidxJ = which(ACFJ[["acf"]] < CIJ, arr.ind=TRUE)
+CIJ_neg = CIJ*-1
+ACFidxJ = which(ACFJ[["acf"]] < CIJ & ACFJ[["acf"]] > CIJ_neg, arr.ind=TRUE)
 ACFvalJ = ACFidxJ[1]
 
 #Males
-ACFM = acf(residuals(BlockModM), lag.max = 2000, ylim=c(0,0.1))
+ACFM = acf(residuals(BlockModM), lag.max = 200, ylim=c(0,0.1))
 CIM = ggfortify:::confint.acf(ACFM)
-ACFidxM = which(ACFM[["acf"]] < CIM, arr.ind=TRUE)
+CIM_neg = CIM*-1
+ACFidxM = which(ACFM[["acf"]] < CIM & ACFM[["acf"]] > CIM_neg, arr.ind=TRUE)
 ACFvalM = ACFidxM[1]
 
 #create the blocks based on the full timesereies

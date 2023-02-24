@@ -43,12 +43,8 @@ SiteHourTable = dplyr::filter(HourTable, grepl(site,Site))
 SiteHourTable$Hour = hour(SiteHourTable$tbin)
 SiteHourTable$Effort_Bin[SiteHourTable$Effort_Bin > 12] = 12
 SiteHourTable = subset(SiteHourTable, Site == site)#subset the table for the site only
-
-#If it's a leap year, delete julian day 366
-SiteHourTable = SiteHourTable[!(SiteHourTable$Julian==366),]
-
-#Time lost variable
-SiteHourTable$TimeLost = max(SiteHourTable$Effort_Bin) - SiteHourTable$Effort_Bin
+SiteHourTable = SiteHourTable[!(SiteHourTable$Julian==366),] #If it's a leap year, delete julian day 366
+SiteHourTable$TimeLost = max(SiteHourTable$Effort_Bin) - SiteHourTable$Effort_Bin #Time lost variable
 
 # Each record in the dataset corresponds to an hour of recording, which constitutes the unit of analysis. 
 # The column "PreAbs" represents the binary response variable (0: no animal in acoustic contact; 1: acoustic contact).
