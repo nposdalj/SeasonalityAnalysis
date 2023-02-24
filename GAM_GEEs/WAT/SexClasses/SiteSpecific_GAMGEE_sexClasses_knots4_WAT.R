@@ -25,7 +25,7 @@ library(splines2)       # to use mSpline for the GEEs
 library(ggfortify)      # extract confidence interval for ACF plots
 library(dplyr)
 
-site = 'WC' #specify the site of interest
+site = 'JAX' #specify the site of interest
 GDrive = 'G'
 
 # Step 1: Load the data ---------------------------------------------------
@@ -174,6 +174,26 @@ Anova(BlockModF)
 # TimeLost                 7  1     0.0066 ** 
 # as.factor(Year)       1224  3     <2e-16 ***
 
+#GS
+# bs(Julian, k = 4)   231.47  4     <2e-16 ***
+# TimeLost              2.32  1     0.1277    
+# as.factor(Year)     218.05  3     <2e-16 ***
+
+#BP
+# bs(Julian, k = 4)     31.7  4    2.2e-06 ***
+#   TimeLost               0.5  1       0.48    
+# as.factor(Year)       23.6  3    3.0e-05 ***
+
+#BS
+# bs(Julian, k = 4)    194.2  4     <2e-16 ***
+#   TimeLost               1.0  1       0.31    
+# as.factor(Year)       83.6  3     <2e-16 ***
+
+#JAX
+# bs(Julian, k = 4)     61.7  4    1.3e-12 ***
+#   TimeLost               0.1  1       0.81    
+# as.factor(Year)       88.8  3    < 2e-16 ***
+
 Anova(BlockModJ)
 #HZ
 #bs(Julian, k = 4)      919  4     <2e-16 ***
@@ -199,7 +219,27 @@ Anova(BlockModJ)
 # bs(Julian, k = 4)      677  4    < 2e-16 ***
 # TimeLost                17  1    4.5e-05 ***
 # as.factor(Year)         24  3    2.0e-05 ***
+
+#GS
+# bs(Julian, k = 4)  204.136  4    < 2e-16 ***
+#   TimeLost             5.273  1    0.02165 *  
+#   as.factor(Year)    114.245  3    < 2e-16 ***
+
+#BP
+# bs(Julian, k = 4)     5.24  4      0.264   
+# TimeLost              0.05  1      0.827   
+# as.factor(Year)      11.82  3      0.008 **
+
+#BS
+# bs(Julian, k = 4)      107  4    < 2e-16 ***
+#   TimeLost                 2  1       0.15    
+# as.factor(Year)         39  3    1.8e-08 ***
   
+#JAX
+# bs(Julian, k = 4)    21.20  4    0.00029 ***
+#   TimeLost              0.01  1    0.90822    
+# as.factor(Year)      23.28  3    3.5e-05 ***
+
 Anova(BlockModM)
 #HZ
 #bs(Julian, k = 4)      840  4    < 2e-16 ***
@@ -225,6 +265,26 @@ Anova(BlockModM)
 # bs(Julian, k = 4)     73.4  4    4.4e-15 ***
 # TimeLost               0.1  1       0.74    
 # as.factor(Year)       28.5  3    2.9e-06 ***
+
+#GS
+# bs(Julian, k = 4)  154.720  4  < 2.2e-16 ***
+#   TimeLost             2.911  1    0.08798 .  
+# as.factor(Year)     26.351  3  8.052e-06 ***
+
+#BP
+# bs(Julian, k = 4)     19.3  4    0.00068 ***
+#   TimeLost               0.3  1    0.58462    
+# as.factor(Year)        6.8  3    0.07841 .  
+
+#BS
+# bs(Julian, k = 4)     28.7  4    8.9e-06 ***
+#   TimeLost               0.4  1       0.53    
+# as.factor(Year)       29.9  3    1.4e-06 ***
+
+#JAX
+# bs(Julian, k = 4)     9.31  4    0.05385 .  
+# TimeLost              0.00  1    0.95955    
+# as.factor(Year)      20.78  3    0.00012 ***
 
 # Step 4: Data Exploration and Initial Analysis ------------------------------------------------------------------
 # Follow data exploration protocols suggested by Zuur et al. (2010), Zuur (2012), to generate pair plots, box plots, and assess collinearity between covariates in the dataset using Varinace Inflation Factors (vif).
@@ -307,6 +367,59 @@ VIF(GLMM)
 # TimeLost        1.04  1            1.02
 # as.factor(Year) 1.53  3            1.07
 
+#GS
+# Julian          1.629197  1        1.276400
+# TimeLost        1.000645  1        1.000323
+# as.factor(Year) 1.629608  3        1.084794
+
+# Julian          1.490556  1        1.220883
+# TimeLost        1.000545  1        1.000272
+# as.factor(Year) 1.491044  3        1.068846
+
+# Julian          1.406755  1        1.186067
+# TimeLost        1.000296  1        1.000148
+# as.factor(Year) 1.407116  3        1.058575
+
+#BP
+
+# Julian          1.08  1            1.04
+# TimeLost        1.00  1            1.00
+# as.factor(Year) 1.08  3            1.01
+
+# Julian          1.32  1            1.15
+# TimeLost        1.00  1            1.00
+# as.factor(Year) 1.32  3            1.05
+
+# Julian          1.14  1            1.07
+# TimeLost        1.00  1            1.00
+# as.factor(Year) 1.15  3            1.02
+
+#BS
+# Julian          1.21  1            1.10
+# TimeLost        1.00  1            1.00
+# as.factor(Year) 1.21  3            1.03
+
+# Julian          1.14  1            1.07
+# TimeLost        1.00  1            1.00
+# as.factor(Year) 1.14  3            1.02
+
+# Julian          1.26  1            1.12
+# TimeLost        1.00  1            1.00
+# as.factor(Year) 1.26  3            1.04
+
+#JAX
+# Julian          1.93  1            1.39
+# TimeLost        1.00  1            1.00
+# as.factor(Year) 1.93  3            1.12
+
+# Julian          1.88  1            1.37
+# TimeLost        1.00  1            1.00
+# as.factor(Year) 1.88  3            1.11
+
+# Julian          1.42  1            1.19
+# TimeLost        1.00  1            1.00
+# as.factor(Year) 1.42  3            1.06
+
 # Step 5: Model Selection - Covariate Preparation -------------------------
 # Construct variance-covariance matrices for cyclic covariates:
 #Females
@@ -388,6 +501,33 @@ QICmod3fA
 #Full model is best
 #Model Order -Year, Julian Day
 
+#GS
+# QIC            QIC.1            QIC.2            QIC.3
+# model3fA            POD0f           POD3fa           POD3fb           POD3fc
+# QIC3fA   4550.60144138496 4287.90671675989 4466.50372819207 4471.06160438492
+#Full model is best
+#Model Order -Year, Julian Day
+
+#BP
+# QIC            QIC.1           QIC.2            QIC.3
+# model3fA            POD0f           POD3fa          POD3fb           POD3fc
+# QIC3fA   1044.04420406892 1057.22770176985 1039.5212535693 1062.15324898776
+#without day is best
+
+#BS
+# QIC            QIC.1            QIC.2            QIC.3
+# model3fA            POD0f           POD3fa           POD3fb           POD3fc
+# QIC3fA   4307.51229749653 4270.62817949301 4321.67617395311 4275.07734155226
+#Full model is best
+#Model Order - Julian Day, Year
+
+#JAX
+# QIC            QIC.1            QIC.2           QIC.3
+# model3fA            POD0f           POD3fa           POD3fb          POD3fc
+# QIC3fA   2641.10039315255 2560.80172556923 2606.29750766667 2621.8432164144
+#Full model is best
+#Model Order - Julian Day, Year
+
 #Juveniles
 #The initial full model is:
 POD3ja = geeglm(PreAbsJ ~ AvgDayMatJ+as.factor(Year),family = binomial, corstr="ar1", id=BlocksJ, data=SiteHourTableB)
@@ -434,6 +574,33 @@ QICmod3jA
 # QIC3jA   9528.54058792815 8895.97317038746 9501.02493689036 8905.42534429207
 #Full model is best
 #Model Order - Julian Day, Year
+
+#GS
+# QIC           QIC.1            QIC.2            QIC.3
+# model3jA            POD0j          POD3ja           POD3jb           POD3jc
+# QIC3jA   7401.80721652795 7288.8305562343 7350.49037291193 7352.39558757124
+#Full model is best
+#Model Order - Julian Day, Year
+
+#BP
+# QIC            QIC.1           QIC.2            QIC.3
+# model3jA            POD0j           POD3ja          POD3jb           POD3jc
+# QIC3jA   2867.38851222861 2893.86000925361 2877.9060423217 2881.16360405046
+#without day
+
+#BS
+# QIC            QIC.1            QIC.2            QIC.3
+# model3jA            POD0j           POD3ja           POD3jb           POD3jc
+# QIC3jA   3473.58130289675 3382.03099259574 3454.16892280749 3397.14700557755
+#Full model is best
+#Model Order - Julian Day, Year
+
+#JAX
+# QIC            QIC.1            QIC.2            QIC.3
+# model3jA            POD0j           POD3ja           POD3jb           POD3jc
+# QIC3jA   1598.86996321493 1585.69649990806 1586.95549701838 1596.56429351143
+#Full model is best
+#Model Order - Year, Julian day
 
 #Males
 #The initial full model is:
@@ -482,22 +649,69 @@ QICmod3mA
 #Full model is best
 #Model Order - Julian Day, Year
 
+#GS
+# QIC            QIC.1            QIC.2            QIC.3
+# model3mA            POD0m           POD3ma           POD3mb           POD3mc
+# QIC3mA   2567.14771098863 2522.63443888837 2576.03382801186 2530.26675748105
+#Full model is best
+#Model Order - Julian Day, Year
+
+#BP
+# QIC            QIC.1            QIC.2            QIC.3
+# model3mA            POD0m           POD3ma           POD3mb           POD3mc
+# QIC3mA   1369.73175667386 1382.52225056092 1379.63720753178 1370.53233197354
+#without year
+
+#BS
+# QIC            QIC.1           QIC.2            QIC.3
+# model3mA            POD0m           POD3ma          POD3mb           POD3mc
+# QIC3mA   1328.33542133083 1299.89477405551 1311.2086675766 1311.05742151268
+#Full model is best
+#Model Order - Julian Day, Year
+
+#JAX
+# QIC            QIC.1            QIC.2            QIC.3
+# model3mA            POD0m           POD3ma           POD3mb           POD3mc
+# QIC3mA   382.794479514231 387.053895016668 379.437135364248 390.219719145267
+#without julian day
+
 # Step 7: Finalize Model --------------------------------------------------
 #Females
-if(site == 'BC' || site =='WC'){
+if(site == 'BC' || site =='WC' || site =='GS'){
   dimnames(AvgDayMatF)<-list(NULL,c("ADBM1", "ADBM2"))
   PODFinalF = geeglm(PreAbsF ~ as.factor(Year)+AvgDayMatF,family = binomial, corstr="ar1", id=BlocksF, data=SiteHourTableB)
+}else 
+  
+if(site == 'BP'){
+  dimnames(AvgDayMatF)<-list(NULL,c("ADBM1", "ADBM2"))
+  PODFinalF = geeglm(PreAbsF ~ as.factor(Year),family = binomial, corstr="ar1", id=BlocksF, data=SiteHourTableB)
 }else{
 dimnames(AvgDayMatF)<-list(NULL,c("ADBM1", "ADBM2"))
 PODFinalF = geeglm(PreAbsF ~ AvgDayMatF+as.factor(Year),family = binomial, corstr="ar1", id=BlocksF, data=SiteHourTableB)
 }
 #Juveniles
+if(site == 'BP'){
+  dimnames(AvgDayMatJ)<-list(NULL,c("ADBM1", "ADBM2"))
+  PODFinalJ = geeglm(PreAbsJ ~ as.factor(Year),family = binomial, corstr="ar1", id=BlocksF, data=SiteHourTableB)
+}else
+  if(site == 'JAX'){
+    dimnames(AvgDayMatJ)<-list(NULL,c("ADBM1", "ADBM2"))
+    PODFinalJ = geeglm(PreAbsJ ~ as.factor(Year)+AvgDayMatJ,family = binomial, corstr="ar1", id=BlocksF, data=SiteHourTableB)
+  }else{
 dimnames(AvgDayMatJ)<-list(NULL,c("ADBM1", "ADBM2"))
-PODFinalJ = geeglm(PreAbsJ ~  AvgDayMatJ+as.factor(Year),family = binomial, corstr="ar1", id=BlocksJ, data=SiteHourTableB)
+PODFinalJ = geeglm(PreAbsJ ~  AvgDayMatJ+as.factor(Year),family = binomial, corstr="ar1", id=BlocksJ, data=SiteHourTableB)}
 
 #Males
+if(site == 'BP'){
+  dimnames(AvgDayMatM)<-list(NULL,c("ADBM1", "ADBM2"))
+  PODFinalM = geeglm(PreAbsM ~ AvgDayMatM,family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB)
+}else
+  if(site == 'JAX'){
+    dimnames(AvgDayMatM)<-list(NULL,c("ADBM1", "ADBM2"))
+    PODFinalM = geeglm(PreAbsM ~ as.factor(Year),family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB)
+  }else{
 dimnames(AvgDayMatM)<-list(NULL,c("ADBM1", "ADBM2"))
-PODFinalM = geeglm(PreAbsM ~ AvgDayMatM + as.factor(Year),family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB)
+PODFinalM = geeglm(PreAbsM ~ AvgDayMatM + as.factor(Year),family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB)}
 
 # STEP 8: Interpreting the summary of the model --------------------------
 # How to intepret model results
@@ -507,6 +721,7 @@ PODFinalM = geeglm(PreAbsM ~ AvgDayMatM + as.factor(Year),family = binomial, cor
 # distribution and test whether the true parameter value is different from zero
 
 anova(PODFinalF)
+
 #HZ
 #AvgDayMatF       2 14.90   0.00058 ***
 #as.factor(Year)  4  6.48   0.16598    
@@ -526,6 +741,21 @@ anova(PODFinalF)
 #WC
 # AvgDayMatF       2 22.8   1.1e-05 ***
 # as.factor(Year)  3 59.5   7.6e-13 ***
+
+#GS
+# as.factor(Year)  3 13.624  0.003465 ** 
+#   AvgDayMatF       2 23.442 8.121e-06 ***
+
+#BP
+#as.factor(Year)  3 9.41     0.024 *
+
+#BS
+# AvgDayMatF       2 14.89   0.00059 ***
+#   as.factor(Year)  3  9.34   0.02513 *  
+
+#JAX
+# AvgDayMatF       2 7.89     0.019 *
+#   as.factor(Year)  3 9.02     0.029 *
 anova(PODFinalJ)
 #HZ
 #AvgDayMatJ       2 193.5   < 2e-16 ***
@@ -546,6 +776,21 @@ anova(PODFinalJ)
 #WC
 # AvgDayMatJ       2 200.7    <2e-16 ***
 #   as.factor(Year)  3   9.2     0.027 *  
+
+#GS
+# AvgDayMatJ       2 15.162 0.0005101 ***
+#   as.factor(Year)  3 16.328 0.0009714 ***
+
+#BP
+#as.factor(Year)  3 3.91      0.27
+
+#BS
+# AvgDayMatJ       2 19.61   5.5e-05 ***
+#   as.factor(Year)  3  7.84     0.049 *  
+
+#JAX
+# as.factor(Year)  3 9.67     0.022 *
+#   AvgDayMatJ       2 3.65     0.161  
 anova(PODFinalM)
 #HZ
 #AvgDayMatM       2 160.2    <2e-16 ***
@@ -567,6 +812,19 @@ anova(PODFinalM)
 # AvgDayMatM       2 14.76   0.00062 ***
 # as.factor(Year)  3  6.07   0.10838    
 
+#GS
+# AvgDayMatM       2 12.3304  0.002101 **
+#   as.factor(Year)  3  6.5687  0.086992 . 
+
+#BP
+#AvgDayMatM  2 5.75     0.056 .
+
+#BS
+# AvgDayMatM       2  5.99    0.0500 * 
+#   as.factor(Year)  3 12.77    0.0052 **
+
+#JAX
+# as.factor(Year)  3 232    <2e-16 ***
 #Remove any insignificant variables
 if (site == 'HZ'){
   #Remove Year from Female and Male models
@@ -581,8 +839,11 @@ if (site == 'BC'){
   #Remove Year from Juvenile
   PODFinalJ = geeglm(PreAbsJ ~ AvgDayMatJ,family = binomial, corstr="ar1", id=BlocksJ, data=SiteHourTableB)
 }
-
-if (site == 'WC'){
+if (site == 'JAX'){
+  #Remove JDay from Juvenile
+  PODFinalJ = geeglm(PreAbsJ ~ as.factor(Year),family = binomial, corstr="ar1", id=BlocksJ, data=SiteHourTableB)
+}
+if (site == 'WC' || site == 'GS'){
   #Remove Year from Male
   PODFinalM = geeglm(PreAbsM ~ AvgDayMatM,family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB)
 }
