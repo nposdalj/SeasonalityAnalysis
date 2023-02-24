@@ -77,19 +77,19 @@ BlockModM<-glm(PreAbsM~
                ,data=SiteHourTable,family=binomial)
 
 #Social Groups
-ACFF = acf(residuals(BlockModF), lag.max = 2000, ylim=c(0,0.1))
+ACFF = acf(residuals(BlockModF), lag.max = 2000, ylim=c(-0.1,0.1))
 CIF = ggfortify:::confint.acf(ACFF)
 ACFidxF = which(ACFF[["acf"]] < CIF, arr.ind=TRUE)
 ACFvalF = ACFidxF[1]
 
 #Mid Size
-ACFJ = acf(residuals(BlockModJ), lag.max = 2000, ylim=c(0,0.1))
+ACFJ = acf(residuals(BlockModJ), lag.max = 2000, ylim=c(-0.1,0.1))
 CIJ = ggfortify:::confint.acf(ACFJ)
 ACFidxJ = which(ACFJ[["acf"]] < CIJ, arr.ind=TRUE)
 ACFvalJ = ACFidxJ[1]
 
 #Males
-ACFM = acf(residuals(BlockModM), lag.max = 2000, ylim=c(0,0.1))
+ACFM = acf(residuals(BlockModM), lag.max = 2000, ylim=c(-0.1,0.1))
 CIM = ggfortify:::confint.acf(ACFM)
 ACFidxM = which(ACFM[["acf"]] < CIM, arr.ind=TRUE)
 ACFvalM = ACFidxM[1]
