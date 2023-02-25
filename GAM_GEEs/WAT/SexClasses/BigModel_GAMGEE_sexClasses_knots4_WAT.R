@@ -245,6 +245,8 @@ QIC3fA = c(QIC(POD0f)[1],QIC(POD3fa)[1],QIC(POD3fb)[1],QIC(POD3fc)[1],QIC(POD3fd
 QICmod3fA<-data.frame(rbind(model3fA,QIC3fA))
 QICmod3fA
 
+#
+
 
 #Juveniles
 #The initial full model is:

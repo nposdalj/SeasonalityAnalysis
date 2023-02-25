@@ -6,7 +6,6 @@ library(pracma)
 library(geepack)         # for the GEEs (Wald's hypothesis tests allowed)
 library(splines)         # to construct the B-splines within a GEE-GLM
 library(tidyverse)       # because it literally does everything
-library(rjags)           # replacement for geeglm which is out of date
 library(ROCR)            # to build the ROC curve
 library(PresenceAbsence) # to build the confusion matrix
 library(ggplot2)         # to build the partial residual plots

@@ -13,9 +13,10 @@ library(see)
 #source('C:/Users/nposd/Documents/GitHub/SeasonalityAnalysis/GAM_GEEs/Binned_Residuals_Functions.R')
 
 #Specify Directories and find subdirectories
-GDrive = 'H'
-MainDir = paste(GDrive,':/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis',sep='')
-PlotDir = paste(GDrive,':/My Drive/GofAK_TPWS_metadataReduced/Plots',sep='')
+GDrive = 'G'
+Region = 'WAT'
+MainDir = paste(GDrive,':/My Drive/',Region,'_TPWS_metadataReduced/SeasonalityAnalysis',sep='')
+PlotDir = paste(GDrive,':/My Drive/',Region,'_TPWS_metadataReduced/Plots',sep='')
 AllFolders = list.dirs(MainDir, full.names = TRUE, recursive = TRUE) #find all subfolders
 
 #SITES - General

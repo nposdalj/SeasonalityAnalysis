@@ -24,10 +24,11 @@ library(ggExtra)
 library(plyr)
 
 #load functions
-source('C:/Users/Harp/Documents/GitHub/SeasonalityAnalysis/GAM_GEEs/GAMGEE_sexClasses_Plotting_Functions_RealProbs_HistAbove.R')
+#source('C:/Users/Harp/Documents/GitHub/SeasonalityAnalysis/GAM_GEEs/GAMGEE_sexClasses_Plotting_Functions_RealProbs_HistAbove.R')
+source('C:/Users/nposd/Documents/GitHub/SeasonalityAnalysis/GAM_GEEs/GAMGEE_sexClasses_Plotting_Functions_RealProbs_HistAbove.R')
 
 # Load Workspace --------------------------------------------------
-site = 'WC'
+site = 'JAX'
 GDrive = 'G'
 saveWorkspace = paste(GDrive,":/My Drive/WAT_TPWS_metadataReduced/SeasonalityAnalysis/",site,'/',sep="")
 fileName = paste(saveWorkspace,site,'_SiteSpecific_gamgeeOutput_sexClasses.RData',sep="")
@@ -35,9 +36,7 @@ load(fileName)
 GDrive = 'G'
 saveDir = paste(GDrive,":/My Drive/WAT_TPWS_metadataReduced/Plots/",site,'/',sep="")
 sexGroups = c('Social Groups','Mid-Size','Males')
-
-#If it's a leap year, delete julian day 366 for plotting
-SiteHourTableB = SiteHourTable[!(SiteHourTableB$Julian==366),]
+SiteHourTableB = SiteHourTable[!(SiteHourTableB$Julian==366),] #If it's a leap year, delete julian day 366 for plotting
 SiteHourTableB$Year = as.factor(SiteHourTableB$Year)
 
 for (i in 1:length(sexGroups)){
@@ -58,16 +57,20 @@ if (sex == 'Social Groups'){
 # Plot Julian Day ---------------------------------------------------------
   if (site == 'BC' & sex == 'Social Groups' | site == 'WC' & sex == 'Social Groups'){
     ggPlot_JD_AfterYear_WAT(PODFinal,SiteHourTableB,sex)
+  }else if (site == 'BP' & sex == 'Social Groups' | site == 'BP' & sex == 'Mid-Size' | site == 'BP' & sex == 'Males' |
+            site == 'JAX' & sex == 'Mid-Size' | site == 'JAX' & sex == 'Males'){
+    print('Skip this')
   }else{
     ggPlot_JD_sex(PODFinal,SiteHourTableB,sex)
   }
 
 # Plot Year ---------------------------------------------------------------
   if (site == 'HZ' & sex == 'Social Groups' | site == 'HZ' & sex == 'Males' | site == 'OC' & sex == 'Social Groups' | 
-      site == 'BC' & sex == 'Mid-Size' | site == 'WC' & sex == 'Males'){
+      site == 'BC' & sex == 'Mid-Size' | site == 'WC' & sex == 'Males' | site == 'BP' & sex == 'Males' | site == 'BP' & sex == 'Mid-Size'){
     #skip this
     print('Skip this')
-  }else if (site == 'BC' & sex == 'Social Groups' | site == 'WC' & sex == 'Social Groups'){
+  }else if (site == 'BC' & sex == 'Social Groups' | site == 'WC' & sex == 'Social Groups' | site == 'BP' & sex == 'Social Groups' | 
+            site == 'BP' & sex == 'Mid-Size' | site == 'JAX' & sex == 'Mid-Size' | site == 'JAX' & sex == 'Males'){
     ggPlot_Year_WAT_first(PODFinal,SiteHourTableB,sex)
   }else{    
     if (length(unique(SiteHourTableB$Year)) > 4){

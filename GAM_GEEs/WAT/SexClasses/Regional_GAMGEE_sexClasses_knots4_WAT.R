@@ -290,6 +290,12 @@ QICmod3fA
 #QIC3fA   12806.7635613707 12386.4482332141 12407.9468021846 12440.8229626073 12711.7594856545
 #Full model is best - Site, Year, Julian Day
 
+#North
+# QIC            QIC.1            QIC.2          QIC.3           QIC.4
+# model3fA            POD0f           POD3fa           POD3fb      POD3fc          POD3fd
+# QIC3fA   152072.337986146 146451.889676579 146649.198626759  148841.712674249 149655.60754625
+#Full model is best - Site, Year, Julian Day
+
 #Juveniles
 #The initial full model is:
 POD3ja = geeglm(PreAbsJ ~ AvgDayMatJ+as.factor(Year)+as.factor(Site),family = binomial, corstr="ar1", id=BlocksJ, data=SiteHourTableB)
@@ -310,6 +316,12 @@ QICmod3jA
 #model3jA            POD0j           POD3ja          POD3jb           POD3jc          POD3jd
 #QIC3jA   15879.2960879808 15270.7800575956 15275.132341962 15311.0636492576 15830.158334417
 #Full model - Site, Year, Julian Day
+
+#North
+# QIC            QIC.1            QIC.2            QIC.3            QIC.4
+# model3jA            POD0j           POD3ja           POD3jb           POD3jc           POD3jd
+# QIC3jA   81971.4861594802 74491.1781115864 79771.8295944595 75227.2290293803 76301.4072099103
+#Full model - Julian Day, Site, Year
 
 #Males
 #The initial full model is:
@@ -342,6 +354,12 @@ QICmod3mA
   QIC3mA = c(QIC(POD0m)[1],QIC(POD3ma)[1],QIC(POD3mb)[1],QIC(POD3mc)[1],QIC(POD3md)[1])
   QICmod3mA<-data.frame(rbind(model3mA,QIC3mA))
   QICmod3mA
+  
+  #North
+  # QIC            QIC.1            QIC.2            QIC.3           QIC.4
+  # model3mA            POD0m           POD3ma           POD3mb           POD3mc          POD3md
+  # QIC3mA   22781.3047776683 19038.2586405958 21822.8623096594 19131.8809396324 20143.457783147
+  #Full model - Julian Day, Site, Year
 }
 
 # Step 7: Finalize Model --------------------------------------------------
@@ -351,12 +369,19 @@ PODFinalF = geeglm(PreAbsF ~ as.factor(Site)+as.factor(Year)+AvgDayMatF,family =
 
 #Juveniles
 dimnames(AvgDayMatJ)<-list(NULL,c("ADBM1", "ADBM2"))
-PODFinalJ = geeglm(PreAbsJ ~  as.factor(Site)+as.factor(Year)+AvgDayMatJ,family = binomial, corstr="ar1", id=BlocksJ, data=SiteHourTableB)
+if (region == 'South'){
+  PODFinalJ = geeglm(PreAbsJ ~  as.factor(Site)+as.factor(Year)+AvgDayMatJ,family = binomial, corstr="ar1", id=BlocksJ, data=SiteHourTableB)
+}else{
+  PODFinalJ = geeglm(PreAbsJ ~  AvgDayMatJ+as.factor(Site)+as.factor(Year),family = binomial, corstr="ar1", id=BlocksJ, data=SiteHourTableB)
+}
 
 #Males
 dimnames(AvgDayMatM)<-list(NULL,c("ADBM1", "ADBM2"))
-PODFinalM = geeglm(PreAbsM ~ as.factor(Site)+AvgDayMatM,family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB)
-
+if (region == 'South'){
+  PODFinalM = geeglm(PreAbsM ~ as.factor(Site)+AvgDayMatM,family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB)
+}else{
+  PODFinalM = geeglm(PreAbsM ~ AvgDayMatJ+as.factor(Site)+as.factor(Year),family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB)
+}
 # STEP 8: Interpreting the summary of the model --------------------------
 # How to intepret model results
 # Standard error - robust estimate - provides reasonable variance estimates even when the specified correlation model is in correct
@@ -369,6 +394,11 @@ anova(PODFinalF)
 #as.factor(Site)  3 100.0   < 2e-16 ***
 #as.factor(Year)  3  34.2   1.8e-07 ***
 #AvgDayMatF       2  12.1    0.0024 ** 
+
+#North
+# as.factor(Site)  4 318.32 < 2.2e-16 ***
+#   as.factor(Year)  4 191.06 < 2.2e-16 ***
+#   AvgDayMatF       2  21.96 1.703e-05 ***
   
 anova(PODFinalJ)
 #South
@@ -376,10 +406,17 @@ anova(PODFinalJ)
 #as.factor(Year)  3  28   2.9e-06 ***
 #AvgDayMatJ       2   6     0.042 *  
 
+#North
+# AvgDayMatJ       2 1609.35 < 2.2e-16 ***
+#   as.factor(Site)  4  473.14 < 2.2e-16 ***
+#   as.factor(Year)  4  191.72 < 2.2e-16 ***
+
 anova(PODFinalM)
 #South
 #as.factor(Site)  3 74.6   4.4e-16 ***
 #AvgDayMatM       2 11.2    0.0038 ** 
+
+#North
 
 filename = paste(saveWorkspace,region,'_Regional_sexClasses_ModelSummary.txt',sep="")
 sink(filename)

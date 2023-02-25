@@ -25,7 +25,7 @@ library(splines2)       # to use mSpline for the GEEs
 library(ggfortify)      # extract confidence interval for ACF plots
 library(dplyr)
 
-site = 'JAX' #specify the site of interest
+site = 'BP' #specify the site of interest
 GDrive = 'G'
 
 # Step 1: Load the data ---------------------------------------------------
@@ -440,12 +440,8 @@ AvgDayMatM = as.matrix(AvgDayBasisM)
 
 #Female
 POD0f<-geeglm(PreAbsF ~ 1, family = binomial, corstr="ar1", id=BlocksF, data=SiteHourTableB)
-
-
 #Juvenile
 POD0j<-geeglm(PreAbsJ ~ 1, family = binomial, corstr="ar1", id=BlocksJ, data=SiteHourTableB)
-
-
 #Male
 POD0m<-geeglm(PreAbsM ~ 1, family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB)
 
@@ -529,6 +525,9 @@ QICmod3fA
 #Model Order - Julian Day, Year
 
 #Juveniles
+if (site == 'BP'){ 
+  #skip this; only one variable
+}else{
 #The initial full model is:
 POD3ja = geeglm(PreAbsJ ~ AvgDayMatJ+as.factor(Year),family = binomial, corstr="ar1", id=BlocksJ, data=SiteHourTableB)
 #without AvgDayMat
@@ -540,6 +539,7 @@ model3jA = c("POD0j","POD3ja","POD3jb","POD3jc")
 QIC3jA = c(QIC(POD0j)[1],QIC(POD3ja)[1],QIC(POD3jb)[1],QIC(POD3jc)[1])
 QICmod3jA<-data.frame(rbind(model3jA,QIC3jA))
 QICmod3jA
+}
 #HZ
 #QIC            QIC.1            QIC.2            QIC.3
 #model3jA            POD0j           POD3ja           POD3jb           POD3jc
@@ -582,12 +582,6 @@ QICmod3jA
 #Full model is best
 #Model Order - Julian Day, Year
 
-#BP
-# QIC            QIC.1           QIC.2            QIC.3
-# model3jA            POD0j           POD3ja          POD3jb           POD3jc
-# QIC3jA   2867.38851222861 2893.86000925361 2877.9060423217 2881.16360405046
-#without day
-
 #BS
 # QIC            QIC.1            QIC.2            QIC.3
 # model3jA            POD0j           POD3ja           POD3jb           POD3jc
@@ -603,6 +597,9 @@ QICmod3jA
 #Model Order - Year, Julian day
 
 #Males
+if (site == 'BP'){ 
+  #skip this; only one variable
+}else{
 #The initial full model is:
 POD3ma = geeglm(PreAbsM ~ AvgDayMatM+as.factor(Year),family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB)
 #without AvgDayMat
@@ -614,6 +611,7 @@ model3mA = c("POD0m","POD3ma","POD3mb","POD3mc")
 QIC3mA = c(QIC(POD0m)[1],QIC(POD3ma)[1],QIC(POD3mb)[1],QIC(POD3mc)[1])
 QICmod3mA<-data.frame(rbind(model3mA,QIC3mA))
 QICmod3mA
+}
 #HZ
 #QIC            QIC.1            QIC.2            QIC.3
 #model3mA            POD0m           POD3ma           POD3mb           POD3mc
@@ -656,12 +654,6 @@ QICmod3mA
 #Full model is best
 #Model Order - Julian Day, Year
 
-#BP
-# QIC            QIC.1            QIC.2            QIC.3
-# model3mA            POD0m           POD3ma           POD3mb           POD3mc
-# QIC3mA   1369.73175667386 1382.52225056092 1379.63720753178 1370.53233197354
-#without year
-
 #BS
 # QIC            QIC.1           QIC.2            QIC.3
 # model3mA            POD0m           POD3ma          POD3mb           POD3mc
@@ -680,33 +672,31 @@ QICmod3mA
 if(site == 'BC' || site =='WC' || site =='GS'){
   dimnames(AvgDayMatF)<-list(NULL,c("ADBM1", "ADBM2"))
   PODFinalF = geeglm(PreAbsF ~ as.factor(Year)+AvgDayMatF,family = binomial, corstr="ar1", id=BlocksF, data=SiteHourTableB)
-}else 
-  
-if(site == 'BP'){
+}else if(site == 'BP'){
   dimnames(AvgDayMatF)<-list(NULL,c("ADBM1", "ADBM2"))
   PODFinalF = geeglm(PreAbsF ~ as.factor(Year),family = binomial, corstr="ar1", id=BlocksF, data=SiteHourTableB)
 }else{
 dimnames(AvgDayMatF)<-list(NULL,c("ADBM1", "ADBM2"))
 PODFinalF = geeglm(PreAbsF ~ AvgDayMatF+as.factor(Year),family = binomial, corstr="ar1", id=BlocksF, data=SiteHourTableB)
 }
+
 #Juveniles
 if(site == 'BP'){
   dimnames(AvgDayMatJ)<-list(NULL,c("ADBM1", "ADBM2"))
   PODFinalJ = geeglm(PreAbsJ ~ as.factor(Year),family = binomial, corstr="ar1", id=BlocksF, data=SiteHourTableB)
-}else
-  if(site == 'JAX'){
+}else if(site == 'JAX'){
     dimnames(AvgDayMatJ)<-list(NULL,c("ADBM1", "ADBM2"))
     PODFinalJ = geeglm(PreAbsJ ~ as.factor(Year)+AvgDayMatJ,family = binomial, corstr="ar1", id=BlocksF, data=SiteHourTableB)
   }else{
-dimnames(AvgDayMatJ)<-list(NULL,c("ADBM1", "ADBM2"))
-PODFinalJ = geeglm(PreAbsJ ~  AvgDayMatJ+as.factor(Year),family = binomial, corstr="ar1", id=BlocksJ, data=SiteHourTableB)}
+  dimnames(AvgDayMatJ)<-list(NULL,c("ADBM1", "ADBM2"))
+  PODFinalJ = geeglm(PreAbsJ ~  AvgDayMatJ+as.factor(Year),family = binomial, corstr="ar1", id=BlocksJ, data=SiteHourTableB)
+  }
 
 #Males
 if(site == 'BP'){
   dimnames(AvgDayMatM)<-list(NULL,c("ADBM1", "ADBM2"))
   PODFinalM = geeglm(PreAbsM ~ AvgDayMatM,family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB)
-}else
-  if(site == 'JAX'){
+}else if(site == 'JAX'){
     dimnames(AvgDayMatM)<-list(NULL,c("ADBM1", "ADBM2"))
     PODFinalM = geeglm(PreAbsM ~ as.factor(Year),family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB)
   }else{
@@ -756,6 +746,7 @@ anova(PODFinalF)
 #JAX
 # AvgDayMatF       2 7.89     0.019 *
 #   as.factor(Year)  3 9.02     0.029 *
+
 anova(PODFinalJ)
 #HZ
 #AvgDayMatJ       2 193.5   < 2e-16 ***
@@ -791,6 +782,7 @@ anova(PODFinalJ)
 #JAX
 # as.factor(Year)  3 9.67     0.022 *
 #   AvgDayMatJ       2 3.65     0.161  
+
 anova(PODFinalM)
 #HZ
 #AvgDayMatM       2 160.2    <2e-16 ***
