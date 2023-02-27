@@ -750,7 +750,7 @@ ggPlot_Site_Year <- function(model,table,sex){
   
 }
 
-#Plot Site for WAT Regional model (first term) --------------------------------------------------
+#Plot Site for WAT Regional model (first term in south model) --------------------------------------------------
 ggPlot_Site_WAT <- function(model,table,site,sex){
   BootstrapParameters2<-rmvnorm(10000, coef(model),summary(model)$cov.unscaled)
   start=2; end=4; Variable=table$Site
@@ -804,6 +804,118 @@ ggPlot_Site_WAT <- function(model,table,site,sex){
   } # close graphics device
   print("Plot Saved")
   
+}
+
+#Plot Site for WAT Regional model (first term in northern model) --------------------------------------------------
+ggPlot_Site_WATT <- function(model,table,site,sex){
+  BootstrapParameters2<-rmvnorm(10000, coef(model),summary(model)$cov.unscaled)
+  start=2; end=5; Variable=table$Site
+  BootstrapCoefs2<-BootstrapParameters2[, c(1,start:end)]
+  
+  #Histogram for Site observations
+  plothist = data.frame(table(SiteHourTableB$Site))
+  colnames(plothist) = c("x","y")
+  
+  #Center intercept (1st level of year factor) at 0 and show other levels relative to it
+  AdjustedSiteCoefs = data.frame(  c(
+    BootstrapCoefs2[, 1] - mean(BootstrapCoefs2[, 1]),
+    BootstrapCoefs2[, 2],
+    BootstrapCoefs2[, 3],
+    BootstrapCoefs2[, 4],
+    BootstrapCoefs2[, 5]
+  ),
+  as.factor(rep(1:5, each = 10000)))
+  colnames(AdjustedSiteCoefs) = c("Coefficient", "Site")
+  trans = c("HZ","OC","NC","BC","WC")
+  names(trans) = c(1,2,3,4,5)
+  AdjustedSiteCoefs$SiteName = trans[as.character(AdjustedSiteCoefs$Site)]
+  
+  ggtitle = paste(saveDir,"/Site - ", site,'_',sex,".pdf",sep="")
+  
+  pmain = ggplot(AdjustedSiteCoefs, aes(SiteName, Coefficient)
+  ) + geom_boxplot(
+  ) + theme(axis.line = element_line(),
+            panel.background = element_blank(),
+            text = element_text(size = 25)
+  ) + scale_x_discrete(labels = c("HZ","OC","NC","BC","WC")
+  ) + labs(x = "Site",
+           y = "s(Site)")
+  
+  xens = axis_canvas(pmain, axis = "x")+
+    geom_bar(data = plothist,
+             aes(x,y),
+             fill = 4,
+             alpha = 0.2,
+             #position = "dodge",
+             stat = "identity",
+             width = 1) + scale_x_discrete(labels = c("HZ","OC","NC","BC","WC"))
+  
+  p1 = insert_xaxis_grob(pmain,xens,grid::unit(.2, "null"), position = "top")
+  ggdraw(p1)
+  
+  ggsave(
+    ggtitle, width = 7, height = 6, units = "in",
+    device = "pdf") # save figure
+  while (dev.cur() > 1) {
+    dev.off()
+  } # close graphics device
+  print("Plot Saved")
+}
+
+#Plot Site for WAT Regional model (second term in northern model) --------------------------------------------------
+ggPlot_Site_WATTT <- function(model,table,site,sex){
+  BootstrapParameters2<-rmvnorm(10000, coef(model),summary(model)$cov.unscaled)
+  start=4; end=7; Variable=table$Site
+  BootstrapCoefs2<-BootstrapParameters2[, c(1,start:end)]
+  
+  #Histogram for Site observations
+  plothist = data.frame(table(SiteHourTableB$Site))
+  colnames(plothist) = c("x","y")
+  
+  #Center intercept (1st level of year factor) at 0 and show other levels relative to it
+  AdjustedSiteCoefs = data.frame(  c(
+    BootstrapCoefs2[, 1] - mean(BootstrapCoefs2[, 1]),
+    BootstrapCoefs2[, 2],
+    BootstrapCoefs2[, 3],
+    BootstrapCoefs2[, 4],
+    BootstrapCoefs2[, 5]
+  ),
+  as.factor(rep(1:5, each = 10000)))
+  colnames(AdjustedSiteCoefs) = c("Coefficient", "Site")
+  trans = c("HZ","OC","NC","BC","WC")
+  names(trans) = c(1,2,3,4,5)
+  AdjustedSiteCoefs$SiteName = trans[as.character(AdjustedSiteCoefs$Site)]
+  
+  ggtitle = paste(saveDir,"/Site - ", site,'_',sex,".pdf",sep="")
+  
+  pmain = ggplot(AdjustedSiteCoefs, aes(SiteName, Coefficient)
+  ) + geom_boxplot(
+  ) + theme(axis.line = element_line(),
+            panel.background = element_blank(),
+            text = element_text(size = 25)
+  ) + scale_x_discrete(labels = c("HZ","OC","NC","BC","WC")
+  ) + labs(x = "Site",
+           y = "s(Site)")
+  
+  xens = axis_canvas(pmain, axis = "x")+
+    geom_bar(data = plothist,
+             aes(x,y),
+             fill = 4,
+             alpha = 0.2,
+             #position = "dodge",
+             stat = "identity",
+             width = 1) + scale_x_discrete(labels = c("HZ","OC","NC","BC","WC"))
+  
+  p1 = insert_xaxis_grob(pmain,xens,grid::unit(.2, "null"), position = "top")
+  ggdraw(p1)
+  
+  ggsave(
+    ggtitle, width = 7, height = 6, units = "in",
+    device = "pdf") # save figure
+  while (dev.cur() > 1) {
+    dev.off()
+  } # close graphics device
+  print("Plot Saved")
 }
 
 #Plot Site with ggplot (GOA - Social Groups) --------------------------------------------------
@@ -1011,6 +1123,150 @@ ggPlot_Year_WAT_regional <- function(model, table,site,sex){
 ggPlot_Year_WATT <- function(model, table,site){
   BootstrapParameters2<-rmvnorm(10000, coef(model),summary(model)$cov.unscaled)
   start=4; end=7; Variable=table$Year
+  BootstrapCoefs2<-BootstrapParameters2[, c(1,start:end)]
+  
+  #Histogram for Year observations
+  counts = count(table$Year)
+  counts$x = as.character(counts$x)
+  counts$freq = as.numeric(counts$freq)
+  counts$days = round(counts$freq/12)
+  counts$label = '*'
+  counts$label[counts$days > 365] <- ' ' 
+  #counts = counts[-c(6),]
+  
+  #Histogram for Year observations
+  # Year = seq(from = 2016,to = 2019,by = 1)
+  # fullhist = hist(SiteHourTableB$Year,Year)
+  # yhist = fullhist$counts
+  # plothist = data.frame(x=Year[-1],y=yhist)
+  # plothist$x = as.character(plothist$x)
+  # plothist$y = as.numeric(plothist$y)
+  # plothist$days = round(plothist$y/12)
+  # plothist$label = '*'
+  # plothist$label[plothist$days > 365] <- ' ' 
+  # plothist = plothist[-c(6),]
+  
+  #Center intercept (1st level of year factor) at 0 and show other levels relative to it
+  AdjustedSiteCoefs = data.frame(  c(
+    BootstrapCoefs2[, 1] - mean(BootstrapCoefs2[, 1]),
+    BootstrapCoefs2[, 2],
+    BootstrapCoefs2[, 3],
+    BootstrapCoefs2[, 4],
+    BootstrapCoefs2[, 5]),
+    as.factor(rep(1:5, each = 10000)))
+  colnames(AdjustedSiteCoefs) = c("Probability", "Year")
+  trans = c("2015", "2016","2017","2018","2019")
+  names(trans) = c(1,2,3,4,5)
+  AdjustedSiteCoefs$YearVal = trans[as.character(AdjustedSiteCoefs$Year)]
+  
+  ggtitle = paste(saveDir,"/Year - ", site,".pdf",sep="")
+  
+  pmain = ggplot(AdjustedSiteCoefs, aes(YearVal, Probability)
+  ) + geom_boxplot(
+  ) + theme(axis.line = element_line(),
+            panel.background = element_blank(),
+            text = element_text(size = 25)
+  ) + scale_x_discrete(labels = c("2015","2016","2017","2018","2019")
+  ) + labs(x = "Year",
+           y = "s(Year)")
+  
+  xens = axis_canvas(pmain, axis = "x")+
+    geom_bar(data = counts,
+             aes(x,freq),
+             fill = 4,
+             alpha = 0.2,
+             #position = "dodge",
+             stat = "identity",
+             width = 1) + scale_x_discrete(labels = c("2015", "2016","2017","2018","2019")
+             )
+  
+  p1 = insert_xaxis_grob(pmain,xens,grid::unit(.2, "null"), position = "top")
+  ggdraw(p1)
+  
+  ggsave(
+    ggtitle, width = 7, height = 6, units = "in",
+    device = "pdf") # save figure
+  while (dev.cur() > 1) {
+    dev.off()
+  } # close graphics device
+  print("Plot Saved")
+}
+
+ggPlot_Year_WATTT_north <- function(model, table,site){
+  BootstrapParameters2<-rmvnorm(10000, coef(model),summary(model)$cov.unscaled)
+  start=8; end=11; Variable=table$Year
+  BootstrapCoefs2<-BootstrapParameters2[, c(1,start:end)]
+  
+  #Histogram for Year observations
+  counts = count(table$Year)
+  counts$x = as.character(counts$x)
+  counts$freq = as.numeric(counts$freq)
+  counts$days = round(counts$freq/12)
+  counts$label = '*'
+  counts$label[counts$days > 365] <- ' ' 
+  #counts = counts[-c(6),]
+  
+  #Histogram for Year observations
+  # Year = seq(from = 2016,to = 2019,by = 1)
+  # fullhist = hist(SiteHourTableB$Year,Year)
+  # yhist = fullhist$counts
+  # plothist = data.frame(x=Year[-1],y=yhist)
+  # plothist$x = as.character(plothist$x)
+  # plothist$y = as.numeric(plothist$y)
+  # plothist$days = round(plothist$y/12)
+  # plothist$label = '*'
+  # plothist$label[plothist$days > 365] <- ' ' 
+  # plothist = plothist[-c(6),]
+  
+  #Center intercept (1st level of year factor) at 0 and show other levels relative to it
+  AdjustedSiteCoefs = data.frame(  c(
+    BootstrapCoefs2[, 1] - mean(BootstrapCoefs2[, 1]),
+    BootstrapCoefs2[, 2],
+    BootstrapCoefs2[, 3],
+    BootstrapCoefs2[, 4],
+    BootstrapCoefs2[, 5]),
+    as.factor(rep(1:5, each = 10000)))
+  colnames(AdjustedSiteCoefs) = c("Probability", "Year")
+  trans = c("2015", "2016","2017","2018","2019")
+  names(trans) = c(1,2,3,4,5)
+  AdjustedSiteCoefs$YearVal = trans[as.character(AdjustedSiteCoefs$Year)]
+  
+  ggtitle = paste(saveDir,"/Year - ", site,".pdf",sep="")
+  
+  pmain = ggplot(AdjustedSiteCoefs, aes(YearVal, Probability)
+  ) + geom_boxplot(
+  ) + theme(axis.line = element_line(),
+            panel.background = element_blank(),
+            text = element_text(size = 25)
+  ) + scale_x_discrete(labels = c("2015","2016","2017","2018","2019")
+  ) + labs(x = "Year",
+           y = "s(Year)")
+  
+  xens = axis_canvas(pmain, axis = "x")+
+    geom_bar(data = counts,
+             aes(x,freq),
+             fill = 4,
+             alpha = 0.2,
+             #position = "dodge",
+             stat = "identity",
+             width = 1) + scale_x_discrete(labels = c("2015", "2016","2017","2018","2019")
+             )
+  
+  p1 = insert_xaxis_grob(pmain,xens,grid::unit(.2, "null"), position = "top")
+  ggdraw(p1)
+  
+  ggsave(
+    ggtitle, width = 7, height = 6, units = "in",
+    device = "pdf") # save figure
+  while (dev.cur() > 1) {
+    dev.off()
+  } # close graphics device
+  print("Plot Saved")
+}
+
+ggPlot_Year_WATT_north <- function(model, table,site){
+  BootstrapParameters2<-rmvnorm(10000, coef(model),summary(model)$cov.unscaled)
+  start=6; end=9; Variable=table$Year
   BootstrapCoefs2<-BootstrapParameters2[, c(1,start:end)]
   
   #Histogram for Year observations

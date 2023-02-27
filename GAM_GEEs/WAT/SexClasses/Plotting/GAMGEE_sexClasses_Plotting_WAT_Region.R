@@ -59,6 +59,10 @@ for (i in 1:length(sexGroups)){
   # Plot Julian Day ---------------------------------------------------------
   if (region == 'South' & sex == 'Males'){
     ggPlot_JD_AfterYear_WAT(PODFinal,SiteHourTableB,sex)
+  }else if (region == 'North' & sex == 'Social Groups'){
+    ggPlot_JD_AfterYearB(PODFinal,SiteHourTableB,sex)
+  }else if (region == 'North' & sex == 'Mid-Size' | region == 'North' & sex == 'Males'){
+    ggPlot_JD_sex(PODFinal,SiteHourTableB,sex)
   }else{
     ggPlot_JD_Last(PODFinal,SiteHourTableB,region,sex)
   }
@@ -67,14 +71,22 @@ for (i in 1:length(sexGroups)){
   if (region == 'South' & sex == 'Males'){
     print('Skip this') #skip this
   }else{    
-    if (length(unique(SiteHourTableB$Year)) > 4){
-      ggPlot_Year_WATT(PODFinal,SiteHourTableB,sex)
+  if (length(unique(SiteHourTableB$Year)) > 4){
+    if (sex == 'Social Groups'){
+    ggPlot_Year_WATT_north(PODFinal,SiteHourTableB,sex)
+    }else{
+      ggPlot_Year_WATTT_north(PODFinal,SiteHourTableB,sex)}
     }else{
       ggPlot_Year_WAT(PODFinal,SiteHourTableB,sex)
     }
   }
   
   # Plot Site ---------------------------------------------------------------
+  if (region == 'South'){
   ggPlot_Site_WAT(PODFinal,SiteHourTableB,region,sex)
+  }else if (region == 'North' & sex == 'Mid-Size' | region == 'North' & sex == 'Males'){
+    ggPlot_Site_WATTT(PODFinal,SiteHourTableB,region,sex)
+  }else{
+    ggPlot_Site_WATT(PODFinal,SiteHourTableB,region,sex)
+  }
 }
-
