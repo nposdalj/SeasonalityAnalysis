@@ -263,19 +263,30 @@ QIC3jA = c(QIC(POD0j)[1],QIC(POD3ja)[1],QIC(POD3jb)[1],QIC(POD3jc)[1],QIC(POD3jd
 QICmod3jA<-data.frame(rbind(model3jA,QIC3jA))
 QICmod3jA
 
+#                      QIC            QIC.1            QIC.2           QIC.3            QIC.4
+# model3jA            POD0j           POD3ja           POD3jb          POD3jc           POD3jd
+# QIC3jA   104303.461311412 93017.9089776209 97330.2986594487 93509.731652652 99981.5234003416
+#Full model is best - Region, Julian Day, Year
 
 #Males
 #The initial full model is:
-POD3ma = geeglm(PreAbsM ~ AvgDayMatM+as.factor(Region),family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB)
+POD3ma = geeglm(PreAbsM ~ AvgDayMatM+as.factor(Region)+as.factor(Year),family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB)
 #without AvgDayMat
-POD3mb = geeglm(PreAbsM ~ as.factor(Region),family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB)
+POD3mb = geeglm(PreAbsM ~ as.factor(Region)+as.factor(Year),family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB)
 #without Region
-POD3mc = geeglm(PreAbsM ~ AvgDayMatM,family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB)
+POD3mc = geeglm(PreAbsM ~ AvgDayMatM+as.factor(Year),family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB)
+#without Year
+POD3md = geeglm(PreAbsM ~ AvgDayMatM+as.factor(Region),family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB)
 
-model3mA = c("POD0m","POD3ma","POD3mb","POD3mc")
-QIC3mA = c(QIC(POD0m)[1],QIC(POD3ma)[1],QIC(POD3mb)[1],QIC(POD3mc)[1])
+model3mA = c("POD0m","POD3ma","POD3mb","POD3mc","POD3md")
+QIC3mA = c(QIC(POD0m)[1],QIC(POD3ma)[1],QIC(POD3mb)[1],QIC(POD3md)[1])
 QICmod3mA<-data.frame(rbind(model3mA,QIC3mA))
 QICmod3mA
+
+#                     X1               X2               X3               X4               X5
+# model3mA            POD0m           POD3ma           POD3mb           POD3mc           POD3md
+# QIC3mA   29278.4329836999 26529.4964953979 28340.6085975542 26556.9578607205 29278.4329836999
+#Full model - Year, Julian Day, Region
 
 # Step 7: Finalize Model --------------------------------------------------
 #Females
@@ -284,11 +295,11 @@ PODFinalF = geeglm(PreAbsF ~ as.factor(Region)+as.factor(Year)+AvgDayMatF,family
 
 #Juveniles
 dimnames(AvgDayMatJ)<-list(NULL,c("ADBM1", "ADBM2"))
-PODFinalJ = geeglm(PreAbsJ ~  as.factor(Region)+as.factor(Year)+AvgDayMatJ,family = binomial, corstr="ar1", id=BlocksJ, data=SiteHourTableB)
+PODFinalJ = geeglm(PreAbsJ ~  as.factor(Region)+AvgDayMatJ+as.factor(Year),family = binomial, corstr="ar1", id=BlocksJ, data=SiteHourTableB)
 
 #Males
 dimnames(AvgDayMatM)<-list(NULL,c("ADBM1", "ADBM2"))
-PODFinalM = geeglm(PreAbsM ~ as.factor(Region)+AvgDayMatM,family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB)
+PODFinalM = geeglm(PreAbsM ~ as.factor(Year)+AvgDayMatM+as.factor(Region),family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB)
 
 # STEP 8: Interpreting the summary of the model --------------------------
 # How to intepret model results
@@ -298,30 +309,24 @@ PODFinalM = geeglm(PreAbsM ~ as.factor(Region)+AvgDayMatM,family = binomial, cor
 # distribution and test whether the true parameter value is different from zero
 
 anova(PODFinalF)
-#South
-#as.factor(Site)  3 100.0   < 2e-16 ***
-#as.factor(Year)  3  34.2   1.8e-07 ***
-#AvgDayMatF       2  12.1    0.0024 ** 
+
   
 anova(PODFinalJ)
-#South
-#as.factor(Site)  3 342   < 2e-16 ***
-#as.factor(Year)  3  28   2.9e-06 ***
-#AvgDayMatJ       2   6     0.042 *  
+# as.factor(Region)  1 1604.95 < 2.2e-16 ***
+# AvgDayMatJ         2 1871.23 < 2.2e-16 ***
+# as.factor(Year)    4  202.08 < 2.2e-16 ***
 
 anova(PODFinalM)
-#South
-#as.factor(Site)  3 74.6   4.4e-16 ***
-#AvgDayMatM       2 11.2    0.0038 ** 
 
-filename = paste(saveWorkspace,region,'_Regional_sexClasses_ModelSummary.txt',sep="")
+
+filename = paste(saveWorkspace,'_Big_sexClasses_Male_ModelSummary.txt',sep="")
 sink(filename)
-summary(PODFinalF)
-anova(PODFinalF)
-summary(PODFinalJ)
-anova(PODFinalJ)
+# summary(PODFinalF)
+# anova(PODFinalF)
 summary(PODFinalM)
 anova(PODFinalM)
+# summary(PODFinalM)
+# anova(PODFinalM)
 sink(file = NULL)
   
 # Step 9: Construction of the ROC curve    --------------------------------
@@ -443,5 +448,5 @@ cmx(DATA, threshold = cutoff)                                   # the identified
 auc <- performance(pred, measure="auc")
 
 # Step 10: Save Workspace -------------------------------------------------
-fileName = paste(saveWorkspace,region,'_Regional_gamgeeOutput_sexClasses.RData',sep="")
+fileName = paste(saveWorkspace,'_Big_gamgeeOutput_sexClasses_Male.RData',sep="")
 save.image(file = fileName)
