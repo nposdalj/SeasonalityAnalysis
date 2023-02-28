@@ -245,8 +245,10 @@ QIC3fA = c(QIC(POD0f)[1],QIC(POD3fa)[1],QIC(POD3fb)[1],QIC(POD3fc)[1],QIC(POD3fd
 QICmod3fA<-data.frame(rbind(model3fA,QIC3fA))
 QICmod3fA
 
-#
-
+#                      QIC            QIC.1            QIC.2            QIC.3            QIC.4
+# model3fA            POD0f           POD3fa           POD3fb           POD3fc           POD3fd
+# QIC3fA   195055.645586609 162940.236326629 163061.500848601 164924.246666641 193051.634387027
+#Full model is best - Region, Year, Julian Day
 
 #Juveniles
 #The initial full model is:
@@ -317,16 +319,19 @@ anova(PODFinalJ)
 # as.factor(Year)    4  202.08 < 2.2e-16 ***
 
 anova(PODFinalM)
+# as.factor(Year)    4  16.6    0.0023 ** 
+# AvgDayMatM         2 199.4    <2e-16 ***
+# as.factor(Region)  1  98.7    <2e-16 ***
 
 
 filename = paste(saveWorkspace,'_Big_sexClasses_Male_ModelSummary.txt',sep="")
 sink(filename)
-# summary(PODFinalF)
-# anova(PODFinalF)
+summary(PODFinalF)
+anova(PODFinalF)
+summary(PODFinalJ)
+anova(PODFinalJ)
 summary(PODFinalM)
 anova(PODFinalM)
-# summary(PODFinalM)
-# anova(PODFinalM)
 sink(file = NULL)
   
 # Step 9: Construction of the ROC curve    --------------------------------
@@ -448,5 +453,5 @@ cmx(DATA, threshold = cutoff)                                   # the identified
 auc <- performance(pred, measure="auc")
 
 # Step 10: Save Workspace -------------------------------------------------
-fileName = paste(saveWorkspace,'_Big_gamgeeOutput_sexClasses_Male.RData',sep="")
+fileName = paste(saveWorkspace,'_Big_gamgeeOutput_sexClasses.RData',sep="")
 save.image(file = fileName)
