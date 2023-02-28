@@ -311,7 +311,9 @@ PODFinalM = geeglm(PreAbsM ~ as.factor(Year)+AvgDayMatM+as.factor(Region),family
 # distribution and test whether the true parameter value is different from zero
 
 anova(PODFinalF)
-
+#as.factor(Region)  1 1391    <2e-16 ***
+#as.factor(Year)    4  115    <2e-16 ***
+#AvgDayMatF         2   10    0.0076 ** 
   
 anova(PODFinalJ)
 # as.factor(Region)  1 1604.95 < 2.2e-16 ***
@@ -324,7 +326,7 @@ anova(PODFinalM)
 # as.factor(Region)  1  98.7    <2e-16 ***
 
 
-filename = paste(saveWorkspace,'_Big_sexClasses_Male_ModelSummary.txt',sep="")
+filename = paste(saveWorkspace,'_Big_sexClasses_ModelSummary.txt',sep="")
 sink(filename)
 summary(PODFinalF)
 anova(PODFinalF)

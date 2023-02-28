@@ -30,7 +30,7 @@ source('C:/Users/nposd/Documents/GitHub/SeasonalityAnalysis/GAM_GEEs/GAMGEE_sexC
 GDrive = 'G'
 model = 'Big'
 saveWorkspace = paste(GDrive,":/My Drive/WAT_TPWS_metadataReduced/SeasonalityAnalysis/AllSites/",sep="")
-fileName = paste(saveWorkspace,region,'_Big_gamgeeOutput_sexClasses.RData',sep="")
+fileName = paste(saveWorkspace,'_Big_gamgeeOutput_sexClasses.RData',sep="")
 load(fileName)
 GDrive = 'G'
 saveDir = paste(GDrive,":/My Drive/WAT_TPWS_metadataReduced/Plots/AllSites",sep="")
@@ -56,16 +56,20 @@ for (i in 1:length(sexGroups)){
   
   # Plot Julian Day ---------------------------------------------------------
   if (sex == 'Males'){
-    ggPlot_JD_AfterSite(PODFinal,SiteHourTableB,sex)
+    ggPlot_JD_AfterSite(PODFinal,SiteHourTableB,model,sex)
+  }else if (sex == 'Mid-Size'){
+    ggPlot_JD_WATBIG(PODFinal,SiteHourTableB,model,sex)
   }else{
-  ggPlot_JD_WATBIG(PODFinal,SiteHourTableB,model,sex)
+    ggPlot_JD_SG_WATBIG(PODFinal,SiteHourTableB,model,sex)
   }
   
   # Plot Year ---------------------------------------------------------------
   if (sex == 'Males'){
     ggPlot_Year_WAT_Big(PODFinal,SiteHourTableB,sex)
+  }else if (sex == 'Mid-Size'){
+    ggPlot_Year_WATTT_Big(PODFinal,SiteHourTableB,sex)
   }else{
-  ggPlot_Year_WATT(PODFinal,SiteHourTableB,sex)
+    ggPlot_Year_WATT_Big(PODFinal,SiteHourTableB,sex)
   }
   
   # Plot Region ---------------------------------------------------------------
