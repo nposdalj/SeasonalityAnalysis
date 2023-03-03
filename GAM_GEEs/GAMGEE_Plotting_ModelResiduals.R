@@ -17,7 +17,7 @@ GDrive = 'G'
 Region = 'WAT'
 MainDir = paste(GDrive,':/My Drive/',Region,'_TPWS_metadataReduced/SeasonalityAnalysis',sep='')
 PlotDir = paste(GDrive,':/My Drive/',Region,'_TPWS_metadataReduced/Plots',sep='')
-AllFolders = list.dirs(MainDir, full.names = TRUE, recursive = TRUE) #find all subfolders
+AllFolders = list.dirs(MainDir, full.names = TRUE, recursive = FALSE) #find all subfolders
 
 #SITES - General
 #Loop through each folder and load R workspace, extract final model for residual plotting
@@ -289,7 +289,7 @@ for (i in 2:length(AllFolders)){
 
 #Big Model
 #Loop through each folder and load R workspace, extract final model for residual plotting
-for (i in 2:length(AllFolders)){
+for (i in 1:length(AllFolders)){
   #Seperate site name
   SiteFolder = AllFolders[i]
   Site = gsub(".*SeasonalityAnalysis/","",SiteFolder)
@@ -331,7 +331,7 @@ for (i in 2:length(AllFolders)){
 
 #Big Model - Sex Specific
 #Loop through each folder and load R workspace, extract final model for residual plotting
-for (i in 2:length(AllFolders)){
+for (i in 1:length(AllFolders)){
   #Seperate site name
   SiteFolder = AllFolders[i]
   Site = gsub(".*SeasonalityAnalysis/","",SiteFolder)
