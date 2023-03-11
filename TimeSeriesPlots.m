@@ -2,20 +2,20 @@ clearvars
 close all
 % This script creates time series plots for each site.
 %% Parameters defined by user
-filePrefix = 'QC'; % File name to match. 
-siteabrev = 'QC'; %abbreviation of site.
-GDrive = 'I'; %directory for Google Drive
-region = 'CCE';
+filePrefix = 'WC'; % File name to match. 
+siteabrev = 'WC'; %abbreviation of site.
+GDrive = 'G'; %directory for Google Drive
+region = 'WAT';
 sp = 'Pm'; % your species code
-titleNAME = 'Quinault Canyon';
+titleNAME = 'Wilmington Canyon';
 dataDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev]; %specify directory where workspaces are saved
 %% load workspace
-GDrive_correct = GDrive; % Preserve correct GDrive as it was entered above
+GDrive_corrected = GDrive; % Preserve correct GDrive as it was entered above
 load([dataDir,'\',siteabrev,'_workspaceStep2.mat']);
 load([dataDir,'\',siteabrev,'_workspaceStep3.mat']);
 
 % Overwrite some path names
-GDrive = GDrive_correct; %Correct GDrive if overwritten by loading workspace
+GDrive = GDrive_corrected; %Correct GDrive if overwritten by loading workspace
 dayBinCSV(1) = GDrive;
 effortXls(1) = GDrive;
 filename(1) = GDrive;
@@ -126,7 +126,7 @@ ylim([-1 101])
 ax = gca;
 ax.YAxis(1).Color = slate;
 ax.YAxis(2).Color = gray;
-sgtitle(['Daily Presence of Sperm Whales in the ', titleNAME]) % Overarching title
+suptitle(['Daily Presence of Sperm Whales in the ', titleNAME]) % Overarching title %
 saveas(gcf,[saveDir,'\',siteabrev,'DailyPresence_AllClasses_Subplots.png']);
 
 %Plot proportion of hours per WEEK with presence from each group
@@ -173,7 +173,7 @@ ylim([-1 101])
 ax = gca;
 ax.YAxis(1).Color = slate;
 ax.YAxis(2).Color = gray;
-sgtitle(['Weekly Presence of Sperm Whales in the ', titleNAME]) % Overarching title
+suptitle(['Weekly Presence of Sperm Whales in the ', titleNAME]) % Overarching title
 saveas(gcf,[saveDir,'\',siteabrev,'WeeklyPresence_AllClasses_Subplots.png']);
 
 %% Average yearly plots
@@ -267,7 +267,7 @@ subplot(3,1,3)
 bar(sexbinPresence.tbin,sexbinPresence.MaHoursProp,'FaceColor',slate,'BarWidth',3)
 xlim([sexbinPresence.tbin(1),sexbinPresence.tbin(end)])
 title(['Males'])
-sgtitle(['Daily Presence of Sperm Whales in the ', titleNAME]) % Overarching title
+suptitle(['Daily Presence of Sperm Whales in the ', titleNAME]) % Overarching title
 saveas(gcf,[saveDir,'\',siteabrev,'DailyPresence_AllClasses_Subplots130.png']);
 
 %Plot daily presence in 5-min bins for all classes in one plot
@@ -276,8 +276,8 @@ bar(sexbinPresence.tbin,sexbinPresence.MaleNormBin,'FaceColor',slate,'BarWidth',
 ylabel('Daily Presence (5-min bins)')
 title(['Daily Presence of Each Size Class at ',titleNAME])
 hold on
-bar(sexbinPresence.tbin,sexbinPresence.JuvenileNormBin,'FaceColor',persimmon,'BarWidth',1)
-bar(sexbinPresence.tbin,sexbinPresence.FemaleNormBin,'FaceColor',mint,'BarWidth',1)
+bar(sexbinPresence.tbin,sexbinPresence.MidSizeNormBin,'FaceColor',persimmon,'BarWidth',1)
+bar(sexbinPresence.tbin,sexbinPresence.SocialGroupNormBin,'FaceColor',mint,'BarWidth',1)
 legend('Males','Mid-Size','Social Units')
 saveas(gcf,[saveDir,'\',siteabrev,'DailyPresence_AllClasses130.png']);
 
@@ -287,8 +287,8 @@ figure
 bar(dayBinTAB.tbin,dayBinTAB.NormBin,'k')
 hold on
 bar(sexbinPresence.tbin,sexbinPresence.MaleNormBin,'FaceColor','c','BarWidth',1)
-bar(sexbinPresence.tbin,sexbinPresence.JuvenileNormBin,'FaceColor','b','BarWidth',1)
-bar(sexbinPresence.tbin,sexbinPresence.FemaleNormBin,'FaceColor','y','BarWidth',1)
+bar(sexbinPresence.tbin,sexbinPresence.MidSizeNormBin,'FaceColor','b','BarWidth',1)
+bar(sexbinPresence.tbin,sexbinPresence.SocialGroupNormBin,'FaceColor','y','BarWidth',1)
 ylabel('Daily Presence (5-min bins)')
 title(['Daily Presence with Each Size Class at ',titleNAME])
 legend('All','Males','Mid-Size','Social Units')
