@@ -9,17 +9,20 @@ library(plotrix)
 
 #User Directory
 GDrive = 'G'
-FileDir = paste(GDrive,":/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/BigModel/",sep="")
-fileName = paste(FileDir,'BigModel_gamgeeOutput.RData',sep="")
-fileNameSex = paste(FileDir,'BigModel_gamgeeOutput_sexClasses.RData',sep="")
+FileDir = paste(GDrive,":/My Drive/WAT_TPWS_metadataReduced/SeasonalityAnalysis/AllSites/",sep="")
+fileName = paste(FileDir,'AllSites_gamgeeOutput.RData',sep="")
+fileNameSex = paste(FileDir,'AllSites_gamgeeOutput_sexClasses.RData',sep="")
 load(fileName)
-saveDir = paste(GDrive,":/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",sep="")
-PlotDir = paste(GDrive,":/My Drive/GofAK_TPWS_metadataReduced/Plots/",sep="")
+GDrive = 'G'
+saveDir = paste(GDrive,":/My Drive/WAT_TPWS_metadataReduced/SeasonalityAnalysis/",sep="")
+PlotDir = paste(GDrive,":/My Drive/WAT_TPWS_metadataReduced/Plots/",sep="")
+
 
 #Sites = c('CB','PT','QN','AB','KOA','BD','KS') #The GOA and BSAI Sites
 #Regions = c("GOA","BSAI") #GOA AND BSAI Region
 
-Sites = c('BP') #WAT
+Sites = c('HZ','NC','OC','BC','WC','GS','BP','BS','JAX') #WAT
+Regions = c("North","South")
 
 #Add month
 SiteHourTableB$Month = as.factor(month(SiteHourTableB$date))
@@ -195,52 +198,52 @@ TempTableAggYear$CI = TempTableAggYear$SEM * qt((1-0.05)/2 + 0.5,TempTableAggYea
 BinN = sum(SiteHourTableB$PreAbs)
 PropBin = sum(SiteHourTableB$PreAbs)/length(SiteHourTableB)
   
-filename = paste(saveDir,'BigModel/BigModel_Ns.txt',sep="")
+filename = paste(saveDir,'AllSites/AllSites_Ns.txt',sep="")
 sink(filename)
 print(paste(nrow(SiteHourTableB),'total number of bins'),sep="")
 print(paste(BinN,' bins with 1s'),sep="")
 print(paste(PropBin,' is the proportion of bins with 1s'),sep="")
 sink(file = NULL)
 
-PlotsaveDir = paste(PlotDir,'BigModel',sep='')
+PlotsaveDir = paste(PlotDir,'AllSites',sep='')
   
 #Plot histograms
 ggplot(TempTableAggMonth,aes(x=Month,y=Mean))+geom_bar(stat="identity",fill="skyblue",alpha=0.7)+
   geom_errorbar(aes(ymin=Mean-SEM, ymax=Mean+SEM), width=0.4, colour="orange", alpha=0.9, size=1.3)+
   ggtitle(paste("Mean Monthly Binary Presence with Standard Error of the Mean for Big Moddel",sep=""))
-ggsave(file = paste(PlotsaveDir,'/MeanMonthlyBinaryPresence_SEM_BigModel.jpeg',sep=''))
+ggsave(file = paste(PlotsaveDir,'/MeanMonthlyBinaryPresence_SEM_AllSites.jpeg',sep=''))
 
 ggplot(TempTableAggMonth,aes(x=Month,y=Mean))+geom_bar(stat="identity",fill="skyblue",alpha=0.7)+
   geom_errorbar(aes(ymin=Mean-CI, ymax=Mean+CI), width=0.4, colour="orange", alpha=0.9, size=1.3)+
   ggtitle(paste("Mean Monthly Binary Presence with Confidence Intervals for Big Model",sep=""))
-ggsave(file = paste(PlotsaveDir,'/MeanMonthlyBinaryPresence_CI_BigModel.jpeg',sep=''))
+ggsave(file = paste(PlotsaveDir,'/MeanMonthlyBinaryPresence_CI_AllSites.jpeg',sep=''))
 
 ggplot(TempTableAggMonth,aes(x=Month,y=Count))+geom_bar(stat="identity",fill="skyblue",alpha=0.7)+
   ggtitle(paste("Distribution of Raw Data for Big Model",sep=""))
-ggsave(file = paste(PlotsaveDir,'/RawDataDistribution_BigModel.jpeg',sep=''))
+ggsave(file = paste(PlotsaveDir,'/RawDataDistribution_AllSites.jpeg',sep=''))
 
 ggplot(TempTableAggMonth,aes(x=Month,y=Presence))+geom_bar(stat="identity",fill="skyblue",alpha=0.7)+
   ggtitle(paste("Monthly Binary Presence for Big Model",sep=""))
-ggsave(file = paste(PlotsaveDir,'/MonthlyBinaryPresence_BigModel.jpeg',sep=''))
+ggsave(file = paste(PlotsaveDir,'/MonthlyBinaryPresence_AllSites.jpeg',sep=''))
 
 #Plot histograms for year
 ggplot(TempTableAggYear,aes(x=Year,y=Mean))+geom_bar(stat="identity",fill="skyblue",alpha=0.7)+
   geom_errorbar(aes(ymin=Mean-SEM, ymax=Mean+SEM), width=0.4, colour="orange", alpha=0.9, size=1.3)+
   ggtitle(paste("Mean Yearly Binary Presence with Standard Error of the Mean for Big Model",sep=""))
-ggsave(file = paste(PlotsaveDir,'/MeanYearlyBinaryPresence_SEM_BigModel.jpeg',sep=''))
+ggsave(file = paste(PlotsaveDir,'/MeanYearlyBinaryPresence_SEM_AllSites.jpeg',sep=''))
 
 ggplot(TempTableAggYear,aes(x=Year,y=Mean))+geom_bar(stat="identity",fill="skyblue",alpha=0.7)+
   geom_errorbar(aes(ymin=Mean-CI, ymax=Mean+CI), width=0.4, colour="orange", alpha=0.9, size=1.3)+
   ggtitle(paste("Mean Yearly Binary Presence with Confidence Intervals for Big Model",sep=""))
-ggsave(file = paste(PlotsaveDir,'/MeanYearlyBinaryPresence_CI_BigModel.jpeg',sep=''))
+ggsave(file = paste(PlotsaveDir,'/MeanYearlyBinaryPresence_CI_AllSites.jpeg',sep=''))
 
 ggplot(TempTableAggYear,aes(x=Year,y=Count))+geom_bar(stat="identity",fill="skyblue",alpha=0.7)+
   ggtitle(paste("Distribution of Yearly Raw Data for Big Model",sep=""))
-ggsave(file = paste(PlotsaveDir,'/YearlyRawDataDistribution_BigModel.jpeg',sep=''))
+ggsave(file = paste(PlotsaveDir,'/YearlyRawDataDistribution_AllSites.jpeg',sep=''))
 
 ggplot(TempTableAggYear,aes(x=Year,y=Presence))+geom_bar(stat="identity",fill="skyblue",alpha=0.7)+
   ggtitle(paste("Yearly Binary Presence for Big Model",sep=""))
-ggsave(file = paste(PlotsaveDir,'/YearlyBinaryPresence_BigModel.jpeg',sep=''))
+ggsave(file = paste(PlotsaveDir,'/YearlyBinaryPresence_AllSites.jpeg',sep=''))
 
 #Site and Region raw data
 #Average site values 
@@ -291,7 +294,7 @@ ggsave(file = paste(PlotsaveDir,'/YearlyBinaryPresence_Region.jpeg',sep=''))
 
 #### SEX SPECIFIC MODELS######
 load(fileNameSex)
-saveDir = paste(GDrive,":/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/",sep="")
+saveDir = paste(GDrive,":/My Drive/WAT_TPWS_metadataReduced/SeasonalityAnalysis/",sep="")
 #SITE
 #Subset in loop and plot histograms
 for (i in 1:length(Sites)){
@@ -662,7 +665,7 @@ PropBinJ = sum(SiteHourTableB$PreAbsJ)/length(SiteHourTableB$PreAbsJ)
 BinNM = sum(SiteHourTableB$PreAbsM)
 PropBinM = sum(SiteHourTableB$PreAbsM)/length(SiteHourTableB$PreAbsM)
 
-filename = paste(saveDir,'BigModel/BigModel_sexSpecific_Ns.txt',sep="")
+filename = paste(saveDir,'AllSites/AllSites_sexSpecific_Ns.txt',sep="")
 sink(filename)
 print("Social Groups")
 print(paste(nrow(SiteHourTableB),'total number of bins'),sep="")
@@ -676,121 +679,121 @@ print(paste(BinNM,' bins with 1s'),sep="")
 print(paste(PropBinM,' is the proportion of bins with 1s'),sep="")
 sink(file = NULL)
 
-PlotsaveDir = paste(PlotDir,'BigModel',sep='')
+PlotsaveDir = paste(PlotDir,'AllSites',sep='')
 
 #Plot histograms for Social Groups
 ggplot(TempTableAggMonth,aes(x=Month,y=MeanF))+geom_bar(stat="identity",fill="skyblue",alpha=0.7)+
   geom_errorbar(aes(ymin=MeanF-SEMF, ymax=MeanF+SEMF), width=0.4, colour="orange", alpha=0.9, size=1.3)+
   ggtitle(paste("Mean Monthly Binary Presence with Standard Error of the Mean for Social Groups in Big Model",sep=""))
-ggsave(file = paste(PlotsaveDir,'/MeanMonthlyBinaryPresence_SEM_SocialGroups_BigModel.jpeg',sep=''))
+ggsave(file = paste(PlotsaveDir,'/MeanMonthlyBinaryPresence_SEM_SocialGroups_AllSites.jpeg',sep=''))
 
 ggplot(TempTableAggMonth,aes(x=Month,y=MeanF))+geom_bar(stat="identity",fill="skyblue",alpha=0.7)+
   geom_errorbar(aes(ymin=MeanF-CIF, ymax=MeanF+CIF), width=0.4, colour="orange", alpha=0.9, size=1.3)+
   ggtitle(paste("Mean Monthly Binary Presence with Confidence Intervals for Social Groups in Big Model",sep=""))
-ggsave(file = paste(PlotsaveDir,'/MeanMonthlyBinaryPresence_CI_SocialGroups_BigModel.jpeg',sep=''))
+ggsave(file = paste(PlotsaveDir,'/MeanMonthlyBinaryPresence_CI_SocialGroups_AllSites.jpeg',sep=''))
 
 ggplot(TempTableAggMonth,aes(x=Month,y=CountF))+geom_bar(stat="identity",fill="skyblue",alpha=0.7)+
   ggtitle(paste("Distribution of Raw Data for Social Groups in Big Model",sep=""))
-ggsave(file = paste(PlotsaveDir,'/RawDataDistribution_SocialGroups_BigModel.jpeg',sep=''))
+ggsave(file = paste(PlotsaveDir,'/RawDataDistribution_SocialGroups_AllSites.jpeg',sep=''))
 
 ggplot(TempTableAggMonth,aes(x=Month,y=PresenceF))+geom_bar(stat="identity",fill="skyblue",alpha=0.7)+
   ggtitle(paste("Monthly Binary Presence for Social Groups in Big Model",sep=""))
-ggsave(file = paste(PlotsaveDir,'/MonthlyBinaryPresence_SocialGroups_BigModel.jpeg',sep=''))
+ggsave(file = paste(PlotsaveDir,'/MonthlyBinaryPresence_SocialGroups_AllSites.jpeg',sep=''))
 
 #Plot histograms for Mid-Size
 ggplot(TempTableAggMonth,aes(x=Month,y=MeanJ))+geom_bar(stat="identity",fill="skyblue",alpha=0.7)+
   geom_errorbar(aes(ymin=MeanJ-SEMJ, ymax=MeanJ+SEMJ), width=0.4, colour="orange", alpha=0.9, size=1.3)+
   ggtitle(paste("Mean Monthly Binary Presence with Standard Error of the Mean for Mid-Size in Big Model",sep=""))
-ggsave(file = paste(PlotsaveDir,'/MeanMonthlyBinaryPresence_SEM_MidSize_BigModel.jpeg',sep=''))
+ggsave(file = paste(PlotsaveDir,'/MeanMonthlyBinaryPresence_SEM_MidSize_AllSites.jpeg',sep=''))
 
 ggplot(TempTableAggMonth,aes(x=Month,y=MeanJ))+geom_bar(stat="identity",fill="skyblue",alpha=0.7)+
   geom_errorbar(aes(ymin=MeanJ-CIJ, ymax=MeanJ+CIJ), width=0.4, colour="orange", alpha=0.9, size=1.3)+
   ggtitle(paste("Mean Monthly Binary Presence with Confidence Intervals for Mid-Size in Big Model",sep=""))
-ggsave(file = paste(PlotsaveDir,'/MeanMonthlyBinaryPresence_CI_MidSize_BigModel.jpeg',sep=''))
+ggsave(file = paste(PlotsaveDir,'/MeanMonthlyBinaryPresence_CI_MidSize_AllSites.jpeg',sep=''))
 
 ggplot(TempTableAggMonth,aes(x=Month,y=CountJ))+geom_bar(stat="identity",fill="skyblue",alpha=0.7)+
   ggtitle(paste("Distribution of Raw Data for Mid-Size in Big Model",sep=""))
-ggsave(file = paste(PlotsaveDir,'/RawDataDistribution_MidSize_BigModel.jpeg',sep=''))
+ggsave(file = paste(PlotsaveDir,'/RawDataDistribution_MidSize_AllSites.jpeg',sep=''))
 
 ggplot(TempTableAggMonth,aes(x=Month,y=PresenceJ))+geom_bar(stat="identity",fill="skyblue",alpha=0.7)+
   ggtitle(paste("Monthly Binary Presence for Mid-Size in Big Model",sep=""))
-ggsave(file = paste(PlotsaveDir,'/MonthlyBinaryPresence_MidSize_BigModel.jpeg',sep=''))
+ggsave(file = paste(PlotsaveDir,'/MonthlyBinaryPresence_MidSize_AllSites.jpeg',sep=''))
 
 #Plot histograms for Males
 ggplot(TempTableAggMonth,aes(x=Month,y=MeanM))+geom_bar(stat="identity",fill="skyblue",alpha=0.7)+
   geom_errorbar(aes(ymin=MeanM-SEMM, ymax=MeanM+SEMM), width=0.4, colour="orange", alpha=0.9, size=1.3)+
   ggtitle(paste("Mean Monthly Binary Presence with Standard Error of the Mean for Males in Big Model",sep=""))
-ggsave(file = paste(PlotsaveDir,'/MeanMonthlyBinaryPresence_SEM_Males_BigModel.jpeg',sep=''))
+ggsave(file = paste(PlotsaveDir,'/MeanMonthlyBinaryPresence_SEM_Males_AllSites.jpeg',sep=''))
 
 ggplot(TempTableAggMonth,aes(x=Month,y=MeanM))+geom_bar(stat="identity",fill="skyblue",alpha=0.7)+
   geom_errorbar(aes(ymin=MeanM-CIM, ymax=MeanM+CIM), width=0.4, colour="orange", alpha=0.9, size=1.3)+
   ggtitle(paste("Mean Monthly Binary Presence with Confidence Intervals for Males in Big Model",sep=""))
-ggsave(file = paste(PlotsaveDir,'/MeanMonthlyBinaryPresence_CI_Males_BigModel.jpeg',sep=''))
+ggsave(file = paste(PlotsaveDir,'/MeanMonthlyBinaryPresence_CI_Males_AllSites.jpeg',sep=''))
 
 ggplot(TempTableAggMonth,aes(x=Month,y=CountM))+geom_bar(stat="identity",fill="skyblue",alpha=0.7)+
   ggtitle(paste("Distribution of Raw Data for Males in Big Model",sep=""))
-ggsave(file = paste(PlotsaveDir,'/RawDataDistribution_Males_BigModel.jpeg',sep=''))
+ggsave(file = paste(PlotsaveDir,'/RawDataDistribution_Males_AllSites.jpeg',sep=''))
 
 ggplot(TempTableAggMonth,aes(x=Month,y=PresenceM))+geom_bar(stat="identity",fill="skyblue",alpha=0.7)+
   ggtitle(paste("Monthly Binary Presence for Males in Big Model",sep=""))
-ggsave(file = paste(PlotsaveDir,'/MonthlyBinaryPresence_Males_BigModel.jpeg',sep=''))
+ggsave(file = paste(PlotsaveDir,'/MonthlyBinaryPresence_Males_AllSites.jpeg',sep=''))
 
 #Plot Year histograms for Social Groups
 ggplot(TempTableAggYear,aes(x=Year,y=MeanF))+geom_bar(stat="identity",fill="skyblue",alpha=0.7)+
   geom_errorbar(aes(ymin=MeanF-SEMF, ymax=MeanF+SEMF), width=0.4, colour="orange", alpha=0.9, size=1.3)+
   ggtitle(paste("Mean Yearly Binary Presence with Standard Error of the Mean for Social Groups in Big Model",sep=""))
-ggsave(file = paste(PlotsaveDir,'/MeanYearlyBinaryPresence_SEM_SocialGroups_BigModel.jpeg',sep=''))
+ggsave(file = paste(PlotsaveDir,'/MeanYearlyBinaryPresence_SEM_SocialGroups_AllSites.jpeg',sep=''))
 
 ggplot(TempTableAggYear,aes(x=Year,y=MeanF))+geom_bar(stat="identity",fill="skyblue",alpha=0.7)+
   geom_errorbar(aes(ymin=MeanF-CIF, ymax=MeanF+CIF), width=0.4, colour="orange", alpha=0.9, size=1.3)+
   ggtitle(paste("Mean Yearly Binary Presence with Confidence Intervals for Social Groups in Big Model",sep=""))
-ggsave(file = paste(PlotsaveDir,'/MeanYearlyBinaryPresence_CI_SocialGroups_BigModel.jpeg',sep=''))
+ggsave(file = paste(PlotsaveDir,'/MeanYearlyBinaryPresence_CI_SocialGroups_AllSites.jpeg',sep=''))
 
 ggplot(TempTableAggYear,aes(x=Year,y=CountF))+geom_bar(stat="identity",fill="skyblue",alpha=0.7)+
   ggtitle(paste("Distribution of Yearly Raw Data for Social Groups in Big Model",sep=""))
-ggsave(file = paste(PlotsaveDir,'/YearlyRawDataDistribution_SocialGroups_BigModel.jpeg',sep=''))
+ggsave(file = paste(PlotsaveDir,'/YearlyRawDataDistribution_SocialGroups_AllSites.jpeg',sep=''))
 
 ggplot(TempTableAggYear,aes(x=Year,y=PresenceF))+geom_bar(stat="identity",fill="skyblue",alpha=0.7)+
   ggtitle(paste("Yearly Binary Presence for Social Groups in Big Model",sep=""))
-ggsave(file = paste(PlotsaveDir,'/YearlyBinaryPresence_SocialGroups_BigModel.jpeg',sep=''))
+ggsave(file = paste(PlotsaveDir,'/YearlyBinaryPresence_SocialGroups_AllSites.jpeg',sep=''))
 
 #Plot year histograms for Mid-Size
 ggplot(TempTableAggYear,aes(x=Year,y=MeanJ))+geom_bar(stat="identity",fill="skyblue",alpha=0.7)+
   geom_errorbar(aes(ymin=MeanJ-SEMJ, ymax=MeanJ+SEMJ), width=0.4, colour="orange", alpha=0.9, size=1.3)+
   ggtitle(paste("Mean Monthly Binary Presence with Standard Error of the Mean for Mid-Size in Big Model",sep=""))
-ggsave(file = paste(PlotsaveDir,'/MeanMonthlyBinaryPresence_SEM_MidSize_BigModel.jpeg',sep=''))
+ggsave(file = paste(PlotsaveDir,'/MeanMonthlyBinaryPresence_SEM_MidSize_AllSites.jpeg',sep=''))
 
 ggplot(TempTableAggYear,aes(x=Year,y=MeanJ))+geom_bar(stat="identity",fill="skyblue",alpha=0.7)+
   geom_errorbar(aes(ymin=MeanJ-CIJ, ymax=MeanJ+CIJ), width=0.4, colour="orange", alpha=0.9, size=1.3)+
   ggtitle(paste("Mean Yearly Binary Presence with Confidence Intervals for Mid-Size in Big Model",sep=""))
-ggsave(file = paste(PlotsaveDir,'/MeanYearlyBinaryPresence_CI_MidSize_BigModel.jpeg',sep=''))
+ggsave(file = paste(PlotsaveDir,'/MeanYearlyBinaryPresence_CI_MidSize_AllSites.jpeg',sep=''))
 
 ggplot(TempTableAggYear,aes(x=Year,y=CountJ))+geom_bar(stat="identity",fill="skyblue",alpha=0.7)+
   ggtitle(paste("Distribution of Yearly Raw Data for Mid-Size in Big Model",sep=""))
-ggsave(file = paste(PlotsaveDir,'/YearlyRawDataDistribution_MidSize_BigModel.jpeg',sep=''))
+ggsave(file = paste(PlotsaveDir,'/YearlyRawDataDistribution_MidSize_AllSites.jpeg',sep=''))
 
 ggplot(TempTableAggYear,aes(x=Year,y=PresenceJ))+geom_bar(stat="identity",fill="skyblue",alpha=0.7)+
   ggtitle(paste("Yearly Binary Presence for Mid-Size in Big Model",sep=""))
-ggsave(file = paste(PlotsaveDir,'/YearlyBinaryPresence_MidSize_BigModel.jpeg',sep=''))
+ggsave(file = paste(PlotsaveDir,'/YearlyBinaryPresence_MidSize_AllSites.jpeg',sep=''))
 
 #Plot Year histograms for Males
 ggplot(TempTableAggYear,aes(x=Year,y=MeanM))+geom_bar(stat="identity",fill="skyblue",alpha=0.7)+
   geom_errorbar(aes(ymin=MeanM-SEMM, ymax=MeanM+SEMM), width=0.4, colour="orange", alpha=0.9, size=1.3)+
   ggtitle(paste("Mean Yearly Binary Presence with Standard Error of the Mean for Males in Big Model",sep=""))
-ggsave(file = paste(PlotsaveDir,'/MeanYearlyBinaryPresence_SEM_Males_BigModel.jpeg',sep=''))
+ggsave(file = paste(PlotsaveDir,'/MeanYearlyBinaryPresence_SEM_Males_AllSites.jpeg',sep=''))
 
 ggplot(TempTableAggYear,aes(x=Year,y=MeanM))+geom_bar(stat="identity",fill="skyblue",alpha=0.7)+
   geom_errorbar(aes(ymin=MeanM-CIM, ymax=MeanM+CIM), width=0.4, colour="orange", alpha=0.9, size=1.3)+
   ggtitle(paste("Mean Yearly Binary Presence with Confidence Intervals for Males in Big Model",sep=""))
-ggsave(file = paste(PlotsaveDir,'/MeanYearlyBinaryPresence_CI_Males_BigModel.jpeg',sep=''))
+ggsave(file = paste(PlotsaveDir,'/MeanYearlyBinaryPresence_CI_Males_AllSites.jpeg',sep=''))
 
 ggplot(TempTableAggYear,aes(x=Year,y=CountM))+geom_bar(stat="identity",fill="skyblue",alpha=0.7)+
   ggtitle(paste("Distribution of Yearly Raw Data for Males in Big Model",sep=""))
-ggsave(file = paste(PlotsaveDir,'/YearlyRawDataDistribution_Males_BigModel.jpeg',sep=''))
+ggsave(file = paste(PlotsaveDir,'/YearlyRawDataDistribution_Males_AllSites.jpeg',sep=''))
 
 ggplot(TempTableAggYear,aes(x=Year,y=PresenceM))+geom_bar(stat="identity",fill="skyblue",alpha=0.7)+
   ggtitle(paste("Yearly Binary Presence for Males in Big Model",sep=""))
-ggsave(file = paste(PlotsaveDir,'/YearlyBinaryPresence_Males_BigModel.jpeg',sep=''))
+ggsave(file = paste(PlotsaveDir,'/YearlyBinaryPresence_Males_AllSites.jpeg',sep=''))
 
 #Site and Region raw data
 #Average site values 
