@@ -302,7 +302,7 @@ ggPlot_JD_WATBIG <- function(model,table,site,sex,COL){
 
 
 # Plot Julian Day with ggplot (When Julian day is after year for GOA (Mid-Size) or CB)  ---------------------------------------------
-ggPlot_JD_AfterYear <- function(model, table,sex,COL){
+ggPlot_JD_AfterYear <- function(model,table,site,sex,COL){
   BootstrapParameters3<-rmvnorm(10000, coef(model),summary(model)$cov.unscaled)
   start=9; finish=10; Variable=table$Julian;  
   PlottingVar3<-seq(min(Variable), max(Variable), length=5000)

@@ -28,7 +28,7 @@ source('C:/Users/nposd/Documents/GitHub/SeasonalityAnalysis/GAM_GEEs/GAMGEE_sexC
 
 # Load Workspace --------------------------------------------------
 #site = 'Big'
-region = 'BSAI'
+region = 'GOA'
 GDrive = 'G'
 sexGroups = c('Social Groups','Mid-Size','Males')
 
