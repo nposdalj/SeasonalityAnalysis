@@ -13,7 +13,7 @@ siteabrev = 'CB'; %abbreviation of site.
 sp = 'Pm'; % your species code
 itnum = '3'; % which iteration you are looking for
 region = 'GofAK';
-GDrive = 'I';
+GDrive = 'G';
 srate = 200; % sample rate
 tpwsPath = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\TPWS_125\',siteabrev]; %directory of TPWS files
 dir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev]; %seasonality analysis directory
@@ -27,12 +27,12 @@ startTime = datetime(2013,09,05);
 endTime = datetime(2017,09,11); 
 MinRec = 10;
 MinPer = 12;
-NumSamples = 80;
+NumSamples = 10;
 %% Evaluating the duty cycle by shifting the 15 minute listening period by 1 minute - THIS IS THE ONE I ENDED UP USING
 SecRec = MinRec *60;
 SecPer = MinPer * 60;
-%within the entire 20 minute cycle. This will result in 20 samples.
-%group data by 1 second bins
+
+%group data by 1 second bins (how many clicks in a one second bin)
 tbin = datetime(vTT);
 tbin = dateshift(tbin, 'start','second');
 data = timetable(tbin,TTall,PPall);
@@ -40,17 +40,12 @@ SecData = varfun(@max,data,'GroupingVariable','tbin','InputVariable','PPall');
 SecData.Properties.VariableNames{'GroupCount'} = 'Count'; % #clicks per bin
 SecData.max_PPall = [];
 
-%Calculate 1-second bin effort
+%Calculate 1-second bin effort and combine with click count
 disp('Calculating 1 second bin effort, this may take awhile')
-if er > 1
-    MinbinEffort = intervalTo1SecBinTimetable(effort.Start,effort.End,p); % convert intervals in bins when there is multiple lines of effort
-else
-    %binEffort = intervalToBinTimetable_Only1RowEffort(effort.Start,effort.End,p); % convert intervals in bins when there is only one line of effort
-end
+MinbinEffort = intervalTo1SecBinTimetable(effort.Start,effort.End,p); % convert intervals in bins when there is multiple lines of effort
+clickTable = synchronize(SecData,MinbinEffort); %synchronize clicks and effort per one second bins
 
-clickTable = synchronize(SecData,MinbinEffort);
-
-%Remove duty cycled portion
+%Remove duty cycled portion so you have only continuous data
 SecData_1 = clickTable;
 SecData_2 = clickTable;
 SecData_1(SecData_1.tbin > startTime,:) = [];
@@ -60,7 +55,7 @@ SecData_cont = [SecData_1;SecData_2];
 clear SecData_1
 clear SecData_2
 
-%make it divisble by the duty cycle
+%make it divisble by the duty cycle by rounding the seconds
 divis = floor(SDC/SecPer);
 ROWS = divis * SecPer;
 SecData_contRound = SecData_cont(1:ROWS,:);
@@ -75,19 +70,19 @@ for j = 1:NumSamples
     disp(['Evaluating sample # ',num2str(j),' out of ',num2str(NumSamples)])
     %make an array of zeros that's the length of one duty cycle 
     Z_array = zeros(SecPer,1); %array of zeros the length of 1 period
-    Z_array(R(j),1) = 1; %replace a random value with a 1
+    Z_array(R(j),1) = 1; %replace a random value with a 1 to mark the start of the listening period
     cycle_skeleton = repmat(Z_array, divis,1);%repeat the length of the dataset
     zidx = find(cycle_skeleton);
     PositionsToFill = SecRec;
     for na = 1:numel(zidx)
-        anchor = zidx(na);
-        cycle_skeleton(anchor:anchor+PositionsToFill-1) = 1;
+        anchor = zidx(na); %find the starting point of the listening period
+        cycle_skeleton(anchor:anchor+PositionsToFill-1) = 1; %fill in the remaining listening period with '1s'
     end
     cycle_skeleton = cycle_skeleton(1:ROWS,:); %make the duty cycled table equal to the original data table
-    
-    cycle_skeleton(cycle_skeleton==1)=SecData_contRound.Count(cycle_skeleton == 1);
+    %cycle_skeleton(cycle_skeleton==1)=SecData_contRound.Count(cycle_skeleton == 1); %fill in the listening period to the main table
     cycle_skeleton = array2table(cycle_skeleton);
     cycle_skeleton.Properties.VariableNames{'cycle_skeleton'} = ['Count_Sub',num2str(j)];
+    %Concatenate to main table
     if j > 1
         All_Clicks = [All_Clicks,cycle_skeleton];
     else
@@ -105,7 +100,8 @@ binEffort_2 = binEffort;
 binEffort_1(binEffort_1.tbin > startTime,:) = [];
 binEffort_2(binEffort_2.tbin < endTime,:)=[];
 binEffort_cont = [binEffort_1;binEffort_2];
-All_Clicks_Bin_Effort = synchronize(All_Clicks_Bin,binEffort_cont);
+All_Clicks_Bin_Effort = retime(All_Clicks_Bin,unique(All_Clicks_Bin.tbin),'sum'); %sum effort in 5-min bins
+All_Clicks_Bin_Effort = outerjoin(All_Clicks_Bin_Effort,binEffort_cont);
 
 %remove rows with no effort
 All_Clicks_Bin_Effort(All_Clicks_Bin_Effort.effortSec == 0, :) = [];
@@ -113,11 +109,12 @@ All_Clicks_Bin_Effort(All_Clicks_Bin_Effort.effortSec == 0, :) = [];
 %Average # of bins with sperm whales
 TableLength = NumSamples+2;
 All_Clicks_Bin_Effort.DutyAvg = mean(All_Clicks_Bin_Effort{:,3:TableLength},2);
-All_Clicks_Bin_Effort.Diff = All_Clicks_Bin_Effort.Count - All_Clicks_Bin_Effort.DutyAvg; %average number of missed clicks in each bin
+All_Clicks_Bin_Effort.DutyClick = All_Clicks_Bin_Effort.Count./(All_Clicks_Bin_Effort.effortSec./All_Clicks_Bin_Effort.DutyAvg); %Find proportion of clicks based on effort
+All_Clicks_Bin_Effort.Diff = All_Clicks_Bin_Effort.Count - All_Clicks_Bin_Effort.DutyClick; %average number of missed clicks in each bin
 %what to multiply the duty cycled data by to supplement so it can look like the continuous data
 All_Clicks_Bin_Effort.Supp = All_Clicks_Bin_Effort.Count./All_Clicks_Bin_Effort.DutyAvg; 
-%what does the duty cycle percent look like, compared to the actual duty cycle which was recording 43% of the time
-All_Clicks_Bin_Effort.DutyPercent = All_Clicks_Bin_Effort.DutyAvg./All_Clicks_Bin_Effort.Count; 
+%what does the duty cycle percent look like, compared to the actual duty cycle
+All_Clicks_Bin_Effort.DutyPercent = All_Clicks_Bin_Effort.DutyClick./All_Clicks_Bin_Effort.Count; 
 %Multiply the duty cycled average number of clicks in each bin by the
 %'supplement' so you can see what number of clicks you'd have if you
 %recorded continuously
@@ -135,25 +132,23 @@ xlabel('# of Missed Clicks in Each 5-Min Bin')
 ylabel('Count')
 
 %Average Duty cycle
-MeanBin = nanmean(All_Clicks_Bin_Effort.DutyPercent);
+MeanBin = mean(All_Clicks_Bin_Effort.DutyPercent,'omitnan');
 Avg_DutyCycle = ['The average duty cycle for this site was ',num2str(MeanBin)];
 disp(Avg_DutyCycle)
 
 %Average # of days with sperm whales 
 %retime bin table for daily
-columnIndices2Delete = [2 TableLength+1:TableLength+8];
-All_BinsINT = All_Clicks_Bin_Effort;
-All_BinsINT(:,columnIndices2Delete) = [];
-All_Clicks_Bin_Effort_Days = retime(All_BinsINT,'daily','sum');
+All_Clicks_Bin_Effort_Days = retime(All_Clicks_Bin,'daily','sum'); %sum effort in 5-min bins
 
 %recalculate all columns
 %All_2016_Days{:,2:end}(All_2016_Days{:,2:end} == 0) = NaN;
 All_Clicks_Bin_Effort_Days.DutyAvg = mean(All_Clicks_Bin_Effort_Days{:,2:end},2); %average number of clicks in each bin
-All_Clicks_Bin_Effort_Days.Diff = All_Clicks_Bin_Effort_Days.Count - All_Clicks_Bin_Effort_Days.DutyAvg; %average number of missed clicks in each bin
+All_Clicks_Bin_Effort_Days.DutyClick = All_Clicks_Bin_Effort_Days.Count./(All_Clicks_Bin_Effort_Days.effortSec./All_Clicks_Bin_Effort_Days.DutyAvg); %Find proportion of clicks based on effort
+All_Clicks_Bin_Effort_Days.Diff = All_Clicks_Bin_Effort_Days.Count - All_Clicks_Bin_Effort_Days.DutyClick; %average number of missed clicks in each bin
 %what to multiply the duty cycled data by to supplement so it can look like the continuous data
 All_Clicks_Bin_Effort_Days.Supp = All_Clicks_Bin_Effort_Days.Count./All_Clicks_Bin_Effort_Days.DutyAvg; 
 %what does the duty cycle percent look like, compared to the actual duty cycle which was recording 43% of the time
-All_Clicks_Bin_Effort_Days.DutyPercent = All_Clicks_Bin_Effort_Days.DutyAvg./All_Clicks_Bin_Effort_Days.Count; 
+All_Clicks_Bin_Effort_Days.DutyPercent = All_Clicks_Bin_Effort_Days.DutyClick./All_Clicks_Bin_Effort_Days.Count; 
 %Multiply the duty cycled average number of clicks in each bin by the
 %'supplement' so you can see what number of clicks you'd have if you
 %recorded continuously

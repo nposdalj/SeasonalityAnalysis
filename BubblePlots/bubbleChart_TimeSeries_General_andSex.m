@@ -3,7 +3,7 @@ clear all;close all;clc;
 % Needs to be run in 2018B or later
 %% load data
 siteName = 'HZ';
-GDrive = 'I';
+GDrive = 'G';
 region = 'WAT'; %region
 NumBub = 3;
 DataDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteName];

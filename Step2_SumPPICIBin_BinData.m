@@ -17,11 +17,11 @@ close all; clear all;clc;
     % mean of julian day - '*_days365GroupedMean_forGLMR125.csv'
 %% Parameters defined by user
 %Site names and data paths
-filePrefix = 'CB'; % File name to match. 
-siteabrev = 'CB'; %abbreviation of site.
+filePrefix = 'BD'; % File name to match. 
+siteabrev = 'BD'; %abbreviation of site.
 region = 'GofAK'; %region
 sp = 'Pm'; % your species code
-GDrive = 'I'; %Google Drive
+GDrive = 'G'; %Google Drive
 saveDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev]; %specify directory to save files
 DutyCy = 1; %if this data only has 1 deployment that is duty cycled make it equal to 1 otherwise, make it equal to the number...
 % of deployments that have different duty cycles that must be accounted for; if this data is NOT duty cycled,...
