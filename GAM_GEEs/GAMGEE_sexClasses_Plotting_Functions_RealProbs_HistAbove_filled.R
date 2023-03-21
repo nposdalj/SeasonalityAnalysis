@@ -29,23 +29,24 @@ ggPlot_JD_sex <- function(model, table,sex,COL){
   ) + labs(x = "Julian Day",
            y = "s(Julian Day)"
   ) + scale_x_continuous(breaks = seq(20,350,length.out = 12),labels = c('J','F','M','A','M','J','J','A','S','O','N','D')
-  ) + theme(axis.line = element_line(),
+  ) + theme(axis.title.x=element_blank(),
+            axis.text.x=element_blank(),
+            axis.title.y=element_blank(),
+            axis.line = element_line(),
             panel.background = element_blank(),
             text = element_text(size = 25)
   )
-  
-  xens = axis_canvas(pmain, axis = "x")+
-    geom_bar(data = plothist,
-             aes(x,y),
-             fill = 4,
-             alpha = 0.2,
-             position = "dodge",
-             stat = "identity",
-             width = 1
-    )
-  p1 = insert_xaxis_grob(pmain,xens,grid::unit(.2, "null"), position = "top")
-  ggdraw(p1)
-  
+  # xens = axis_canvas(pmain, axis = "x")+
+  #   geom_bar(data = plothist,
+  #            aes(x,y),
+  #            fill = 4,
+  #            alpha = 0.2,
+  #            position = "dodge",
+  #            stat = "identity",
+  #            width = 1
+  #   )
+  # p1 = insert_xaxis_grob(pmain,xens,grid::unit(.2, "null"), position = "top")
+  ggdraw(pmain)
   ggtitle = paste(saveDir,"/Julian Day - ", site,'_',sex,"filled.pdf",sep="")
   
   ggsave(
@@ -87,22 +88,24 @@ ggPlot_JD_AfterYear_WAT <- function(model, table,sex,COL){
   ) + labs(x = "Julian Day",
            y = "s(Julian Day)"
   ) + scale_x_continuous(breaks = seq(20,350,length.out = 12),labels = c('J','F','M','A','M','J','J','A','S','O','N','D')
-  ) + theme(axis.line = element_line(),
+  ) + theme(axis.title.x=element_blank(),
+            axis.text.x=element_blank(),
+            axis.title.y=element_blank(),
+            axis.line = element_line(),
             panel.background = element_blank(),
             text = element_text(size = 25)
   )
-  
-  xens = axis_canvas(pmain, axis = "x")+
-    geom_bar(data = plothist,
-             aes(x,y),
-             fill = 4,
-             alpha = 0.2,
-             position = "dodge",
-             stat = "identity",
-             width = 1
-    )
-  p1 = insert_xaxis_grob(pmain,xens,grid::unit(.2, "null"), position = "top")
-  ggdraw(p1)
+  # xens = axis_canvas(pmain, axis = "x")+
+  #   geom_bar(data = plothist,
+  #            aes(x,y),
+  #            fill = 4,
+  #            alpha = 0.2,
+  #            position = "dodge",
+  #            stat = "identity",
+  #            width = 1
+  #   )
+  # p1 = insert_xaxis_grob(pmain,xens,grid::unit(.2, "null"), position = "top")
+  ggdraw(pmain)
   
   ggtitle = paste(saveDir,"/Julian Day - ", site,'_',sex,"filled.pdf",sep="")
   
@@ -145,22 +148,24 @@ ggPlot_JD_SG_WATBIG <- function(model, table,site,sex,COL){
   ) + labs(x = "Julian Day",
            y = "s(Julian Day)"
   ) + scale_x_continuous(breaks = seq(20,350,length.out = 12),labels = c('J','F','M','A','M','J','J','A','S','O','N','D')
-  ) + theme(axis.line = element_line(),
+  ) + theme(axis.title.x=element_blank(),
+            axis.text.x=element_blank(),
+            axis.title.y=element_blank(),
+            axis.line = element_line(),
             panel.background = element_blank(),
             text = element_text(size = 25)
   )
-  
-  xens = axis_canvas(pmain, axis = "x")+
-    geom_bar(data = plothist,
-             aes(x,y),
-             fill = 4,
-             alpha = 0.2,
-             position = "dodge",
-             stat = "identity",
-             width = 1
-    )
-  p1 = insert_xaxis_grob(pmain,xens,grid::unit(.2, "null"), position = "top")
-  ggdraw(p1)
+  # xens = axis_canvas(pmain, axis = "x")+
+  #   geom_bar(data = plothist,
+  #            aes(x,y),
+  #            fill = 4,
+  #            alpha = 0.2,
+  #            position = "dodge",
+  #            stat = "identity",
+  #            width = 1
+  #   )
+  # p1 = insert_xaxis_grob(pmain,xens,grid::unit(.2, "null"), position = "top")
+  ggdraw(pmain)
   
   ggtitle = paste(saveDir,"/Julian Day - ", site,'_',sex,"filled.pdf",sep="")
   
@@ -203,22 +208,24 @@ ggPlot_JD_Last <- function(model,table,site,sex,COL){
   ) + labs(x = "Julian Day",
            y = "s(Julian Day)"
   ) + scale_x_continuous(breaks = seq(20,350,length.out = 12),labels = c('J','F','M','A','M','J','J','A','S','O','N','D')
-  ) + theme(axis.line = element_line(),
+  ) + theme(axis.title.x=element_blank(),
+            axis.text.x=element_blank(),
+            axis.title.y=element_blank(),
+            axis.line = element_line(),
             panel.background = element_blank(),
             text = element_text(size = 25)
   )
-  
-  xens = axis_canvas(pmain, axis = "x")+
-    geom_bar(data = plothist,
-             aes(x,y),
-             fill = 4,
-             alpha = 0.2,
-             position = "dodge",
-             stat = "identity",
-             width = 1
-    )
-  p1 = insert_xaxis_grob(pmain,xens,grid::unit(.2, "null"), position = "top")
-  ggdraw(p1)
+  # xens = axis_canvas(pmain, axis = "x")+
+  #   geom_bar(data = plothist,
+  #            aes(x,y),
+  #            fill = 4,
+  #            alpha = 0.2,
+  #            position = "dodge",
+  #            stat = "identity",
+  #            width = 1
+  #   )
+  # p1 = insert_xaxis_grob(pmain,xens,grid::unit(.2, "null"), position = "top")
+  ggdraw(pmain)
   
   ggtitle = paste(saveDir,"/Julian Day - ", site,'_',sex,"filled.pdf",sep="")
   
@@ -261,22 +268,24 @@ ggPlot_JD_WATBIG <- function(model,table,site,sex,COL){
   ) + labs(x = "Julian Day",
            y = "s(Julian Day)"
   ) + scale_x_continuous(breaks = seq(20,350,length.out = 12),labels = c('J','F','M','A','M','J','J','A','S','O','N','D')
-  ) + theme(axis.line = element_line(),
+  ) + theme(axis.title.x=element_blank(),
+            axis.text.x=element_blank(),
+            axis.title.y=element_blank(),
+            axis.line = element_line(),
             panel.background = element_blank(),
             text = element_text(size = 25)
   )
-  
-  xens = axis_canvas(pmain, axis = "x")+
-    geom_bar(data = plothist,
-             aes(x,y),
-             fill = 4,
-             alpha = 0.2,
-             position = "dodge",
-             stat = "identity",
-             width = 1
-    )
-  p1 = insert_xaxis_grob(pmain,xens,grid::unit(.2, "null"), position = "top")
-  ggdraw(p1)
+  # xens = axis_canvas(pmain, axis = "x")+
+  #   geom_bar(data = plothist,
+  #            aes(x,y),
+  #            fill = 4,
+  #            alpha = 0.2,
+  #            position = "dodge",
+  #            stat = "identity",
+  #            width = 1
+  #   )
+  # p1 = insert_xaxis_grob(pmain,xens,grid::unit(.2, "null"), position = "top")
+  ggdraw(pmain)
   
   ggtitle = paste(saveDir,"/Julian Day - ", site,'_',sex,"filled.pdf",sep="")
   
@@ -322,21 +331,24 @@ ggPlot_JD_AfterYear <- function(model, table,sex,COL){
   ) + labs(x = "Julian Day",
            y = "s(Julian Day)"
   ) + scale_x_continuous(breaks = seq(20,350,length.out = 12),labels = c('J','F','M','A','M','J','J','A','S','O','N','D')
-  ) + theme(axis.line = element_line(),
+  ) + theme(axis.title.x=element_blank(),
+            axis.text.x=element_blank(),
+            axis.title.y=element_blank(),
+            axis.line = element_line(),
             panel.background = element_blank(),
             text = element_text(size = 25)
   )
-  xens = axis_canvas(pmain, axis = "x")+
-    geom_bar(data = plothist,
-             aes(x,y),
-             fill = 4,
-             alpha = 0.2,
-             position = "dodge",
-             stat = "identity",
-             width = 1
-    )
-  p1 = insert_xaxis_grob(pmain,xens,grid::unit(.2, "null"), position = "top")
-  ggdraw(p1)
+  # xens = axis_canvas(pmain, axis = "x")+
+  #   geom_bar(data = plothist,
+  #            aes(x,y),
+  #            fill = 4,
+  #            alpha = 0.2,
+  #            position = "dodge",
+  #            stat = "identity",
+  #            width = 1
+  #   )
+  # p1 = insert_xaxis_grob(pmain,xens,grid::unit(.2, "null"), position = "top")
+  ggdraw(pmain)
   
   ggtitle = paste(saveDir,"/Julian Day - ", site,'_',sex,"filled.pdf",sep="")
   
@@ -381,21 +393,24 @@ ggPlot_JD_AfterSite <- function(model,table,site,sex,COL){
   ) + labs(x = "Julian Day",
            y = "s(Julian Day)"
   ) + scale_x_continuous(breaks = seq(20,350,length.out = 12),labels = c('J','F','M','A','M','J','J','A','S','O','N','D')
-  ) + theme(axis.line = element_line(),
+  ) + theme(axis.title.x=element_blank(),
+            axis.text.x=element_blank(),
+            axis.title.y=element_blank(),
+            axis.line = element_line(),
             panel.background = element_blank(),
             text = element_text(size = 25)
   )
-  xens = axis_canvas(pmain, axis = "x")+
-    geom_bar(data = plothist,
-             aes(x,y),
-             fill = 4,
-             alpha = 0.2,
-             position = "dodge",
-             stat = "identity",
-             width = 1
-    )
-  p1 = insert_xaxis_grob(pmain,xens,grid::unit(.2, "null"), position = "top")
-  ggdraw(p1)
+  # xens = axis_canvas(pmain, axis = "x")+
+  #   geom_bar(data = plothist,
+  #            aes(x,y),
+  #            fill = 4,
+  #            alpha = 0.2,
+  #            position = "dodge",
+  #            stat = "identity",
+  #            width = 1
+  #   )
+  # p1 = insert_xaxis_grob(pmain,xens,grid::unit(.2, "null"), position = "top")
+  ggdraw(pmain)
   
   ggsave(
     ggtitle, width = 7, height = 6, units = "in",
@@ -407,7 +422,7 @@ ggPlot_JD_AfterSite <- function(model,table,site,sex,COL){
   
 }
 # Plot Julian Day with ggplot (when julian day is after year and site for GOA (Social Groups)) ---------------------------------------------
-ggPlot_JD_AfterYearSite <- function(model, table,sex,COL){
+ggPlot_JD_AfterYearSite <- function(model,table,site,sex,COL){
   BootstrapParameters3<-rmvnorm(10000, coef(model),summary(model)$cov.unscaled)
   start=13; finish=14; Variable=table$Julian;  
   PlottingVar3<-seq(min(Variable), max(Variable), length=5000)
@@ -438,21 +453,24 @@ ggPlot_JD_AfterYearSite <- function(model, table,sex,COL){
   ) + labs(x = "Julian Day",
            y = "s(Julian Day)"
   ) + scale_x_continuous(breaks = seq(20,350,length.out = 12),labels = c('J','F','M','A','M','J','J','A','S','O','N','D')
-  ) + theme(axis.line = element_line(),
+  ) + theme(axis.title.x=element_blank(),
+            axis.text.x=element_blank(),
+            axis.title.y=element_blank(),
+            axis.line = element_line(),
             panel.background = element_blank(),
             text = element_text(size = 25)
   )
-  xens = axis_canvas(pmain, axis = "x")+
-    geom_bar(data = plothist,
-             aes(x,y),
-             fill = 4,
-             alpha = 0.2,
-             position = "dodge",
-             stat = "identity",
-             width = 1
-    )
-  p1 = insert_xaxis_grob(pmain,xens,grid::unit(.2, "null"), position = "top")
-  ggdraw(p1)
+  # xens = axis_canvas(pmain, axis = "x")+
+  #   geom_bar(data = plothist,
+  #            aes(x,y),
+  #            fill = 4,
+  #            alpha = 0.2,
+  #            position = "dodge",
+  #            stat = "identity",
+  #            width = 1
+  #   )
+  # p1 = insert_xaxis_grob(pmain,xens,grid::unit(.2, "null"), position = "top")
+  ggdraw(pmain)
   
   ggsave(
     ggtitle, width = 7, height = 6, units = "in",
@@ -465,7 +483,7 @@ ggPlot_JD_AfterYearSite <- function(model, table,sex,COL){
 }
 
 # Plot Julian Day with ggplot (when julian day is after Year for Big Model) ---------------------------------------------
-ggPlot_JD_AfterYearB <- function(model, table,sex,COL){
+ggPlot_JD_AfterYearB <- function(model,table,site,sex,COL){
   BootstrapParameters3<-rmvnorm(10000, coef(model),summary(model)$cov.unscaled)
   start=10; finish=11; Variable=table$Julian;  
   PlottingVar3<-seq(min(Variable), max(Variable), length=5000)
@@ -494,21 +512,24 @@ ggPlot_JD_AfterYearB <- function(model, table,sex,COL){
   ) + labs(x = "Julian Day",
            y = "s(Julian Day)"
   ) + scale_x_continuous(breaks = seq(20,350,length.out = 12),labels = c('J','F','M','A','M','J','J','A','S','O','N','D')
-  ) + theme(axis.line = element_line(),
+  ) + theme(axis.title.x=element_blank(),
+            axis.text.x=element_blank(),
+            axis.title.y=element_blank(),
+            axis.line = element_line(),
             panel.background = element_blank(),
             text = element_text(size = 25)
   )
-  xens = axis_canvas(pmain, axis = "x")+
-    geom_bar(data = plothist,
-             aes(x,y),
-             fill = 4,
-             alpha = 0.2,
-             position = "dodge",
-             stat = "identity",
-             width = 1
-    )
-  p1 = insert_xaxis_grob(pmain,xens,grid::unit(.2, "null"), position = "top")
-  ggdraw(p1)
+  # xens = axis_canvas(pmain, axis = "x")+
+  #   geom_bar(data = plothist,
+  #            aes(x,y),
+  #            fill = 4,
+  #            alpha = 0.2,
+  #            position = "dodge",
+  #            stat = "identity",
+  #            width = 1
+  #   )
+  # p1 = insert_xaxis_grob(pmain,xens,grid::unit(.2, "null"), position = "top")
+  ggdraw(pmain)
   
   ggtitle = paste(saveDir,"/Julian Day - ", site,'_',sex,"filled.pdf",sep="")
   
@@ -522,9 +543,6 @@ ggPlot_JD_AfterYearB <- function(model, table,sex,COL){
   
 }
 
-
-
-
 #Plot Year as factor with ggplot --------------------------------------------------
 ggPlot_Year <- function(model, table,site,COL){
   BootstrapParameters2<-rmvnorm(10000, coef(model),summary(model)$cov.unscaled)
@@ -537,20 +555,7 @@ ggPlot_Year <- function(model, table,site,COL){
   counts$freq = as.numeric(counts$freq)
   counts$days = round(counts$freq/12)
   counts$label = '*'
-  counts$label[counts$days > 365] <- ' ' 
-  #counts = counts[-c(6),]
-  
-  #Histogram for Year observations
-  # Year = seq(from = 2016,to = 2019,by = 1)
-  # fullhist = hist(SiteHourTableB$Year,Year)
-  # yhist = fullhist$counts
-  # plothist = data.frame(x=Year[-1],y=yhist)
-  # plothist$x = as.character(plothist$x)
-  # plothist$y = as.numeric(plothist$y)
-  # plothist$days = round(plothist$y/12)
-  # plothist$label = '*'
-  # plothist$label[plothist$days > 365] <- ' ' 
-  # plothist = plothist[-c(6),]
+  counts$label[counts$days > 365] <- ' '
   
   #Center intercept (1st level of year factor) at 0 and show other levels relative to it
   AdjustedSiteCoefs = data.frame(  c(
@@ -571,25 +576,28 @@ ggPlot_Year <- function(model, table,site,COL){
   ggtitle = paste(saveDir,"/Year - ", site,'_',sex,"filled.pdf",sep="")
   pmain = ggplot(AdjustedSiteCoefs, aes(YearVal, Probability)
   ) + geom_boxplot(fill=COL
-  ) + theme(axis.line = element_line(),
+  ) + theme(axis.title.x=element_blank(),
+            axis.text.x=element_blank(),
+            axis.title.y=element_blank(),
+            axis.line = element_line(),
             panel.background = element_blank(),
             text = element_text(size = 25)
   ) + scale_x_discrete(labels = c("2011","2012","2013","2014","2015","2017","2018","2019")
   ) + labs(x = "Year",
            y = "s(Year)")
   
-  xens = axis_canvas(pmain, axis = "x")+
-    geom_bar(data = counts,
-             aes(x,freq),
-             fill = 4,
-             alpha = 0.2,
-             #position = "dodge",
-             stat = "identity",
-             width = 1) + scale_x_discrete(labels = c("2011","2012","2013","2014","2015","2017","2018","2019")
-             )
-  
-  p1 = insert_xaxis_grob(pmain,xens,grid::unit(.2, "null"), position = "top")
-  ggdraw(p1)
+  # xens = axis_canvas(pmain, axis = "x")+
+  #   geom_bar(data = counts,
+  #            aes(x,freq),
+  #            fill = 4,
+  #            alpha = 0.2,
+  #            #position = "dodge",
+  #            stat = "identity",
+  #            width = 1) + scale_x_discrete(labels = c("2011","2012","2013","2014","2015","2017","2018","2019")
+  #            )
+  # 
+  # p1 = insert_xaxis_grob(pmain,xens,grid::unit(.2, "null"), position = "top")
+  ggdraw(pmain)
   
   ggsave(
     ggtitle, width = 7, height = 6, units = "in",
@@ -613,20 +621,7 @@ ggPlot_Year_AfterJD <- function(model,table,site,COL){
   counts$freq = as.numeric(counts$freq)
   counts$days = round(counts$freq/12)
   counts$label = '*'
-  counts$label[counts$days > 365] <- ' ' 
-  #counts = counts[-c(6),]
-  
-  #Histogram for Year observations
-  # Year = seq(from = 2016,to = 2019,by = 1)
-  # fullhist = hist(SiteHourTableB$Year,Year)
-  # yhist = fullhist$counts
-  # plothist = data.frame(x=Year[-1],y=yhist)
-  # plothist$x = as.character(plothist$x)
-  # plothist$y = as.numeric(plothist$y)
-  # plothist$days = round(plothist$y/12)
-  # plothist$label = '*'
-  # plothist$label[plothist$days > 365] <- ' ' 
-  # plothist = plothist[-c(6),]
+  counts$label[counts$days > 365] <- ' '
   
   #Center intercept (1st level of year factor) at 0 and show other levels relative to it
   AdjustedSiteCoefs = data.frame(  c(
@@ -648,25 +643,28 @@ ggPlot_Year_AfterJD <- function(model,table,site,COL){
   
   pmain = ggplot(AdjustedSiteCoefs, aes(YearVal, Probability)
   ) + geom_boxplot(fill=COL
-  ) + theme(axis.line = element_line(),
+  ) + theme(axis.title.x=element_blank(),
+            axis.text.x=element_blank(),
+            axis.title.y=element_blank(),
+            axis.line = element_line(),
             panel.background = element_blank(),
             text = element_text(size = 25)
   ) + scale_x_discrete(labels = c("2011","2012","2013","2014","2015","2017","2018","2019")
   ) + labs(x = "Year",
            y = "s(Year)")
   
-  xens = axis_canvas(pmain, axis = "x")+
-    geom_bar(data = counts,
-             aes(x,freq),
-             fill = 4,
-             alpha = 0.2,
-             #position = "dodge",
-             stat = "identity",
-             width = 1) + scale_x_discrete(labels = c("2011","2012","2013","2014","2015","2017","2018","2019")
-             )
-  
-  p1 = insert_xaxis_grob(pmain,xens,grid::unit(.2, "null"), position = "top")
-  ggdraw(p1)
+  # xens = axis_canvas(pmain, axis = "x")+
+  #   geom_bar(data = counts,
+  #            aes(x,freq),
+  #            fill = 4,
+  #            alpha = 0.2,
+  #            #position = "dodge",
+  #            stat = "identity",
+  #            width = 1) + scale_x_discrete(labels = c("2011","2012","2013","2014","2015","2017","2018","2019")
+  #            )
+  # 
+  # p1 = insert_xaxis_grob(pmain,xens,grid::unit(.2, "null"), position = "top")
+  ggdraw(pmain)
   
   ggsave(
     ggtitle, width = 7, height = 6, units = "in",
@@ -689,20 +687,7 @@ ggPlot_Year_Big <- function(model, table,site,COL){
   counts$freq = as.numeric(counts$freq)
   counts$days = round(counts$freq/12)
   counts$label = '*'
-  counts$label[counts$days > 365] <- ' ' 
-  #counts = counts[-c(6),]
-  
-  #Histogram for Year observations
-  # Year = seq(from = 2016,to = 2019,by = 1)
-  # fullhist = hist(SiteHourTableB$Year,Year)
-  # yhist = fullhist$counts
-  # plothist = data.frame(x=Year[-1],y=yhist)
-  # plothist$x = as.character(plothist$x)
-  # plothist$y = as.numeric(plothist$y)
-  # plothist$days = round(plothist$y/12)
-  # plothist$label = '*'
-  # plothist$label[plothist$days > 365] <- ' ' 
-  # plothist = plothist[-c(6),]
+  counts$label[counts$days > 365] <- ' '
   
   #Center intercept (1st level of year factor) at 0 and show other levels relative to it
   AdjustedSiteCoefs = data.frame(  c(
@@ -725,25 +710,28 @@ ggPlot_Year_Big <- function(model, table,site,COL){
   
   pmain = ggplot(AdjustedSiteCoefs, aes(YearVal, Probability)
   ) + geom_boxplot(fill=COL
-  ) + theme(axis.line = element_line(),
+  ) + theme(axis.title.x=element_blank(),
+            axis.text.x=element_blank(),
+            axis.title.y=element_blank(),
+            axis.line = element_line(),
             panel.background = element_blank(),
             text = element_text(size = 25)
   ) + scale_x_discrete(labels = c("2010","2011","2012","2013","2014","2015","2017","2018","2019")
   ) + labs(x = "Year",
            y = "s(Year)")
   
-  xens = axis_canvas(pmain, axis = "x")+
-    geom_bar(data = counts,
-             aes(x,freq),
-             fill = 4,
-             alpha = 0.2,
-             #position = "dodge",
-             stat = "identity",
-             width = 1) + scale_x_discrete(labels = c("2010","2011","2012","2013","2014","2015","2017","2018","2019")
-             )
-  
-  p1 = insert_xaxis_grob(pmain,xens,grid::unit(.2, "null"), position = "top")
-  ggdraw(p1)
+  # xens = axis_canvas(pmain, axis = "x")+
+  #   geom_bar(data = counts,
+  #            aes(x,freq),
+  #            fill = 4,
+  #            alpha = 0.2,
+  #            #position = "dodge",
+  #            stat = "identity",
+  #            width = 1) + scale_x_discrete(labels = c("2010","2011","2012","2013","2014","2015","2017","2018","2019")
+  #            )
+  # 
+  # p1 = insert_xaxis_grob(pmain,xens,grid::unit(.2, "null"), position = "top")
+  ggdraw(pmain)
   
   ggsave(
     ggtitle, width = 7, height = 6, units = "in",
@@ -779,24 +767,27 @@ ggtitle = paste(saveDir,"/Site - ", site,'_',sex,"filled.pdf",sep="")
 
 pmain = ggplot(AdjustedSiteCoefs, aes(SiteName, Coefficient)
 ) + geom_boxplot(fill=COL
-) + theme(axis.line = element_line(),
+) + theme(axis.title.x=element_blank(),
+          axis.text.x=element_blank(),
+          axis.title.y=element_blank(),
+          axis.line = element_line(),
           panel.background = element_blank(),
           text = element_text(size = 25)
 ) + scale_x_discrete(labels = c("BD","KS")
 ) + labs(x = "Site",
          y = "s(Site)")
 
-xens = axis_canvas(pmain, axis = "x")+
-  geom_bar(data = plothist,
-           aes(x,y),
-           fill = 4,
-           alpha = 0.2,
-           #position = "dodge",
-           stat = "identity",
-           width = 1) + scale_x_discrete(labels = c("BD","KS"))
-
-p1 = insert_xaxis_grob(pmain,xens,grid::unit(.2, "null"), position = "top")
-ggdraw(p1)
+# xens = axis_canvas(pmain, axis = "x")+
+#   geom_bar(data = plothist,
+#            aes(x,y),
+#            fill = 4,
+#            alpha = 0.2,
+#            #position = "dodge",
+#            stat = "identity",
+#            width = 1) + scale_x_discrete(labels = c("BD","KS"))
+# 
+# p1 = insert_xaxis_grob(pmain,xens,grid::unit(.2, "null"), position = "top")
+ggdraw(pmain)
 
 ggsave(
   ggtitle, width = 7, height = 6, units = "in",
@@ -836,24 +827,27 @@ ggPlot_Site_Year <- function(model,table,sex,COL){
   
   pmain = ggplot(AdjustedSiteCoefs, aes(SiteName, Coefficient)
   ) + geom_boxplot(fill=COL
-  ) + theme(axis.line = element_line(),
+  ) + theme(axis.title.x=element_blank(),
+            axis.text.x=element_blank(),
+            axis.title.y=element_blank(),
+            axis.line = element_line(),
             panel.background = element_blank(),
             text = element_text(size = 25)
   ) + scale_x_discrete(labels = c("AB","CB","KOA","PT","QN")
   ) + labs(x = "Site",
            y = "s(Site)")
   
-  xens = axis_canvas(pmain, axis = "x")+
-    geom_bar(data = plothist,
-             aes(x,y),
-             fill = 4,
-             alpha = 0.2,
-             #position = "dodge",
-             stat = "identity",
-             width = 1) + scale_x_discrete(labels = c("AB","CB","KOA","PT","QN"))
-  
-  p1 = insert_xaxis_grob(pmain,xens,grid::unit(.2, "null"), position = "top")
-  ggdraw(p1)
+  # xens = axis_canvas(pmain, axis = "x")+
+  #   geom_bar(data = plothist,
+  #            aes(x,y),
+  #            fill = 4,
+  #            alpha = 0.2,
+  #            #position = "dodge",
+  #            stat = "identity",
+  #            width = 1) + scale_x_discrete(labels = c("AB","CB","KOA","PT","QN"))
+  # 
+  # p1 = insert_xaxis_grob(pmain,xens,grid::unit(.2, "null"), position = "top")
+  ggdraw(pmain)
   
   ggsave(
     ggtitle, width = 7, height = 6, units = "in",
@@ -892,24 +886,27 @@ ggPlot_Site_WAT <- function(model,table,site,sex,COL){
   
   pmain = ggplot(AdjustedSiteCoefs, aes(SiteName, Coefficient)
   ) + geom_boxplot(fill=COL
-  ) + theme(axis.line = element_line(),
+  ) + theme(axis.title.x=element_blank(),
+            axis.text.x=element_blank(),
+            axis.title.y=element_blank(),
+            axis.line = element_line(),
             panel.background = element_blank(),
             text = element_text(size = 25)
   ) + scale_x_discrete(labels = c("GS","BP","BS","JAX")
   ) + labs(x = "Site",
            y = "s(Site)")
   
-  xens = axis_canvas(pmain, axis = "x")+
-    geom_bar(data = plothist,
-             aes(x,y),
-             fill = 4,
-             alpha = 0.2,
-             #position = "dodge",
-             stat = "identity",
-             width = 1) + scale_x_discrete(labels = c("GS","BS","BP","JAX"))
-  
-  p1 = insert_xaxis_grob(pmain,xens,grid::unit(.2, "null"), position = "top")
-  ggdraw(p1)
+  # xens = axis_canvas(pmain, axis = "x")+
+  #   geom_bar(data = plothist,
+  #            aes(x,y),
+  #            fill = 4,
+  #            alpha = 0.2,
+  #            #position = "dodge",
+  #            stat = "identity",
+  #            width = 1) + scale_x_discrete(labels = c("GS","BS","BP","JAX"))
+  # 
+  # p1 = insert_xaxis_grob(pmain,xens,grid::unit(.2, "null"), position = "top")
+  ggdraw(pmain)
   
   ggsave(
     ggtitle, width = 7, height = 6, units = "in",
@@ -945,24 +942,27 @@ ggPlot_Region_WAT <- function(model,table,site,sex,COL){
   
   pmain = ggplot(AdjustedSiteCoefs, aes(SiteName, Coefficient)
   ) + geom_boxplot(fill=COL
-  ) + theme(axis.line = element_line(),
+  ) + theme(axis.title.x=element_blank(),
+            axis.text.x=element_blank(),
+            axis.title.y=element_blank(),
+            axis.line = element_line(),
             panel.background = element_blank(),
             text = element_text(size = 25)
   ) + scale_x_discrete(labels = c("North","South")
   ) + labs(x = "Region",
            y = "s(Region)")
   
-  xens = axis_canvas(pmain, axis = "x")+
-    geom_bar(data = plothist,
-             aes(x,y),
-             fill = 4,
-             alpha = 0.2,
-             #position = "dodge",
-             stat = "identity",
-             width = 1) + scale_x_discrete(labels = c("North","South"))
-  
-  p1 = insert_xaxis_grob(pmain,xens,grid::unit(.2, "null"), position = "top")
-  ggdraw(p1)
+  # xens = axis_canvas(pmain, axis = "x")+
+  #   geom_bar(data = plothist,
+  #            aes(x,y),
+  #            fill = 4,
+  #            alpha = 0.2,
+  #            #position = "dodge",
+  #            stat = "identity",
+  #            width = 1) + scale_x_discrete(labels = c("North","South"))
+  # 
+  # p1 = insert_xaxis_grob(pmain,xens,grid::unit(.2, "null"), position = "top")
+  ggdraw(pmain)
   
   ggsave(
     ggtitle, width = 7, height = 6, units = "in",
@@ -998,24 +998,27 @@ ggPlot_Region_WAT_last <- function(model,table,site,sex,COL){
   
   pmain = ggplot(AdjustedSiteCoefs, aes(SiteName, Coefficient)
   ) + geom_boxplot(fill=COL
-  ) + theme(axis.line = element_line(),
+  ) + theme(axis.title.x=element_blank(),
+            axis.text.x=element_blank(),
+            axis.title.y=element_blank(),
+            axis.line = element_line(),
             panel.background = element_blank(),
             text = element_text(size = 25)
   ) + scale_x_discrete(labels = c("North","South")
   ) + labs(x = "Region",
            y = "s(Region)")
   
-  xens = axis_canvas(pmain, axis = "x")+
-    geom_bar(data = plothist,
-             aes(x,y),
-             fill = 4,
-             alpha = 0.2,
-             #position = "dodge",
-             stat = "identity",
-             width = 1) + scale_x_discrete(labels = c("North","South"))
-  
-  p1 = insert_xaxis_grob(pmain,xens,grid::unit(.2, "null"), position = "top")
-  ggdraw(p1)
+  # xens = axis_canvas(pmain, axis = "x")+
+  #   geom_bar(data = plothist,
+  #            aes(x,y),
+  #            fill = 4,
+  #            alpha = 0.2,
+  #            #position = "dodge",
+  #            stat = "identity",
+  #            width = 1) + scale_x_discrete(labels = c("North","South"))
+  # 
+  # p1 = insert_xaxis_grob(pmain,xens,grid::unit(.2, "null"), position = "top")
+  ggdraw(pmain)
   
   ggsave(
     ggtitle, width = 7, height = 6, units = "in",
@@ -1054,24 +1057,27 @@ ggPlot_Site_WATT <- function(model,table,site,sex,COL){
   
   pmain = ggplot(AdjustedSiteCoefs, aes(SiteName, Coefficient)
   ) + geom_boxplot(fill=COL
-  ) + theme(axis.line = element_line(),
+  ) + theme(axis.title.x=element_blank(),
+            axis.text.x=element_blank(),
+            axis.title.y=element_blank(),
+            axis.line = element_line(),
             panel.background = element_blank(),
             text = element_text(size = 25)
   ) + scale_x_discrete(labels = c("HZ","OC","NC","BC","WC")
   ) + labs(x = "Site",
            y = "s(Site)")
   
-  xens = axis_canvas(pmain, axis = "x")+
-    geom_bar(data = plothist,
-             aes(x,y),
-             fill = 4,
-             alpha = 0.2,
-             #position = "dodge",
-             stat = "identity",
-             width = 1) + scale_x_discrete(labels = c("HZ","OC","NC","BC","WC"))
-  
-  p1 = insert_xaxis_grob(pmain,xens,grid::unit(.2, "null"), position = "top")
-  ggdraw(p1)
+  # xens = axis_canvas(pmain, axis = "x")+
+  #   geom_bar(data = plothist,
+  #            aes(x,y),
+  #            fill = 4,
+  #            alpha = 0.2,
+  #            #position = "dodge",
+  #            stat = "identity",
+  #            width = 1) + scale_x_discrete(labels = c("HZ","OC","NC","BC","WC"))
+  # 
+  # p1 = insert_xaxis_grob(pmain,xens,grid::unit(.2, "null"), position = "top")
+  ggdraw(pmain)
   
   ggsave(
     ggtitle, width = 7, height = 6, units = "in",
@@ -1110,24 +1116,27 @@ ggPlot_Site_WATTT <- function(model,table,site,sex,COL){
   
   pmain = ggplot(AdjustedSiteCoefs, aes(SiteName, Coefficient)
   ) + geom_boxplot(fill=COL
-  ) + theme(axis.line = element_line(),
+  ) + theme(axis.title.x=element_blank(),
+            axis.text.x=element_blank(),
+            axis.title.y=element_blank(),
+            axis.line = element_line(),
             panel.background = element_blank(),
             text = element_text(size = 25)
   ) + scale_x_discrete(labels = c("HZ","OC","NC","BC","WC")
   ) + labs(x = "Site",
            y = "s(Site)")
   
-  xens = axis_canvas(pmain, axis = "x")+
-    geom_bar(data = plothist,
-             aes(x,y),
-             fill = 4,
-             alpha = 0.2,
-             #position = "dodge",
-             stat = "identity",
-             width = 1) + scale_x_discrete(labels = c("HZ","OC","NC","BC","WC"))
-  
-  p1 = insert_xaxis_grob(pmain,xens,grid::unit(.2, "null"), position = "top")
-  ggdraw(p1)
+  # xens = axis_canvas(pmain, axis = "x")+
+  #   geom_bar(data = plothist,
+  #            aes(x,y),
+  #            fill = 4,
+  #            alpha = 0.2,
+  #            #position = "dodge",
+  #            stat = "identity",
+  #            width = 1) + scale_x_discrete(labels = c("HZ","OC","NC","BC","WC"))
+  # 
+  # p1 = insert_xaxis_grob(pmain,xens,grid::unit(.2, "null"), position = "top")
+  ggdraw(pmain)
   
   ggsave(
     ggtitle, width = 7, height = 6, units = "in",
@@ -1166,24 +1175,27 @@ ggPlot_Site_AfterYear <- function(model,table,sex,COL){
   
   pmain = ggplot(AdjustedSiteCoefs, aes(SiteName, Coefficient)
   ) + geom_boxplot(fill=COL
-  ) + theme(axis.line = element_line(),
+  ) + theme(axis.title.x=element_blank(),
+            axis.text.x=element_blank(),
+            axis.title.y=element_blank(),
+            axis.line = element_line(),
             panel.background = element_blank(),
             text = element_text(size = 25)
   ) + scale_x_discrete(labels = c("AB","CB","KOA","PT","QN")
   ) + labs(x = "Site",
            y = "s(Site)")
   
-  xens = axis_canvas(pmain, axis = "x")+
-    geom_bar(data = plothist,
-             aes(x,y),
-             fill = 4,
-             alpha = 0.2,
-             #position = "dodge",
-             stat = "identity",
-             width = 1) + scale_x_discrete(labels = c("AB","CB","KOA","PT","QN"))
-  
-  p1 = insert_xaxis_grob(pmain,xens,grid::unit(.2, "null"), position = "top")
-  ggdraw(p1)
+  # xens = axis_canvas(pmain, axis = "x")+
+  #   geom_bar(data = plothist,
+  #            aes(x,y),
+  #            fill = 4,
+  #            alpha = 0.2,
+  #            #position = "dodge",
+  #            stat = "identity",
+  #            width = 1) + scale_x_discrete(labels = c("AB","CB","KOA","PT","QN"))
+  # 
+  # p1 = insert_xaxis_grob(pmain,xens,grid::unit(.2, "null"), position = "top")
+  ggdraw(pmain)
   
   ggsave(
     ggtitle, width = 7, height = 6, units = "in",
@@ -1208,20 +1220,7 @@ ggPlot_Year_WAT <- function(model, table,site,COL){
   counts$freq = as.numeric(counts$freq)
   counts$days = round(counts$freq/12)
   counts$label = '*'
-  counts$label[counts$days > 365] <- ' ' 
-  #counts = counts[-c(6),]
-  
-  #Histogram for Year observations
-  # Year = seq(from = 2016,to = 2019,by = 1)
-  # fullhist = hist(SiteHourTableB$Year,Year)
-  # yhist = fullhist$counts
-  # plothist = data.frame(x=Year[-1],y=yhist)
-  # plothist$x = as.character(plothist$x)
-  # plothist$y = as.numeric(plothist$y)
-  # plothist$days = round(plothist$y/12)
-  # plothist$label = '*'
-  # plothist$label[plothist$days > 365] <- ' ' 
-  # plothist = plothist[-c(6),]
+  counts$label[counts$days > 365] <- ' '
   
   #Center intercept (1st level of year factor) at 0 and show other levels relative to it
   AdjustedSiteCoefs = data.frame(  c(
@@ -1239,25 +1238,28 @@ ggPlot_Year_WAT <- function(model, table,site,COL){
   
   pmain = ggplot(AdjustedSiteCoefs, aes(YearVal, Probability)
   ) + geom_boxplot(fill=COL
-  ) + theme(axis.line = element_line(),
+  ) + theme(axis.title.x=element_blank(),
+            axis.text.x=element_blank(),
+            axis.title.y=element_blank(),
+            axis.line = element_line(),
             panel.background = element_blank(),
             text = element_text(size = 25)
   ) + scale_x_discrete(labels = c("2016","2017","2018","2019")
   ) + labs(x = "Year",
            y = "s(Year)")
   
-  xens = axis_canvas(pmain, axis = "x")+
-    geom_bar(data = counts,
-             aes(x,freq),
-             fill = 4,
-             alpha = 0.2,
-             #position = "dodge",
-             stat = "identity",
-             width = 1) + scale_x_discrete(labels = c("2016","2017","2018","2019")
-             )
-  
-  p1 = insert_xaxis_grob(pmain,xens,grid::unit(.2, "null"), position = "top")
-  ggdraw(p1)
+  # xens = axis_canvas(pmain, axis = "x")+
+  #   geom_bar(data = counts,
+  #            aes(x,freq),
+  #            fill = 4,
+  #            alpha = 0.2,
+  #            #position = "dodge",
+  #            stat = "identity",
+  #            width = 1) + scale_x_discrete(labels = c("2016","2017","2018","2019")
+  #            )
+  # 
+  # p1 = insert_xaxis_grob(pmain,xens,grid::unit(.2, "null"), position = "top")
+  ggdraw(pmain)
   
   ggsave(
     ggtitle, width = 7, height = 6, units = "in",
@@ -1281,19 +1283,6 @@ ggPlot_Year_WAT_regional <- function(model, table,site,sex,COL){
   counts$days = round(counts$freq/12)
   counts$label = '*'
   counts$label[counts$days > 365] <- ' ' 
-  #counts = counts[-c(6),]
-  
-  #Histogram for Year observations
-  # Year = seq(from = 2016,to = 2019,by = 1)
-  # fullhist = hist(SiteHourTableB$Year,Year)
-  # yhist = fullhist$counts
-  # plothist = data.frame(x=Year[-1],y=yhist)
-  # plothist$x = as.character(plothist$x)
-  # plothist$y = as.numeric(plothist$y)
-  # plothist$days = round(plothist$y/12)
-  # plothist$label = '*'
-  # plothist$label[plothist$days > 365] <- ' ' 
-  # plothist = plothist[-c(6),]
   
   #Center intercept (1st level of year factor) at 0 and show other levels relative to it
   AdjustedSiteCoefs = data.frame(  c(
@@ -1311,25 +1300,28 @@ ggPlot_Year_WAT_regional <- function(model, table,site,sex,COL){
   
   pmain = ggplot(AdjustedSiteCoefs, aes(YearVal, Probability)
   ) + geom_boxplot(fill=COL
-  ) + theme(axis.line = element_line(),
+  ) + theme(axis.title.x=element_blank(),
+            axis.text.x=element_blank(),
+            axis.title.y=element_blank(),
+            axis.line = element_line(),
             panel.background = element_blank(),
             text = element_text(size = 25)
   ) + scale_x_discrete(labels = c("2016","2017","2018","2019")
   ) + labs(x = "Year",
            y = "s(Year)")
   
-  xens = axis_canvas(pmain, axis = "x")+
-    geom_bar(data = counts,
-             aes(x,freq),
-             fill = 4,
-             alpha = 0.2,
-             #position = "dodge",
-             stat = "identity",
-             width = 1) + scale_x_discrete(labels = c("2016","2017","2018","2019")
-             )
-  
-  p1 = insert_xaxis_grob(pmain,xens,grid::unit(.2, "null"), position = "top")
-  ggdraw(p1)
+  # xens = axis_canvas(pmain, axis = "x")+
+  #   geom_bar(data = counts,
+  #            aes(x,freq),
+  #            fill = 4,
+  #            alpha = 0.2,
+  #            #position = "dodge",
+  #            stat = "identity",
+  #            width = 1) + scale_x_discrete(labels = c("2016","2017","2018","2019")
+  #            )
+  # 
+  # p1 = insert_xaxis_grob(pmain,xens,grid::unit(.2, "null"), position = "top")
+  ggdraw(pmain)
   
   ggsave(
     ggtitle, width = 7, height = 6, units = "in",
@@ -1352,19 +1344,6 @@ ggPlot_Year_WATT <- function(model, table,site,COL){
   counts$days = round(counts$freq/12)
   counts$label = '*'
   counts$label[counts$days > 365] <- ' ' 
-  #counts = counts[-c(6),]
-  
-  #Histogram for Year observations
-  # Year = seq(from = 2016,to = 2019,by = 1)
-  # fullhist = hist(SiteHourTableB$Year,Year)
-  # yhist = fullhist$counts
-  # plothist = data.frame(x=Year[-1],y=yhist)
-  # plothist$x = as.character(plothist$x)
-  # plothist$y = as.numeric(plothist$y)
-  # plothist$days = round(plothist$y/12)
-  # plothist$label = '*'
-  # plothist$label[plothist$days > 365] <- ' ' 
-  # plothist = plothist[-c(6),]
   
   #Center intercept (1st level of year factor) at 0 and show other levels relative to it
   AdjustedSiteCoefs = data.frame(  c(
@@ -1383,25 +1362,28 @@ ggPlot_Year_WATT <- function(model, table,site,COL){
   
   pmain = ggplot(AdjustedSiteCoefs, aes(YearVal, Probability)
   ) + geom_boxplot(fill=COL
-  ) + theme(axis.line = element_line(),
+  ) + theme(axis.title.x=element_blank(),
+            axis.text.x=element_blank(),
+            axis.title.y=element_blank(),
+            axis.line = element_line(),
             panel.background = element_blank(),
             text = element_text(size = 25)
   ) + scale_x_discrete(labels = c("2015","2016","2017","2018","2019")
   ) + labs(x = "Year",
            y = "s(Year)")
   
-  xens = axis_canvas(pmain, axis = "x")+
-    geom_bar(data = counts,
-             aes(x,freq),
-             fill = 4,
-             alpha = 0.2,
-             #position = "dodge",
-             stat = "identity",
-             width = 1) + scale_x_discrete(labels = c("2015", "2016","2017","2018","2019")
-             )
-  
-  p1 = insert_xaxis_grob(pmain,xens,grid::unit(.2, "null"), position = "top")
-  ggdraw(p1)
+  # xens = axis_canvas(pmain, axis = "x")+
+  #   geom_bar(data = counts,
+  #            aes(x,freq),
+  #            fill = 4,
+  #            alpha = 0.2,
+  #            #position = "dodge",
+  #            stat = "identity",
+  #            width = 1) + scale_x_discrete(labels = c("2015", "2016","2017","2018","2019")
+  #            )
+  # 
+  # p1 = insert_xaxis_grob(pmain,xens,grid::unit(.2, "null"), position = "top")
+  ggdraw(pmain)
   
   ggsave(
     ggtitle, width = 7, height = 6, units = "in",
@@ -1424,19 +1406,6 @@ ggPlot_Year_WATTT_north <- function(model, table,site,COL){
   counts$days = round(counts$freq/12)
   counts$label = '*'
   counts$label[counts$days > 365] <- ' ' 
-  #counts = counts[-c(6),]
-  
-  #Histogram for Year observations
-  # Year = seq(from = 2016,to = 2019,by = 1)
-  # fullhist = hist(SiteHourTableB$Year,Year)
-  # yhist = fullhist$counts
-  # plothist = data.frame(x=Year[-1],y=yhist)
-  # plothist$x = as.character(plothist$x)
-  # plothist$y = as.numeric(plothist$y)
-  # plothist$days = round(plothist$y/12)
-  # plothist$label = '*'
-  # plothist$label[plothist$days > 365] <- ' ' 
-  # plothist = plothist[-c(6),]
   
   #Center intercept (1st level of year factor) at 0 and show other levels relative to it
   AdjustedSiteCoefs = data.frame(  c(
@@ -1455,25 +1424,28 @@ ggPlot_Year_WATTT_north <- function(model, table,site,COL){
   
   pmain = ggplot(AdjustedSiteCoefs, aes(YearVal, Probability)
   ) + geom_boxplot(fill=COL
-  ) + theme(axis.line = element_line(),
+  ) + theme(axis.title.x=element_blank(),
+            axis.text.x=element_blank(),
+            axis.title.y=element_blank(),
+            axis.line = element_line(),
             panel.background = element_blank(),
             text = element_text(size = 25)
   ) + scale_x_discrete(labels = c("2015","2016","2017","2018","2019")
   ) + labs(x = "Year",
            y = "s(Year)")
   
-  xens = axis_canvas(pmain, axis = "x")+
-    geom_bar(data = counts,
-             aes(x,freq),
-             fill = 4,
-             alpha = 0.2,
-             #position = "dodge",
-             stat = "identity",
-             width = 1) + scale_x_discrete(labels = c("2015", "2016","2017","2018","2019")
-             )
-  
-  p1 = insert_xaxis_grob(pmain,xens,grid::unit(.2, "null"), position = "top")
-  ggdraw(p1)
+  # xens = axis_canvas(pmain, axis = "x")+
+  #   geom_bar(data = counts,
+  #            aes(x,freq),
+  #            fill = 4,
+  #            alpha = 0.2,
+  #            #position = "dodge",
+  #            stat = "identity",
+  #            width = 1) + scale_x_discrete(labels = c("2015", "2016","2017","2018","2019")
+  #            )
+  # 
+  # p1 = insert_xaxis_grob(pmain,xens,grid::unit(.2, "null"), position = "top")
+  ggdraw(pmain)
   
   ggsave(
     ggtitle, width = 7, height = 6, units = "in",
@@ -1496,19 +1468,6 @@ ggPlot_Year_WATT_north <- function(model, table,site,COL){
   counts$days = round(counts$freq/12)
   counts$label = '*'
   counts$label[counts$days > 365] <- ' ' 
-  #counts = counts[-c(6),]
-  
-  #Histogram for Year observations
-  # Year = seq(from = 2016,to = 2019,by = 1)
-  # fullhist = hist(SiteHourTableB$Year,Year)
-  # yhist = fullhist$counts
-  # plothist = data.frame(x=Year[-1],y=yhist)
-  # plothist$x = as.character(plothist$x)
-  # plothist$y = as.numeric(plothist$y)
-  # plothist$days = round(plothist$y/12)
-  # plothist$label = '*'
-  # plothist$label[plothist$days > 365] <- ' ' 
-  # plothist = plothist[-c(6),]
   
   #Center intercept (1st level of year factor) at 0 and show other levels relative to it
   AdjustedSiteCoefs = data.frame(  c(
@@ -1527,25 +1486,28 @@ ggPlot_Year_WATT_north <- function(model, table,site,COL){
   
   pmain = ggplot(AdjustedSiteCoefs, aes(YearVal, Probability)
   ) + geom_boxplot(fill=COL
-  ) + theme(axis.line = element_line(),
+  ) + theme(axis.title.x=element_blank(),
+            axis.text.x=element_blank(),
+            axis.title.y=element_blank(),
+            axis.line = element_line(),
             panel.background = element_blank(),
             text = element_text(size = 25)
   ) + scale_x_discrete(labels = c("2015","2016","2017","2018","2019")
   ) + labs(x = "Year",
            y = "s(Year)")
   
-  xens = axis_canvas(pmain, axis = "x")+
-    geom_bar(data = counts,
-             aes(x,freq),
-             fill = 4,
-             alpha = 0.2,
-             #position = "dodge",
-             stat = "identity",
-             width = 1) + scale_x_discrete(labels = c("2015", "2016","2017","2018","2019")
-             )
-  
-  p1 = insert_xaxis_grob(pmain,xens,grid::unit(.2, "null"), position = "top")
-  ggdraw(p1)
+  # xens = axis_canvas(pmain, axis = "x")+
+  #   geom_bar(data = counts,
+  #            aes(x,freq),
+  #            fill = 4,
+  #            alpha = 0.2,
+  #            #position = "dodge",
+  #            stat = "identity",
+  #            width = 1) + scale_x_discrete(labels = c("2015", "2016","2017","2018","2019")
+  #            )
+  # 
+  # p1 = insert_xaxis_grob(pmain,xens,grid::unit(.2, "null"), position = "top")
+  ggdraw(pmain)
   
   ggsave(
     ggtitle, width = 7, height = 6, units = "in",
@@ -1569,19 +1531,6 @@ ggPlot_Year_WAT_first <- function(model, table,site,COL){
   counts$days = round(counts$freq/12)
   counts$label = '*'
   counts$label[counts$days > 365] <- ' ' 
-  #counts = counts[-c(6),]
-  
-  #Histogram for Year observations
-  # Year = seq(from = 2016,to = 2019,by = 1)
-  # fullhist = hist(SiteHourTableB$Year,Year)
-  # yhist = fullhist$counts
-  # plothist = data.frame(x=Year[-1],y=yhist)
-  # plothist$x = as.character(plothist$x)
-  # plothist$y = as.numeric(plothist$y)
-  # plothist$days = round(plothist$y/12)
-  # plothist$label = '*'
-  # plothist$label[plothist$days > 365] <- ' ' 
-  # plothist = plothist[-c(6),]
   
   #Center intercept (1st level of year factor) at 0 and show other levels relative to it
   AdjustedSiteCoefs = data.frame(  c(
@@ -1599,25 +1548,28 @@ ggPlot_Year_WAT_first <- function(model, table,site,COL){
   
   pmain = ggplot(AdjustedSiteCoefs, aes(YearVal, Probability)
   ) + geom_boxplot(fill=COL
-  ) + theme(axis.line = element_line(),
+  ) + theme(axis.title.x=element_blank(),
+            axis.text.x=element_blank(),
+            axis.title.y=element_blank(),
+            axis.line = element_line(),
             panel.background = element_blank(),
             text = element_text(size = 25)
   ) + scale_x_discrete(labels = c("2016","2017","2018","2019")
   ) + labs(x = "Year",
            y = "s(Year)")
   
-  xens = axis_canvas(pmain, axis = "x")+
-    geom_bar(data = counts,
-             aes(x,freq),
-             fill = 4,
-             alpha = 0.2,
-             #position = "dodge",
-             stat = "identity",
-             width = 1) + scale_x_discrete(labels = c("2016","2017","2018","2019")
-             )
-  
-  p1 = insert_xaxis_grob(pmain,xens,grid::unit(.2, "null"), position = "top")
-  ggdraw(p1)
+  # xens = axis_canvas(pmain, axis = "x")+
+  #   geom_bar(data = counts,
+  #            aes(x,freq),
+  #            fill = 4,
+  #            alpha = 0.2,
+  #            #position = "dodge",
+  #            stat = "identity",
+  #            width = 1) + scale_x_discrete(labels = c("2016","2017","2018","2019")
+  #            )
+  # 
+  # p1 = insert_xaxis_grob(pmain,xens,grid::unit(.2, "null"), position = "top")
+  ggdraw(pmain)
   
   ggsave(
     ggtitle, width = 7, height = 6, units = "in",
@@ -1641,19 +1593,6 @@ ggPlot_Year_WAT_Big <- function(model, table,site,COL){
   counts$days = round(counts$freq/12)
   counts$label = '*'
   counts$label[counts$days > 365] <- ' ' 
-  #counts = counts[-c(6),]
-  
-  #Histogram for Year observations
-  # Year = seq(from = 2016,to = 2019,by = 1)
-  # fullhist = hist(SiteHourTableB$Year,Year)
-  # yhist = fullhist$counts
-  # plothist = data.frame(x=Year[-1],y=yhist)
-  # plothist$x = as.character(plothist$x)
-  # plothist$y = as.numeric(plothist$y)
-  # plothist$days = round(plothist$y/12)
-  # plothist$label = '*'
-  # plothist$label[plothist$days > 365] <- ' ' 
-  # plothist = plothist[-c(6),]
   
   #Center intercept (1st level of year factor) at 0 and show other levels relative to it
   AdjustedSiteCoefs = data.frame(  c(
@@ -1672,25 +1611,28 @@ ggPlot_Year_WAT_Big <- function(model, table,site,COL){
   
   pmain = ggplot(AdjustedSiteCoefs, aes(YearVal, Probability)
   ) + geom_boxplot(fill=COL
-  ) + theme(axis.line = element_line(),
+  ) + theme(axis.title.x=element_blank(),
+            axis.text.x=element_blank(),
+            axis.title.y=element_blank(),
+            axis.line = element_line(),
             panel.background = element_blank(),
             text = element_text(size = 25)
   ) + scale_x_discrete(labels = c("2015","2016","2017","2018","2019")
   ) + labs(x = "Year",
            y = "s(Year)")
   
-  xens = axis_canvas(pmain, axis = "x")+
-    geom_bar(data = counts,
-             aes(x,freq),
-             fill = 4,
-             alpha = 0.2,
-             #position = "dodge",
-             stat = "identity",
-             width = 1) + scale_x_discrete(labels = c("2015","2016","2017","2018","2019")
-             )
-  
-  p1 = insert_xaxis_grob(pmain,xens,grid::unit(.2, "null"), position = "top")
-  ggdraw(p1)
+  # xens = axis_canvas(pmain, axis = "x")+
+  #   geom_bar(data = counts,
+  #            aes(x,freq),
+  #            fill = 4,
+  #            alpha = 0.2,
+  #            #position = "dodge",
+  #            stat = "identity",
+  #            width = 1) + scale_x_discrete(labels = c("2015","2016","2017","2018","2019")
+  #            )
+  # 
+  # p1 = insert_xaxis_grob(pmain,xens,grid::unit(.2, "null"), position = "top")
+  ggdraw(pmain)
   
   ggsave(
     ggtitle, width = 7, height = 6, units = "in",
@@ -1714,19 +1656,6 @@ ggPlot_Year_WATT_Big <- function(model, table,site,COL){
   counts$days = round(counts$freq/12)
   counts$label = '*'
   counts$label[counts$days > 365] <- ' ' 
-  #counts = counts[-c(6),]
-  
-  #Histogram for Year observations
-  # Year = seq(from = 2016,to = 2019,by = 1)
-  # fullhist = hist(SiteHourTableB$Year,Year)
-  # yhist = fullhist$counts
-  # plothist = data.frame(x=Year[-1],y=yhist)
-  # plothist$x = as.character(plothist$x)
-  # plothist$y = as.numeric(plothist$y)
-  # plothist$days = round(plothist$y/12)
-  # plothist$label = '*'
-  # plothist$label[plothist$days > 365] <- ' ' 
-  # plothist = plothist[-c(6),]
   
   #Center intercept (1st level of year factor) at 0 and show other levels relative to it
   AdjustedSiteCoefs = data.frame(  c(
@@ -1745,25 +1674,28 @@ ggPlot_Year_WATT_Big <- function(model, table,site,COL){
   
   pmain = ggplot(AdjustedSiteCoefs, aes(YearVal, Probability)
   ) + geom_boxplot(fill=COL
-  ) + theme(axis.line = element_line(),
+  ) + theme(axis.title.x=element_blank(),
+            axis.text.x=element_blank(),
+            axis.title.y=element_blank(),
+            axis.line = element_line(),
             panel.background = element_blank(),
             text = element_text(size = 25)
   ) + scale_x_discrete(labels = c("2015","2016","2017","2018","2019")
   ) + labs(x = "Year",
            y = "s(Year)")
   
-  xens = axis_canvas(pmain, axis = "x")+
-    geom_bar(data = counts,
-             aes(x,freq),
-             fill = 4,
-             alpha = 0.2,
-             #position = "dodge",
-             stat = "identity",
-             width = 1) + scale_x_discrete(labels = c("2015","2016","2017","2018","2019")
-             )
-  
-  p1 = insert_xaxis_grob(pmain,xens,grid::unit(.2, "null"), position = "top")
-  ggdraw(p1)
+  # xens = axis_canvas(pmain, axis = "x")+
+  #   geom_bar(data = counts,
+  #            aes(x,freq),
+  #            fill = 4,
+  #            alpha = 0.2,
+  #            #position = "dodge",
+  #            stat = "identity",
+  #            width = 1) + scale_x_discrete(labels = c("2015","2016","2017","2018","2019")
+  #            )
+  # 
+  # p1 = insert_xaxis_grob(pmain,xens,grid::unit(.2, "null"), position = "top")
+  ggdraw(pmain)
   
   ggsave(
     ggtitle, width = 7, height = 6, units = "in",
@@ -1787,20 +1719,7 @@ ggPlot_Year_WATTT_Big <- function(model, table,site,COL){
   counts$days = round(counts$freq/12)
   counts$label = '*'
   counts$label[counts$days > 365] <- ' ' 
-  #counts = counts[-c(6),]
-  
-  #Histogram for Year observations
-  # Year = seq(from = 2016,to = 2019,by = 1)
-  # fullhist = hist(SiteHourTableB$Year,Year)
-  # yhist = fullhist$counts
-  # plothist = data.frame(x=Year[-1],y=yhist)
-  # plothist$x = as.character(plothist$x)
-  # plothist$y = as.numeric(plothist$y)
-  # plothist$days = round(plothist$y/12)
-  # plothist$label = '*'
-  # plothist$label[plothist$days > 365] <- ' ' 
-  # plothist = plothist[-c(6),]
-  
+
   #Center intercept (1st level of year factor) at 0 and show other levels relative to it
   AdjustedSiteCoefs = data.frame(  c(
     BootstrapCoefs2[, 1] - mean(BootstrapCoefs2[, 1]),
@@ -1818,25 +1737,28 @@ ggPlot_Year_WATTT_Big <- function(model, table,site,COL){
   
   pmain = ggplot(AdjustedSiteCoefs, aes(YearVal, Probability)
   ) + geom_boxplot(fill=COL
-  ) + theme(axis.line = element_line(),
+  ) + theme(axis.title.x=element_blank(),
+            axis.text.x=element_blank(),
+            axis.title.y=element_blank(),
+            axis.line = element_line(),
             panel.background = element_blank(),
             text = element_text(size = 25)
   ) + scale_x_discrete(labels = c("2015","2016","2017","2018","2019")
   ) + labs(x = "Year",
            y = "s(Year)")
   
-  xens = axis_canvas(pmain, axis = "x")+
-    geom_bar(data = counts,
-             aes(x,freq),
-             fill = 4,
-             alpha = 0.2,
-             #position = "dodge",
-             stat = "identity",
-             width = 1) + scale_x_discrete(labels = c("2015","2016","2017","2018","2019")
-             )
-  
-  p1 = insert_xaxis_grob(pmain,xens,grid::unit(.2, "null"), position = "top")
-  ggdraw(p1)
+  # xens = axis_canvas(pmain, axis = "x")+
+  #   geom_bar(data = counts,
+  #            aes(x,freq),
+  #            fill = 4,
+  #            alpha = 0.2,
+  #            #position = "dodge",
+  #            stat = "identity",
+  #            width = 1) + scale_x_discrete(labels = c("2015","2016","2017","2018","2019")
+  #            )
+  # 
+  # p1 = insert_xaxis_grob(pmain,xens,grid::unit(.2, "null"), position = "top")
+  ggdraw(pmain)
   
   ggsave(
     ggtitle, width = 7, height = 6, units = "in",
