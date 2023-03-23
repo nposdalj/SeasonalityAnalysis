@@ -26,10 +26,10 @@ library(plyr)
 source('C:/Users/nposd/Documents/GitHub/SeasonalityAnalysis/GAM_GEEs/GAMGEE_Plotting_Functions_RealProbs_HistAbove_filled.R')
 
 # Load Workspace --------------------------------------------------
-site = 'QN'
+#site = 'Big'
 GDrive = 'G'
 COL = '#D3D3D3'
-#region = 'GOA'
+region = 'BSAI'
 if (exists("site")){
   if (site == 'Big'){
     saveWorkspace = paste(GDrive,":/My Drive/GofAK_TPWS_metadataReduced/SeasonalityAnalysis/AllSites/",sep="")

@@ -27,8 +27,8 @@ library(plyr)
 source('C:/Users/nposd/Documents/GitHub/SeasonalityAnalysis/GAM_GEEs/GAMGEE_sexClasses_Plotting_Functions_RealProbs_HistAbove_filled.R')
 
 # Load Workspace --------------------------------------------------
-#site = 'Big'
-region = 'GOA'
+site = 'QN'
+#region = 'BSAI'
 GDrive = 'G'
 sexGroups = c('Social Groups','Mid-Size','Males')
 

@@ -31,7 +31,7 @@ ggPlot_JD_sex <- function(model, table,sex,COL){
   ) + scale_x_continuous(breaks = seq(20,350,length.out = 12),labels = c('J','F','M','A','M','J','J','A','S','O','N','D')
   ) + theme(axis.title.x=element_blank(),
             axis.text.x=element_blank(),
-            axis.title.y=element_blank(),
+
             axis.line = element_line(),
             panel.background = element_blank(),
             text = element_text(size = 25)
@@ -90,7 +90,7 @@ ggPlot_JD_AfterYear_WAT <- function(model, table,sex,COL){
   ) + scale_x_continuous(breaks = seq(20,350,length.out = 12),labels = c('J','F','M','A','M','J','J','A','S','O','N','D')
   ) + theme(axis.title.x=element_blank(),
             axis.text.x=element_blank(),
-            axis.title.y=element_blank(),
+
             axis.line = element_line(),
             panel.background = element_blank(),
             text = element_text(size = 25)
@@ -150,7 +150,7 @@ ggPlot_JD_SG_WATBIG <- function(model, table,site,sex,COL){
   ) + scale_x_continuous(breaks = seq(20,350,length.out = 12),labels = c('J','F','M','A','M','J','J','A','S','O','N','D')
   ) + theme(axis.title.x=element_blank(),
             axis.text.x=element_blank(),
-            axis.title.y=element_blank(),
+
             axis.line = element_line(),
             panel.background = element_blank(),
             text = element_text(size = 25)
@@ -210,7 +210,7 @@ ggPlot_JD_Last <- function(model,table,site,sex,COL){
   ) + scale_x_continuous(breaks = seq(20,350,length.out = 12),labels = c('J','F','M','A','M','J','J','A','S','O','N','D')
   ) + theme(axis.title.x=element_blank(),
             axis.text.x=element_blank(),
-            axis.title.y=element_blank(),
+
             axis.line = element_line(),
             panel.background = element_blank(),
             text = element_text(size = 25)
@@ -270,7 +270,7 @@ ggPlot_JD_WATBIG <- function(model,table,site,sex,COL){
   ) + scale_x_continuous(breaks = seq(20,350,length.out = 12),labels = c('J','F','M','A','M','J','J','A','S','O','N','D')
   ) + theme(axis.title.x=element_blank(),
             axis.text.x=element_blank(),
-            axis.title.y=element_blank(),
+
             axis.line = element_line(),
             panel.background = element_blank(),
             text = element_text(size = 25)
@@ -333,7 +333,7 @@ ggPlot_JD_AfterYear <- function(model,table,site,sex,COL){
   ) + scale_x_continuous(breaks = seq(20,350,length.out = 12),labels = c('J','F','M','A','M','J','J','A','S','O','N','D')
   ) + theme(axis.title.x=element_blank(),
             axis.text.x=element_blank(),
-            axis.title.y=element_blank(),
+
             axis.line = element_line(),
             panel.background = element_blank(),
             text = element_text(size = 25)
@@ -395,7 +395,7 @@ ggPlot_JD_AfterSite <- function(model,table,site,sex,COL){
   ) + scale_x_continuous(breaks = seq(20,350,length.out = 12),labels = c('J','F','M','A','M','J','J','A','S','O','N','D')
   ) + theme(axis.title.x=element_blank(),
             axis.text.x=element_blank(),
-            axis.title.y=element_blank(),
+
             axis.line = element_line(),
             panel.background = element_blank(),
             text = element_text(size = 25)
@@ -455,7 +455,7 @@ ggPlot_JD_AfterYearSite <- function(model,table,site,sex,COL){
   ) + scale_x_continuous(breaks = seq(20,350,length.out = 12),labels = c('J','F','M','A','M','J','J','A','S','O','N','D')
   ) + theme(axis.title.x=element_blank(),
             axis.text.x=element_blank(),
-            axis.title.y=element_blank(),
+
             axis.line = element_line(),
             panel.background = element_blank(),
             text = element_text(size = 25)
@@ -514,7 +514,7 @@ ggPlot_JD_AfterYearB <- function(model,table,site,sex,COL){
   ) + scale_x_continuous(breaks = seq(20,350,length.out = 12),labels = c('J','F','M','A','M','J','J','A','S','O','N','D')
   ) + theme(axis.title.x=element_blank(),
             axis.text.x=element_blank(),
-            axis.title.y=element_blank(),
+
             axis.line = element_line(),
             panel.background = element_blank(),
             text = element_text(size = 25)
@@ -578,7 +578,7 @@ ggPlot_Year <- function(model, table,site,COL){
   ) + geom_boxplot(fill=COL
   ) + theme(axis.title.x=element_blank(),
             axis.text.x=element_blank(),
-            axis.title.y=element_blank(),
+
             axis.line = element_line(),
             panel.background = element_blank(),
             text = element_text(size = 25)
@@ -645,7 +645,7 @@ ggPlot_Year_AfterJD <- function(model,table,site,COL){
   ) + geom_boxplot(fill=COL
   ) + theme(axis.title.x=element_blank(),
             axis.text.x=element_blank(),
-            axis.title.y=element_blank(),
+
             axis.line = element_line(),
             panel.background = element_blank(),
             text = element_text(size = 25)
@@ -712,7 +712,7 @@ ggPlot_Year_Big <- function(model, table,site,COL){
   ) + geom_boxplot(fill=COL
   ) + theme(axis.title.x=element_blank(),
             axis.text.x=element_blank(),
-            axis.title.y=element_blank(),
+
             axis.line = element_line(),
             panel.background = element_blank(),
             text = element_text(size = 25)
@@ -829,7 +829,7 @@ ggPlot_Site_Year <- function(model,table,sex,COL){
   ) + geom_boxplot(fill=COL
   ) + theme(axis.title.x=element_blank(),
             axis.text.x=element_blank(),
-            axis.title.y=element_blank(),
+
             axis.line = element_line(),
             panel.background = element_blank(),
             text = element_text(size = 25)
@@ -888,7 +888,7 @@ ggPlot_Site_WAT <- function(model,table,site,sex,COL){
   ) + geom_boxplot(fill=COL
   ) + theme(axis.title.x=element_blank(),
             axis.text.x=element_blank(),
-            axis.title.y=element_blank(),
+
             axis.line = element_line(),
             panel.background = element_blank(),
             text = element_text(size = 25)
@@ -944,7 +944,7 @@ ggPlot_Region_WAT <- function(model,table,site,sex,COL){
   ) + geom_boxplot(fill=COL
   ) + theme(axis.title.x=element_blank(),
             axis.text.x=element_blank(),
-            axis.title.y=element_blank(),
+
             axis.line = element_line(),
             panel.background = element_blank(),
             text = element_text(size = 25)
@@ -1000,7 +1000,7 @@ ggPlot_Region_WAT_last <- function(model,table,site,sex,COL){
   ) + geom_boxplot(fill=COL
   ) + theme(axis.title.x=element_blank(),
             axis.text.x=element_blank(),
-            axis.title.y=element_blank(),
+
             axis.line = element_line(),
             panel.background = element_blank(),
             text = element_text(size = 25)
@@ -1059,7 +1059,7 @@ ggPlot_Site_WATT <- function(model,table,site,sex,COL){
   ) + geom_boxplot(fill=COL
   ) + theme(axis.title.x=element_blank(),
             axis.text.x=element_blank(),
-            axis.title.y=element_blank(),
+
             axis.line = element_line(),
             panel.background = element_blank(),
             text = element_text(size = 25)
@@ -1118,7 +1118,7 @@ ggPlot_Site_WATTT <- function(model,table,site,sex,COL){
   ) + geom_boxplot(fill=COL
   ) + theme(axis.title.x=element_blank(),
             axis.text.x=element_blank(),
-            axis.title.y=element_blank(),
+
             axis.line = element_line(),
             panel.background = element_blank(),
             text = element_text(size = 25)
@@ -1177,7 +1177,7 @@ ggPlot_Site_AfterYear <- function(model,table,sex,COL){
   ) + geom_boxplot(fill=COL
   ) + theme(axis.title.x=element_blank(),
             axis.text.x=element_blank(),
-            axis.title.y=element_blank(),
+
             axis.line = element_line(),
             panel.background = element_blank(),
             text = element_text(size = 25)
@@ -1240,7 +1240,7 @@ ggPlot_Year_WAT <- function(model, table,site,COL){
   ) + geom_boxplot(fill=COL
   ) + theme(axis.title.x=element_blank(),
             axis.text.x=element_blank(),
-            axis.title.y=element_blank(),
+
             axis.line = element_line(),
             panel.background = element_blank(),
             text = element_text(size = 25)
@@ -1302,7 +1302,7 @@ ggPlot_Year_WAT_regional <- function(model, table,site,sex,COL){
   ) + geom_boxplot(fill=COL
   ) + theme(axis.title.x=element_blank(),
             axis.text.x=element_blank(),
-            axis.title.y=element_blank(),
+
             axis.line = element_line(),
             panel.background = element_blank(),
             text = element_text(size = 25)
@@ -1364,7 +1364,7 @@ ggPlot_Year_WATT <- function(model, table,site,COL){
   ) + geom_boxplot(fill=COL
   ) + theme(axis.title.x=element_blank(),
             axis.text.x=element_blank(),
-            axis.title.y=element_blank(),
+
             axis.line = element_line(),
             panel.background = element_blank(),
             text = element_text(size = 25)
@@ -1426,7 +1426,7 @@ ggPlot_Year_WATTT_north <- function(model, table,site,COL){
   ) + geom_boxplot(fill=COL
   ) + theme(axis.title.x=element_blank(),
             axis.text.x=element_blank(),
-            axis.title.y=element_blank(),
+
             axis.line = element_line(),
             panel.background = element_blank(),
             text = element_text(size = 25)
@@ -1488,7 +1488,7 @@ ggPlot_Year_WATT_north <- function(model, table,site,COL){
   ) + geom_boxplot(fill=COL
   ) + theme(axis.title.x=element_blank(),
             axis.text.x=element_blank(),
-            axis.title.y=element_blank(),
+
             axis.line = element_line(),
             panel.background = element_blank(),
             text = element_text(size = 25)
@@ -1550,7 +1550,7 @@ ggPlot_Year_WAT_first <- function(model, table,site,COL){
   ) + geom_boxplot(fill=COL
   ) + theme(axis.title.x=element_blank(),
             axis.text.x=element_blank(),
-            axis.title.y=element_blank(),
+
             axis.line = element_line(),
             panel.background = element_blank(),
             text = element_text(size = 25)
@@ -1613,7 +1613,7 @@ ggPlot_Year_WAT_Big <- function(model, table,site,COL){
   ) + geom_boxplot(fill=COL
   ) + theme(axis.title.x=element_blank(),
             axis.text.x=element_blank(),
-            axis.title.y=element_blank(),
+
             axis.line = element_line(),
             panel.background = element_blank(),
             text = element_text(size = 25)
@@ -1676,7 +1676,7 @@ ggPlot_Year_WATT_Big <- function(model, table,site,COL){
   ) + geom_boxplot(fill=COL
   ) + theme(axis.title.x=element_blank(),
             axis.text.x=element_blank(),
-            axis.title.y=element_blank(),
+
             axis.line = element_line(),
             panel.background = element_blank(),
             text = element_text(size = 25)
@@ -1739,7 +1739,7 @@ ggPlot_Year_WATTT_Big <- function(model, table,site,COL){
   ) + geom_boxplot(fill=COL
   ) + theme(axis.title.x=element_blank(),
             axis.text.x=element_blank(),
-            axis.title.y=element_blank(),
+
             axis.line = element_line(),
             panel.background = element_blank(),
             text = element_text(size = 25)
