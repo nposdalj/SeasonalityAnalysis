@@ -8,7 +8,7 @@
 close all;clear all;clc;
 %% Load Site data
 % load lat and longs for each site
-SaveDir = 'P:\My Drive\WAT_TPWS_metadataReduced\Plots';
+SaveDir = 'G:\My Drive\WAT_TPWS_metadataReduced\Plots';
 NC_latLongs = [39.83248333,-69.98; %01 in decimals
 39.83238333, -69.98; %nc02
 39.83258333, -69.98; %nc03
@@ -51,6 +51,17 @@ JAX_latLongs = [30.15183333, -79.77; %JAX_D_13
 30.15225, -79.77]; %JAX_D_15
 %Not sure if other JAX deployments will be included but this is it for now,
 %update if needed.
+
+HAT_latLongs = [35.34218333, -74.86;
+35.30183333, -74.86;
+35.58413333, -74.75;
+35.58351667, -74.75;
+35.58976667, -74.75;
+35.5893, -74.75];
+
+NFC_latLongs = [37.16651667, -74.47;
+37.1674, - 74.47;
+37.16451667, -74.47];
 
 %find means of sites with multiple deployments
 [NClat,NClong] = meanm(NC_latLongs(:,1),NC_latLongs(:,2));
@@ -98,13 +109,23 @@ JAX_mean = [JAXlat, JAXlong];
 JAXtext = repmat({'JAX'},size(JAX_mean,1),1);
 JAX = [JAXtext num2cell(JAX_mean)];
 
+[NFClat, NFClong] = meanm(NFC_latLongs(:,1),NFC_latLongs(:,2));
+NFC_mean = [NFClat, NFClong];
+NFCtext = repmat({'NFC'},size(NFC_mean,1),1);
+NFC = [NFCtext num2cell(NFC_mean)];
+
+[HATlat, HATlong] = meanm(HAT_latLongs(:,1),HAT_latLongs(:,2));
+HAT_mean = [HATlat, HATlong];
+HATtext = repmat({'JAX'},size(HAT_mean,1),1);
+HAT = [JAXtext num2cell(HAT_mean)];
+
 %create one table with all lat and longs
-LL = [NC; BC; GS; BP; BS; WC; OC; HZ; JAX];
+LL = [NC; BC; GS; BP; BS; WC; OC; HZ; JAX; NFC; HAT];
 LatLong = cell2mat(LL(:,2:3));
 
 SiteData = array2table(LatLong);
 SiteData.Properties.VariableNames = {'Latitude' 'Longitude'};
-SiteData{:,'Site'} = {'NC'; 'BC'; 'GS'; 'BP'; 'BS'; 'WC'; 'OC'; 'HZ'; 'JAX'};
+SiteData{:,'Site'} = {'NC'; 'BC'; 'GS'; 'BP'; 'BS'; 'WC'; 'OC'; 'HZ'; 'JAX'; 'NFC'; 'HAT'};
 %% Create map 
 %The projections that successfully work: UTM, Transverse mercator (or this), Mercator (probably the best),...
 %Miller Cylindrical, Albers Equal-Area Conic, Lambert Conformal Conic, Hammer-Aitoff, Mollweide, Robinson
@@ -141,6 +162,12 @@ m_text(SiteData.Longitude(8)+0.4,SiteData.Latitude(8),SiteData.Site(8),'FontWeig
 m_line(SiteData.Longitude(9),SiteData.Latitude(9),'marker','.','markersize',15,...
           'linest','none','color','k','clip','point');
 m_text(SiteData.Longitude(9)+0.4,SiteData.Latitude(9),SiteData.Site(9),'FontWeight','Bold','FontSize',12);
+m_line(SiteData.Longitude(10),SiteData.Latitude(10),'marker','.','markersize',15,...
+          'linest','none','color','k','clip','point');
+m_text(SiteData.Longitude(10)+0.4,SiteData.Latitude(10),SiteData.Site(10),'FontWeight','Bold','FontSize',12);
+m_line(SiteData.Longitude(11),SiteData.Latitude(11),'marker','.','markersize',15,...
+          'linest','none','color','k','clip','point');
+m_text(SiteData.Longitude(11)+0.4,SiteData.Latitude(11),SiteData.Site(11),'FontWeight','Bold','FontSize',12);
 m_grid('linest','none','tickdir','out','box','fancy','fontsize',16);
 colormap(m_colmap('blues'));  
 caxis([-7000 000]);
@@ -152,10 +179,6 @@ ax.FontSize = 11;
 %ax.YColor = [1, 1, 1];
 % ax.FontWeight = 'Bold';
 set(gcf,'color','w');  % otherwise 'print' turns lakes black
-
-%% Additional
-
-
 %% Save plot
 x0=10;
 y0=10;

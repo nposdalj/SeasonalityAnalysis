@@ -8,7 +8,7 @@ close all; clc;
 % Parameters defined by user
 GDrive = 'G';
 Region = 'WAT';
-Sites = {'NC' 'BC' 'GS' 'BP' 'BS' 'WC' 'OC' 'HZ' 'JAX'};
+Sites = {'NC' 'BC' 'GS' 'BP' 'BS' 'WC' 'OC' 'HZ' 'JAX','NFC','HAT'};
 
 % No need to change the following
 numsites = length(Sites);
@@ -58,6 +58,17 @@ Site_latLongs.JAX = [30.15183333, -79.77; %JAX_D_13
 %Not sure if other JAX deployments will be included but this is it for now,
 %update if needed.
 
+Site_latLongs.HAT = [35.34218333, -74.86;
+35.30183333, -74.86;
+35.58413333, -74.75;
+35.58351667, -74.75;
+35.58976667, -74.75;
+35.5893, -74.75];
+
+Site_latLongs.NFC = [37.16651667, -74.47;
+37.1674, - 74.47;
+37.16451667, -74.47];
+
 %find means of sites with multiple deployments
 [NClat,NClong] = meanm(Site_latLongs.NC(:,1),Site_latLongs.NC(:,2));
 NC_mean = [NClat,NClong];
@@ -104,14 +115,23 @@ JAX_mean = [JAXlat, JAXlong];
 JAXtext = repmat({'JAX'},size(JAX_mean,1),1);
 JAX = [JAXtext num2cell(JAX_mean)];
 
+[NFClat, NFClong] = meanm(NFC_latLongs(:,1),NFC_latLongs(:,2));
+NFC_mean = [NFClat, NFClong];
+NFCtext = repmat({'NFC'},size(NFC_mean,1),1);
+NFC = [NFCtext num2cell(NFC_mean)];
+
+[HATlat, HATlong] = meanm(HAT_latLongs(:,1),HAT_latLongs(:,2));
+HAT_mean = [HATlat, HATlong];
+HATtext = repmat({'JAX'},size(HAT_mean,1),1);
+HAT = [JAXtext num2cell(HAT_mean)];
+
 %create one table with all lat and longs
-LL = [NC; BC; GS; BP; BS; WC; OC; HZ; JAX];
+LL = [NC; BC; GS; BP; BS; WC; OC; HZ; JAX; HAT; NFC];
 LatLong = cell2mat(LL(:,2:3));
 
 SiteData = array2table(LatLong);
 SiteData.Properties.VariableNames = {'Latitude' 'Longitude'};
-SiteData{:,'Site'} = {'NC'; 'BC'; 'GS'; 'BP'; 'BS'; 'WC'; 'OC'; 'HZ'; 'JAX'};
-
+SiteData{:,'Site'} = {'NC'; 'BC'; 'GS'; 'BP'; 'BS'; 'WC'; 'OC'; 'HZ'; 'JAX'; 'HAT';'NFC'};
 %% Loop through sites, create map of deployments
 for i = 1:numsites
     site_i = Sites(i);
@@ -120,13 +140,13 @@ for i = 1:numsites
     latLongs_i = array2table(latLongs_i);
     latLongs_i.Properties.VariableNames = {'Latitude', 'Longitude', 'DeplNum'};
     
-    plotLatLims = [min(latLongs_i.Latitude)-.01 max(latLongs_i.Latitude+.01)];
-    plotLongLims = [min(latLongs_i.Longitude)-.02 max(latLongs_i.Longitude+.02)];
+    plotLatLims = [min(latLongs_i.Latitude)-.05 max(latLongs_i.Latitude+.05)];
+    plotLongLims = [min(latLongs_i.Longitude)-.05 max(latLongs_i.Longitude+.05)];
     
     figure(i)
     
     m_proj('Robinson','long',plotLongLims,'lat',plotLatLims); %identify ranges of the map
-    [CS,CH]=m_etopo2('contourf',[-1200:10:-700],'edgecolor','none'); %load bathymetry from ETOPO 1
+    [CS,CH]=m_etopo2('contourf',[-2000:50:0],'edgecolor','none'); %load bathymetry from ETOPO 1
     m_gshhs_f('patch',[.7 .7 .7],'edgecolor','none');
     
     numDepls = size(latLongs_i, 1);
@@ -140,7 +160,7 @@ for i = 1:numsites
     
     m_grid('linest','none','tickdir','out','box','fancy','fontsize',16);
     colormap(m_colmap('blues'));
-    caxis([-1200 -700]);
+    caxis([-2000 0]);
     [ax,h]=m_contfbar([.6 .8],.2,CS,CH,'endpiece','no','axfrac',.05,'YColor','white');
     title(ax,'meters','FontWeight','Bold')
     ax.FontSize = 12;
@@ -185,6 +205,12 @@ m_text(SiteData.Longitude(8)+0.1,SiteData.Latitude(8),SiteData.Site(8),'FontWeig
 m_line(SiteData.Longitude(9),SiteData.Latitude(9),'marker','s',...
           'linest','none','markerfacecolor','w','clip','point');
 m_text(SiteData.Longitude(9)+0.1,SiteData.Latitude(9),SiteData.Site(9),'FontWeight','Bold','FontSize',12);
+m_line(SiteData.Longitude(10),SiteData.Latitude(10),'marker','.','markersize',15,...
+          'linest','none','color','k','clip','point');
+m_text(SiteData.Longitude(10)+0.4,SiteData.Latitude(10),SiteData.Site(10),'FontWeight','Bold','FontSize',12);
+m_line(SiteData.Longitude(11),SiteData.Latitude(11),'marker','.','markersize',15,...
+          'linest','none','color','k','clip','point');
+m_text(SiteData.Longitude(11)+0.4,SiteData.Latitude(11),SiteData.Site(11),'FontWeight','Bold','FontSize',12);
 m_grid('linest','none','tickdir','out','box','fancy','fontsize',16);
 colormap(m_colmap('blues'));  
 caxis([-7000 000]);
