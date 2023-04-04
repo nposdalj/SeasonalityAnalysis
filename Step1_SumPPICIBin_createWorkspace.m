@@ -20,7 +20,7 @@ siteabrev = 'KOA'; %abbreviation of site (folder names)
 region = 'GofAK'; %region
 sp = 'Pm'; % your species code
 itnum = '3'; % which iteration you are looking for (which TPWS folder)
-GDrive = 'I'; %Google Drive
+GDrive = 'G'; %Google Drive
 
 %Other parameters
 fft = 512; %length of fft

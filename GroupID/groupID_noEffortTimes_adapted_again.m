@@ -61,6 +61,8 @@ for n = 1:length(site)
             deplCompare = ['NFC_A_',strdepl];
         elseif strcmp(siteNameMatch,'HAT');
             deplCompare = ['HAT_B_',strdepl];
+        elseif strcmp(siteNameMatch,'GI');
+            deplCompare = ['Baja_GI_',strdepl];
         else
             deplCompare = [loc strdepl];
         end

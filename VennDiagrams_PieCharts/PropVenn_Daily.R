@@ -5,14 +5,14 @@ library("dplyr")
 
 #load data
 GDrive =  'G'
-Region = c('WAT')
+Region = c('GofAK')
 dir = paste(GDrive,":/My Drive/",Region,"_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites",sep="")
 
 #Site Names
-#SiteNames = c('CB','PT','QN','BD','AB','KOA','KS')
+SiteNames = c('CB','PT','QN','BD','AB','KOA','KS')
 #SiteNames = c('CA','CCE','CORC','DCPP01C','GI','HOKE','PS1','PS2','QC')
 #SiteNames = c('CSM','Equator','Kauai','King','Kona','LSM','Pagan','Palmyra','PHR','Saipan','Tinian','Wake')
-SiteNames = c('HZ','OC','NC','BC','WC','GS','BP','BS','JAX')
+# SiteNames = c('HZ','OC','NC','BC','WC','GS','BP','BS','JAX')
 
 saveDir = paste(GDrive,":/My Drive/",Region,"_TPWS_metadataReduced/Plots/",sep="")
 
@@ -169,4 +169,3 @@ p+ theme(
   axis.line = element_line(colour = "grey")
 )
 dev.off()
-
