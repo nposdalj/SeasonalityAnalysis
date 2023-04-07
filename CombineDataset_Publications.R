@@ -1,0 +1,103 @@
+## This is script was written to take the data from each site in a region and 
+# create one table to be shared with manuscript publications
+
+#load libraries
+library(tidyverse)
+library(anytime)
+library(lubridate)
+library(dplyr)
+
+GDrive = 'G'
+
+#Sites
+Sites = c('CB','PT','QN','AB','KOA','BD','KS') #The GOA and BSAI Sites
+#Sites = c('HZ','OC','NC','BC','WC','GS','BP','BS','JAX')
+#Sites = c('CA','CCE','CORC','DCPP01C','GI','HOKE','PS1','PS2','QC')
+#Sites = c('CSM','Equator','Kauai','King','Kona','LSM','Pagan','Palmyra','PHR','Saipan','Tinian','Wake')
+
+#Regions
+#Regions = c('CentralPac')
+#region = 'CentralPac'
+#Regions = c('CCE')
+#region = 'CCE'
+Regions = c("GOA","BSAI") #GOA AND BSAI Region
+region = 'GofAK'
+#region = 'WAT'
+#Regions = c("North","South")
+
+#Which sites correspond to each region
+Reg1a = 1  #Region 1 start
+Reg1b = 5  #Region 1 end
+Reg2a = 6  #Region 2 start
+Reg2b = 7  #Region 2 end
+
+fileDir = paste(GDrive,":/My Drive/",region,"_TPWS_metadataReduced/SeasonalityAnalysis/",Sites, sep="")#setting the directory
+saveDir = paste(GDrive,":/My Drive/",region,"_TPWS_metadataReduced/SeasonalityAnalysis/AllSites/",sep="")
+filename = paste(fileDir,"/",Sites,"_dayData_forGLMR125.csv",sep="")
+filename2 = paste(fileDir,"/",Sites,"_binData_forGAMGEE.csv",sep="")
+filename3 = paste(fileDir,"/",Sites,"_binPresence.csv",sep="")
+filename4 = paste(fileDir,"/",Sites,"_binData_forGAMGEE_sexClasses.csv",sep="")
+
+#### Day Data
+#Day table with each row that has a site name
+DayTab = data.frame(matrix(ncol = 0, nrow=0))
+BinaryTab = data.frame(matrix(ncol = 0, nrow=0))
+
+for (i in 1:length(Sites)){
+  dayBinTAB = read.csv(filename[i])
+  BinaryTAB = read.csv(filename2[i])
+  dayBinTAB_sex = read.csv(filename3[i])
+  BinaryTAB_sex = read.csv(filename4[i])
+  
+  #Join Day Table
+  modDayBinTAB = left_join(dayBinTAB,dayBinTAB_sex,)
+  
+  #Join Binary Table
+  modBinaryTAB = left_join(BinaryTAB,BinaryTAB_sex)
+  
+  name = Sites[i]
+  modDayBinTAB$Site = name
+  modBinaryTAB$Site = name
+  modDayBinTAB$ID = i
+  modBinaryTAB$ID = i
+  if (between(i,Reg1a,Reg1b)){
+    modDayBinTAB$Region = Regions[1]
+    modBinaryTAB$Region = Regions[1]}
+  if (between(i,Reg2a,Reg2b)){
+    modDayBinTAB$Region = Regions[2]
+    modBinaryTAB$Region = Regions[2]}
+  if (i == 1){
+    DayTab = modDayBinTAB
+    BinaryTab = modBinaryTAB
+  }
+  DayTab = merge(DayTab, modDayBinTAB, all = TRUE)
+  BinaryTab = merge(BinaryTab, modBinaryTAB, all = TRUE)
+}
+
+#Sort table by ascending order by time
+DayTab$tbin = anytime(as.factor(DayTab$tbin))
+DayTab$tbin = format(as.POSIXct(DayTab$tbin,format='%m/%d/%Y %H:%M:%S'),format='%d/%m/%Y')
+DayTab$tbin <- lubridate::dmy(DayTab$tbin)
+DayTab = DayTab %>% arrange(ymd(DayTab$tbin))
+DayTab$Julian = format(DayTab$tbin,"%j")
+DayTab$Year = format(DayTab$tbin,"%Y")
+
+BinaryTab$tbin = anytime(as.factor(BinaryTab$tbin))
+BinaryTab$tbin = format(as.POSIXct(BinaryTab$tbin,format='%m/%d/%Y %H:%M:%S'),format='%d/%m/%Y')
+BinaryTab$tbin <- lubridate::dmy(BinaryTab$tbin)
+BinaryTab = BinaryTab %>% arrange(ymd(BinaryTab$tbin))
+BinaryTab$Julian = format(BinaryTab$tbin,"%j")
+BinaryTab$Year = format(BinaryTab$tbin,"%Y")
+
+#PreAbs
+DayTab$HoursNorm[is.na(DayTab$HoursNorm)] = 0
+DayTab$PreAbs = ifelse(DayTab$HoursNorm>0,1,0)
+
+#Export grouped table as .csv
+fileName = paste(saveDir,"AllSites_DayData.csv",sep="")
+write.csv(DayTab,fileName, row.names = FALSE)
+
+fileName = paste(saveDir,"AllSites_HourlyBinaryData.csv",sep="")
+write.csv(BinaryTab,fileName, row.names = FALSE)
+
+
