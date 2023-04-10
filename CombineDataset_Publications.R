@@ -83,9 +83,9 @@ DayTab$Julian = format(DayTab$tbin,"%j")
 DayTab$Year = format(DayTab$tbin,"%Y")
 
 BinaryTab$tbin = anytime(as.factor(BinaryTab$tbin))
-BinaryTab$tbin = format(as.POSIXct(BinaryTab$tbin,format='%m/%d/%Y %H:%M:%S'),format='%d/%m/%Y')
-BinaryTab$tbin <- lubridate::dmy(BinaryTab$tbin)
-BinaryTab = BinaryTab %>% arrange(ymd(BinaryTab$tbin))
+#BinaryTab$tbin = format(as.POSIXct(BinaryTab$tbin,format='%m/%d/%Y %H:%M:%S'),format='%d/%m/%Y %H:%M:%S')
+#BinaryTab$tbin <- lubridate::dmy(BinaryTab$tbin)
+#BinaryTab = BinaryTab %>% arrange(ymd(BinaryTab$tbin))
 BinaryTab$Julian = format(BinaryTab$tbin,"%j")
 BinaryTab$Year = format(BinaryTab$tbin,"%Y")
 
