@@ -40,7 +40,7 @@ J_CV_Bars = errorbar((1:height(plotData)), plotData.pDetJ, plotData.pDetJ_CV, pl
 M_CV_Bars = errorbar((1:height(plotData))+.225, plotData.pDetM, plotData.pDetM_CV, plotData.pDetM_CV, '.k', 'Marker', 'none', 'CapSize', 10, 'LineWidth', 1);
 hold off
 
-saveas(gcf, [GDrive ':\My Drive\WAT_TPWS_metadataReduced\Plots\Manuscript_Plots\pDetBar.png'])
+saveas(gcf, [GDrive ':\My Drive\WAT_TPWS_metadataReduced\Manuscript\Figures\Timeseries\pDetBar.png'])
 
 %% LOAD IN DATA FOR SITE PRESENCE PLOTS
 
@@ -218,7 +218,7 @@ for j = 1:3 % Cycle through size classes
         
         hold off
     end   
-    saveas(gcf, [GDrive ':\My Drive\' Region '_TPWS_metadataReduced\Plots\Manuscript_Plots\AllSites_' SaveName 'ClickPresence.png'])
+    saveas(gcf, [GDrive ':\My Drive\' Region '_TPWS_metadataReduced\Manuscript\Figures\Timeseries\AllSites_' SaveName 'ClickPresence.png'])
     
 end
 
@@ -349,6 +349,6 @@ for j = 1:3 % Cycle through size classes
         
         hold off
     end   
-    saveas(gcf, [GDrive ':\My Drive\' Region '_TPWS_metadataReduced\Plots\Manuscript_Plots\AllSites_' SaveName 'GroupPresence.png'])
+    saveas(gcf, [GDrive ':\My Drive\' Region '_TPWS_metadataReduced\Manuscript\Figures\Timeseries\AllSites_' SaveName 'GroupPresence.png'])
     
 end
