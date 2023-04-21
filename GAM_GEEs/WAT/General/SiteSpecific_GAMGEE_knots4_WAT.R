@@ -29,10 +29,10 @@ site = 'JAX' #specify the site of interest
 
 # Step 1: Load the Data -----------------------------------------------------------
 GDir = 'G'
-dir = paste(GDir,":/My Drive/WAT_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites",sep="")
+dir = paste(GDir,":/My Drive/WAT_TPWS_metadataReduced/SeasonalityAnalysis/AllSites",sep="")
 saveDir = paste(GDir,":/My Drive/WAT_TPWS_metadataReduced/Plots/",site, sep="")
 saveWorkspace = paste(GDir,":/My Drive/WAT_TPWS_metadataReduced/SeasonalityAnalysis/",site,'/',sep="")
-fileName = paste(GDir,":/My Drive/WAT_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites/AllSitesGrouped_Binary_GAMGEE_ROW.csv",sep="") #setting the directory
+fileName = paste(GDir,":/My Drive/WAT_TPWS_metadataReduced/SeasonalityAnalysis/AllSites/AllSitesGrouped_Binary_GAMGEE_ROW.csv",sep="") #setting the directory
 HourTable = read.csv(fileName)
 HourTable = na.omit(HourTable)
 HourTable$date = as.Date(HourTable$tbin, "%m/%d/%Y")
@@ -65,7 +65,7 @@ BlockMod<-glm(PreAbs~
                as.factor(Year)
              ,data=SiteHourTable,family=binomial)
 
-ACF = acf(residuals(BlockMod),lag.max = 10000)
+ACF = acf(residuals(BlockMod),lag.max = 50)
 CI = ggfortify:::confint.acf(ACF)
 ACFidx = which(ACF[["acf"]] < CI, arr.ind=TRUE)
 ACFval = ACFidx[1] #<---- check this value to make sure it's reasonable (<600)

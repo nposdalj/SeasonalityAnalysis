@@ -6,7 +6,7 @@ close all
 
 GDrive = 'G';
 
-Sites = {'HZ', 'OC', 'NC', 'BC', 'WC', 'GS', 'BP', 'BS', 'JAX'};
+Sites = {'HZ', 'OC', 'NC', 'BC', 'WC', 'NFC','GS', 'BP', 'BS', 'JAX'};
 Region = 'WAT';
 sp = 'Pm'; % your species code
 

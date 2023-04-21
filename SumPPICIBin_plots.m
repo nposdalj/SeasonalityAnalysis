@@ -5,18 +5,18 @@ close all;clear all;clc;
 % Accounts for effort but doesn't normalize bin or click count
 %% Parameters defined by user
 %Site names and paths
-filePrefix = 'OC'; % File name to match. 
-siteabrev = 'OC'; %abbreviation of site.
+filePrefix = 'NFC'; % File name to match. 
+siteabrev = 'NFC'; %abbreviation of site.
 region = 'WAT'; %region
 sp = 'Pm'; % your species code
-GDrive = 'I'; %Google Drive
-PlotSiteName =  'Oceanographers Canyon';
+GDrive = 'G'; %Google Drive
+PlotSiteName =  'Norfolk Canyon';
 saveDirr = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev]; %specify directory to save files
 saveDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\Plots\',siteabrev,'\']; %specify directory to save files
 %% load workspace
 GDrive_correct = GDrive; % Preserve correct GDrive as it was entered above
 load([saveDirr,'\',siteabrev,'_workspaceStep2.mat']);
-GDrive = 'I'; %Correct GDrive for SWAL1
+GDrive = 'G'; %Correct GDrive for SWAL1
 saveDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\Plots\',siteabrev,'\']; %specify directory to save files
 p = sp_setting_defaults('sp',sp,'analysis','SumPPICIBin'); % get default parameters -- make sure these match for your species
 

@@ -22,9 +22,9 @@ close all; clear all;clc;
     % '*_binData_forGAMGEE_sexClasses.csv' %hourly bin data for modeling
 %% Parameters defined by user
 %Site names and data paths
-filePrefix = 'HZ'; % File name to match. 
-genderFileName = 'HZ'; %File name to match gender file
-siteabrev = 'HZ'; %abbreviation of site
+filePrefix = 'NFC'; % File name to match. 
+genderFileName = 'NFC'; %File name to match gender file
+siteabrev = 'NFC'; %abbreviation of site
 region = 'WAT';
 sp = 'Pm'; % your species code
 GDrive = 'G'; %Google Drive

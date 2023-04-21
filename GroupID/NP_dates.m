@@ -466,12 +466,14 @@ CSM_latLongs = [39.938, - 76;
 40.195, - 76;
 40.195, - 76];
 %% NFC
-NFC_dates = [datenum([2017 06 30 00 00 00]), datenum([2018 06 02 06 15 06]);
+NFC_dates = [datenum([2016 04 30 12 00 00]), datenum([2017 06 28 18 38 51]);
+    datenum([2017 06 30 00 00 00]), datenum([2018 06 02 06 15 06]);
     datenum([2018 06 02 12 00 00]), datenum([2019 05 18 17 46 40])];
-NFC_depl = [3,4];
+NFC_depl = [2,3,4];
 NFC_site(1:length(NFC_depl),1) = {'NFC'};
 NFC_latLongs = [39.938, - 76;
-40.195, - 76];
+    39.938, - 76;
+    40.195, - 76];
 %% HAT
 HAT_dates = [datenum([2018 12 14 00 00 00]), datenum([2019 05 17 18 17 30])];
 HAT_depl = 5;

@@ -2,7 +2,7 @@
 clear all;close all;clc;
 % Needs to be run in 2018B or later
 %% load data
-siteName = 'HZ';
+siteName = 'NFC';
 GDrive = 'G';
 region = 'WAT'; %region
 NumBub = 3;

@@ -15,11 +15,11 @@ close all; clear all;clc;
 % binDataICIgram - ICIgram data grouped in 5 min bins
 %% Parameters defined by user
 %Site names
-filePrefix = 'KOA'; %TPWS file names that match
-siteabrev = 'KOA'; %abbreviation of site (folder names)
-region = 'GofAK'; %region
+filePrefix = 'NFC'; %TPWS file names that match
+siteabrev = 'NFC'; %abbreviation of site (folder names)
+region = 'WAT'; %region
 sp = 'Pm'; % your species code
-itnum = '3'; % which iteration you are looking for (which TPWS folder)
+itnum = '2'; % which iteration you are looking for (which TPWS folder)
 GDrive = 'G'; %Google Drive
 
 %Other parameters
@@ -147,10 +147,10 @@ binMonitEffort = sum(effort.roundbin); %bins recorded
 
 if er > 1
     binEffort = intervalToBinTimetable(effort.Start,effort.End,p); % convert intervals in bins when there is multiple lines of effort
-    binEffort.sec = binEffort.bin*(p.binDur*60);
+    binEffort.effortSec = binEffort.effortBin*(p.binDur*60);
 else
     binEffort = intervalToBinTimetable_Only1RowEffort(effort.Start,effort.End,p); % convert intervals in bins when there is only one line of effort
-    binEffort.sec = binEffort.bin*(p.binDur*60);
+    binEffort.effortSec = binEffort.effortBin*(p.binDur*60);
 end
 %% get average of detection by effort - excluding bins with less than 5 clicks
 positiveCounts = sum(binData.Count); %total # of clicks detected
