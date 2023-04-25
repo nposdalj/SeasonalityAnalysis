@@ -5,11 +5,11 @@ library(tidyverse)
 library(anytime)
 library(lubridate)
 
-GDrive = 'I'
+GDrive = 'G'
 
 #Sites
 #Sites = c('CB','PT','QN','AB','KOA','BD','KS') #The GOA and BSAI Sites
-Sites = c('HZ','OC','NC','BC','WC','GS','BP','BS','JAX')
+Sites = c('HZ','OC','NC','BC','WC','NFC','GS','BP','BS','JAX')
 #Sites = c('CA','CCE','CORC','DCPP01C','GI','HOKE','PS1','PS2','QC')
 #Sites = c('CSM','Equator','Kauai','King','Kona','LSM','Pagan','Palmyra','PHR','Saipan','Tinian','Wake')
 
@@ -129,9 +129,9 @@ for (i in 1:length(Sites)){
   name = Sites[i]
   modHourBinTAB$Site = name
   modHourBinTAB$ID = i
-  if (between(i,1,5)){
+  if (between(i,1,6)){
     modHourBinTAB$Region = Regions[1]}
-  if (between(i,6,9)){
+  if (between(i,7,10)){
     modHourBinTAB$Region = Regions[2]}
   if (i == 1){
     HourTab = modHourBinTAB
