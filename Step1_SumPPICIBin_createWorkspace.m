@@ -15,8 +15,8 @@ close all; clear all;clc;
 % binDataICIgram - ICIgram data grouped in 5 min bins
 %% Parameters defined by user
 %Site names
-filePrefix = 'NFC'; %TPWS file names that match
-siteabrev = 'NFC'; %abbreviation of site (folder names)
+filePrefix = 'HAT'; %TPWS file names that match
+siteabrev = 'HAT'; %abbreviation of site (folder names)
 region = 'WAT'; %region
 sp = 'Pm'; % your species code
 itnum = '2'; % which iteration you are looking for (which TPWS folder)
@@ -147,7 +147,7 @@ binMonitEffort = sum(effort.roundbin); %bins recorded
 
 if er > 1
     binEffort = intervalToBinTimetable(effort.Start,effort.End,p); % convert intervals in bins when there is multiple lines of effort
-    binEffort.effortSec = binEffort.effortBin*(p.binDur*60);
+    binEffort.sec = binEffort.bin*(p.binDur*60);
 else
     binEffort = intervalToBinTimetable_Only1RowEffort(effort.Start,effort.End,p); % convert intervals in bins when there is only one line of effort
     binEffort.effortSec = binEffort.effortBin*(p.binDur*60);

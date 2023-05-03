@@ -2,8 +2,8 @@
 close all;clear all;clc;
 %% select directory where ship files are located
 %Site name
-siteabrev = 'NFC';
-siteNameMatch = 'NFC';
+siteabrev = 'HAT';
+siteNameMatch = 'HAT';
 region = 'WAT'; %all of the WAT data has a space between the site and the deployment #
 shipDataType = 2; % 1 - old ship data, %2 - new ship data
 maxDetEdit = 2; % number of TPWS folders (i.e. TPWS4 is 4)
@@ -51,8 +51,6 @@ for n = 1:length(site)
             deplCompare = [loc,'_D_',strdepl];
         elseif strcmp(siteNameMatch,'NFC');
             deplCompare = ['NFC_A_',strdepl];
-        elseif strcmp(siteNameMatch,'HAT');
-            deplCompare = ['HAT_B_',strdepl];
         elseif strcmp(region,'WAT')
             deplCompare = [loc,'_',strdepl];
         elseif strcmp(siteNameMatch,'CORC');

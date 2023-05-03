@@ -5,12 +5,12 @@ close all;clear all;clc;
 % Accounts for effort but doesn't normalize bin or click count
 %% Parameters defined by user
 %Site names and paths
-filePrefix = 'NFC'; % File name to match. 
-siteabrev = 'NFC'; %abbreviation of site.
+filePrefix = 'HAT'; % File name to match. 
+siteabrev = 'HAT'; %abbreviation of site.
 region = 'WAT'; %region
 sp = 'Pm'; % your species code
 GDrive = 'G'; %Google Drive
-PlotSiteName =  'Norfolk Canyon';
+PlotSiteName =  'Cape Hatteras';
 saveDirr = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev]; %specify directory to save files
 saveDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\Plots\',siteabrev,'\']; %specify directory to save files
 %% load workspace

@@ -1005,7 +1005,7 @@ ggPlot_Site_WATN <- function(model, table,site){
                                    BootstrapCoefs2[,5]),
                                  as.factor(rep(1:5, each = 10000)))
   colnames(AdjustedSiteCoefs) = c("Coefficient", "Site")
-  trans = c("BC","HZ","NC","OC","WC")
+  trans = c("HZ","OC","NC","BC","WC")
   names(trans) = c(1:5)
   AdjustedSiteCoefs$SiteName = trans[as.character(AdjustedSiteCoefs$Site)]
   
@@ -1019,7 +1019,7 @@ ggPlot_Site_WATN <- function(model, table,site){
             axis.line = element_line(),
             panel.background = element_blank(),
             text = element_text(size = 25)
-  ) + scale_x_discrete(labels = c("BC","HZ","NC","OC","WC")
+  ) + scale_x_discrete(labels = c("HZ","OC","NC","BC","WC")
   ) + labs(x = "Site",
            y = "s(Site)")
   

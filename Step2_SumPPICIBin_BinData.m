@@ -17,8 +17,8 @@ close all; clear all;clc;
     % mean of julian day - '*_days365GroupedMean_forGLMR125.csv'
 %% Parameters defined by user
 %Site names and data paths
-filePrefix = 'NFC'; % File name to match. 
-siteabrev = 'NFC'; %abbreviation of site.
+filePrefix = 'HAT'; % File name to match. 
+siteabrev = 'HAT'; %abbreviation of site.
 region = 'WAT'; %region
 sp = 'Pm'; % your species code
 GDrive = 'G'; %Google Drive
@@ -134,8 +134,8 @@ binData(binData.Count < 5,:) = []; %identify any bins with less than 5 clicks an
 % STILL DOESN'T INCLUDE EFFORT FOR DUTY CYCLE
 % BINS (5-min)
 binTable = synchronize(binData,binEffort);
-binTable.Properties.VariableNames{'effortBin'} = 'Effort_Bin';
-binTable.Properties.VariableNames{'effortSec'} = 'Effort_Sec';
+binTable.Properties.VariableNames{'bin'} = 'Effort_Bin';
+binTable.Properties.VariableNames{'sec'} = 'Effort_Sec';
 binTable.maxPP = [];
 binidx1 = (binTable.Count >= 5); %identify any bins with less than 5 clicks and delete them (another safety)
 [y,~]=size(binTable);
@@ -149,8 +149,8 @@ Bin = retime(binData(:,1),'hourly','count'); % #bin per day
 hourData = synchronize(Click,Bin);
 hourlyEffort = retime(binEffort,'hourly','sum');
 hourlyTab = synchronize(hourData,hourlyEffort);
-hourlyTab.Properties.VariableNames{'effortBin'} = 'Effort_Bin';
-hourlyTab.Properties.VariableNames{'effortSec'} = 'Effort_Sec';
+hourlyTab.Properties.VariableNames{'bin'} = 'Effort_Bin';
+hourlyTab.Properties.VariableNames{'sec'} = 'Effort_Sec';
 hourlyTab(~hourlyTab.Effort_Bin,:)=[]; %removes days with no effort, NOT days with no presence (where there are big gaps in data between deployments
 %Add binary data
 binidx_hourly = (hourlyTab.Count_Bin >= 1);
@@ -165,8 +165,8 @@ dayData = synchronize(Click,Bin);
 dayEffort = retime(binEffort,'daily','sum');
 dayTab = synchronize(dayData,dayEffort);
 dayTable = synchronize(dayData,dayEffort);
-dayTable.Properties.VariableNames{'effortBin'} = 'Effort_Bin';
-dayTable.Properties.VariableNames{'effortSec'} = 'Effort_Sec';
+dayTable.Properties.VariableNames{'bin'} = 'Effort_Bin';
+dayTable.Properties.VariableNames{'sec'} = 'Effort_Sec';
 dayTableZeros = dayTable;
 dayTable(~dayTable.Effort_Bin,:)=[]; %removes days with no effort, NOT days with no presence
 %% Accounting for the duty cycle and effort (hourly data)
