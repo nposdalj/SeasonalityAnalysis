@@ -35,8 +35,8 @@ saveWorkspace = paste(GDir,":/My Drive/WAT_TPWS_metadataReduced/SeasonalityAnaly
 fileName = paste(GDir,":/My Drive/WAT_TPWS_metadataReduced/SeasonalityAnalysis/AllSites/AllSitesGrouped_Binary_GAMGEE_ROW.csv",sep="") #setting the directory
 HourTable = read.csv(fileName)
 HourTable = na.omit(HourTable)
-HourTable$date = as.Date(HourTable$tbin, "%m/%d/%Y")
-HourTable$tbin = as.POSIXct(strptime(HourTable$tbin, "%m/%d/%Y %H:%M"))
+HourTable$date = as.Date(HourTable$tbin)
+HourTable$tbin = as.POSIXct(HourTable$tbin)
 HourTable = HourTable[ order(HourTable$tbin , decreasing = FALSE ),]
 SiteHourTable = dplyr::filter(HourTable, grepl(site,Site))
 SiteHourTable$Hour = hour(SiteHourTable$tbin)
