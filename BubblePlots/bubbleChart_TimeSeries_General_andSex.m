@@ -1,8 +1,8 @@
-%% clear workspace
+ %% clear workspace
 clear all;close all;clc;
 % Needs to be run in 2018B or later
 %% load data
-siteName = 'NFC';
+siteName = 'HAT';
 GDrive = 'G';
 region = 'WAT'; %region
 NumBub = 3;

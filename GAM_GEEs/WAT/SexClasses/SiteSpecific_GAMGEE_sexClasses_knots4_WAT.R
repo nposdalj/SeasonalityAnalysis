@@ -81,7 +81,7 @@ BlockModM<-glm(PreAbsM~
                ,data=SiteHourTable,family=binomial)
 
 #Social Groups
-ACFF = acf(residuals(BlockModF), lag.max = 2000, ylim=c(0,0.1))
+ACFF = acf(residuals(BlockModF), lag.max = 350, ylim=c(0,0.1))
 CIF = ggfortify:::confint.acf(ACFF)
 ACFidxF = which(ACFF[["acf"]] < CIF, arr.ind=TRUE)
 ACFvalF = ACFidxF[1]

@@ -2,12 +2,12 @@ clearvars
 close all
 % This script creates time series plots for each site.
 %% Parameters defined by user
-filePrefix = 'WC'; % File name to match. 
-siteabrev = 'WC'; %abbreviation of site.
+filePrefix = 'HAT'; % File name to match. 
+siteabrev = 'HAT'; %abbreviation of site.
 GDrive = 'G'; %directory for Google Drive
 region = 'WAT';
 sp = 'Pm'; % your species code
-titleNAME = 'Wilmington Canyon';
+titleNAME = 'Cape Hatteras';
 dataDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev]; %specify directory where workspaces are saved
 %% load workspace
 GDrive_corrected = GDrive; % Preserve correct GDrive as it was entered above
@@ -126,7 +126,7 @@ ylim([-1 101])
 ax = gca;
 ax.YAxis(1).Color = slate;
 ax.YAxis(2).Color = gray;
-suptitle(['Daily Presence of Sperm Whales in the ', titleNAME]) % Overarching title %
+sgtitle(['Daily Presence of Sperm Whales in the ', titleNAME]) % Overarching title %
 saveas(gcf,[saveDir,'\',siteabrev,'DailyPresence_AllClasses_Subplots.png']);
 
 %Plot proportion of hours per WEEK with presence from each group
@@ -173,7 +173,7 @@ ylim([-1 101])
 ax = gca;
 ax.YAxis(1).Color = slate;
 ax.YAxis(2).Color = gray;
-suptitle(['Weekly Presence of Sperm Whales in the ', titleNAME]) % Overarching title
+sgtitle(['Weekly Presence of Sperm Whales in the ', titleNAME]) % Overarching title
 saveas(gcf,[saveDir,'\',siteabrev,'WeeklyPresence_AllClasses_Subplots.png']);
 
 %% Average yearly plots
@@ -267,7 +267,7 @@ subplot(3,1,3)
 bar(sexbinPresence.tbin,sexbinPresence.MaHoursProp,'FaceColor',slate,'BarWidth',3)
 xlim([sexbinPresence.tbin(1),sexbinPresence.tbin(end)])
 title(['Males'])
-suptitle(['Daily Presence of Sperm Whales in the ', titleNAME]) % Overarching title
+sgtitle(['Daily Presence of Sperm Whales in the ', titleNAME]) % Overarching title
 saveas(gcf,[saveDir,'\',siteabrev,'DailyPresence_AllClasses_Subplots130.png']);
 
 %Plot daily presence in 5-min bins for all classes in one plot

@@ -8,7 +8,7 @@ close all; clc;
 % Parameters defined by user
 GDrive = 'G';
 Region = 'WAT';
-Sites = {'NC' 'BC' 'GS' 'BP' 'BS' 'WC' 'OC' 'HZ' 'JAX','NFC','HAT'};
+Sites = {'HAT'};
 
 % No need to change the following
 numsites = length(Sites);
@@ -115,12 +115,12 @@ JAX_mean = [JAXlat, JAXlong];
 JAXtext = repmat({'JAX'},size(JAX_mean,1),1);
 JAX = [JAXtext num2cell(JAX_mean)];
 
-[NFClat, NFClong] = meanm(NFC_latLongs(:,1),NFC_latLongs(:,2));
+[NFClat, NFClong] = meanm(Site_latLongs.NFC(:,1),Site_latLongs.NFC(:,2));
 NFC_mean = [NFClat, NFClong];
 NFCtext = repmat({'NFC'},size(NFC_mean,1),1);
 NFC = [NFCtext num2cell(NFC_mean)];
 
-[HATlat, HATlong] = meanm(HAT_latLongs(:,1),HAT_latLongs(:,2));
+[HATlat, HATlong] = meanm(Site_latLongs.HAT(:,1),Site_latLongs.HAT(:,2));
 HAT_mean = [HATlat, HATlong];
 HATtext = repmat({'JAX'},size(HAT_mean,1),1);
 HAT = [JAXtext num2cell(HAT_mean)];

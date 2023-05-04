@@ -117,23 +117,23 @@ NFC_mean = [NFClat, NFClong];
 NFCtext = repmat({'NFC'},size(NFC_mean,1),1);
 NFC = [NFCtext num2cell(NFC_mean)];
 
-[HATlat, HATlong] = meanm(HAT_latLongs(:,1),HAT_latLongs(:,2));
-HAT_mean = [HATlat, HATlong];
-HATtext = repmat({'JAX'},size(HAT_mean,1),1);
-HAT = [JAXtext num2cell(HAT_mean)];
+[HATAlat, HATAlong] = meanm(HATA_latLongs(:,1),HATA_latLongs(:,2));
+HATA_mean = [HATAlat, HATAlong];
+HATAtext = repmat({'HAT_A'},size(HATA_mean,1),1);
+HATA = [HATAtext num2cell(HATA_mean)];
 
-[HATlat, HATlong] = meanm(HAT_latLongs(:,1),HAT_latLongs(:,2));
-HAT_mean = [HATlat, HATlong];
-HATtext = repmat({'JAX'},size(HAT_mean,1),1);
-HAT = [JAXtext num2cell(HAT_mean)];
+[HATBlat, HATBlong] = meanm(HATB_latLongs(:,1),HATB_latLongs(:,2));
+HATB_mean = [HATBlat, HATBlong];
+HATBtext = repmat({'HAT_B'},size(HATB_mean,1),1);
+HATB = [HATBtext num2cell(HATB_mean)];
 
 %create one table with all lat and longs
-LL = [NC; BC; GS; BP; BS; WC; OC; HZ; JAX; NFC; HAT];
+LL = [NC; BC; GS; BP; BS; WC; OC; HZ; JAX; NFC; HATA; HATB];
 LatLong = cell2mat(LL(:,2:3));
 
 SiteData = array2table(LatLong);
 SiteData.Properties.VariableNames = {'Latitude' 'Longitude'};
-SiteData{:,'Site'} = {'NC'; 'BC'; 'GS'; 'BP'; 'BS'; 'WC'; 'OC'; 'HZ'; 'JAX'; 'NFC'; 'HAT'};
+SiteData{:,'Site'} = {'NC'; 'BC'; 'GS'; 'BP'; 'BS'; 'WC'; 'OC'; 'HZ'; 'JAX'; 'NFC'; 'HAT_A'; 'HAT_B'};
 %% Create map 
 %The projections that successfully work: UTM, Transverse mercator (or this), Mercator (probably the best),...
 %Miller Cylindrical, Albers Equal-Area Conic, Lambert Conformal Conic, Hammer-Aitoff, Mollweide, Robinson
@@ -176,6 +176,9 @@ m_text(SiteData.Longitude(10)+0.4,SiteData.Latitude(10),SiteData.Site(10),'FontW
 m_line(SiteData.Longitude(11),SiteData.Latitude(11),'marker','.','markersize',15,...
           'linest','none','color','k','clip','point');
 m_text(SiteData.Longitude(11)+0.4,SiteData.Latitude(11),SiteData.Site(11),'FontWeight','Bold','FontSize',12);
+m_line(SiteData.Longitude(12),SiteData.Latitude(12),'marker','.','markersize',15,...
+          'linest','none','color','k','clip','point');
+m_text(SiteData.Longitude(12)+0.4,SiteData.Latitude(12),SiteData.Site(12),'FontWeight','Bold','FontSize',12);
 m_grid('linest','none','tickdir','out','box','fancy','fontsize',16);
 colormap(m_colmap('blues'));  
 caxis([-7000 000]);
@@ -195,9 +198,9 @@ height=400*1.5;
 set(gcf,'position',[x0,y0,width,height])
 
 %png
-filename = [SaveDir,'\SiteMap_M_Map_WAT.png'];
+filename = [SaveDir,'\SiteMap_M_Map_WAT_HATAB.png'];
 saveas(gcf,filename, 'png')
 
 %pdf
-filename = [SaveDir,'\SiteMap_M_Map_WAT.pdf'];
+filename = [SaveDir,'\SiteMap_M_Map_WAT_HATAB.pdf'];
 saveas(gcf,filename, 'pdf')
