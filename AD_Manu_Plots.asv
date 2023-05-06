@@ -10,6 +10,9 @@ Sites = {'HZ', 'OC', 'NC', 'BC', 'WC', 'NFC', 'HAT', 'GS', 'BP', 'BS', 'JAX'};
 Region = 'WAT';
 sp = 'Pm'; % your species code
 
+% Load or reload workspaces? (Set 1 to do so; 0 if everything is loaded and just need to plot)
+load_workspaces = 1;
+
 % Load in data for plotting parameter values (pDet, cue rate, etc.)
 plotData = readtable([GDrive ':\My Drive\WAT_TPWS_metadataReduced\Plots\Manuscript_PlottingData.xlsx']);
 
@@ -20,6 +23,17 @@ hat_trick = 0; % 1 = Yes; 0 = No
 palette.mint = [.4000 .7608 .6471];     palette.persimmon = [.9882 .5529 .3843];    palette.slate = [.5529 .6275 .7961];
 palette.grey = [.7529 .7529 .7529];     palette.darkgrey = [.5000 .5000 .5000];     palette.magenta = [.8582 .3500 .6500];
 palette.lightgrey = [.8700 .8700 .8700];
+
+% Using GDrive shortcut?
+using_shortcut = false;
+shortcut = ':\.shortcut-targets-by-id\1FGSX39xqOmreo9qPfPoqhlhUNm1STQB9';
+
+%% Prepare paths and load in data
+if using_shortcut == false % Deal with GDrive shortcut if needed
+    DrivePath = ':\My Drive';
+elseif using_shortcut == true
+    DrivePath = shortcut;
+end
 
 %% Probability of Detection - by Site and Sex
 
@@ -43,16 +57,17 @@ J_CV_Bars = errorbar((1:height(plotData)), plotData.pDetJ, plotData.pDetJ_CV, pl
 M_CV_Bars = errorbar((1:height(plotData))+.225, plotData.pDetM, plotData.pDetM_CV, plotData.pDetM_CV, '.k', 'Marker', 'none', 'CapSize', 10, 'LineWidth', 1);
 hold off
 
-saveas(gcf, [GDrive ':\My Drive\WAT_TPWS_metadataReduced\Manuscript\Figures\Timeseries\pDetBar.png'])
+saveas(gcf, [GDrive DrivePath '\WAT_TPWS_metadataReduced\Manuscript\Figures\Timeseries\pDetBar.png'])
 
 %% LOAD IN DATA FOR SITE PRESENCE PLOTS
 
 GDrive_correctII = GDrive; % Preserve correct GDrive as it was entered above
 
+if load_workspaces == 1
 for i = 1:length(Sites)
     
     siteabrev = char(Sites(i));
-    dataDir = [GDrive,':\My Drive\',Region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev]; %specify directory where workspaces are saved
+    dataDir = [GDrive,DrivePath,'\',Region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev]; %specify directory where workspaces are saved
     
     disp(['Loading Site ' siteabrev '...']) % Load in workspaces
     load([dataDir,'\',siteabrev,'_workspaceStep2.mat']);
@@ -62,7 +77,7 @@ for i = 1:length(Sites)
     GDrive = GDrive_correctII; % Correct GDrive if overwritten by loading workspace
     dayBinCSV(1) = GDrive; effortXls(1) = GDrive; filename(1) = GDrive; tpwsPath(1) = GDrive;
     
-    saveDir = [GDrive,':\My Drive\',Region,'_TPWS_metadataReduced\Plots\',siteabrev];
+    saveDir = [GDrive,DrivePath,'\',Region,'_TPWS_metadataReduced\Plots\',siteabrev];
     %% Fill in missing days
     %day table
     dayTable.day= double(dayTable.day);
@@ -89,6 +104,10 @@ for i = 1:length(Sites)
     %% Save site weekPresence, clear weekPresence, and save site no-effort intervals
     SitesWeekPresence.(['Site', num2str(i)]) = weekPresence;
     clear weekTable weekPresence
+
+    if strcmp(siteabrev, 'NFC') % Remove apparently erroneous effort time entries in NFC effort
+        effort([1150 1151 1977 1978], :) = [];
+    end
     
     SitesEffort.(['Site', num2str(i)]) = timetable2table(effort); % Preserve site-specific effort table for later use (for plotting large periods of no effort)
     noEffortIntervals = effort.Start(2:end) - effort.End(1:end-1); % Get durations of gaps between periods of effort
@@ -98,9 +117,14 @@ end
 disp('Finished loading site workspaces and retaining needed variables')
 
 %% Before plotting, remove some rows from NFC's effort table that seem to cause issues when plotting
-oldEffort_NFC = SitesEffort.Site6; % Save old effort table... just in case
+oldEffort_NFC = SitesEffort.Site6; % Save old effort table - represents how the effort was originally logged
+SitesEffort.Site6([1150, 1151, 1977, 1978], :) = []; % In table used for plotting, remove problematic rows
+% Basically they have a start or end date that is way off, so a huge
+% non-existent effort gap gets plotted
 
+end %
 
+%% PLOTTING!
 %% Stacked Sites - Acoustic Presence of Size Classes
 
 HoursPropClasses = {'FeHoursProp', 'JuHoursProp', 'MaHoursProp'};
@@ -225,7 +249,7 @@ for j = 1:3 % Cycle through size classes
         
         hold off
     end   
-    saveas(gcf, [GDrive ':\My Drive\' Region '_TPWS_metadataReduced\Manuscript\Figures\Timeseries\AllSites_' SaveName 'ClickPresence.png'])
+    saveas(gcf, [GDrive DrivePath '\' Region '_TPWS_metadataReduced\Manuscript\Figures\Timeseries\AllSites_' SaveName 'ClickPresence.png'])
     
 end
 
@@ -356,6 +380,6 @@ for j = 1:3 % Cycle through size classes
         
         hold off
     end   
-    saveas(gcf, [GDrive ':\My Drive\' Region '_TPWS_metadataReduced\Manuscript\Figures\Timeseries\AllSites_' SaveName 'GroupPresence.png'])
+    saveas(gcf, [GDrive DrivePath '\' Region '_TPWS_metadataReduced\Manuscript\Figures\Timeseries\AllSites_' SaveName 'GroupPresence.png'])
     
 end

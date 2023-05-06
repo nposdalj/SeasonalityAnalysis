@@ -14,7 +14,7 @@ sp = 'Pm'; % your species code
 plotData = readtable([GDrive ':\My Drive\WAT_TPWS_metadataReduced\Plots\Manuscript_PlottingData.xlsx']);
 
 % Plot HAT A and B in separate lanes? (Not yet configured)
-hat_trick = 0; % 1 = Yes; 0 = No
+HAT_split = 0; % 1 = Yes; 0 = No
 
 % Color palette
 palette.mint = [.4000 .7608 .6471];     palette.persimmon = [.9882 .5529 .3843];    palette.slate = [.5529 .6275 .7961];
@@ -22,7 +22,7 @@ palette.grey = [.7529 .7529 .7529];     palette.darkgrey = [.5000 .5000 .5000]; 
 palette.lightgrey = [.8700 .8700 .8700];
 
 % Using GDrive shortcut?
-using_shortcut = true;
+using_shortcut = false;
 shortcut = ':\.shortcut-targets-by-id\1FGSX39xqOmreo9qPfPoqhlhUNm1STQB9';
 
 %% Prepare paths and load in data
@@ -115,9 +115,9 @@ disp('Finished loading site workspaces and retaining needed variables')
 %% Before plotting, remove some rows from NFC's effort table that seem to cause issues when plotting
 oldEffort_NFC = SitesEffort.Site6; % Save old effort table - represents how the effort was originally logged
 SitesEffort.Site6([1150, 1151, 1977, 1978], :) = []; % In table used for plotting, remove problematic rows
-% Basically they have a start or end date that is way off, so a huge
-% non-existent effort gap gets plotted
+% Basically they have a start or end date that is way off, so a huge non-existent effort gap gets plotted
 
+%% PLOTTING!
 %% Stacked Sites - Acoustic Presence of Size Classes
 
 HoursPropClasses = {'FeHoursProp', 'JuHoursProp', 'MaHoursProp'};
