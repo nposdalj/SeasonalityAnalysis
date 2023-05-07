@@ -238,7 +238,13 @@ for j = 1:3 % Cycle through size classes
 %         end
         
         set(gca, 'Layer', 'top') % Move tick marks to top so they aren't covered by shaded regions
-        text(datetime(2015,5,15),70,Sites(i), 'FontSize', 10, 'FontWeight', 'bold') % Site Label
+        
+        if strcmp(Sites(i), 'HAT') % Special site label for HAT
+            text(datetime(2015,5,15),70,'HAT A', 'FontSize', 10, 'FontWeight', 'bold')
+            text(datetime(2017,4, 1),70,'B',     'FontSize', 10, 'FontWeight', 'bold')
+        else % General site label
+            text(datetime(2015,5,15),70,Sites(i), 'FontSize', 10, 'FontWeight', 'bold')
+        end
         
         hold off
     end   
@@ -369,7 +375,13 @@ for j = 1:3 % Cycle through size classes
 %         end
         
         set(gca, 'Layer', 'top') % Move tick marks to top so they aren't covered by shaded regions
-        text(datetime(2015,5,15),70,Sites(i), 'FontSize', 10, 'FontWeight', 'bold') % Site Label
+
+        if strcmp(Sites(i), 'HAT') % Special site label for HAT
+            text(datetime(2015,5,15),70,'HAT A', 'FontSize', 10, 'FontWeight', 'bold')
+            text(datetime(2017,4, 1),70,'B',     'FontSize', 10, 'FontWeight', 'bold')
+        else % General site label
+            text(datetime(2015,5,15),70,Sites(i), 'FontSize', 10, 'FontWeight', 'bold')
+        end
         
         hold off
     end   
