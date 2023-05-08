@@ -76,11 +76,10 @@ BlockModJ<-glm(PreAbsJ~
 
 #Males
 BlockModM<-glm(PreAbsM~
-                 bs(Julian, k = 4)+
-                 TimeLost+
                  as.factor(Year)+
-                 as.factor(Site)
-               ,data=SiteHourTable,family=binomial)
+                 as.factor(Site)+
+                 bs(Julian, k = 4),
+               data=SiteHourTable,family=binomial)
 
 #Social Groups
 ACFF = acf(residuals(BlockModF), lag.max = 2000, ylim=c(-0.1,0.1))
@@ -97,11 +96,14 @@ ACFidxJ = which(ACFJ[["acf"]] < CIJ & ACFJ[["acf"]] > CIJ_neg, arr.ind=TRUE)
 ACFvalJ = ACFidxJ[1]
 
 #Males
-ACFM = acf(residuals(BlockModM), lag.max = 2000, ylim=c(-0.1,0.1))
+ACFM = acf(residuals(BlockModM), lag.max = 200, ylim=c(-0.1,0.1))
 CIM = ggfortify:::confint.acf(ACFM)
 CIM_neg = CIM*-1
 ACFidxM = which(ACFM[["acf"]] < CIM & ACFM[["acf"]] > CIM_neg, arr.ind=TRUE)
-ACFvalM = ACFidxM[1]
+if (region =='North'){
+  ACFvalM = 172 #Closest to the CI intervals without having a ridiculous number over 1600+
+}else{
+ACFvalM = ACFidxM[1]}
 
 #create the blocks based on the full timesereies
 startDate = SiteHourTable$tbin[1]

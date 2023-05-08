@@ -84,6 +84,7 @@ CIF = ggfortify:::confint.acf(ACFF)
 CIF_neg = CIF*-1
 ACFidxF = which(ACFF[["acf"]] < CIF & ACFF[["acf"]] > CIF_neg , arr.ind=TRUE)
 ACFvalF = ACFidxF[1]
+ACFvalF = 19 #Gets close enough
 
 #Mid Size
 ACFJ = acf(residuals(BlockModJ), lag.max = 2000, ylim=c(-0.1,0.1))
@@ -93,12 +94,12 @@ ACFidxJ = which(ACFJ[["acf"]] < CIJ & ACFJ[["acf"]] > CIJ_neg, arr.ind=TRUE)
 ACFvalJ = ACFidxJ[1]
 
 #Males
-ACFM = acf(residuals(BlockModM), lag.max = 60, ylim=c(-0.1,0.1)) #58 gets close enough
+ACFM = acf(residuals(BlockModM), lag.max = 2000, ylim=c(-0.1,0.1))
 CIM = ggfortify:::confint.acf(ACFM)
 CIM_neg = CIM*-1
 ACFidxM = which(ACFM[["acf"]] < CIM & ACFM[["acf"]] > CIM_neg, arr.ind=TRUE)
 ACFvalM = ACFidxM[1]
-ACFvalM = 58
+ACFvalM = 75 #Gets close enough
 
 #create the blocks based on the full timesereies
 startDate = SiteHourTable$tbin[1]
@@ -167,10 +168,10 @@ Anova(BlockModJ)
 #as.factor(Region)   7035.4  1  < 2.2e-16 ***
   
 Anova(BlockModM)
-#bs(Julian, k = 4)  1944.37  4  < 2.2e-16 ***
-#TimeLost             20.12  1  7.259e-06 ***
-#as.factor(Year)      59.87  4  3.093e-12 ***
-#as.factor(Region)   896.29  1  < 2.2e-16 ***
+#bs(Julian, k = 4)     1984  4    < 2e-16 ***
+#TimeLost                59  1    1.3e-14 ***
+#as.factor(Year)         63  4    7.9e-13 ***
+#as.factor(Region)      688  1    < 2e-16 ***
 
 # Step 4: Data Exploration and Initial Analysis ------------------------------------------------------------------
 # Follow data exploration protocols suggested by Zuur et al. (2010), Zuur (2012), to generate pair plots, box plots, and assess collinearity between covariates in the dataset using Varinace Inflation Factors (vif).

@@ -16,7 +16,7 @@ close all; clear all;clc;
 %% Parameters defined by user
 %Site names
 filePrefix = 'HAT'; %TPWS file names that match
-siteabrev = 'HAT'; %abbreviation of site (folder names)
+siteabrev = 'HAT_B'; %abbreviation of site (folder names)
 region = 'WAT'; %region
 sp = 'Pm'; % your species code
 itnum = '2'; % which iteration you are looking for (which TPWS folder)

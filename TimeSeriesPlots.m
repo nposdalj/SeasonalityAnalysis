@@ -2,8 +2,8 @@ clearvars
 close all
 % This script creates time series plots for each site.
 %% Parameters defined by user
-filePrefix = 'HAT'; % File name to match. 
-siteabrev = 'HAT'; %abbreviation of site.
+filePrefix = 'HAT_B'; % File name to match. 
+siteabrev = 'HAT_B'; %abbreviation of site.
 GDrive = 'G'; %directory for Google Drive
 region = 'WAT';
 sp = 'Pm'; % your species code

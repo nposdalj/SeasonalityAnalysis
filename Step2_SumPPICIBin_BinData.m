@@ -17,8 +17,8 @@ close all; clear all;clc;
     % mean of julian day - '*_days365GroupedMean_forGLMR125.csv'
 %% Parameters defined by user
 %Site names and data paths
-filePrefix = 'HAT'; % File name to match. 
-siteabrev = 'HAT'; %abbreviation of site.
+filePrefix = 'HAT_B'; % File name to match. 
+siteabrev = 'HAT_B'; %abbreviation of site.
 region = 'WAT'; %region
 sp = 'Pm'; % your species code
 GDrive = 'G'; %Google Drive

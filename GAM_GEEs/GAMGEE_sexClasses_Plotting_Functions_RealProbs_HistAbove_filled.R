@@ -878,9 +878,12 @@ ggPlot_Site_WAT <- function(model,table,site,sex,COL){
   ),
   as.factor(rep(1:4, each = 10000)))
   colnames(AdjustedSiteCoefs) = c("Coefficient", "Site")
-  trans = c("GS","BP","BS","JAX")
+  trans = c("BP","BS","GS","JAX")
   names(trans) = c(1,2,3,4)
   AdjustedSiteCoefs$SiteName = trans[as.character(AdjustedSiteCoefs$Site)]
+  target <- c("GS","BP","BS","JAX")
+  AdjustedSiteCoefs$SiteName = factor(AdjustedSiteCoefs$SiteName, levels = target)
+  AdjustedSiteCoefs = AdjustedSiteCoefs[order(AdjustedSiteCoefs$SiteName), ]
   
   ggtitle = paste(saveDir,"/Site - ", site,'_',sex,"filled.pdf",sep="")
   
@@ -1032,7 +1035,7 @@ ggPlot_Region_WAT_last <- function(model,table,site,sex,COL){
 #Plot Site for WAT Regional model (first term in northern model) --------------------------------------------------
 ggPlot_Site_WATT <- function(model,table,site,sex,COL){
   BootstrapParameters2<-rmvnorm(10000, coef(model),summary(model)$cov.unscaled)
-  start=2; end=5; Variable=table$Site
+  start=2; end=8; Variable=table$Site
   BootstrapCoefs2<-BootstrapParameters2[, c(1,start:end)]
   
   #Histogram for Site observations
@@ -1045,13 +1048,19 @@ ggPlot_Site_WATT <- function(model,table,site,sex,COL){
     BootstrapCoefs2[, 2],
     BootstrapCoefs2[, 3],
     BootstrapCoefs2[, 4],
-    BootstrapCoefs2[, 5]
-  ),
-  as.factor(rep(1:5, each = 10000)))
+    BootstrapCoefs2[, 5],
+    BootstrapCoefs2[,6],
+    BootstrapCoefs2[,7],
+    BootstrapCoefs2[,8]),
+    as.factor(rep(1:8, each = 10000)))
   colnames(AdjustedSiteCoefs) = c("Coefficient", "Site")
-  trans = c("HZ","OC","NC","BC","WC")
-  names(trans) = c(1,2,3,4,5)
+  trans = c("BC","HAT_A","HAT_B","HZ","NC","NFC","OC","WC")
+  names(trans) = c(1:8)
   AdjustedSiteCoefs$SiteName = trans[as.character(AdjustedSiteCoefs$Site)]
+  target <- c("HZ","OC","NC","BC","WC","NFC","HAT_B","HAT_A")
+  AdjustedSiteCoefs$SiteName = factor(AdjustedSiteCoefs$SiteName, levels = target)
+  AdjustedSiteCoefs = AdjustedSiteCoefs[order(AdjustedSiteCoefs$SiteName), ]
+  
   
   ggtitle = paste(saveDir,"/Site - ", site,'_',sex,"filled.pdf",sep="")
   
@@ -1091,7 +1100,7 @@ ggPlot_Site_WATT <- function(model,table,site,sex,COL){
 #Plot Site for WAT Regional model (second term in northern model) --------------------------------------------------
 ggPlot_Site_WATTT <- function(model,table,site,sex,COL){
   BootstrapParameters2<-rmvnorm(10000, coef(model),summary(model)$cov.unscaled)
-  start=4; end=7; Variable=table$Site
+  start=4; end=10; Variable=table$Site
   BootstrapCoefs2<-BootstrapParameters2[, c(1,start:end)]
   
   #Histogram for Site observations
@@ -1104,13 +1113,18 @@ ggPlot_Site_WATTT <- function(model,table,site,sex,COL){
     BootstrapCoefs2[, 2],
     BootstrapCoefs2[, 3],
     BootstrapCoefs2[, 4],
-    BootstrapCoefs2[, 5]
-  ),
-  as.factor(rep(1:5, each = 10000)))
+    BootstrapCoefs2[, 5],
+    BootstrapCoefs2[,6],
+    BootstrapCoefs2[,7],
+    BootstrapCoefs2[,8]),
+    as.factor(rep(1:8, each = 10000)))
   colnames(AdjustedSiteCoefs) = c("Coefficient", "Site")
-  trans = c("HZ","OC","NC","BC","WC")
-  names(trans) = c(1,2,3,4,5)
+  trans = c("BC","HAT_A","HAT_B","HZ","NC","NFC","OC","WC")
+  names(trans) = c(1:8)
   AdjustedSiteCoefs$SiteName = trans[as.character(AdjustedSiteCoefs$Site)]
+  target <- c("HZ","OC","NC","BC","WC","NFC","HAT_B","HAT_A")
+  AdjustedSiteCoefs$SiteName = factor(AdjustedSiteCoefs$SiteName, levels = target)
+  AdjustedSiteCoefs = AdjustedSiteCoefs[order(AdjustedSiteCoefs$SiteName), ]
   
   ggtitle = paste(saveDir,"/Site - ", site,'_',sex,"filled.pdf",sep="")
   

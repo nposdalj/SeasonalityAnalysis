@@ -9,7 +9,7 @@ GDrive = 'G'
 
 #Sites
 #Sites = c('CB','PT','QN','AB','KOA','BD','KS') #The GOA and BSAI Sites
-Sites = c('HZ','OC','NC','BC','WC','NFC','HAT','GS','BP','BS','JAX')
+Sites = c('HZ','OC','NC','BC','WC','NFC','HAT_B','HAT_A','GS','BP','BS','JAX')
 #Sites = c('CA','CCE','CORC','DCPP01C','GI','HOKE','PS1','PS2','QC')
 #Sites = c('CSM','Equator','Kauai','King','Kona','LSM','Pagan','Palmyra','PHR','Saipan','Tinian','Wake')
 
@@ -66,9 +66,9 @@ for (i in 1:length(Sites)){
   name = Sites[i]
   modDayBinTAB$Site = name
   modDayBinTAB$ID = i
-  if (between(i,1,7)){
+  if (between(i,1,8)){
     modDayBinTAB$Region = Regions[1]}
-  if (between(i,8,11)){
+  if (between(i,9,12)){
     modDayBinTAB$Region = Regions[2]}
   if (i == 1){
     DayTab = modDayBinTAB
@@ -129,9 +129,9 @@ for (i in 1:length(Sites)){
   name = Sites[i]
   modHourBinTAB$Site = name
   modHourBinTAB$ID = i
-  if (between(i,1,7)){
+  if (between(i,1,8)){
     modHourBinTAB$Region = Regions[1]}
-  if (between(i,8,11)){
+  if (between(i,9,12)){
     modHourBinTAB$Region = Regions[2]}
   if (i == 1){
     HourTab = modHourBinTAB

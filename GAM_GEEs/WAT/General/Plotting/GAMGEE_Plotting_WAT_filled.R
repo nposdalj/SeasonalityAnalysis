@@ -21,6 +21,8 @@ library(splines2)       # to use mSpline for the GEEs
 library(scales)
 library(magick)
 library(cowplot)
+library(ggExtra)
+library(plyr)
 
 #load functions
 source('C:/Users/nposd/Documents/GitHub/SeasonalityAnalysis/GAM_GEEs/GAMGEE_Plotting_Functions_RealProbs_HistAbove_filled.R')  #on Nat's computer
@@ -28,6 +30,7 @@ source('C:/Users/nposd/Documents/GitHub/SeasonalityAnalysis/GAM_GEEs/GAMGEE_Plot
 # Load Workspace --------------------------------------------------
 site = 'BS'
 GDrive = 'G'
+COL = '#D3D3D3'
 varOrder = cbind('Year','Julian Day') #Variables in the final model and their order (ex: (1)'Julian Day','Year' (2)'Year,'Julian Day', (3)'Julian Day', (4)'Year')
 saveWorkspace = paste(GDrive,":/My Drive/WAT_TPWS_metadataReduced/SeasonalityAnalysis/",site,'/',sep="")
 fileName = paste(saveWorkspace,site,'_SiteSpecific_gamgeeOutput.RData',sep="")
@@ -35,7 +38,6 @@ load(fileName)
 saveDir = paste(GDrive,":/My Drive/WAT_TPWS_metadataReduced/Plots/",site,'/',sep="")
 
 SiteHourTableB = SiteHourTable[!(SiteHourTableB$Julian==366),] #If it's a leap year, delete julian day 366 for plotting
-
 SiteHourTableB$Year = as.factor(SiteHourTableB$Year) #Change year to categorical variable for plotting histograms
 
 #Only includes 2016-2019

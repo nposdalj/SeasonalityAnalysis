@@ -25,7 +25,7 @@ library(splines2)       # to use mSpline for the GEEs
 
 region = 'North' #specify the region of interest
 Region = 'WAT'
-GDrive= 'I'
+GDrive= 'G'
 
 # Step 1: Load the Data -----------------------------------------------------------
 dir = paste(GDrive,":/My Drive/",Region,"_TPWS_metadataReduced/SeasonalityAnalysis/AllSites", sep="")
@@ -156,7 +156,7 @@ QICmod3A
 #North
 #QIC            QIC.1            QIC.2           QIC.3            QIC.4
 #model3A             POD0            POD3a            POD3b            POD3c            POD3d
-#QIC3A   191560.005165058 179487.333402436 183239.495032242 185885.833506098 181863.434294688
+#QIC3A   259944.799358274 237873.379451355 245365.13585481 250197.394630712 241294.183321952
 #Full model is the best
 #Model Order - Site, Julian Day, Year
 
