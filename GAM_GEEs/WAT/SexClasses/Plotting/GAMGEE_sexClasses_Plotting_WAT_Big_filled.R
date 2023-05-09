@@ -24,7 +24,7 @@ library(ggExtra)
 library(plyr)
 
 #load functions
-source('C:/Users/nposd/Documents/GitHub/SeasonalityAnalysis/GAM_GEEs/GAMGEE_sexClasses_Plotting_Functions_RealProbs_HistAbove.R')  #on Nat's computer
+source('C:/Users/nposd/Documents/GitHub/SeasonalityAnalysis/GAM_GEEs/GAMGEE_sexClasses_Plotting_Functions_RealProbs_HistAbove_filled.R')  #on Nat's computer
 
 # Load Workspace --------------------------------------------------
 GDrive = 'G'
@@ -59,7 +59,7 @@ for (i in 1:length(sexGroups)){
   
   # Plot Julian Day ---------------------------------------------------------
   if (sex == 'Males'){
-    ggPlot_JD_AfterSite(PODFinal,SiteHourTableB,model,sex,COL)
+    ggPlot_JD_sex(PODFinal,SiteHourTableB,model,sex,COL)
   }else if (sex == 'Mid-Size'){
     ggPlot_JD_WATBIG(PODFinal,SiteHourTableB,model,sex,COL)
   }else{
@@ -67,9 +67,7 @@ for (i in 1:length(sexGroups)){
   }
   
   # Plot Year ---------------------------------------------------------------
-  if (sex == 'Males'){
-    ggPlot_Year_WAT_Big(PODFinal,SiteHourTableB,sex,COL)
-  }else if (sex == 'Mid-Size'){
+  if (sex == 'Mid-Size' | sex == 'Males'){
     ggPlot_Year_WATTT_Big(PODFinal,SiteHourTableB,sex,COL)
   }else{
     ggPlot_Year_WATT_Big(PODFinal,SiteHourTableB,sex,COL)

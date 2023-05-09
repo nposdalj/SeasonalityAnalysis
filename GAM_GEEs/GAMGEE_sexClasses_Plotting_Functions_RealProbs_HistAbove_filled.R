@@ -1,6 +1,6 @@
 ################Sex Specific###########################
 # Plot Julian Day with ggplot ---------------------------------------------
-ggPlot_JD_sex <- function(model, table,sex,COL){
+ggPlot_JD_sex <- function(model,table,site,sex,COL){
   BootstrapParameters3<-rmvnorm(10000, coef(model),summary(model)$cov.unscaled)
   start=2; finish=3; Variable=table$Julian;  
   PlottingVar3<-seq(min(Variable), max(Variable), length=5000)
@@ -119,7 +119,7 @@ ggPlot_JD_AfterYear_WAT <- function(model, table,sex,COL){
   
 }
 
-ggPlot_JD_SG_WATBIG <- function(model, table,site,sex,COL){
+ggPlot_JD_SG_WATBIG <- function(model,table,site,sex,COL){
   BootstrapParameters3<-rmvnorm(10000, coef(model),summary(model)$cov.unscaled)
   start=7; finish=8; Variable=table$Julian;  
   PlottingVar3<-seq(min(Variable), max(Variable), length=5000)
@@ -150,21 +150,9 @@ ggPlot_JD_SG_WATBIG <- function(model, table,site,sex,COL){
   ) + scale_x_continuous(breaks = seq(20,350,length.out = 12),labels = c('J','F','M','A','M','J','J','A','S','O','N','D')
   ) + theme(axis.title.x=element_blank(),
             axis.text.x=element_blank(),
-
             axis.line = element_line(),
             panel.background = element_blank(),
-            text = element_text(size = 25)
-  )
-  # xens = axis_canvas(pmain, axis = "x")+
-  #   geom_bar(data = plothist,
-  #            aes(x,y),
-  #            fill = 4,
-  #            alpha = 0.2,
-  #            position = "dodge",
-  #            stat = "identity",
-  #            width = 1
-  #   )
-  # p1 = insert_xaxis_grob(pmain,xens,grid::unit(.2, "null"), position = "top")
+            text = element_text(size = 25))
   ggdraw(pmain)
   
   ggtitle = paste(saveDir,"/Julian Day - ", site,'_',sex,"filled.pdf",sep="")
@@ -176,7 +164,6 @@ ggPlot_JD_SG_WATBIG <- function(model, table,site,sex,COL){
     dev.off()
   } # close graphics device
   print("Plot Saved")
-  
 }
 
 ggPlot_JD_Last <- function(model,table,site,sex,COL){
@@ -979,7 +966,7 @@ ggPlot_Region_WAT <- function(model,table,site,sex,COL){
 #Plot region for Wat (last term) --------------------------------------------------
 ggPlot_Region_WAT_last <- function(model,table,site,sex,COL){
   BootstrapParameters2<-rmvnorm(10000, coef(model),summary(model)$cov.unscaled)
-  start=8; end=8; Variable=table$Site
+  start=4; end=4; Variable=table$Site
   BootstrapCoefs2<-BootstrapParameters2[, c(1,start:end)]
   
   #Histogram for Site observations
