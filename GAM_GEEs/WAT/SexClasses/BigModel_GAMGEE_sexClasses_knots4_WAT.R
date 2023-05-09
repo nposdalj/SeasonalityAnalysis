@@ -282,14 +282,14 @@ POD3mc = geeglm(PreAbsM ~ AvgDayMatM+as.factor(Year),family = binomial, corstr="
 POD3md = geeglm(PreAbsM ~ AvgDayMatM+as.factor(Region),family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB)
 
 model3mA = c("POD0m","POD3ma","POD3mb","POD3mc","POD3md")
-QIC3mA = c(QIC(POD0m)[1],QIC(POD3ma)[1],QIC(POD3mb)[1],QIC(POD3md)[1])
+QIC3mA = c(QIC(POD0m)[1],QIC(POD3ma)[1],QIC(POD3mb)[1],QIC(POD3mc)[1],QIC(POD3md)[1])
 QICmod3mA<-data.frame(rbind(model3mA,QIC3mA))
 QICmod3mA
 
 #                     X1               X2               X3               X4               X5
 # model3mA            POD0m           POD3ma           POD3mb           POD3mc           POD3md
-# QIC3mA   29278.4329836999 26529.4964953979 28340.6085975542 26556.9578607205 29278.4329836999
-#Full model - Year, Julian Day, Region
+#QIC3mA   33823.4558492453 31276.4599901311 33123.7679113388 31951.3528359603 31297.119823975
+#Full model - Julian Day, Region, Year
 
 # Step 7: Finalize Model --------------------------------------------------
 #Females
@@ -302,7 +302,7 @@ PODFinalJ = geeglm(PreAbsJ ~  as.factor(Region)+AvgDayMatJ+as.factor(Year),famil
 
 #Males
 dimnames(AvgDayMatM)<-list(NULL,c("ADBM1", "ADBM2"))
-PODFinalM = geeglm(PreAbsM ~ as.factor(Year)+AvgDayMatM+as.factor(Region),family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB)
+PODFinalM = geeglm(PreAbsM ~ AvgDayMatM+as.factor(Region)+as.factor(Year),family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB)
 
 # STEP 8: Interpreting the summary of the model --------------------------
 # How to intepret model results
@@ -322,10 +322,9 @@ anova(PODFinalJ)
 # as.factor(Year)    4  202.08 < 2.2e-16 ***
 
 anova(PODFinalM)
-# as.factor(Year)    4  16.6    0.0023 ** 
-# AvgDayMatM         2 199.4    <2e-16 ***
-# as.factor(Region)  1  98.7    <2e-16 ***
-
+#AvgDayMatM         2 200.0    <2e-16 ***
+#as.factor(Region)  1  72.4    <2e-16 ***
+#as.factor(Year)    4  10.5     0.033 *  
 
 filename = paste(saveWorkspace,'_Big_sexClasses_ModelSummary.txt',sep="")
 sink(filename)
