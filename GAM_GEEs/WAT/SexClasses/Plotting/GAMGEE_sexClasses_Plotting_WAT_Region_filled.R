@@ -27,12 +27,12 @@ library(plyr)
 source('C:/Users/nposd/Documents/GitHub/SeasonalityAnalysis/GAM_GEEs/GAMGEE_sexClasses_Plotting_Functions_RealProbs_HistAbove_filled.R')  #on Nat's computer
 
 # Load Workspace --------------------------------------------------
-region = 'South'
-site = "South"
+region = 'North'
+site = "North"
 GDrive = 'G'
 
 saveWorkspace = paste(GDrive,":/My Drive/WAT_TPWS_metadataReduced/SeasonalityAnalysis/",region,'/',sep="")
-fileName = paste(saveWorkspace,region,'_RegionSpecific_gamgeeOutput_sexClasses.RData',sep="")
+fileName = paste(saveWorkspace,region,'_Regional_gamgeeOutput_sexClasses.RData',sep="")
 load(fileName)
 GDrive = 'G'
 saveDir = paste(GDrive,":/My Drive/WAT_TPWS_metadataReduced/Plots/",region,'/',sep="")
@@ -61,11 +61,11 @@ for (i in 1:length(sexGroups)){
   
   # Plot Julian Day ---------------------------------------------------------
   if (region == 'South' & sex == 'Males'){
-    ggPlot_JD_AfterYear_WAT(PODFinal,SiteHourTableB,sex,COL)
+    ggPlot_JD_AfterYear_WAT(PODFinal,SiteHourTableB,site,sex,COL)
   }else if (region == 'North' & sex == 'Social Groups'){
-    ggPlot_JD_AfterYearB(PODFinal,SiteHourTableB,sex,COL)
+    ggPlot_JD_AfterYearSite(PODFinal,SiteHourTableB,site,sex,COL)
   }else if (region == 'North' & sex == 'Mid-Size' | region == 'North' & sex == 'Males'){
-    ggPlot_JD_sex(PODFinal,SiteHourTableB,sex,COL)
+    ggPlot_JD_sex(PODFinal,SiteHourTableB,site,sex,COL)
   }else{
     ggPlot_JD_Last(PODFinal,SiteHourTableB,region,sex,COL)
   }
@@ -76,11 +76,11 @@ for (i in 1:length(sexGroups)){
   }else{    
   if (length(unique(SiteHourTableB$Year)) > 4){
     if (sex == 'Social Groups'){
-    ggPlot_Year_WATT_north(PODFinal,SiteHourTableB,sex,COL)
+    ggPlot_Year_WATT_north(PODFinal,SiteHourTableB,site,sex,COL)
     }else{
-      ggPlot_Year_WATTT_north(PODFinal,SiteHourTableB,sex,COL)}
+      ggPlot_Year_WATTT_north(PODFinal,SiteHourTableB,site,sex,COL)}
     }else{
-      ggPlot_Year_WAT(PODFinal,SiteHourTableB,sex,COL)
+      ggPlot_Year_WAT(PODFinal,SiteHourTableB,site,sex,COL)
     }
   }
   

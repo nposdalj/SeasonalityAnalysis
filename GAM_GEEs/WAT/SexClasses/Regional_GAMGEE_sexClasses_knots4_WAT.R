@@ -399,8 +399,8 @@ anova(PODFinalF)
 
 #North
 # as.factor(Site)  4 318.32 < 2.2e-16 ***
-#   as.factor(Year)  4 191.06 < 2.2e-16 ***
-#   AvgDayMatF       2  21.96 1.703e-05 ***
+# as.factor(Year)  4 191.06 < 2.2e-16 ***
+# AvgDayMatF       2  21.96 7.7e-14 ***
   
 anova(PODFinalJ)
 #South
@@ -419,9 +419,9 @@ anova(PODFinalM)
 #AvgDayMatM       2 11.2    0.0038 ** 
 
 #North
-# AvgDayMatJ       2 163.921 < 2.2e-16 ***
-#   as.factor(Site)  4 180.302 < 2.2e-16 ***
-#   as.factor(Year)  4  21.696 0.0002304 ***
+#AvgDayMatM       2 150.2   < 2e-16 ***
+#as.factor(Site)  7 199.4   < 2e-16 ***
+#as.factor(Year)  4  32.2   1.7e-06 ***
 
 filename = paste(saveWorkspace,region,'_Regional_sexClasses_ModelSummary.txt',sep="")
 sink(filename)

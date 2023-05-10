@@ -1036,9 +1036,9 @@ ggPlot_Site_WATT <- function(model,table,site,sex,COL){
     BootstrapCoefs2[, 3],
     BootstrapCoefs2[, 4],
     BootstrapCoefs2[, 5],
-    BootstrapCoefs2[,6],
-    BootstrapCoefs2[,7],
-    BootstrapCoefs2[,8]),
+    BootstrapCoefs2[, 6],
+    BootstrapCoefs2[, 7],
+    BootstrapCoefs2[, 8]),
     as.factor(rep(1:8, each = 10000)))
   colnames(AdjustedSiteCoefs) = c("Coefficient", "Site")
   trans = c("BC","HAT_A","HAT_B","HZ","NC","NFC","OC","WC")
@@ -1101,9 +1101,9 @@ ggPlot_Site_WATTT <- function(model,table,site,sex,COL){
     BootstrapCoefs2[, 3],
     BootstrapCoefs2[, 4],
     BootstrapCoefs2[, 5],
-    BootstrapCoefs2[,6],
-    BootstrapCoefs2[,7],
-    BootstrapCoefs2[,8]),
+    BootstrapCoefs2[, 6],
+    BootstrapCoefs2[, 7],
+    BootstrapCoefs2[, 8]),
     as.factor(rep(1:8, each = 10000)))
   colnames(AdjustedSiteCoefs) = c("Coefficient", "Site")
   trans = c("BC","HAT_A","HAT_B","HZ","NC","NFC","OC","WC")
@@ -1235,7 +1235,7 @@ ggPlot_Year_WAT <- function(model, table,site,COL){
   names(trans) = c(1,2,3,4)
   AdjustedSiteCoefs$YearVal = trans[as.character(AdjustedSiteCoefs$Year)]
   
-  ggtitle = paste(saveDir,"/Year - ", site,"filled.pdf",sep="")
+  ggtitle = paste(saveDir,"/Year - ", site,'_',sex,"filled.pdf",sep="")
   
   pmain = ggplot(AdjustedSiteCoefs, aes(YearVal, Probability)
   ) + geom_boxplot(fill=COL
@@ -1359,7 +1359,7 @@ ggPlot_Year_WATT <- function(model, table,site,COL){
   names(trans) = c(1,2,3,4,5)
   AdjustedSiteCoefs$YearVal = trans[as.character(AdjustedSiteCoefs$Year)]
   
-  ggtitle = paste(saveDir,"/Year - ", site,"filled.pdf",sep="")
+  ggtitle = paste(saveDir,"/Year - ", site,'_',sex,"filled.pdf",sep="")
   
   pmain = ggplot(AdjustedSiteCoefs, aes(YearVal, Probability)
   ) + geom_boxplot(fill=COL
@@ -1395,9 +1395,9 @@ ggPlot_Year_WATT <- function(model, table,site,COL){
   print("Plot Saved")
 }
 
-ggPlot_Year_WATTT_north <- function(model, table,site,COL){
+ggPlot_Year_WATTT_north <- function(model,table,site,sex,COL){
   BootstrapParameters2<-rmvnorm(10000, coef(model),summary(model)$cov.unscaled)
-  start=8; end=11; Variable=table$Year
+  start=11; end=14; Variable=table$Year
   BootstrapCoefs2<-BootstrapParameters2[, c(1,start:end)]
   
   #Histogram for Year observations
@@ -1421,7 +1421,7 @@ ggPlot_Year_WATTT_north <- function(model, table,site,COL){
   names(trans) = c(1,2,3,4,5)
   AdjustedSiteCoefs$YearVal = trans[as.character(AdjustedSiteCoefs$Year)]
   
-  ggtitle = paste(saveDir,"/Year - ", site,"filled.pdf",sep="")
+  ggtitle = paste(saveDir,"/Year - ", site,'_',sex,"filled.pdf",sep="")
   
   pmain = ggplot(AdjustedSiteCoefs, aes(YearVal, Probability)
   ) + geom_boxplot(fill=COL
@@ -1457,9 +1457,9 @@ ggPlot_Year_WATTT_north <- function(model, table,site,COL){
   print("Plot Saved")
 }
 
-ggPlot_Year_WATT_north <- function(model, table,site,COL){
+ggPlot_Year_WATT_north <- function(model,table,site,sex,COL){
   BootstrapParameters2<-rmvnorm(10000, coef(model),summary(model)$cov.unscaled)
-  start=6; end=9; Variable=table$Year
+  start=9; end=12; Variable=table$Year
   BootstrapCoefs2<-BootstrapParameters2[, c(1,start:end)]
   
   #Histogram for Year observations
@@ -1483,7 +1483,7 @@ ggPlot_Year_WATT_north <- function(model, table,site,COL){
   names(trans) = c(1,2,3,4,5)
   AdjustedSiteCoefs$YearVal = trans[as.character(AdjustedSiteCoefs$Year)]
   
-  ggtitle = paste(saveDir,"/Year - ", site,"filled.pdf",sep="")
+  ggtitle = paste(saveDir,"/Year - ", site,'_',sex,"filled.pdf",sep="")
   
   pmain = ggplot(AdjustedSiteCoefs, aes(YearVal, Probability)
   ) + geom_boxplot(fill=COL
@@ -1545,7 +1545,7 @@ ggPlot_Year_WAT_first <- function(model, table,site,COL){
   names(trans) = c(1,2,3,4)
   AdjustedSiteCoefs$YearVal = trans[as.character(AdjustedSiteCoefs$Year)]
   
-  ggtitle = paste(saveDir,"/Year - ", site,"filled.pdf",sep="")
+  ggtitle = paste(saveDir,"/Year - ", site,'_',sex,"filled.pdf",sep="")
   
   pmain = ggplot(AdjustedSiteCoefs, aes(YearVal, Probability)
   ) + geom_boxplot(fill=COL
@@ -1608,7 +1608,7 @@ ggPlot_Year_WAT_Big <- function(model, table,site,COL){
   names(trans) = c(1,2,3,4,5)
   AdjustedSiteCoefs$YearVal = trans[as.character(AdjustedSiteCoefs$Year)]
   
-  ggtitle = paste(saveDir,"/Year - ", site,"filled.pdf",sep="")
+  ggtitle = paste(saveDir,"/Year - ", site,'_',sex,"filled.pdf",sep="")
   
   pmain = ggplot(AdjustedSiteCoefs, aes(YearVal, Probability)
   ) + geom_boxplot(fill=COL
@@ -1671,7 +1671,7 @@ ggPlot_Year_WATT_Big <- function(model, table,site,COL){
   names(trans) = c(1,2,3,4,5)
   AdjustedSiteCoefs$YearVal = trans[as.character(AdjustedSiteCoefs$Year)]
   
-  ggtitle = paste(saveDir,"/Year - ", site,"filled.pdf",sep="")
+  ggtitle = paste(saveDir,"/Year - ", site,'_',sex,"filled.pdf",sep="")
   
   pmain = ggplot(AdjustedSiteCoefs, aes(YearVal, Probability)
   ) + geom_boxplot(fill=COL
@@ -1734,7 +1734,7 @@ ggPlot_Year_WATTT_Big <- function(model, table,site,COL){
   names(trans) = c(1,2,3,4,5)
   AdjustedSiteCoefs$YearVal = trans[as.character(AdjustedSiteCoefs$Year)]
   
-  ggtitle = paste(saveDir,"/Year - ", site,"filled.pdf",sep="")
+  ggtitle = paste(saveDir,"/Year - ", site,'_',sex,"filled.pdf",sep="")
   
   pmain = ggplot(AdjustedSiteCoefs, aes(YearVal, Probability)
   ) + geom_boxplot(fill=COL
