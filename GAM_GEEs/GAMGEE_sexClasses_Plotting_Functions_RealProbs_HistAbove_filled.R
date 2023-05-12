@@ -24,7 +24,7 @@ ggPlot_JD_sex <- function(model,table,site,sex,COL){
   colnames(plotDF_labels) = c("Jday", "Fit")
   
   pmain = ggplot(plotDF_labels, aes(Jday, Fit),
-  ) + geom_smooth(fill = COL, colour = "black", aes(ymin=cis3[1,], ymax=cis3[2,]), stat ="identity",size = 1
+  ) + geom_smooth(fill = COL, colour = "black", aes(ymin=cis3[1,], ymax=cis3[2,]), stat ="identity",linewidth = 1
   ) + coord_cartesian(ylim = c(min(cis3[1,]), max(cis3[2,]))
   ) + labs(x = "Julian Day",
            y = "s(Julian Day)"
@@ -34,7 +34,7 @@ ggPlot_JD_sex <- function(model,table,site,sex,COL){
 
             axis.line = element_line(),
             panel.background = element_blank(),
-            text = element_text(size = 25)
+            text = element_text(size = 35)
   )
   # xens = axis_canvas(pmain, axis = "x")+
   #   geom_bar(data = plothist,
@@ -59,7 +59,7 @@ ggPlot_JD_sex <- function(model,table,site,sex,COL){
   
 }
 
-ggPlot_JD_AfterYear_WAT <- function(model, table,sex,COL){
+ggPlot_JD_AfterYear_WAT <- function(model,table,site,sex,COL){
   BootstrapParameters3<-rmvnorm(10000, coef(model),summary(model)$cov.unscaled)
   start=5; finish=6; Variable=table$Julian;  
   PlottingVar3<-seq(min(Variable), max(Variable), length=5000)
@@ -83,7 +83,7 @@ ggPlot_JD_AfterYear_WAT <- function(model, table,sex,COL){
   colnames(plotDF_labels) = c("Jday", "Fit")
   
   pmain = ggplot(plotDF_labels, aes(Jday, Fit),
-  ) + geom_smooth(fill = COL, colour = "black", aes(ymin=cis3[1,], ymax=cis3[2,]), stat ="identity",size = 1
+  ) + geom_smooth(fill = COL, colour = "black", aes(ymin=cis3[1,], ymax=cis3[2,]), stat ="identity",linewidth = 1
   ) + coord_cartesian(ylim = c(min(cis3[1,]), max(cis3[2,]))
   ) + labs(x = "Julian Day",
            y = "s(Julian Day)"
@@ -93,7 +93,7 @@ ggPlot_JD_AfterYear_WAT <- function(model, table,sex,COL){
 
             axis.line = element_line(),
             panel.background = element_blank(),
-            text = element_text(size = 25)
+            text = element_text(size = 35)
   )
   # xens = axis_canvas(pmain, axis = "x")+
   #   geom_bar(data = plothist,
@@ -143,7 +143,7 @@ ggPlot_JD_SG_WATBIG <- function(model,table,site,sex,COL){
   colnames(plotDF_labels) = c("Jday", "Fit")
   
   pmain = ggplot(plotDF_labels, aes(Jday, Fit),
-  ) + geom_smooth(fill = COL, colour = "black", aes(ymin=cis3[1,], ymax=cis3[2,]), stat ="identity",size = 1
+  ) + geom_smooth(fill = COL, colour = "black", aes(ymin=cis3[1,], ymax=cis3[2,]), stat ="identity",linewidth = 1
   ) + coord_cartesian(ylim = c(min(cis3[1,]), max(cis3[2,]))
   ) + labs(x = "Julian Day",
            y = "s(Julian Day)"
@@ -152,7 +152,7 @@ ggPlot_JD_SG_WATBIG <- function(model,table,site,sex,COL){
             axis.text.x=element_blank(),
             axis.line = element_line(),
             panel.background = element_blank(),
-            text = element_text(size = 25))
+            text = element_text(size = 35))
   ggdraw(pmain)
   
   ggtitle = paste(saveDir,"/Julian Day - ", site,'_',sex,"filled.pdf",sep="")
@@ -190,7 +190,7 @@ ggPlot_JD_Last <- function(model,table,site,sex,COL){
   colnames(plotDF_labels) = c("Jday", "Fit")
   
   pmain = ggplot(plotDF_labels, aes(Jday, Fit),
-  ) + geom_smooth(fill = COL, colour = "black", aes(ymin=cis3[1,], ymax=cis3[2,]), stat ="identity",size = 1
+  ) + geom_smooth(fill = COL, colour = "black", aes(ymin=cis3[1,], ymax=cis3[2,]), stat ="identity",linewidth = 1
   ) + coord_cartesian(ylim = c(min(cis3[1,]), max(cis3[2,]))
   ) + labs(x = "Julian Day",
            y = "s(Julian Day)"
@@ -200,7 +200,7 @@ ggPlot_JD_Last <- function(model,table,site,sex,COL){
 
             axis.line = element_line(),
             panel.background = element_blank(),
-            text = element_text(size = 25)
+            text = element_text(size = 35)
   )
   # xens = axis_canvas(pmain, axis = "x")+
   #   geom_bar(data = plothist,
@@ -250,7 +250,7 @@ ggPlot_JD_WATBIG <- function(model,table,site,sex,COL){
   colnames(plotDF_labels) = c("Jday", "Fit")
   
   pmain = ggplot(plotDF_labels, aes(Jday, Fit),
-  ) + geom_smooth(fill = COL, colour = "black", aes(ymin=cis3[1,], ymax=cis3[2,]), stat ="identity",size = 1
+  ) + geom_smooth(fill = COL, colour = "black", aes(ymin=cis3[1,], ymax=cis3[2,]), stat ="identity",linewidth = 1
   ) + coord_cartesian(ylim = c(min(cis3[1,]), max(cis3[2,]))
   ) + labs(x = "Julian Day",
            y = "s(Julian Day)"
@@ -260,7 +260,7 @@ ggPlot_JD_WATBIG <- function(model,table,site,sex,COL){
 
             axis.line = element_line(),
             panel.background = element_blank(),
-            text = element_text(size = 25)
+            text = element_text(size = 35)
   )
   # xens = axis_canvas(pmain, axis = "x")+
   #   geom_bar(data = plothist,
@@ -313,7 +313,7 @@ ggPlot_JD_AfterYear <- function(model,table,site,sex,COL){
   colnames(plotDF_labels) = c("Jday", "Fit")
   
   pmain = ggplot(plotDF_labels, aes(Jday, Fit),
-  ) + geom_smooth(fill = COL, colour = "black", aes(ymin=cis3[1,], ymax=cis3[2,]), stat ="identity",size = 1
+  ) + geom_smooth(fill = COL, colour = "black", aes(ymin=cis3[1,], ymax=cis3[2,]), stat ="identity",linewidth = 1
   ) + coord_cartesian(ylim = c(min(cis3[1,]), max(cis3[2,]))
   ) + labs(x = "Julian Day",
            y = "s(Julian Day)"
@@ -323,7 +323,7 @@ ggPlot_JD_AfterYear <- function(model,table,site,sex,COL){
 
             axis.line = element_line(),
             panel.background = element_blank(),
-            text = element_text(size = 25)
+            text = element_text(size = 35)
   )
   # xens = axis_canvas(pmain, axis = "x")+
   #   geom_bar(data = plothist,
@@ -375,7 +375,7 @@ ggPlot_JD_AfterSite <- function(model,table,site,sex,COL){
   ggtitle = paste(saveDir,"/Julian Day - ", site,'_',sex,"filled.pdf",sep="")
   
   pmain = ggplot(plotDF_labels, aes(Jday, Fit),
-  ) + geom_smooth(fill = COL, colour = "black", aes(ymin=cis3[1,], ymax=cis3[2,]), stat ="identity",size = 1
+  ) + geom_smooth(fill = COL, colour = "black", aes(ymin=cis3[1,], ymax=cis3[2,]), stat ="identity",linewidth = 1
   ) + coord_cartesian(ylim = c(min(cis3[1,]), max(cis3[2,]))
   ) + labs(x = "Julian Day",
            y = "s(Julian Day)"
@@ -385,7 +385,7 @@ ggPlot_JD_AfterSite <- function(model,table,site,sex,COL){
 
             axis.line = element_line(),
             panel.background = element_blank(),
-            text = element_text(size = 25)
+            text = element_text(size = 35)
   )
   # xens = axis_canvas(pmain, axis = "x")+
   #   geom_bar(data = plothist,
@@ -435,7 +435,7 @@ ggPlot_JD_AfterYearSite <- function(model,table,site,sex,COL){
   ggtitle = paste(saveDir,"/Julian Day - ", site,'_',sex,"filled.pdf",sep="")
   
   pmain = ggplot(plotDF_labels, aes(Jday, Fit),
-  ) + geom_smooth(fill = COL, colour = "black", aes(ymin=cis3[1,], ymax=cis3[2,]), stat ="identity",size = 1
+  ) + geom_smooth(fill = COL, colour = "black", aes(ymin=cis3[1,], ymax=cis3[2,]), stat ="identity",linewidth = 1
   ) + coord_cartesian(ylim = c(min(cis3[1,]), max(cis3[2,]))
   ) + labs(x = "Julian Day",
            y = "s(Julian Day)"
@@ -445,7 +445,7 @@ ggPlot_JD_AfterYearSite <- function(model,table,site,sex,COL){
 
             axis.line = element_line(),
             panel.background = element_blank(),
-            text = element_text(size = 25)
+            text = element_text(size = 35)
   )
   # xens = axis_canvas(pmain, axis = "x")+
   #   geom_bar(data = plothist,
@@ -494,7 +494,7 @@ ggPlot_JD_AfterYearB <- function(model,table,site,sex,COL){
   colnames(plotDF_labels) = c("Jday", "Fit")
   
   pmain = ggplot(plotDF_labels, aes(Jday, Fit),
-  ) + geom_smooth(fill = COL, colour = "black", aes(ymin=cis3[1,], ymax=cis3[2,]), stat ="identity",size = 1
+  ) + geom_smooth(fill = COL, colour = "black", aes(ymin=cis3[1,], ymax=cis3[2,]), stat ="identity",linewidth = 1
   ) + coord_cartesian(ylim = c(min(cis3[1,]), max(cis3[2,]))
   ) + labs(x = "Julian Day",
            y = "s(Julian Day)"
@@ -504,7 +504,7 @@ ggPlot_JD_AfterYearB <- function(model,table,site,sex,COL){
 
             axis.line = element_line(),
             panel.background = element_blank(),
-            text = element_text(size = 25)
+            text = element_text(size = 35)
   )
   # xens = axis_canvas(pmain, axis = "x")+
   #   geom_bar(data = plothist,
@@ -568,7 +568,7 @@ ggPlot_Year <- function(model, table,site,COL){
 
             axis.line = element_line(),
             panel.background = element_blank(),
-            text = element_text(size = 25)
+            text = element_text(size = 35)
   ) + scale_x_discrete(labels = c("2011","2012","2013","2014","2015","2017","2018","2019")
   ) + labs(x = "Year",
            y = "s(Year)")
@@ -635,7 +635,7 @@ ggPlot_Year_AfterJD <- function(model,table,site,COL){
 
             axis.line = element_line(),
             panel.background = element_blank(),
-            text = element_text(size = 25)
+            text = element_text(size = 35)
   ) + scale_x_discrete(labels = c("2011","2012","2013","2014","2015","2017","2018","2019")
   ) + labs(x = "Year",
            y = "s(Year)")
@@ -702,7 +702,7 @@ ggPlot_Year_Big <- function(model, table,site,COL){
 
             axis.line = element_line(),
             panel.background = element_blank(),
-            text = element_text(size = 25)
+            text = element_text(size = 35)
   ) + scale_x_discrete(labels = c("2010","2011","2012","2013","2014","2015","2017","2018","2019")
   ) + labs(x = "Year",
            y = "s(Year)")
@@ -759,7 +759,7 @@ pmain = ggplot(AdjustedSiteCoefs, aes(SiteName, Coefficient)
           axis.title.y=element_blank(),
           axis.line = element_line(),
           panel.background = element_blank(),
-          text = element_text(size = 25)
+          text = element_text(size = 35)
 ) + scale_x_discrete(labels = c("BD","KS")
 ) + labs(x = "Site",
          y = "s(Site)")
@@ -819,7 +819,7 @@ ggPlot_Site_Year <- function(model,table,sex,COL){
 
             axis.line = element_line(),
             panel.background = element_blank(),
-            text = element_text(size = 25)
+            text = element_text(size = 35)
   ) + scale_x_discrete(labels = c("AB","CB","KOA","PT","QN")
   ) + labs(x = "Site",
            y = "s(Site)")
@@ -881,7 +881,7 @@ ggPlot_Site_WAT <- function(model,table,site,sex,COL){
 
             axis.line = element_line(),
             panel.background = element_blank(),
-            text = element_text(size = 25)
+            text = element_text(size = 35)
   ) + scale_x_discrete(labels = c("GS","BP","BS","JAX")
   ) + labs(x = "Site",
            y = "s(Site)")
@@ -937,7 +937,7 @@ ggPlot_Region_WAT <- function(model,table,site,sex,COL){
 
             axis.line = element_line(),
             panel.background = element_blank(),
-            text = element_text(size = 25)
+            text = element_text(size = 35)
   ) + scale_x_discrete(labels = c("North","South")
   ) + labs(x = "Region",
            y = "s(Region)")
@@ -993,7 +993,7 @@ ggPlot_Region_WAT_last <- function(model,table,site,sex,COL){
 
             axis.line = element_line(),
             panel.background = element_blank(),
-            text = element_text(size = 25)
+            text = element_text(size = 35)
   ) + scale_x_discrete(labels = c("North","South")
   ) + labs(x = "Region",
            y = "s(Region)")
@@ -1058,7 +1058,7 @@ ggPlot_Site_WATT <- function(model,table,site,sex,COL){
 
             axis.line = element_line(),
             panel.background = element_blank(),
-            text = element_text(size = 25)
+            text = element_text(size = 35)
   ) + scale_x_discrete(labels = c("HZ","OC","NC","BC","WC")
   ) + labs(x = "Site",
            y = "s(Site)")
@@ -1122,7 +1122,7 @@ ggPlot_Site_WATTT <- function(model,table,site,sex,COL){
 
             axis.line = element_line(),
             panel.background = element_blank(),
-            text = element_text(size = 25)
+            text = element_text(size = 35)
   ) + scale_x_discrete(labels = c("HZ","OC","NC","BC","WC")
   ) + labs(x = "Site",
            y = "s(Site)")
@@ -1181,7 +1181,7 @@ ggPlot_Site_AfterYear <- function(model,table,sex,COL){
 
             axis.line = element_line(),
             panel.background = element_blank(),
-            text = element_text(size = 25)
+            text = element_text(size = 35)
   ) + scale_x_discrete(labels = c("AB","CB","KOA","PT","QN")
   ) + labs(x = "Site",
            y = "s(Site)")
@@ -1210,7 +1210,7 @@ ggPlot_Site_AfterYear <- function(model,table,sex,COL){
 
 #For WAT
 #Year is second term
-ggPlot_Year_WAT <- function(model, table,site,COL){
+ggPlot_Year_WAT <- function(model,table,site,sex,COL){
   BootstrapParameters2<-rmvnorm(10000, coef(model),summary(model)$cov.unscaled)
   start=4; end=6; Variable=table$Year
   BootstrapCoefs2<-BootstrapParameters2[, c(1,start:end)]
@@ -1244,7 +1244,7 @@ ggPlot_Year_WAT <- function(model, table,site,COL){
 
             axis.line = element_line(),
             panel.background = element_blank(),
-            text = element_text(size = 25)
+            text = element_text(size = 35)
   ) + scale_x_discrete(labels = c("2016","2017","2018","2019")
   ) + labs(x = "Year",
            y = "s(Year)")
@@ -1306,7 +1306,7 @@ ggPlot_Year_WAT_regional <- function(model, table,site,sex,COL){
 
             axis.line = element_line(),
             panel.background = element_blank(),
-            text = element_text(size = 25)
+            text = element_text(size = 35)
   ) + scale_x_discrete(labels = c("2016","2017","2018","2019")
   ) + labs(x = "Year",
            y = "s(Year)")
@@ -1333,7 +1333,7 @@ ggPlot_Year_WAT_regional <- function(model, table,site,sex,COL){
   print("Plot Saved")
 }
 
-ggPlot_Year_WATT <- function(model, table,site,COL){
+ggPlot_Year_WATT <- function(model,table,site,sex,COL){
   BootstrapParameters2<-rmvnorm(10000, coef(model),summary(model)$cov.unscaled)
   start=4; end=7; Variable=table$Year
   BootstrapCoefs2<-BootstrapParameters2[, c(1,start:end)]
@@ -1368,22 +1368,11 @@ ggPlot_Year_WATT <- function(model, table,site,COL){
 
             axis.line = element_line(),
             panel.background = element_blank(),
-            text = element_text(size = 25)
+            text = element_text(size = 35)
   ) + scale_x_discrete(labels = c("2015","2016","2017","2018","2019")
   ) + labs(x = "Year",
            y = "s(Year)")
   
-  # xens = axis_canvas(pmain, axis = "x")+
-  #   geom_bar(data = counts,
-  #            aes(x,freq),
-  #            fill = 4,
-  #            alpha = 0.2,
-  #            #position = "dodge",
-  #            stat = "identity",
-  #            width = 1) + scale_x_discrete(labels = c("2015", "2016","2017","2018","2019")
-  #            )
-  # 
-  # p1 = insert_xaxis_grob(pmain,xens,grid::unit(.2, "null"), position = "top")
   ggdraw(pmain)
   
   ggsave(
@@ -1430,7 +1419,7 @@ ggPlot_Year_WATTT_north <- function(model,table,site,sex,COL){
 
             axis.line = element_line(),
             panel.background = element_blank(),
-            text = element_text(size = 25)
+            text = element_text(size = 35)
   ) + scale_x_discrete(labels = c("2015","2016","2017","2018","2019")
   ) + labs(x = "Year",
            y = "s(Year)")
@@ -1492,7 +1481,7 @@ ggPlot_Year_WATT_north <- function(model,table,site,sex,COL){
 
             axis.line = element_line(),
             panel.background = element_blank(),
-            text = element_text(size = 25)
+            text = element_text(size = 35)
   ) + scale_x_discrete(labels = c("2015","2016","2017","2018","2019")
   ) + labs(x = "Year",
            y = "s(Year)")
@@ -1554,7 +1543,7 @@ ggPlot_Year_WAT_first <- function(model, table,site,COL){
 
             axis.line = element_line(),
             panel.background = element_blank(),
-            text = element_text(size = 25)
+            text = element_text(size = 35)
   ) + scale_x_discrete(labels = c("2016","2017","2018","2019")
   ) + labs(x = "Year",
            y = "s(Year)")
@@ -1617,7 +1606,7 @@ ggPlot_Year_WAT_Big <- function(model, table,site,COL){
 
             axis.line = element_line(),
             panel.background = element_blank(),
-            text = element_text(size = 25)
+            text = element_text(size = 35)
   ) + scale_x_discrete(labels = c("2015","2016","2017","2018","2019")
   ) + labs(x = "Year",
            y = "s(Year)")
@@ -1680,7 +1669,7 @@ ggPlot_Year_WATT_Big <- function(model, table,site,COL){
 
             axis.line = element_line(),
             panel.background = element_blank(),
-            text = element_text(size = 25)
+            text = element_text(size = 35)
   ) + scale_x_discrete(labels = c("2015","2016","2017","2018","2019")
   ) + labs(x = "Year",
            y = "s(Year)")
@@ -1743,7 +1732,7 @@ ggPlot_Year_WATTT_Big <- function(model, table,site,COL){
 
             axis.line = element_line(),
             panel.background = element_blank(),
-            text = element_text(size = 25)
+            text = element_text(size = 35)
   ) + scale_x_discrete(labels = c("2015","2016","2017","2018","2019")
   ) + labs(x = "Year",
            y = "s(Year)")

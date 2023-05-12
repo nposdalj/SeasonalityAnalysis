@@ -21,6 +21,8 @@ library(splines2)       # to use mSpline for the GEEs
 library(scales)
 library(magick)
 library(cowplot)
+library(ggExtra)
+library(plyr)
 
 #load functions
 source('C:/Users/nposd/Documents/GitHub/SeasonalityAnalysis/GAM_GEEs/GAMGEE_Plotting_Functions_RealProbs_HistAbove_filled.R')  #on Nat's computer
@@ -40,17 +42,23 @@ SiteHourTableB = SiteHourTable[!(SiteHourTableB$Julian==366),] #If it's a leap y
 SiteHourTableB$Year = as.factor(SiteHourTableB$Year) #Change year to categorical variable for plotting histograms
 
 if (region == 'North'){
-#Site
-ggPlot_Site_WATN(PODFinal,SiteHourTableB,region)
-#JulianDay
-ggPlot_JD_AfterYear_WAT_2015(PODFinal,SiteHourTableB,region)
-#Year
-ggPlot_Year_Regional(PODFinal,SiteHourTableB,region)}
+  #Site
+  ggPlot_Site_WATN(PODFinal,SiteHourTableB,region)
+  #Julian Day
+  ggPlot_JD_AfterYear_WAT_2015(PODFinal,SiteHourTableB,region)
+  #Plot Julian Day again with effort
+  ggPlot_JD_AfterYear_WAT_2015_wEff(PODFinal,SiteHourTableB,region)
+  #Year
+  ggPlot_Year_Regional(PODFinal,SiteHourTableB,region)}
 
 if (region == 'South'){
-#Site
+  #Site
   ggPlot_Site_WATS(PODFinal,SiteHourTableB,region)
-#JulianDay
+  #Julian Day
   ggPlot_JD_AfterYear_WAT(PODFinal,SiteHourTableB,region)
-#Year
-ggPlot_Year_WATS(PODFinal,SiteHourTableB,region)}
+  #Plot Julian Day again with effort
+  ggPlot_JD_AfterYear_WAT_wEff(PODFinal,SiteHourTableB,region)
+  #Year
+  ggPlot_Year_WATS(PODFinal,SiteHourTableB,region)}
+
+

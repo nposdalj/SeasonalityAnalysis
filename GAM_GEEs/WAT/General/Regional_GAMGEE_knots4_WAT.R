@@ -23,7 +23,7 @@ library(ChemoSpecUtils)
 library(car)            # to run an ANOVA
 library(splines2)       # to use mSpline for the GEEs
 
-region = 'North' #specify the region of interest
+region = 'South' #specify the region of interest
 Region = 'WAT'
 GDrive= 'G'
 
