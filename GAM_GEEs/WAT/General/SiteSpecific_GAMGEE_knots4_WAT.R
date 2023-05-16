@@ -25,7 +25,7 @@ library(splines2)       # to use mSpline for the GEEs
 library(ggfortify)      # extract confidence interval for ACF plots
 library(lubridate)      # to adjust dates
 
-site = 'JAX' #specify the site of interest 
+site = 'HAT_B' #specify the site of interest 
 
 # Step 1: Load the Data -----------------------------------------------------------
 GDir = 'G'
@@ -65,11 +65,16 @@ BlockMod<-glm(PreAbs~
                as.factor(Year)
              ,data=SiteHourTable,family=binomial)
 
-ACF = acf(residuals(BlockMod),lag.max = 50)
+ACF = acf(residuals(BlockMod),lag.max = 100)
 CI = ggfortify:::confint.acf(ACF)
 ACFidx = which(ACF[["acf"]] < CI, arr.ind=TRUE)
-ACFval = ACFidx[1] #<---- check this value to make sure it's reasonable (<600)
-
+if (site == 'NFC'){
+  ACFval = 81
+} else 
+ if (site == 'HAT_B'){
+  ACFval = 100
+} else { 
+  ACFval = ACFidx[1] } #<---- check this value to make sure it's reasonable (<600)
 #create the blocks based on the full timeseries
 startDate = SiteHourTable$tbin[1]
 endDate = SiteHourTable$tbin[nrow(SiteHourTable)]
@@ -138,6 +143,20 @@ summary(BlockMod)
 # TimeLost               0.1  1       0.76    
 # as.factor(Year)      103.2  3     <2e-16 ***
 
+#NFC
+# bs(Julian, k = 4)     2178  4     <2e-16 ***
+#   TimeLost               107  1     <2e-16 ***
+#   as.factor(Year)        825  3     <2e-16 ***
+  
+#HAT_A
+# bs(Julian, k = 4)   461.18  4  < 2.2e-16 ***
+#   TimeLost             15.17  1  9.809e-05 ***
+#   as.factor(Year)     127.09  2  < 2.2e-16 ***
+  
+#HAT_B
+# bs(Julian, k = 4)     2210  4     <2e-16 ***
+#   TimeLost               177  1     <2e-16 ***
+#   as.factor(Year)        123  2     <2e-16 ***
 # Step 4: Data Exploration and Initial Analysis ---------------------------
 # Follow data exploration protocols suggested by Zuur et al. (2010), Zuur (2012), to generate pair plots, box plots, and assess collinearity between covariates in the dataset using Varinace Inflation Factors (vif).
 # Basic model for VIF analysis:
@@ -189,6 +208,21 @@ summary(BlockMod)
 # TimeLost        1.00  1            1.00
 # as.factor(Year) 2.55  3            1.17
 
+#NFC
+# bs(Julian)      1.337  3           1.050
+# TimeLost        1.029  1           1.015
+# as.factor(Year) 1.342  3           1.050
+  
+#HAT_A
+# bs(Julian)      1.889748  3        1.111904
+# TimeLost        1.015995  1        1.007966
+# as.factor(Year) 1.877465  2        1.170558
+  
+#HAT_B
+# bs(Julian)      1.578  3           1.079
+# TimeLost        1.042  1           1.021
+# as.factor(Year) 1.604  2           1.125
+  
 # Step 5: Model Selection - Covariate/variable Preparation -------------------------
 
 # Construct variance-covariance matrices for cyclic covariates:
@@ -274,7 +308,24 @@ POD0<-geeglm(PreAbs ~ 1, family = binomial, corstr="ar1", id=Blocks, data=SiteHo
   # QIC3A   6000.25899926762 5860.23861537633 5953.00008800914 5925.57746064399
   # Final model: jday then year
   
-
+  #NFC
+  # QIC            QIC.1            QIC.2            QIC.3
+  # model3A             POD0            POD3a            POD3b            POD3c
+  # QIC3A   29075.5070512403 25595.7986263264 27540.5399804875 26265.5741963022
+  # Final model: jday then year
+  
+  #HAT_A
+  # QIC            QIC.1           QIC.2            QIC.3
+  # model3A             POD0            POD3a           POD3b            POD3c
+  # QIC3A   11385.9045841548 11111.6566800046 11345.316736992 11191.6527660586
+  # Final model: jday then year
+  
+  #HAT_B
+  # QIC            QIC.1            QIC.2           QIC.3
+  # model3A             POD0            POD3a            POD3b           POD3c
+  # QIC3A   22121.3348952683 19868.4230327762 22110.3826171153 19835.300641611
+  #Final model: w/o year
+  
 # Step 7: Finalize Model ----------------------------------------
   
 
@@ -295,7 +346,7 @@ if (site == 'NC'){
   dimnames(AvgDayMat)<-list(NULL,c("ADBM1", "ADBM2"))
   PODFinal = geeglm(PreAbs ~ AvgDayMat+as.factor(Year),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
 }
-if (site == ('HZ')){
+if (site == 'HZ'||site == 'HAT_B'){
   dimnames(AvgDayMat)<-list(NULL,c("ADBM1", "ADBM2"))
   PODFinal = geeglm(PreAbs ~ AvgDayMat,family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
 }
@@ -315,6 +366,10 @@ if (site == 'JAX'){
   dimnames(AvgDayMat)<-list(NULL,c("ADBM1", "ADBM2"))
   PODFinal = geeglm(PreAbs ~ AvgDayMat+as.factor(Year),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
 }
+if (site == 'HAT_A'||site == 'NFC'){
+    dimnames(AvgDayMat)<-list(NULL,c("ADBM1", "ADBM2"))
+    PODFinal = geeglm(PreAbs ~ AvgDayMat+as.factor(Year),family = binomial, corstr="ar1", id=Blocks, data=SiteHourTableB)
+  }
 # STEP 8: Interpreting the summary of the model --------------------------
 # How to interpret model results
 # Standard error - robust estimate - provides reasonable variance estimates even when the specified correlation model is in correct
@@ -365,6 +420,17 @@ anova(PODFinal)
   # JAX
   # AvgDayMat        2 20.5   3.6e-05 ***
   # as.factor(Year)  3 17.3   0.00062 ***
+  
+  #NFC
+  #AvgDayMat        2 150.776 < 2.2e-16 ***
+  #as.factor(Year)  3  51.958 3.057e-11 ***
+  
+  #HAT_A
+  # AvgDayMat        2 24.5258 4.724e-06 ***
+  # as.factor(Year)  2  8.4796   0.01441 * 
+  
+  #HAT_B 
+  # AvgDayMat  2 103    <2e-16 ***
   
 #Save model output
 filename = paste(saveWorkspace,site,'_SiteSpecificModelSummary.txt',sep="")

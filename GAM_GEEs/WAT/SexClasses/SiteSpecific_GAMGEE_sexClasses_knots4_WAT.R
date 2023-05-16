@@ -97,6 +97,9 @@ ACFM = acf(residuals(BlockModM), lag.max = 2000, ylim=c(0,0.1))
 CIM = ggfortify:::confint.acf(ACFM)
 ACFidxM = which(ACFM[["acf"]] < CIM, arr.ind=TRUE)
 ACFvalM = ACFidxM[1]
+if (site == 'HAT_B'){
+  ACFvalM = 46
+}
 
 #create the blocks based on the full timesereies
 startDate = SiteHourTable$tbin[1]
