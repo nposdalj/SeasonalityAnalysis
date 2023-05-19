@@ -75,19 +75,13 @@ if (sex == 'Social Groups'){
             site == 'BP' & sex == 'Mid-Size' | site == 'JAX' & sex == 'Mid-Size' | site == 'JAX' & sex == 'Males' | site == 'NFC' & sex == 'Males'){
     ggPlot_Year_WAT_first(PODFinal,SiteHourTableB,site,sex,COL)
   }else{    
-    if (length(unique(SiteHourTableB$Year)) > 4){
-<<<<<<< Updated upstream
+    }if (length(unique(SiteHourTableB$Year)) > 4){
     ggPlot_Year_WATT(PODFinal,SiteHourTableB,sex,COL)
-    } else if{ 
-    }else{
-    ggPlot_Year_WAT(PODFinal,SiteHourTableB,sex,COL)
-=======
-    ggPlot_Year_WATT(PODFinal,SiteHourTableB,site,sex,COL)
     }else if (length(unique(SiteHourTableB$Year)) == 3){
       ggPlot_Year_HAT_A(PODFinal,SiteHourTableB,site,sex,COL)
+    }else if {
       }else{
     ggPlot_Year_WAT(PODFinal,SiteHourTableB,site,sex,COL)
->>>>>>> Stashed changes
     }
   }
 }
