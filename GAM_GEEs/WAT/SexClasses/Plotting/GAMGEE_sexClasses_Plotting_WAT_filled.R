@@ -77,6 +77,7 @@ if (sex == 'Social Groups'){
   }else{    
     if (length(unique(SiteHourTableB$Year)) > 4){
     ggPlot_Year_WATT(PODFinal,SiteHourTableB,sex,COL)
+    } else if{ 
     }else{
     ggPlot_Year_WAT(PODFinal,SiteHourTableB,sex,COL)
     }
