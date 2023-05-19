@@ -830,13 +830,9 @@ QICmod3mA
 if(site == 'BC' || site =='WC' || site =='GS' || site == 'HAT_A'){
   dimnames(AvgDayMatF)<-list(NULL,c("ADBM1", "ADBM2"))
   PODFinalF = geeglm(PreAbsF ~ as.factor(Year)+AvgDayMatF,family = binomial, corstr="ar1", id=BlocksF, data=SiteHourTableB)
-<<<<<<< Updated upstream
-}else 
-  
-if(site == 'BP' || site == 'HAT_B'){
-=======
+
 }else if(site == 'BP'){
->>>>>>> Stashed changes
+
   dimnames(AvgDayMatF)<-list(NULL,c("ADBM1", "ADBM2"))
   PODFinalF = geeglm(PreAbsF ~ as.factor(Year),family = binomial, corstr="ar1", id=BlocksF, data=SiteHourTableB)
 }else{
