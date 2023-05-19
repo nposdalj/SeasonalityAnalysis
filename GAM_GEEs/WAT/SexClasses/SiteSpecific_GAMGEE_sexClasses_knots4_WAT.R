@@ -630,7 +630,7 @@ QICmod3fA
 # model3fA            POD0f           POD3fa           POD3fb           POD3fc
 # QIC3fA   3064.12351498155 2991.08287999107 3045.96122150695 2990.92489010083
 #Full model is best
-#Model Order -Year, Julian Day
+#Model Order -Julian Day, Year
 
 #HAT_B
 # QIC            QIC.1            QIC.2            QIC.3
@@ -830,9 +830,13 @@ QICmod3mA
 if(site == 'BC' || site =='WC' || site =='GS' || site == 'HAT_A'){
   dimnames(AvgDayMatF)<-list(NULL,c("ADBM1", "ADBM2"))
   PODFinalF = geeglm(PreAbsF ~ as.factor(Year)+AvgDayMatF,family = binomial, corstr="ar1", id=BlocksF, data=SiteHourTableB)
+<<<<<<< Updated upstream
 }else 
   
 if(site == 'BP' || site == 'HAT_B'){
+=======
+}else if(site == 'BP'){
+>>>>>>> Stashed changes
   dimnames(AvgDayMatF)<-list(NULL,c("ADBM1", "ADBM2"))
   PODFinalF = geeglm(PreAbsF ~ as.factor(Year),family = binomial, corstr="ar1", id=BlocksF, data=SiteHourTableB)
 }else{

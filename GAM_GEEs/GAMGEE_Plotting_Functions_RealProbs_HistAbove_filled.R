@@ -730,6 +730,65 @@ ggPlot_Year_WAT_2015 <- function(model, table,site){
   } # close graphics device
   print("Plot Saved")
 }
+ggPlot_Year_HAT_A_2015 <- function(model, table,site){
+  BootstrapParameters2<-rmvnorm(10000, coef(model),summary(model)$cov.unscaled)
+  start=4; end=5; Variable=table$Year
+  BootstrapCoefs2<-BootstrapParameters2[, c(1,start:end)]
+  
+  #Histogram for Year observations
+  counts = count(SiteHourTableB$Year)
+  counts$x = as.character(counts$x)
+  counts$freq = as.numeric(counts$freq)
+  counts$days = round(counts$freq/12)
+  counts$label = '*'
+  counts$label[counts$days > 365] <- ' ' 
+  
+  #Center intercept (1st level of year factor) at 0 and show other levels relative to it
+  AdjustedSiteCoefs = data.frame(  c(
+    BootstrapCoefs2[, 1] - mean(BootstrapCoefs2[, 1]),
+    BootstrapCoefs2[, 2],
+    BootstrapCoefs2[, 3]),
+    as.factor(rep(1:3, each = 10000)))
+  colnames(AdjustedSiteCoefs) = c("Probability", "Year")
+  trans = c("2015","2016","2017")
+  names(trans) = c(1,2,3)
+  AdjustedSiteCoefs$YearVal = trans[as.character(AdjustedSiteCoefs$Year)]
+  
+  ggtitle = paste(saveDir,"/Year - ", site,"filled.pdf",sep="")
+  
+  pmain = ggplot(AdjustedSiteCoefs, aes(YearVal, Probability)
+  ) + geom_boxplot(fill=COL
+  ) + theme(axis.title.x=element_blank(),
+            axis.text.x=element_blank(),
+            
+            axis.line = element_line(),
+            panel.background = element_blank(),
+            text = element_text(size = 35)
+  ) + scale_x_discrete(labels = c("2015","2016","2017")
+  ) + labs(x = "Year",
+           y = "s(Year)")
+  
+  # xens = axis_canvas(pmain, axis = "x")+
+  #   geom_bar(data = counts,
+  #            aes(x,freq),
+  #            fill = 4,
+  #            alpha = 0.2,
+  #            #position = "dodge",
+  #            stat = "identity",
+  #            width = 1) + scale_x_discrete(labels = c("2015","2016","2017","2018","2019")
+  #            )
+  # 
+  # p1 = insert_xaxis_grob(pmain,xens,grid::unit(.2, "null"), position = "top")
+  ggdraw(pmain)
+  
+  ggsave(
+    ggtitle, width = 7, height = 6, units = "in",
+    device = "pdf") # save figure
+  while (dev.cur() > 1) {
+    dev.off()
+  } # close graphics device
+  print("Plot Saved")
+}
 
 #For WAT Big Model when year is after JD and it goes from 2015 to 2019
 ggPlot_Year_WAT_BigM <- function(model, table,site,COL){

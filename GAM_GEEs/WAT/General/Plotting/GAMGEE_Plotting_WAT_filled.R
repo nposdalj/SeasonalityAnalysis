@@ -28,10 +28,10 @@ library(plyr)
 source('C:/Users/nposd/Documents/GitHub/SeasonalityAnalysis/GAM_GEEs/GAMGEE_Plotting_Functions_RealProbs_HistAbove_filled.R')  #on Nat's computer
 
 # Load Workspace --------------------------------------------------
-site = 'BS'
+site = 'HAT_A'
 GDrive = 'G'
 COL = '#D3D3D3'
-varOrder = cbind('Year','Julian Day') #Variables in the final model and their order (ex: (1)'Julian Day','Year' (2)'Year,'Julian Day', (3)'Julian Day', (4)'Year')
+varOrder = cbind('Julian Day','Year') #Variables in the final model and their order (ex: (1)'Julian Day','Year' (2)'Year,'Julian Day', (3)'Julian Day', (4)'Year')
 saveWorkspace = paste(GDrive,":/My Drive/WAT_TPWS_metadataReduced/SeasonalityAnalysis/",site,'/',sep="")
 fileName = paste(saveWorkspace,site,'_SiteSpecific_gamgeeOutput.RData',sep="")
 load(fileName)
@@ -41,7 +41,7 @@ SiteHourTableB = SiteHourTable[!(SiteHourTableB$Julian==366),] #If it's a leap y
 SiteHourTableB$Year = as.factor(SiteHourTableB$Year) #Change year to categorical variable for plotting histograms
 
 #Only includes 2016-2019
-if (site == 'BC' || site == 'GS' || site == 'BP' || site == 'BS' || site == 'WC' || site == 'JAX'){
+if (site == 'BC' || site == 'GS' || site == 'BP' || site == 'BS' || site == 'WC' || site == 'JAX' || site == 'HAT_B' || site == 'NFC'){
 if (length(varOrder) == 2){ #If the model has both variables
   if (varOrder[1] == "Julian Day"){ #If JD is the first variable in the model
   # Plot Julian Day First---------------------------------------------------------
@@ -58,6 +58,10 @@ if (length(varOrder) == 1){ #If the model only has one variable
     ggPlot_JD(PODFinal,SiteHourTableB,site)}
   if (varOrder[1] == "Year"){ #If the model only has Year
     ggPlot_Year_First_WAT(PPODFinal,SiteHourTableB,site)}}}
+ 
+if (site == 'HAT_A') { 
+  ggPlot_JD(PODFinal,SiteHourTableB,site)
+  ggPlot_Year_HAT_A_2015(PODFinal,SiteHourTableB,site)}
 
 #Includes 2015 - 2019
 if (site == 'OC' || site == 'NC' || site == 'HZ'){

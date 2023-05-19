@@ -27,7 +27,7 @@ library(plyr)
 source('C:/Users/nposd/Documents/GitHub/SeasonalityAnalysis/GAM_GEEs/GAMGEE_sexClasses_Plotting_Functions_RealProbs_HistAbove_filled.R')
 
 # Load Workspace --------------------------------------------------
-site = 'JAX'
+site = 'HAT_B'
 GDrive = 'G'
 saveWorkspace = paste(GDrive,":/My Drive/WAT_TPWS_metadataReduced/SeasonalityAnalysis/",site,'/',sep="")
 fileName = paste(saveWorkspace,site,'_SiteSpecific_gamgeeOutput_sexClasses.RData',sep="")
@@ -58,12 +58,12 @@ if (sex == 'Social Groups'){
 
 # Plot Julian Day ---------------------------------------------------------
   if (site == 'BC' & sex == 'Social Groups' | site == 'WC' & sex == 'Social Groups'){
-    ggPlot_JD_AfterYear_WAT(PODFinal,SiteHourTableB,sex,COL)
+    ggPlot_JD_AfterYear_WAT(PODFinal,SiteHourTableB,site,sex,COL)
   }else if (site == 'BP' & sex == 'Social Groups' | site == 'BP' & sex == 'Mid-Size' | site == 'BP' & sex == 'Males' |
-            site == 'JAX' & sex == 'Mid-Size' | site == 'JAX' & sex == 'Males'){
+            site == 'JAX' & sex == 'Mid-Size' | site == 'JAX' & sex == 'Males' | site == 'NFC' & sex == 'Males' | site == 'HAT_B' & sex == 'Social Groups'){
     print('Skip this')
   }else{
-    ggPlot_JD_sex(PODFinal,SiteHourTableB,sex,COL)
+    ggPlot_JD_sex(PODFinal,SiteHourTableB,site,sex,COL)
   }
 
 # Plot Year ---------------------------------------------------------------
@@ -72,14 +72,22 @@ if (sex == 'Social Groups'){
     #skip this
     print('Skip this')
   }else if (site == 'BC' & sex == 'Social Groups' | site == 'WC' & sex == 'Social Groups' | site == 'BP' & sex == 'Social Groups' | 
-            site == 'BP' & sex == 'Mid-Size' | site == 'JAX' & sex == 'Mid-Size' | site == 'JAX' & sex == 'Males'){
-    ggPlot_Year_WAT_first(PODFinal,SiteHourTableB,sex,COL)
+            site == 'BP' & sex == 'Mid-Size' | site == 'JAX' & sex == 'Mid-Size' | site == 'JAX' & sex == 'Males' | site == 'NFC' & sex == 'Males'){
+    ggPlot_Year_WAT_first(PODFinal,SiteHourTableB,site,sex,COL)
   }else{    
     if (length(unique(SiteHourTableB$Year)) > 4){
+<<<<<<< Updated upstream
     ggPlot_Year_WATT(PODFinal,SiteHourTableB,sex,COL)
     } else if{ 
     }else{
     ggPlot_Year_WAT(PODFinal,SiteHourTableB,sex,COL)
+=======
+    ggPlot_Year_WATT(PODFinal,SiteHourTableB,site,sex,COL)
+    }else if (length(unique(SiteHourTableB$Year)) == 3){
+      ggPlot_Year_HAT_A(PODFinal,SiteHourTableB,site,sex,COL)
+      }else{
+    ggPlot_Year_WAT(PODFinal,SiteHourTableB,site,sex,COL)
+>>>>>>> Stashed changes
     }
   }
 }
