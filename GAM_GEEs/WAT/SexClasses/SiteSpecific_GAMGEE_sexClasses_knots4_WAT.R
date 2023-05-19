@@ -632,6 +632,12 @@ QICmod3fA
 #Full model is best
 #Model Order -Year, Julian Day
 
+#HAT_B
+# QIC            QIC.1            QIC.2            QIC.3
+# model3fA            POD0f           POD3fa           POD3fb           POD3fc
+# QIC3fA   16039.6687530653 14466.9302199194 16122.1676317922 14337.6639898968
+#without day
+
 #Juveniles
 #The initial full model is:
 POD3ja = geeglm(PreAbsJ ~ AvgDayMatJ+as.factor(Year),family = binomial, corstr="ar1", id=BlocksJ, data=SiteHourTableB)
@@ -720,6 +726,13 @@ QICmod3jA
 #Full model is best
 #Model Order - Julian Day, Year
 
+#HAT_B
+# QIC            QIC.1            QIC.2           QIC.3
+# model3jA            POD0j           POD3ja           POD3jb          POD3jc
+# QIC3jA   11901.8169327877 10861.7084004151 11870.7741386847 11047.162433375
+#Full model is best
+#Model Order - Julian Day, Year
+
 #Males
 #The initial full model is:
 POD3ma = geeglm(PreAbsM ~ AvgDayMatM+as.factor(Year),family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB)
@@ -797,15 +810,20 @@ QICmod3mA
 # QIC            QIC.1            QIC.2            QIC.3
 # model3mA            POD0m           POD3ma           POD3mb           POD3mc
 # QIC3mA   1199.07186554486 1190.68923263781 1187.10851444974 1183.42260065583
-#Full model is best
-#Model Order - Year, Julian Day
+#W/O year best
 
 #HAT_A
 # QIC           QIC.1            QIC.2            QIC.3
 # model3mA            POD0m          POD3ma           POD3mb           POD3mc
 # QIC3mA   1851.33453040313 1812.2532601839 1815.96220961551 1850.06719459183
 #Full model is best
-#Model Order - Julian Day, Year
+#Model Order - Year, Jday
+
+#HAT_B
+# QIC            QIC.1            QIC.2            QIC.3
+# model3mA           POD0m           POD3ma           POD3mb           POD3mc
+# QIC3mA   1312.6580000832 1178.97806506517 1282.05936511114 1170.61486164629
+#w/o year is best
 
 # Step 7: Finalize Model --------------------------------------------------
 #Females
@@ -814,7 +832,7 @@ if(site == 'BC' || site =='WC' || site =='GS' || site == 'HAT_A'){
   PODFinalF = geeglm(PreAbsF ~ as.factor(Year)+AvgDayMatF,family = binomial, corstr="ar1", id=BlocksF, data=SiteHourTableB)
 }else 
   
-if(site == 'BP'){
+if(site == 'BP' || site == 'HAT_B'){
   dimnames(AvgDayMatF)<-list(NULL,c("ADBM1", "ADBM2"))
   PODFinalF = geeglm(PreAbsF ~ as.factor(Year),family = binomial, corstr="ar1", id=BlocksF, data=SiteHourTableB)
 }else{
@@ -834,7 +852,7 @@ dimnames(AvgDayMatJ)<-list(NULL,c("ADBM1", "ADBM2"))
 PODFinalJ = geeglm(PreAbsJ ~  AvgDayMatJ+as.factor(Year),family = binomial, corstr="ar1", id=BlocksJ, data=SiteHourTableB)}
 
 #Males
-if(site == 'BP'){
+if(site == 'BP' || site == 'HAT_B'){
   dimnames(AvgDayMatM)<-list(NULL,c("ADBM1", "ADBM2"))
   PODFinalM = geeglm(PreAbsM ~ AvgDayMatM,family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB)
 }else
@@ -901,6 +919,9 @@ anova(PODFinalF)
 #as.factor(Year)  2  6.3809 0.0411536 *  
 #AvgDayMatF       2 15.9605 0.0003422 ***
   
+#HAT_B
+# as.factor(Year)  2 2.4451    0.2945
+
 anova(PODFinalJ)
 #HZ
 #AvgDayMatJ       2 193.5   < 2e-16 ***
@@ -944,6 +965,10 @@ anova(PODFinalJ)
 #HAT_A
 # AvgDayMatJ       2 23.308 8.684e-06 ***
 # as.factor(Year)  2 16.647 0.0002427 ***
+
+#HAT_B
+# AvgDayMatJ       2 109.230 < 2.2e-16 ***
+#   as.factor(Year)  2  34.672 2.959e-08 ***
   
 anova(PODFinalM)
 #HZ
@@ -988,13 +1013,16 @@ anova(PODFinalM)
 # AvgDayMatM       2  6.5921  0.037029 * 
 # as.factor(Year)  2 13.4538  0.001198 **
 
+#HAT_B
+#AvgDayMatM  2 18.489 9.663e-05 ***
+
 #Remove any insignificant variables
 if (site == 'HZ'){
   #Remove Year from Female and Male models
   PODFinalF = geeglm(PreAbsF ~ AvgDayMatF,family = binomial, corstr="ar1", id=BlocksF, data=SiteHourTableB)
   PODFinalM = geeglm(PreAbsM ~ AvgDayMatM,family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB)
 }
-if (site == 'OC'){
+if (site == 'OC' || site == 'HAT_B'){
   #Remove Year from Female
   PODFinalF = geeglm(PreAbsF ~ AvgDayMatF,family = binomial, corstr="ar1", id=BlocksF, data=SiteHourTableB)
 }
