@@ -630,13 +630,13 @@ QICmod3fA
 # model3fA            POD0f           POD3fa           POD3fb           POD3fc
 # QIC3fA   3064.12351498155 2991.08287999107 3045.96122150695 2990.92489010083
 #Full model is best
-#Model Order -Year, Julian Day
+#Model Order - jday, year
 
 #HAT_B
 # QIC            QIC.1            QIC.2            QIC.3
 # model3fA            POD0f           POD3fa           POD3fb           POD3fc
 # QIC3fA   16039.6687530653 14466.9302199194 16122.1676317922 14337.6639898968
-#without day
+#without year
 
 #Juveniles
 #The initial full model is:
@@ -852,18 +852,14 @@ dimnames(AvgDayMatJ)<-list(NULL,c("ADBM1", "ADBM2"))
 PODFinalJ = geeglm(PreAbsJ ~  AvgDayMatJ+as.factor(Year),family = binomial, corstr="ar1", id=BlocksJ, data=SiteHourTableB)}
 
 #Males
-if(site == 'BP' || site == 'HAT_B'){
+if(site == 'BP' || site == 'HAT_B' || site == 'NFC'){
   dimnames(AvgDayMatM)<-list(NULL,c("ADBM1", "ADBM2"))
   PODFinalM = geeglm(PreAbsM ~ AvgDayMatM,family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB)
 }else
   if(site == 'JAX'){
     dimnames(AvgDayMatM)<-list(NULL,c("ADBM1", "ADBM2"))
     PODFinalM = geeglm(PreAbsM ~ as.factor(Year),family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB)
-  }else
-    if(site == 'NFC'){
-      dimnames(AvgDayMatM)<-list(NULL,c("ADBM1", "ADBM2"))
-      PODFinalM = geeglm(PreAbsM ~ as.factor(Year) + AvgDayMatM,family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB)
-    }else{
+  }else{
 dimnames(AvgDayMatM)<-list(NULL,c("ADBM1", "ADBM2"))
 PODFinalM = geeglm(PreAbsM ~ AvgDayMatM + as.factor(Year),family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB)}
 
@@ -1006,8 +1002,7 @@ anova(PODFinalM)
 # as.factor(Year)  3 232    <2e-16 ***
 
 #NFC
-# as.factor(Year)  3 10.7706   0.01303 *
-#   AvgDayMatM       2  3.0081   0.22223  
+# AvgDayMatM  2 5.37     0.068 .  
 
 #HAT_A
 # AvgDayMatM       2  6.5921  0.037029 * 
@@ -1037,10 +1032,6 @@ if (site == 'JAX'){
 if (site == 'WC' || site == 'GS'){
   #Remove Year from Male
   PODFinalM = geeglm(PreAbsM ~ AvgDayMatM,family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB)
-}
-if (site == 'NFC'){
-  #Remove JDay from Male
-  PODFinalJ = geeglm(PreAbsJ ~ AvgDayMatM,family = binomial, corstr="ar1", id=BlocksJ, data=SiteHourTableB)
 }
 filename = paste(saveWorkspace,site,'_SiteSpecific_sexClasses_ModelSummary.txt',sep="")
 sink(filename)
