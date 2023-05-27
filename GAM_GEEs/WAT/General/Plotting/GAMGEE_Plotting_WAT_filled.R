@@ -28,7 +28,7 @@ library(plyr)
 source('C:/Users/nposd/Documents/GitHub/SeasonalityAnalysis/GAM_GEEs/GAMGEE_Plotting_Functions_RealProbs_HistAbove_filled.R')  #on Nat's computer
 
 # Load Workspace --------------------------------------------------
-site = 'HAT_A'
+site = 'HAT_B'
 GDrive = 'G'
 COL = '#D3D3D3'
 varOrder = cbind('Julian Day','Year') #Variables in the final model and their order (ex: (1)'Julian Day','Year' (2)'Year,'Julian Day', (3)'Julian Day', (4)'Year')

@@ -849,7 +849,8 @@ if(site == 'BP'){
     PODFinalJ = geeglm(PreAbsJ ~ as.factor(Year)+AvgDayMatJ,family = binomial, corstr="ar1", id=BlocksF, data=SiteHourTableB)
   }else{
 dimnames(AvgDayMatJ)<-list(NULL,c("ADBM1", "ADBM2"))
-PODFinalJ = geeglm(PreAbsJ ~  AvgDayMatJ+as.factor(Year),family = binomial, corstr="ar1", id=BlocksJ, data=SiteHourTableB)}
+PODFinalJ = geeglm(PreAbsJ ~  AvgDayMatJ+as.factor(Year),family = binomial, corstr="ar1", id=BlocksJ, data=SiteHourTableB)
+}
 
 #Males
 if(site == 'BP' || site == 'HAT_B' || site == 'NFC'){
@@ -859,9 +860,14 @@ if(site == 'BP' || site == 'HAT_B' || site == 'NFC'){
   if(site == 'JAX'){
     dimnames(AvgDayMatM)<-list(NULL,c("ADBM1", "ADBM2"))
     PODFinalM = geeglm(PreAbsM ~ as.factor(Year),family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB)
+  }else
+    if(site == 'HAT_A'){
+    dimnames(AvgDayMatM)<-list(NULL,c("ADBM1", "ADBM2"))
+    PODFinalM = geeglm(PreAbsM ~ as.factor(Year)+AvgDayMatM,family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB) 
   }else{
 dimnames(AvgDayMatM)<-list(NULL,c("ADBM1", "ADBM2"))
-PODFinalM = geeglm(PreAbsM ~ AvgDayMatM + as.factor(Year),family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB)}
+PODFinalM = geeglm(PreAbsM ~ AvgDayMatM + as.factor(Year),family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB)
+}
 
 # STEP 8: Interpreting the summary of the model --------------------------
 # How to intepret model results
@@ -912,8 +918,8 @@ anova(PODFinalF)
 #   as.factor(Year)  3 20.965 0.0001071 ***
 
 #HAT_A
-#as.factor(Year)  2  6.3809 0.0411536 *  
-#AvgDayMatF       2 15.9605 0.0003422 ***
+#AvgDayMatF       2 18.8051 8.251e-05 ***
+#as.factor(Year)  2  5.0834   0.07873 .  
   
 #HAT_B
 # as.factor(Year)  2 2.4451    0.2945
@@ -1005,8 +1011,8 @@ anova(PODFinalM)
 # AvgDayMatM  2 5.37     0.068 .  
 
 #HAT_A
-# AvgDayMatM       2  6.5921  0.037029 * 
-# as.factor(Year)  2 13.4538  0.001198 **
+#as.factor(Year)  2 12.8901  0.001588 **
+#AvgDayMatM       2  7.8557  0.019686 * 
 
 #HAT_B
 #AvgDayMatM  2 18.489 9.663e-05 ***
@@ -1032,6 +1038,9 @@ if (site == 'JAX'){
 if (site == 'WC' || site == 'GS'){
   #Remove Year from Male
   PODFinalM = geeglm(PreAbsM ~ AvgDayMatM,family = binomial, corstr="ar1", id=BlocksM, data=SiteHourTableB)
+}
+if (site == 'HAT_A'){
+  PODFinalF = geeglm(PreAbsF ~ AvgDayMatF,family = binomial, corstr="ar1", id=BlocksF, data=SiteHourTableB)
 }
 filename = paste(saveWorkspace,site,'_SiteSpecific_sexClasses_ModelSummary.txt',sep="")
 sink(filename)
