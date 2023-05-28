@@ -32,7 +32,7 @@ GDrive = 'G'
 COL = '#D3D3D3'
 varOrder = cbind('Region','Julian Day','Year') #Variables in the final model and their order (ex: (1)'Julian Day','Year' (2)'Year,'Julian Day', (3)'Julian Day', (4)'Year')
 saveWorkspace = paste(GDrive,":/My Drive/WAT_TPWS_metadataReduced/SeasonalityAnalysis/AllSites/",sep="")
-fileName = paste(saveWorkspace,'BigModel_gamgeeOutput_modified.RData',sep="")
+fileName = paste(saveWorkspace,'AllSites_gamgeeOutput.RData',sep="")
 load(fileName)
 GDrive = 'G'
 saveDir = paste(GDrive,":/My Drive/WAT_TPWS_metadataReduced/Plots/AllSites",sep="")
@@ -40,10 +40,11 @@ saveDir = paste(GDrive,":/My Drive/WAT_TPWS_metadataReduced/Plots/AllSites",sep=
 SiteHourTableB = SiteHourTable[!(SiteHourTableB$Julian==366),] #If it's a leap year, delete julian day 366 for plotting
 SiteHourTableB$Year = as.factor(SiteHourTableB$Year) #Change year to categorical variable for plotting histograms
 
+#All Models include Effort above
 #Region
 ggPlot_Region(PODFinal,SiteHourTableB,region,COL)
-#JulianDay
-ggPlot_JD_BigModel(PODFinal,SiteHourTableB,region,COL)
+#Julian Day
+ggPlot_JD_BigModel_WAT(PODFinal,SiteHourTableB,region,COL)
 #Year
 ggPlot_Year_WAT_BigM(PODFinal,SiteHourTableB,region,COL)
 

@@ -1,6 +1,6 @@
 ################General Patterns########################
 # Plot Julian Day with ggplot ---------------------------------------------
-ggPlot_JD <- function(model, table, site){
+ggPlot_JD <- function(model, table, site,COL){
   BootstrapParameters3<-rmvnorm(10000, coef(model),summary(model)$cov.unscaled)
   start=2; finish=3; Variable=table$Julian;  
   PlottingVar3<-seq(min(Variable), max(Variable), length=5000)
@@ -36,17 +36,17 @@ ggPlot_JD <- function(model, table, site){
             panel.background = element_blank(),
             text = element_text(size = 35)
   )
-  # xens = axis_canvas(pmain, axis = "x")+
-  #   geom_bar(data = plothist,
-  #            aes(x,y),
-  #            fill = 4,
-  #            alpha = 0.2,
-  #            position = "dodge",
-  #            stat = "identity",
-  #            width = 1
-  #   )
-  # p1 = insert_xaxis_grob(pmain,xens,grid::unit(.2, "null"), position = "top")
-  ggdraw(pmain)
+   xens = axis_canvas(pmain, axis = "x")+
+     geom_bar(data = plothist,
+              aes(x,y),
+              fill = 4,
+              alpha = 0.2,
+              position = "dodge",
+              stat = "identity",
+              width = 1
+     )
+   p1 = insert_xaxis_grob(pmain,xens,grid::unit(.2, "null"), position = "top")
+  ggdraw(p1)
   
   ggtitle = paste(saveDir,"/Julian Day - ", site,"filled.pdf",sep="")
   
@@ -96,17 +96,17 @@ ggPlot_JD_AfterYear_WAT <- function(model, table, site,COL){
             panel.background = element_blank(),
             text = element_text(size = 35)
   )
-  # xens = axis_canvas(pmain, axis = "x")+
-  #   geom_bar(data = plothist,
-  #            aes(x,y),
-  #            fill = 4,
-  #            alpha = 0.2,
-  #            position = "dodge",
-  #            stat = "identity",
-  #            width = 1
-  #   )
-  # p1 = insert_xaxis_grob(pmain,xens,grid::unit(.2, "null"), position = "top")
-  ggdraw(pmain)
+   xens = axis_canvas(pmain, axis = "x")+
+     geom_bar(data = plothist,
+              aes(x,y),
+              fill = 4,
+              alpha = 0.2,
+              position = "dodge",
+              stat = "identity",
+              width = 1
+     )
+   p1 = insert_xaxis_grob(pmain,xens,grid::unit(.2, "null"), position = "top")
+  ggdraw(p1)
   
   ggtitle = paste(saveDir,"/Julian Day - ", site,"filled.pdf",sep="")
   
@@ -213,17 +213,17 @@ ggPlot_JD_AfterYear_WAT_2015 <- function(model, table, site,COL){
             panel.background = element_blank(),
             text = element_text(size = 35)
   )
-  # xens = axis_canvas(pmain, axis = "x")+
-  #   geom_bar(data = plothist,
-  #            aes(x,y),
-  #            fill = 4,
-  #            alpha = 0.2,
-  #            position = "dodge",
-  #            stat = "identity",
-  #            width = 1
-  #   )
-  # p1 = insert_xaxis_grob(pmain,xens,grid::unit(.2, "null"), position = "top")
-  ggdraw(pmain)
+   xens = axis_canvas(pmain, axis = "x")+
+     geom_bar(data = plothist,
+              aes(x,y),
+              fill = 4,
+              alpha = 0.2,
+              position = "dodge",
+              stat = "identity",
+              width = 1
+     )
+   p1 = insert_xaxis_grob(pmain,xens,grid::unit(.2, "null"), position = "top")
+  ggdraw(p1)
   
   ggtitle = paste(saveDir,"/Julian Day - ", site,"filled.pdf",sep="")
   
@@ -298,7 +298,7 @@ ggPlot_JD_AfterYear_WAT_2015_wEff <- function(model, table, site,COL){
 
 
 # Plot Julian Day with ggplot (Big) ---------------------------------------------
-ggPlot_JD_Year <- function(model, table){
+ggPlot_JD_Year <- function(model, table,COL){
   BootstrapParameters3<-rmvnorm(10000, coef(model),summary(model)$cov.unscaled)
   start=10; finish=11; Variable=table$Julian;  
   PlottingVar3<-seq(min(Variable), max(Variable), length=5000)
@@ -604,7 +604,7 @@ ggPlot_Year <- function(model, table,site){
 }
 #Plot Year as factor with ggplot --------------------------------------------------
 #For WAT when year is after JD and it goes from 2016 to 2019
-ggPlot_Year_WAT <- function(model, table,site){
+ggPlot_Year_WAT <- function(model, table,site,COL){
   BootstrapParameters2<-rmvnorm(10000, coef(model),summary(model)$cov.unscaled)
   start=4; end=6; Variable=table$Year
   BootstrapCoefs2<-BootstrapParameters2[, c(1,start:end)]
@@ -643,18 +643,18 @@ ggPlot_Year_WAT <- function(model, table,site){
   ) + labs(x = "Year",
            y = "s(Year)")
   
-  # xens = axis_canvas(pmain, axis = "x")+
-  #   geom_bar(data = counts,
-  #            aes(x,freq),
-  #            fill = 4,
-  #            alpha = 0.2,
-  #            #position = "dodge",
-  #            stat = "identity",
-  #            width = 1) + scale_x_discrete(labels = c("2016","2017","2018","2019")
-  #            )
-  # 
-  # p1 = insert_xaxis_grob(pmain,xens,grid::unit(.2, "null"), position = "top")
-  ggdraw(pmain)
+   xens = axis_canvas(pmain, axis = "x")+
+     geom_bar(data = counts,
+              aes(x,freq),
+              fill = 4,
+              alpha = 0.2,
+              #position = "dodge",
+              stat = "identity",
+              width = 1) + scale_x_discrete(labels = c("2016","2017","2018","2019")
+              )
+   
+   p1 = insert_xaxis_grob(pmain,xens,grid::unit(.2, "null"), position = "top")
+  ggdraw(p1)
   
   ggsave(
     ggtitle, width = 7, height = 6, units = "in",
@@ -790,7 +790,7 @@ ggPlot_Year_WATS_wEff <- function(model, table,site,COL){
 }
 
 #For WAT when year is after JD and it goes from 2015 to 2019
-ggPlot_Year_WAT_2015 <- function(model, table,site){
+ggPlot_Year_WAT_2015 <- function(model, table,site,COL){
   BootstrapParameters2<-rmvnorm(10000, coef(model),summary(model)$cov.unscaled)
   start=4; end=7; Variable=table$Year
   BootstrapCoefs2<-BootstrapParameters2[, c(1,start:end)]
@@ -830,18 +830,18 @@ ggPlot_Year_WAT_2015 <- function(model, table,site){
   ) + labs(x = "Year",
            y = "s(Year)")
   
-  # xens = axis_canvas(pmain, axis = "x")+
-  #   geom_bar(data = counts,
-  #            aes(x,freq),
-  #            fill = 4,
-  #            alpha = 0.2,
-  #            #position = "dodge",
-  #            stat = "identity",
-  #            width = 1) + scale_x_discrete(labels = c("2015","2016","2017","2018","2019")
-  #            )
-  # 
-  # p1 = insert_xaxis_grob(pmain,xens,grid::unit(.2, "null"), position = "top")
-  ggdraw(pmain)
+   xens = axis_canvas(pmain, axis = "x")+
+     geom_bar(data = counts,
+              aes(x,freq),
+              fill = 4,
+              alpha = 0.2,
+              #position = "dodge",
+              stat = "identity",
+              width = 1) + scale_x_discrete(labels = c("2015","2016","2017","2018","2019")
+              )
+   
+   p1 = insert_xaxis_grob(pmain,xens,grid::unit(.2, "null"), position = "top")
+  ggdraw(p1)
   
   ggsave(
     ggtitle, width = 7, height = 6, units = "in",
@@ -851,7 +851,7 @@ ggPlot_Year_WAT_2015 <- function(model, table,site){
   } # close graphics device
   print("Plot Saved")
 }
-ggPlot_Year_HAT_A_2015 <- function(model, table,site){
+ggPlot_Year_HAT_A_2015 <- function(model, table,site,COL){
   BootstrapParameters2<-rmvnorm(10000, coef(model),summary(model)$cov.unscaled)
   start=4; end=5; Variable=table$Year
   BootstrapCoefs2<-BootstrapParameters2[, c(1,start:end)]
@@ -889,18 +889,18 @@ ggPlot_Year_HAT_A_2015 <- function(model, table,site){
   ) + labs(x = "Year",
            y = "s(Year)")
   
-  # xens = axis_canvas(pmain, axis = "x")+
-  #   geom_bar(data = counts,
-  #            aes(x,freq),
-  #            fill = 4,
-  #            alpha = 0.2,
-  #            #position = "dodge",
-  #            stat = "identity",
-  #            width = 1) + scale_x_discrete(labels = c("2015","2016","2017","2018","2019")
-  #            )
-  # 
-  # p1 = insert_xaxis_grob(pmain,xens,grid::unit(.2, "null"), position = "top")
-  ggdraw(pmain)
+   xens = axis_canvas(pmain, axis = "x")+
+     geom_bar(data = counts,
+              aes(x,freq),
+              fill = 4,
+              alpha = 0.2,
+              #position = "dodge",
+              stat = "identity",
+              width = 1) + scale_x_discrete(labels = c("2015","2016","2017","2018","2019")
+              )
+   
+   p1 = insert_xaxis_grob(pmain,xens,grid::unit(.2, "null"), position = "top")
+  ggdraw(p1)
   
   ggsave(
     ggtitle, width = 7, height = 6, units = "in",
@@ -975,7 +975,7 @@ ggPlot_Year_WAT_BigM <- function(model, table,site,COL){
 }
 
 #For WAT when year is first and it goes from 2016 to 2019
-ggPlot_Year_First_WAT <- function(model, table,site){
+ggPlot_Year_First_WAT <- function(model, table,site,COL){
   BootstrapParameters2<-rmvnorm(10000, coef(model),summary(model)$cov.unscaled)
   start=2; end=4; Variable=table$Year
   BootstrapCoefs2<-BootstrapParameters2[, c(1,start:end)]
@@ -1014,18 +1014,18 @@ ggPlot_Year_First_WAT <- function(model, table,site){
   ) + labs(x = "Year",
            y = "s(Year)")
   
-  # xens = axis_canvas(pmain, axis = "x")+
-  #   geom_bar(data = counts,
-  #            aes(x,freq),
-  #            fill = 4,
-  #            alpha = 0.2,
-  #            #position = "dodge",
-  #            stat = "identity",
-  #            width = 1) + scale_x_discrete(labels = c("2016","2017","2018","2019")
-  #            )
-  # 
-  # p1 = insert_xaxis_grob(pmain,xens,grid::unit(.2, "null"), position = "top")
-  ggdraw(pmain)
+   xens = axis_canvas(pmain, axis = "x")+
+     geom_bar(data = counts,
+              aes(x,freq),
+              fill = 4,
+              alpha = 0.2,
+              #position = "dodge",
+              stat = "identity",
+              width = 1) + scale_x_discrete(labels = c("2016","2017","2018","2019")
+              )
+   
+   p1 = insert_xaxis_grob(pmain,xens,grid::unit(.2, "null"), position = "top")
+  ggdraw(p1)
   
   ggsave(
     ggtitle, width = 7, height = 6, units = "in",
@@ -1037,7 +1037,7 @@ ggPlot_Year_First_WAT <- function(model, table,site){
 }
 
 #For WAT when year is first and it goes from 2015 to 2019
-ggPlot_Year_First_WAT_2015 <- function(model, table,site){
+ggPlot_Year_First_WAT_2015 <- function(model, table,site,COL){
   BootstrapParameters2<-rmvnorm(10000, coef(model),summary(model)$cov.unscaled)
   start=2; end=5; Variable=table$Year
   BootstrapCoefs2<-BootstrapParameters2[, c(1,start:end)]
@@ -1077,18 +1077,18 @@ ggPlot_Year_First_WAT_2015 <- function(model, table,site){
   ) + labs(x = "Year",
            y = "s(Year)")
   
-  # xens = axis_canvas(pmain, axis = "x")+
-  #   geom_bar(data = counts,
-  #            aes(x,freq),
-  #            fill = 4,
-  #            alpha = 0.2,
-  #            #position = "dodge",
-  #            stat = "identity",
-  #            width = 1) + scale_x_discrete(labels = c("2015","2016","2017","2018","2019")
-  #            )
-  # 
-  # p1 = insert_xaxis_grob(pmain,xens,grid::unit(.2, "null"), position = "top")
-  ggdraw(pmain)
+   xens = axis_canvas(pmain, axis = "x")+
+     geom_bar(data = counts,
+              aes(x,freq),
+              fill = 4,
+              alpha = 0.2,
+              #position = "dodge",
+              stat = "identity",
+              width = 1) + scale_x_discrete(labels = c("2015","2016","2017","2018","2019")
+              )
+   
+   p1 = insert_xaxis_grob(pmain,xens,grid::unit(.2, "null"), position = "top")
+  ggdraw(p1)
   
   ggsave(
     ggtitle, width = 7, height = 6, units = "in",

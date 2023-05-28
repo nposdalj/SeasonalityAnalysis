@@ -28,7 +28,7 @@ library(plyr)
 source('C:/Users/nposd/Documents/GitHub/SeasonalityAnalysis/GAM_GEEs/GAMGEE_Plotting_Functions_RealProbs_HistAbove_filled.R')  #on Nat's computer
 
 # Load Workspace --------------------------------------------------
-region = 'North'
+region = 'South'
 GDrive = 'G'
 COL = '#D3D3D3'
 varOrder = cbind('Site','Julian Day','Year') #Variables in the final model and their order (ex: (1)'Julian Day','Year' (2)'Year,'Julian Day', (3)'Julian Day', (4)'Year')
@@ -43,22 +43,35 @@ SiteHourTableB$Year = as.factor(SiteHourTableB$Year) #Change year to categorical
 
 if (region == 'North'){
   #Site
-  ggPlot_Site_WATN(PODFinal,SiteHourTableB,region)
+  ggPlot_Site_WATN(PODFinal,SiteHourTableB,region,COL)
+  #Plot Site again with effort
+  ggPlot_Site_WATN_wEff(PODFinal,SiteHourTableB,region,COL)
+  
   #Julian Day
-  ggPlot_JD_AfterYear_WAT_2015(PODFinal,SiteHourTableB,region)
+  ggPlot_JD_AfterYear_WAT_2015(PODFinal,SiteHourTableB,region,COL)
   #Plot Julian Day again with effort
-  ggPlot_JD_AfterYear_WAT_2015_wEff(PODFinal,SiteHourTableB,region)
+  ggPlot_JD_AfterYear_WAT_2015_wEff(PODFinal,SiteHourTableB,region,COL)
+  
   #Year
-  ggPlot_Year_Regional(PODFinal,SiteHourTableB,region)}
+  ggPlot_Year_Regional(PODFinal,SiteHourTableB,region,COL)
+  #Plot Year again with effort
+  ggPlot_Year_Regional_wEff(PODFinal,SiteHourTableB,region,COL)
+  }
 
 if (region == 'South'){
   #Site
-  ggPlot_Site_WATS(PODFinal,SiteHourTableB,region)
+  ggPlot_Site_WATS(PODFinal,SiteHourTableB,region,COL)
+  #Plot Site again with Effort
+  ggPlot_Site_WATS_wEff(PODFinal,SiteHourTableB,region,COL)
+  
   #Julian Day
-  ggPlot_JD_AfterYear_WAT(PODFinal,SiteHourTableB,region)
+  ggPlot_JD_AfterYear_WAT(PODFinal,SiteHourTableB,region,COL)
   #Plot Julian Day again with effort
-  ggPlot_JD_AfterYear_WAT_wEff(PODFinal,SiteHourTableB,region)
+  ggPlot_JD_AfterYear_WAT_wEff(PODFinal,SiteHourTableB,region,COL)
+  
   #Year
-  ggPlot_Year_WATS(PODFinal,SiteHourTableB,region)}
+  ggPlot_Year_WATS(PODFinal,SiteHourTableB,region,COL)
+  #Plot Year again with effort
+  ggPlot_Year_WATS_wEff(PODFinal,SiteHourTableB,region,COL)}
 
 

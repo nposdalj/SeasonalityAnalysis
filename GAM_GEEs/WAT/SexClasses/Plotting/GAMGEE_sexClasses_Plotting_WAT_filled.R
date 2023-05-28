@@ -24,10 +24,10 @@ library(ggExtra)
 library(plyr)
 
 #load functions
-source('C:/Users/nposd/Documents/GitHub/SeasonalityAnalysis/GAM_GEEs/GAMGEE_sexClasses_Plotting_Functions_RealProbs_HistAbove_filled.R')
+source('C:/Users/nposd/Documents/GitHub/SeasonalityAnalysis/GAM_GEEs/GAMGEE_sexClasses_Plotting_Functions_RealProbs_HistAbove_filled_effortON.R')
 
 # Load Workspace --------------------------------------------------
-site = 'NFC'
+site = 'JAX'
 GDrive = 'G'
 saveWorkspace = paste(GDrive,":/My Drive/WAT_TPWS_metadataReduced/SeasonalityAnalysis/",site,'/',sep="")
 fileName = paste(saveWorkspace,site,'_SiteSpecific_gamgeeOutput_sexClasses.RData',sep="")
@@ -73,14 +73,14 @@ if (sex == 'Social Groups'){
   if (site == 'HZ' & sex == 'Social Groups' | site == 'HZ' & sex == 'Males' | site == 'OC' & sex == 'Social Groups' | 
       site == 'BC' & sex == 'Mid-Size' | site == 'WC' & sex == 'Males' | site == 'BP' & sex == 'Males' | site == 'BP' & sex == 'Mid-Size' |
       site == 'HAT_B' & sex == 'Social Groups' | site == 'HAT_B' & sex == 'Males' | site == 'HAT_A' & sex == 'Social Groups' |
-      site == 'NFC' & sex == 'Males'){
+      site == 'NFC' & sex == 'Males' | site == 'GS' & sex == 'Males'){
     #skip this
     print('Skip this')
   }else if (site == 'BC' & sex == 'Social Groups' | site == 'WC' & sex == 'Social Groups' | site == 'BP' & sex == 'Social Groups' | 
             site == 'BP' & sex == 'Mid-Size' | site == 'JAX' & sex == 'Mid-Size' | site == 'JAX' & sex == 'Males' | site == 'NFC' & sex == 'Males'){
     ggPlot_Year_WAT_first(PODFinal,SiteHourTableB,site,sex,COL)
   }else if(length(unique(SiteHourTableB$Year)) > 4){
-    ggPlot_Year_WATT(PODFinal,SiteHourTableB,sex,COL)
+    ggPlot_Year_WATT(PODFinal,SiteHourTableB,site,sex,COL)
   }else if (length(unique(SiteHourTableB$Year)) == 3 & site == 'HAT_A'){
     if (sex == 'Mid-Size'){
       ggPlot_Year_HAT_A(PODFinal,SiteHourTableB,site,sex,COL)

@@ -25,10 +25,10 @@ library(ggExtra)
 library(plyr)
 
 #load functions
-source('C:/Users/nposd/Documents/GitHub/SeasonalityAnalysis/GAM_GEEs/GAMGEE_Plotting_Functions_RealProbs_HistAbove_filled.R')  #on Nat's computer
+source('C:/Users/nposd/Documents/GitHub/SeasonalityAnalysis/GAM_GEEs/GAMGEE_Plotting_Functions_RealProbs_HistAbove_filled_effortON.R')  #on Nat's computer
 
 # Load Workspace --------------------------------------------------
-site = 'HAT_B'
+site = 'JAX'
 GDrive = 'G'
 COL = '#D3D3D3'
 varOrder = cbind('Julian Day','Year') #Variables in the final model and their order (ex: (1)'Julian Day','Year' (2)'Year,'Julian Day', (3)'Julian Day', (4)'Year')
@@ -45,39 +45,39 @@ if (site == 'BC' || site == 'GS' || site == 'BP' || site == 'BS' || site == 'WC'
 if (length(varOrder) == 2){ #If the model has both variables
   if (varOrder[1] == "Julian Day"){ #If JD is the first variable in the model
   # Plot Julian Day First---------------------------------------------------------
-  ggPlot_JD(PODFinal,SiteHourTableB,site)
+  ggPlot_JD(PODFinal,SiteHourTableB,site,COL)
   # Plot Year Second---------------------------------------------------------------
-  ggPlot_Year_WAT(PODFinal,SiteHourTableB,site)}
+  ggPlot_Year_WAT(PODFinal,SiteHourTableB,site,COL)}
   if (varOrder[1] == "Year"){ #If Year is the first variable in the model
   # Plot Year First---------------------------------------------------------
-    ggPlot_Year_First_WAT(PODFinal,SiteHourTableB,site)
+    ggPlot_Year_First_WAT(PODFinal,SiteHourTableB,site,COL)
   # Plot Julian Day Second---------------------------------------------------------
-    ggPlot_JD_AfterYear_WAT(PODFinal,SiteHourTableB,site)}}
+    ggPlot_JD_AfterYear_WAT(PODFinal,SiteHourTableB,site,COL)}}
 if (length(varOrder) == 1){ #If the model only has one variable
   if (varOrder[1] == "Julian Day"){ #If the model only has JD
-    ggPlot_JD(PODFinal,SiteHourTableB,site)}
+    ggPlot_JD(PODFinal,SiteHourTableB,site,COL)}
   if (varOrder[1] == "Year"){ #If the model only has Year
-    ggPlot_Year_First_WAT(PPODFinal,SiteHourTableB,site)}}}
+    ggPlot_Year_First_WAT(PPODFinal,SiteHourTableB,site,COL)}}}
  
 if (site == 'HAT_A') { 
-  ggPlot_JD(PODFinal,SiteHourTableB,site)
-  ggPlot_Year_HAT_A_2015(PODFinal,SiteHourTableB,site)}
+  ggPlot_JD(PODFinal,SiteHourTableB,site,COL)
+  ggPlot_Year_HAT_A_2015(PODFinal,SiteHourTableB,site,COL)}
 
 #Includes 2015 - 2019
 if (site == 'OC' || site == 'NC' || site == 'HZ'){
   if (length(varOrder) == 2){ #If the model has both variables
     if (varOrder[1] == "Julian Day"){ #If JD is the first variable in the model
       # Plot Julian Day First---------------------------------------------------------
-      ggPlot_JD(PODFinal,SiteHourTableB,site)
+      ggPlot_JD(PODFinal,SiteHourTableB,site,COL)
       # Plot Year Second---------------------------------------------------------------
-      ggPlot_Year_WAT_2015(PODFinal,SiteHourTableB,site)}
+      ggPlot_Year_WAT_2015(PODFinal,SiteHourTableB,site,COL)}
     if (varOrder[1] == "Year"){ #If Year is the first variable in the model
       # Plot Year First---------------------------------------------------------
-      ggPlot_Year_First_WAT_2015(PODFinal,SiteHourTableB,site)
+      ggPlot_Year_First_WAT_2015(PODFinal,SiteHourTableB,site,COL)
       # Plot Julian Day Second---------------------------------------------------------
-      ggPlot_JD_AfterYear_WAT_2015(PODFinal,SiteHourTableB,site)}}
+      ggPlot_JD_AfterYear_WAT_2015(PODFinal,SiteHourTableB,site,COL)}}
   if (length(varOrder) == 1){ #If the model only has one variable
     if (varOrder[1] == "Julian Day"){ #If the model only has JD
-      ggPlot_JD(PODFinal,SiteHourTableB,site)}
+      ggPlot_JD(PODFinal,SiteHourTableB,site,COL)}
     if (varOrder[1] == "Year"){ #If the model only has Year
-      ggPlot_Year_First_WAT_2015(PODFinal,SiteHourTableB,site)}}}
+      ggPlot_Year_First_WAT_2015(PODFinal,SiteHourTableB,site,COL)}}}
