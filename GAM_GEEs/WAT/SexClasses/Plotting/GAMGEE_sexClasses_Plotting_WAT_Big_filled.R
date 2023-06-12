@@ -30,7 +30,7 @@ source('C:/Users/nposd/Documents/GitHub/SeasonalityAnalysis/GAM_GEEs/GAMGEE_sexC
 GDrive = 'G'
 model = 'Big'
 saveWorkspace = paste(GDrive,":/My Drive/WAT_TPWS_metadataReduced/SeasonalityAnalysis/AllSites/",sep="")
-fileName = paste(saveWorkspace,'_Big_gamgeeOutput_sexClasses.RData',sep="")
+fileName = paste(saveWorkspace,'AllSites_gamgeeOutput_sexClasses.RData',sep="")
 load(fileName)
 GDrive = 'G'
 saveDir = paste(GDrive,":/My Drive/WAT_TPWS_metadataReduced/Plots/AllSites",sep="")
