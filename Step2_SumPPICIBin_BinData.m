@@ -17,9 +17,9 @@ close all; clear all;clc;
     % mean of julian day - '*_days365GroupedMean_forGLMR125.csv'
 %% Parameters defined by user
 %Site names and data paths
-filePrefix = 'HAT_B'; % File name to match. 
-siteabrev = 'HAT_B'; %abbreviation of site.
-region = 'WAT'; %region
+filePrefix = 'Baja_GI'; % File name to match. 
+siteabrev = 'GI'; %abbreviation of site.
+region = 'CCE'; %region
 sp = 'Pm'; % your species code
 GDrive = 'G'; %Google Drive
 saveDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev]; %specify directory to save files
