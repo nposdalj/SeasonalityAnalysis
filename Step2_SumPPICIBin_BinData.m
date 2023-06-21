@@ -21,7 +21,7 @@ filePrefix = 'Baja_GI'; % File name to match.
 siteabrev = 'GI'; %abbreviation of site.
 region = 'CCE'; %region
 sp = 'Pm'; % your species code
-GDrive = 'G'; %Google Drive
+GDrive = 'L'; %Google Drive
 saveDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev]; %specify directory to save files
 DutyCy = 0; %if this data only has 1 deployment that is duty cycled make it equal to 1 otherwise, make it equal to the number...
 % of deployments that have different duty cycles that must be accounted for; if this data is NOT duty cycled,...

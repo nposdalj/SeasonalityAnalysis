@@ -27,7 +27,7 @@ genderFileName = 'GI'; %File name to match gender file
 siteabrev = 'GI'; %abbreviation of site
 region = 'CCE';
 sp = 'Pm'; % your species code
-GDrive = 'G'; %Google Drive
+GDrive = 'L'; %Google Drive
 
 effortXls = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev,'\Pm_Effort.xlsx']; % specify excel file with effort times
 saveDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev]; %specify directory to save files
@@ -41,7 +41,7 @@ load([saveDir,'\',siteabrev,'_workspaceStep2.mat']);
 p = sp_setting_defaults('sp',sp,'analysis','SumPPICIBin'); % get default parameters -- make sure these match for your species
 
 % Overwrite some path names
-GDrive = 'G'; %Correct GDrive if overwritten by loading workspace
+GDrive = 'L'; %Correct GDrive if overwritten by loading workspace
 effortXls(1) = GDrive;
 saveDir(1) = GDrive;
 tpwsPath(1) = GDrive;
