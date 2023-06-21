@@ -6,11 +6,11 @@ siteabrev = 'HAT';
 siteNameMatch = 'HAT';
 region = 'WAT'; %all of the WAT data has a space between the site and the deployment #
 shipDataType = 2; % 1 - old ship data, %2 - new ship data
-maxDetEdit = 2; % number of TPWS folders (i.e. TPWS4 is 4)
-ShipIDReDo = 0; % If you want to re-run ship and ID times, change this to 1
+maxDetEdit = 3; % number of TPWS folders (i.e. TPWS4 is 4)
+ShipIDReDo = 1; % If you want to re-run ship and ID times, change this to 1
 
 % Data directories
-GDrive = 'G';
+GDrive = 'L';
 shipDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\metadata_reduced\',siteabrev];
 shipTimesDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\ShipTimes\',siteabrev]; % directory where to save ship times .mat files
 IDDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\TPWS_125\',siteabrev];

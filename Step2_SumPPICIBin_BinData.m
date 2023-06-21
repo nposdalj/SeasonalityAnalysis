@@ -17,9 +17,9 @@ close all; clear all;clc;
     % mean of julian day - '*_days365GroupedMean_forGLMR125.csv'
 %% Parameters defined by user
 %Site names and data paths
-filePrefix = 'Baja_GI'; % File name to match. 
-siteabrev = 'GI'; %abbreviation of site.
-region = 'CCE'; %region
+filePrefix = 'HAT'; % File name to match. 
+siteabrev = 'HAT_A'; %abbreviation of site.
+region = 'WAT'; %region
 sp = 'Pm'; % your species code
 GDrive = 'L'; %Google Drive
 saveDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev]; %specify directory to save files
@@ -29,7 +29,7 @@ DutyCy = 0; %if this data only has 1 deployment that is duty cycled make it equa
 %% load workspace
 GDrive_correct = GDrive; % Preserve correct GDrive as it was entered above
 load([saveDir,'\',siteabrev,'_workspace125.mat']);
-GDrive = 'G'; %Correct GDrive for SWAL1
+GDrive = 'L'; %Correct GDrive for SWAL1
 
 % Overwrite some path names
 GDrive = GDrive_correct; %Correct GDrive if overwritten by loading workspace

@@ -15,11 +15,11 @@ close all; clear all;clc;
 % binDataICIgram - ICIgram data grouped in 5 min bins
 %% Parameters defined by user
 %Site names
-filePrefix = 'Baja_GI'; %TPWS file names that match
-siteabrev = 'GI'; %abbreviation of site (folder names)
-region = 'CCE'; %region
+filePrefix = 'HAT'; %TPWS file names that match
+siteabrev = 'HAT_B'; %abbreviation of site (folder names)
+region = 'WAT'; %region
 sp = 'Pm'; % your species code
-itnum = '2'; % which iteration you are looking for (which TPWS folder)
+itnum = '3'; % which iteration you are looking for (which TPWS folder)
 GDrive = 'L'; %Google Drive
 
 %Other parameters
