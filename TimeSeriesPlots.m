@@ -2,12 +2,12 @@ clearvars
 close all
 % This script creates time series plots for each site.
 %% Parameters defined by user
-filePrefix = 'HAT_B'; % File name to match. 
-siteabrev = 'HAT_B'; %abbreviation of site.
-GDrive = 'G'; %directory for Google Drive
-region = 'WAT';
+filePrefix = 'GI'; % File name to match. 
+siteabrev = 'GI'; %abbreviation of site.
+GDrive = 'L'; %directory for Google Drive
+region = 'CCE';
 sp = 'Pm'; % your species code
-titleNAME = 'Cape Hatteras';
+titleNAME = 'Guadalupe Island';
 dataDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev]; %specify directory where workspaces are saved
 %% load workspace
 GDrive_corrected = GDrive; % Preserve correct GDrive as it was entered above
