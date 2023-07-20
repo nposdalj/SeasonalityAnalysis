@@ -5,18 +5,18 @@ close all;clear all;clc;
 % Accounts for effort but doesn't normalize bin or click count
 %% Parameters defined by user
 %Site names and paths
-filePrefix = 'HAT_A'; % File name to match. 
-siteabrev = 'HAT_A'; %abbreviation of site.
-region = 'WAT'; %region
+filePrefix = 'GI'; % File name to match. 
+siteabrev = 'GI'; %abbreviation of site.
+region = 'CCE'; %region
 sp = 'Pm'; % your species code
-GDrive = 'G'; %Google Drive
-PlotSiteName =  'Cape Hatteras A';
+GDrive = 'L'; %Google Drive
+PlotSiteName =  'Guadalupe Island';
 saveDirr = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev]; %specify directory to save files
 saveDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\Plots\',siteabrev,'\']; %specify directory to save files
 %% load workspace
 GDrive_correct = GDrive; % Preserve correct GDrive as it was entered above
 load([saveDirr,'\',siteabrev,'_workspaceStep2.mat']);
-GDrive = 'G'; %Correct GDrive for SWAL1
+GDrive = 'L'; %Correct GDrive for SWAL1
 saveDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\Plots\',siteabrev,'\']; %specify directory to save files
 p = sp_setting_defaults('sp',sp,'analysis','SumPPICIBin'); % get default parameters -- make sure these match for your species
 
