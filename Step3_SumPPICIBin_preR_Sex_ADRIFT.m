@@ -22,16 +22,14 @@ close all; clear all;clc;
     % '*_binData_forGAMGEE_sexClasses.csv' %hourly bin data for modeling
 %% Parameters defined by user
 %Site names and data paths
-filePrefix = 'NFC'; % File name to match. 
-genderFileName = 'NFC'; %File name to match gender file
-siteabrev = 'NFC'; %abbreviation of site
-region = 'WAT';
+filePrefix = 'ADRIFT_103'; % File name to match. 
+genderFileName = 'ADRIFT_103'; %File name to match gender file
+siteabrev = 'ADRIFT_103'; %abbreviation of site
 sp = 'Pm'; % your species code
-GDrive = 'L'; %Google Drive
 
-effortXls = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev,'\Pm_Effort.xlsx']; % specify excel file with effort times
-saveDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev]; %specify directory to save files
-dayBinCSV= [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev,'\',siteabrev,'_dayData_forGLMR125.csv']; % specify csv document with general PM information
+effortXls = 'J:\SeasonalityAnalysis\Pm_Effort.xlsx';% specify excel file with effort times
+saveDir = ['J:\SeasonalityAnalysis\',siteabrev]; %specify directory to save files
+dayBinCSV= [saveDir,'\',siteabrev,'_dayData_forGLMR125.csv']; % specify csv document with general PM information
 %% Load sex specific data from ICIgrams
 filename = [saveDir,'\',genderFileName,'_',sp,'_gender_filled.mat'];
 load(filename);
@@ -39,12 +37,6 @@ sexData = binData_mod; %not to get in the way of other bin data
 %% load workspace 2
 load([saveDir,'\',siteabrev,'_workspaceStep2.mat']);
 p = sp_setting_defaults('sp',sp,'analysis','SumPPICIBin'); % get default parameters -- make sure these match for your species
-
-% Overwrite some path names
-GDrive = 'L'; %Correct GDrive if overwritten by loading workspace
-effortXls(1) = GDrive;
-saveDir(1) = GDrive;
-tpwsPath(1) = GDrive;
 %% Adjust bin data not to include less than 5 clicks or ICIs over 2000 ms
 %This should have been done in previous steps but some of the old data
 %needs adjusting still so I've kept this here

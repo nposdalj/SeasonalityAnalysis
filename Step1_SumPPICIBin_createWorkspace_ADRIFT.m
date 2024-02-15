@@ -15,23 +15,21 @@ close all; clear all;clc;
 % binDataICIgram - ICIgram data grouped in 5 min bins
 %% Parameters defined by user
 %Site names
-filePrefix = 'NFC'; %TPWS file names that match
-siteabrev = 'NFC'; %abbreviation of site (folder names)
-region = 'WAT'; %region
+filePrefix = 'ADRIFT_108'; %TPWS file names that match
+siteabrev = 'ADRIFT_108'; %abbreviation of site (folder names)
 sp = 'Pm'; % your species code
 itnum = '2'; % which iteration you are looking for (which TPWS folder)
-GDrive = 'L'; %Google Drive
 
 %Other parameters
-fft = 512; %length of fft
-srate = 200; %sampling rate
+fft = 128; %length of fft
+srate = 48; %sampling rate
 pfMIN = 5; %peak frequency min
 ClickBinMin = 5; %min number of clicks required in a bin
 
 %Data paths
-tpwsPath = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\TPWS_125\',siteabrev]; %directory of TPWS files
-effortXls = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev,'\Pm_Effort.xlsx'];% specify excel file with effort times
-saveDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev]; %specify directory to save files
+tpwsPath = ['J:\TPWS_120\',siteabrev]; %directory of TPWS files
+saveDir = ['J:\SeasonalityAnalysis\',siteabrev]; %specify directory to save files
+effortXls = 'J:\SeasonalityAnalysis\Pm_Effort.xlsx';% specify excel file with effort times
 p = sp_setting_defaults('sp',sp,'analysis','SumPPICIBin'); % get default parameters -- make sure these match for your species
 %% define subfolder that fit specified iteration
 if itnum > 1

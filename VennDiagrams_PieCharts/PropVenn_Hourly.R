@@ -4,7 +4,7 @@ library("tidyverse")
 library("dplyr")
 
 #load data
-GDrive =  'G'
+GDrive =  'L'
 Region = c('WAT')
 dir = paste(GDrive,":/My Drive/",Region,"_TPWS_metadataReduced/SeasonalityAnalysis/All_Sites",sep="")
 
