@@ -15,8 +15,8 @@ close all; clear all;clc;
 % binDataICIgram - ICIgram data grouped in 5 min bins
 %% Parameters defined by user
 %Site names
-filePrefix = 'NFC'; %TPWS file names that match
-siteabrev = 'NFC'; %abbreviation of site (folder names)
+filePrefix = 'HAT'; %TPWS file names that match
+siteabrev = 'HAT'; %abbreviation of site (folder names)
 region = 'WAT'; %region
 sp = 'Pm'; % your species code
 itnum = '2'; % which iteration you are looking for (which TPWS folder)
@@ -29,9 +29,12 @@ pfMIN = 5; %peak frequency min
 ClickBinMin = 5; %min number of clicks required in a bin
 
 %Data paths
-tpwsPath = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\TPWS_125\',siteabrev]; %directory of TPWS files
-effortXls = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev,'\Pm_Effort.xlsx'];% specify excel file with effort times
-saveDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev]; %specify directory to save files
+% tpwsPath = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\TPWS_125\',siteabrev]; %directory of TPWS files
+% effortXls = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev,'\Pm_Effort.xlsx'];% specify excel file with effort times
+% saveDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev]; %specify directory to save files
+tpwsPath = 'F:\Sperm Whales\HAT\TPWS_125';
+effortXls = 'F:\Sperm Whales\HAT\Plots\Pm_Effort.xlsx';
+saveDir = 'F:\Sperm Whales\HAT\Plots';
 p = sp_setting_defaults('sp',sp,'analysis','SumPPICIBin'); % get default parameters -- make sure these match for your species
 %% define subfolder that fit specified iteration
 if itnum > 1
