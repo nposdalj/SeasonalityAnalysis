@@ -9,16 +9,16 @@ siteabrev = 'HAT';
 siteNameMatch = 'HAT';
 region = 'WAT'; %all of the WAT data has a space between the site and the deployment #
 shipDataType = 2; % 1 - old ship data, %2 - new ship data
-maxDetEdit = 2; % number of TPWS folders (i.e. TPWS4 is 4)
-ShipIDReDo = 0; % If you want to re-run ship and ID times, change this to 1
+maxDetEdit = 1; % number of TPWS folders (i.e. TPWS4 is 4)
+ShipIDReDo = 1; % If you want to re-run ship and ID times, change this to 1
 
 % Data directories
 GDrive = 'F';
-shipDir = 'F:\Sperm Whales\HAT\metadata_reduced';
-shipTimesDir = 'F:\Sperm Whales\HAT\ShipTimes'; % directory where to save ship times .mat files
-IDDir = 'F:\Sperm Whales\HAT\TPWS_125';
-IDTimesDir = 'F:\Sperm Whales\HAT\IDtimes'; % directory where to save ID times .mat files
-saveTable = 'F:\Sperm Whales\HAT\Pm_Effort.xlsx';
+shipDir = 'G:\WAT_TPWS_metadataReduced\metadata_reduced\HAT';
+shipTimesDir = 'G:\WAT_TPWS_metadataReduced\ShipTimes\HAT_REDO'; % directory where to save ship times .mat files
+IDDir = 'F:\Sperm Whales\NFC\TPWS_125';
+IDTimesDir = 'G:\WAT_TPWS_metadataReduced\ShipTimes\HAT_REDO'; % directory where to save ID times .mat files
+saveTable = 'E:\Sperm Whales\Plots\NFC\Pm_Effort.xlsx';
 %% write ship and ID file times
 %Check to see if ship files are in the old format or new format
 if ShipIDReDo == 1

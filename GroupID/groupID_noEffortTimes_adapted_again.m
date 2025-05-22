@@ -2,20 +2,23 @@
 close all;clear all;clc;
 %% select directory where ship files are located
 %Site name
-siteabrev = 'HAT';
-siteNameMatch = 'HAT';
-region = 'WAT'; %all of the WAT data has a space between the site and the deployment #
+siteabrev = 'USWTR';
+siteNameMatch = 'USWTR';
+region = ''; %all of the WAT data has a space between the site and the deployment #
 shipDataType = 2; % 1 - old ship data, %2 - new ship data
-maxDetEdit = 3; % number of TPWS folders (i.e. TPWS4 is 4)
-ShipIDReDo = 1; % If you want to re-run ship and ID times, change this to 1
+maxDetEdit = 2; % number of TPWS folders (i.e. TPWS4 is 4)
+ShipIDReDo = 0; % If you want to re-run ship and ID times, change this to 1
 
 % Data directories
 GDrive = 'L';
-shipDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\metadata_reduced\',siteabrev];
-shipTimesDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\ShipTimes\',siteabrev]; % directory where to save ship times .mat files
-IDDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\TPWS_125\',siteabrev];
-IDTimesDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\IDTimes\',siteabrev]; % directory where to save ID times .mat files
-saveTable = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev,'\Pm_Effort.xlsx'];
+shipDir = ['E:\Sperm Whales\metadata_reduced\',siteabrev];
+shipTimesDir = ['E:\Sperm Whales\ShipTimes\',siteabrev]; % directory where to save ship times .mat files
+IDDir = 'E:\Sperm Whales\TPWS_125';
+IDTimesDir = 'E:\Sperm Whales\IDtimes';
+saveTable = 'E:\Sperm Whales\Plots\USWTR\';
+% IDDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\TPWS_125\',siteabrev];
+% IDTimesDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\IDTimes\',siteabrev]; % directory where to save ID times .mat files
+% saveTable = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev,'\Pm_Effort.xlsx'];
 
 %% write ship and ID file times
 %Check to see if ship files are in the old format or new format
@@ -61,6 +64,8 @@ for n = 1:length(site)
             deplCompare = siteNameMatch;
         elseif strcmp(siteNameMatch,'GI');
             deplCompare = ['Baja_GI_',strdepl];
+        elseif strcmp(siteNameMatch, 'USWTR')
+            deplCompare = ['USWTR',strdepl,'E'];
         else
             deplCompare = [loc strdepl];
         end
@@ -115,6 +120,6 @@ end
 effTable.Properties.VariableNames = {'Sites','Deployments','Latitude','Longitude','StartEffort','EndEffort'};
 
 % save effort times in excel file
-writetable(effTable,saveTable)
+writetable(effTable, fullfile(saveTable, 'Pm_Effort.xlsx'))
 
 disp('Effort times saved')

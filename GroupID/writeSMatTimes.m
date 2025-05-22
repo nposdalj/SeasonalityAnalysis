@@ -50,7 +50,7 @@ else
     shipTAB = [];
     load(PathFileListShipMatch{1});
     shipTAB = [table(shipLabels) table(num2cell(shipTimes))];
-    else
+        else
     load(PathFileListShipMatch{j});
     ships = [table(shipLabels) table(num2cell(shipTimes))];
     shipTAB = [shipTAB ; ships];  
@@ -74,7 +74,11 @@ else
     shipTAB = [];
     load(char(PathFileListShipa));
     shipTAB = [table(shipLabels) table(num2cell(shipTimes))];
-    else
+%     elseif i == 9 && j == 2
+%     shipTAB = [];
+%     load(char(PathFileListShipa));
+%     shipTAB = [table(shipLabels) table(num2cell(shipTimes))];
+    else            
     load(char(PathFileListShipa));
     ships = [table(shipLabels) table(num2cell(shipTimes))];
     shipTAB = [shipTAB ; ships];  

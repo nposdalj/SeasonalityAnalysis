@@ -510,13 +510,17 @@ HAT_latLongs = [31.747,-121.38;
     31.747,-121.38;
     31.747,-121.38;]; 
 %% USWTR
-USWTR_dates = [datenum([2011 08 19 00 00 00]), datenum([2011 12 01 14 23 45]);
-    datenum([2012 07 14 00 00 00]), datenum([2012 10 02 17 03 45]);
-    datenum([2012 10 24 00 00 00]), datenum([2012 06 30 00 50 00])];
-USWTR_depl = [6,7,8];
-USWTR_site(1:length(USWTR_depl),1) = {'USWTR'};
-USWTR_latLongs = [39.938, - 76;
+USWTR_dates = [datenum([2014 06 19 12 00 00]), datenum([2015 04 05 02 25 48]);
+    datenum([2016 04 30 12 00 00]), datenum([2017 06 28 18 38 51]);
+    datenum([2021 06 29 08 00 00]), datenum([2022 05 17 14 02 30])];
+USWTR_depl = [1,2,3,4,5,6];
+NFC_site(1:length(NFC_depl),1) = {'NFC'};
+NFC_latLongs = [39.938, - 76;
     39.938, - 76;
+    39.938, - 76;
+    39.938, - 76;
+    39.938, - 76;
+    40.195, - 76
     40.195, - 76];
 %% concatenate all information
 edgeffort = [CB_dates; QN_dates; AB_dates; PT_dates; CORC_dates;...
