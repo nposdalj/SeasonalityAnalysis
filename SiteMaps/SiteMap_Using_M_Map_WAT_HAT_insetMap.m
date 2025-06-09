@@ -8,7 +8,7 @@
 close all;clear all;clc;
 %% Load Site data
 % load lat and longs for each site
-SaveDir = 'G:\My Drive\WAT_TPWS_metadataReduced\Plots';
+SaveDir = 'H:\WAT_TPWS_metadataReduced\Plots\Site Maps';
 
 HATA_latLongs = [35.34218333, -74.86;
 35.30183333, -74.86;
@@ -41,7 +41,7 @@ SiteData{:,'Site'} = {'HAT A'; 'HAT B'};
 %The projections that successfully work: UTM, Transverse mercator (or this), Mercator (probably the best),...
 %Miller Cylindrical, Albers Equal-Area Conic, Lambert Conformal Conic, Hammer-Aitoff, Mollweide, Robinson
 m_proj('Robinson','long',[-74.85 -74.65],'lat',[35.35 35.65]); %identify ranges of the map
-[CS,CH]=m_etopo2('contourf',[-7000:1000:-1000 -500 -200 0 ],'edgecolor','none'); %load bathymetry from ETOPO 1
+[CS,CH]=m_etopo2('contourf',[-6000:500:-1000 -700 -500 -200 0 ],'edgecolor','none'); %load bathymetry from ETOPO 1
 m_gshhs_f('patch',[.7 .7 .7],'edgecolor','none');
 m_line(SiteData.Longitude(1),SiteData.Latitude(1),'marker','.','markersize',15,...
           'linest','none','color','k','clip','point');
@@ -51,7 +51,7 @@ m_line(SiteData.Longitude(2),SiteData.Latitude(2),'marker','.','markersize',15,.
 m_text(SiteData.Longitude(2)+0.02,SiteData.Latitude(2),SiteData.Site(2),'FontWeight','Bold','FontSize',16);
 m_grid('linest','none','tickdir','out','box','fancy','fontsize',16);
 colormap(m_colmap('blues'));  
-caxis([-7000 000]);
+caxis([-6000 000]);
 m_ruler(.7,[.05 .4],3,'fontsize',16)
 set(gcf,'color','w');  % otherwise 'print' turns lakes black
 %% Save plot

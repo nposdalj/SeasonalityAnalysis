@@ -132,7 +132,7 @@ SiteData{:,'Site'} = {'NC'; 'BC'; 'GS'; 'BP'; 'BS'; 'WC'; 'OC'; 'HZ'; 'JAX'; 'NF
 %The projections that successfully work: UTM, Transverse mercator (or this), Mercator (probably the best),...
 %Miller Cylindrical, Albers Equal-Area Conic, Lambert Conformal Conic, Hammer-Aitoff, Mollweide, Robinson
 m_proj('Robinson','long',[-82 -62],'lat',[28.5 42]); %identify ranges of the map
-[CS,CH]=m_etopo2('contourf',[-6000:500:-1000 -700 -500 -200 0 ],'edgecolor','none'); %load bathymetry from ETOPO 1
+[CS,CH]=m_etopo2('contourf',[-6000:1000:-1000 -500 -200 0 ],'edgecolor','none'); %load bathymetry from ETOPO 1
 m_gshhs_f('patch',[.7 .7 .7],'edgecolor','none');
 m_line(SiteData.Longitude(1),SiteData.Latitude(1),'marker','.','markersize',15,...
           'linest','none','color','k','clip','point');
@@ -173,11 +173,12 @@ m_text(SiteData.Longitude(11)+0.4,SiteData.Latitude(11),SiteData.Site(11),'FontW
 m_grid('linest','none','tickdir','out','box','fancy','fontsize',16);
 colormap(m_colmap('blues'));  
 caxis([-6000 000]);
+%[ax,h]=m_contfbar([.68 .95],.35,CS,CH,'endpiece','no','axfrac',.05,'YColor','white');
 [ax,h]=m_contfbar(.18,[.45 .85],CS,CH,'endpiece','no','axfrac',.03,'YColor','black');
 title(ax,'meters','FontWeight','Bold')
 ax.FontSize = 11;
-% ax.XColor = [1, 1, 1];
-% ax.YColor = [1, 1, 1];
+%ax.XColor = [1, 1, 1];
+%ax.YColor = [1, 1, 1];
 % ax.FontWeight = 'Bold';
 set(gcf,'color','w');  % otherwise 'print' turns lakes black
 %% Save plot
