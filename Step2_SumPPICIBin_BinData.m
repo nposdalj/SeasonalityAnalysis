@@ -1,4 +1,4 @@
-clearvars
+ clearvars
 close all; clear all;clc;
 
 % Step 2 - Groups data into 5-min bins and daily data accounting for effort (including duty cycle)...
@@ -17,13 +17,13 @@ close all; clear all;clc;
     % mean of julian day - '*_days365GroupedMean_forGLMR125.csv'
 %% Parameters defined by user
 %Site names and data paths
-filePrefix = 'USWTR'; % File name to match. 
-siteabrev = 'USWTR'; %abbreviation of site.
+filePrefix = 'JAX'; % File name to match. 
+siteabrev = 'JAX'; %abbreviation of site.
 region = 'WAT'; %region
 sp = 'Pm'; % your species code
 GDrive = 'L'; %Google Drive
 % saveDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev]; %specify directory to save files
-saveDir = 'E:\Sperm Whales\Plots\USWTR';
+saveDir = 'E:\Sperm Whales\Plots\JAX';
 DutyCy = 0; %if this data only has 1 deployment that is duty cycled make it equal to 1 otherwise, make it equal to the number...
 % of deployments that have different duty cycles that must be accounted for; if this data is NOT duty cycled,...
 % or if the entire deployment is duty cycled, make it equal to 0
@@ -37,7 +37,7 @@ GDrive = GDrive_correct; %Correct GDrive if overwritten by loading workspace
 effortXls(1) = GDrive;
 saveDir(1) = GDrive;
 tpwsPath(1) = GDrive;
-saveDir = 'E:\Sperm Whales\Plots\USWTR';
+saveDir = 'E:\Sperm Whales\Plots\JAX';
 %% Set up duty cycled dates
 % If only one or two deployments are duty cycled, adjust accordingly
 if DutyCy == 1

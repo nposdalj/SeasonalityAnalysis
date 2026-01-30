@@ -15,11 +15,11 @@ close all; clear all;clc;
 % binDataICIgram - ICIgram data grouped in 5 min bins
 %% Parameters defined by user
 %Site names
-filePrefix = 'USWTR'; %TPWS file names that match
-siteabrev = 'USWTR'; %abbreviation of site (folder names)
+filePrefix = 'JAX'; %TPWS file names that match
+siteabrev = 'JAX'; %abbreviation of site (folder names)
 region = 'WAT'; %region
 sp = 'Pm'; % your species code
-itnum = '2'; % which iteration you are looking for (which TPWS folder)
+itnum = '1'; % which iteration you are looking for (which TPWS folder)
 GDrive = 'G'; %Google Drive
 
 %Other parameters
@@ -32,9 +32,9 @@ ClickBinMin = 5; %min number of clicks required in a bin
 % tpwsPath = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\TPWS_125\',siteabrev]; %directory of TPWS files
 % effortXls = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev,'\Pm_Effort.xlsx'];% specify excel file with effort times
 % saveDir = [GDrive,':\My Drive\',region,'_TPWS_metadataReduced\SeasonalityAnalysis\',siteabrev]; %specify directory to save files
-tpwsPath = 'E:\Sperm Whales\TPWS_125\USWTR';
-effortXls = 'E:\Sperm Whales\Plots\USWTR\Pm_Effort.xlsx';
-saveDir = 'E:\Sperm Whales\Plots\USWTR';
+tpwsPath = 'E:\Sperm Whales\TPWS_125\JAX';
+effortXls = 'E:\Sperm Whales\Plots\JAX\Pm_Effort.xlsx';
+saveDir = 'E:\Sperm Whales\Plots\JAX';
 p = sp_setting_defaults('sp',sp,'analysis','SumPPICIBin'); % get default parameters -- make sure these match for your species
 %% define subfolder that fit specified iteration
 if itnum > 1
