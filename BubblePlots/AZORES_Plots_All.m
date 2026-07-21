@@ -1,4 +1,4 @@
- %% clear workspace
+﻿ %% clear workspace
 clear all;close all;clc;
 % Needs to be run in 2018B or later
 % AZORES_Plots_All - single site per run (edit siteName and rerun for the other AZORES site).
@@ -16,7 +16,7 @@ clear all;close all;clc;
 % Same color scheme throughout (matches OverlappingHistograms_Step1.m):
 %   Social Groups = #66c2a5 (green), Mid-size = #fc8d62 (orange), Adult Males = #8da0cb (blue)
 %% load data
-siteName = 'AZORES_B_01'; % or 'AZORES_B_01' 'AZORES_A_04_DEEP'
+siteName = 'AZORES_A_04_DEEP'; % or 'AZORES_B_01' 'AZORES_A_04_DEEP'
 siteNameDisp = strrep(siteName,'_','\_'); % escaped for use in titles - MATLAB's default tex interpreter
 % treats a bare '_' as a subscript marker, which mangles siteName in plot titles
 NumBub = 3;
@@ -453,12 +453,12 @@ end
 set(gcf,'Position',[-1165         552         812         476])
 if Scale == 1
     weeklyfn = [saveDirectory,'\',siteName,'_BubbleTimeSeriesScaled.png'];
-    exportgraphics(gcf,weeklyfn,'ContentType','vector','Resolution',300);
+    exportgraphics(gcf,weeklyfn,'ContentType','image','Resolution',300);
     weeklyfn = [saveDirectory,'\',siteName,'_BubbleTimeSeriesScaled.pdf'];
     exportgraphics(gcf,weeklyfn,'ContentType','vector','Resolution',300);
 else
     weeklyfn = [saveDirectory,'\',siteName,'_BubbleTimeSeries.png'];
-    exportgraphics(gcf,weeklyfn,'ContentType','vector','Resolution',300);
+    exportgraphics(gcf,weeklyfn,'ContentType','image','Resolution',300);
     weeklyfn = [saveDirectory,'\',siteName,'_BubbleTimeSeries.pdf'];
     exportgraphics(gcf,weeklyfn,'ContentType','vector','Resolution',300);
 end
@@ -688,12 +688,12 @@ end
 set(gcf,'Position',[-1165         552         812         476])
 if Scale == 1
     weeklyfn = [saveDirectory,'\',siteName,'_BubbleTimeSeriesDifferenceScaled.png'];
-    exportgraphics(gcf,weeklyfn,'ContentType','vector','Resolution',300);
+    exportgraphics(gcf,weeklyfn,'ContentType','image','Resolution',300);
     weeklyfn = [saveDirectory,'\',siteName,'_BubbleTimeSeriesDifferenceScaled.pdf'];
     exportgraphics(gcf,weeklyfn,'ContentType','vector','Resolution',300);
 else
     weeklyfn = [saveDirectory,'\',siteName,'_BubbleTimeSeriesDifference.png'];
-    exportgraphics(gcf,weeklyfn,'ContentType','vector','Resolution',300);
+    exportgraphics(gcf,weeklyfn,'ContentType','image','Resolution',300);
     weeklyfn = [saveDirectory,'\',siteName,'_BubbleTimeSeriesDifference.pdf'];
     exportgraphics(gcf,weeklyfn,'ContentType','vector','Resolution',300);
 end
@@ -722,7 +722,7 @@ title(['Stacked Weekly Presence by Size Class - ',siteNameDisp])
 xlim([dataWeekTrim.tbin(1), dataWeekTrim.tbin(end)])
 
 stackfn = [saveDirectory,'\',siteName,'_StackedTimeSeries.png'];
-exportgraphics(fStack,stackfn,'ContentType','vector','Resolution',300);
+exportgraphics(fStack,stackfn,'ContentType','image','Resolution',300);
 stackfn = [saveDirectory,'\',siteName,'_StackedTimeSeries.pdf'];
 exportgraphics(fStack,stackfn,'ContentType','vector','Resolution',300);
 %% ===================================================================
@@ -755,7 +755,7 @@ xticks(ax1,monthTicks); xticks(ax2,monthTicks); xticks(ax3,monthTicks);
 xtickformat(ax3,'MMM yyyy');
 
 subplotfn = [saveDirectory,'\',siteName,'_TimeSeries_Subplots.png'];
-exportgraphics(fSubplots,subplotfn,'ContentType','vector','Resolution',300);
+exportgraphics(fSubplots,subplotfn,'ContentType','image','Resolution',300);
 subplotfn = [saveDirectory,'\',siteName,'_TimeSeries_Subplots.pdf'];
 exportgraphics(fSubplots,subplotfn,'ContentType','vector','Resolution',300);
 %% ===================================================================
@@ -775,14 +775,14 @@ dailyM = sexbinPresence.Male > 0;
 fVennDaily = plotClassVennProportional(dailyF,dailyJ,dailyM,classLabels,classColors, ...
     ['Daily Presence Overlap - ',siteNameDisp],'count');
 vennfn = [saveDirectory,'\',siteName,'_VennDaily.png'];
-exportgraphics(fVennDaily,vennfn,'ContentType','vector','Resolution',300);
+exportgraphics(fVennDaily,vennfn,'ContentType','image','Resolution',300);
 vennfn = [saveDirectory,'\',siteName,'_VennDaily.pdf'];
 exportgraphics(fVennDaily,vennfn,'ContentType','vector','Resolution',300);
 
 fVennDailyPct = plotClassVennProportional(dailyF,dailyJ,dailyM,classLabels,classColors, ...
     ['Daily Presence Overlap (%) - ',siteNameDisp],'percent');
 vennfn = [saveDirectory,'\',siteName,'_VennDaily_Percent.png'];
-exportgraphics(fVennDailyPct,vennfn,'ContentType','vector','Resolution',300);
+exportgraphics(fVennDailyPct,vennfn,'ContentType','image','Resolution',300);
 vennfn = [saveDirectory,'\',siteName,'_VennDaily_Percent.pdf'];
 exportgraphics(fVennDailyPct,vennfn,'ContentType','vector','Resolution',300);
 
@@ -793,14 +793,14 @@ hourlyM = sexhourlyTab.PreAbsM > 0;
 fVennHourly = plotClassVennProportional(hourlyF,hourlyJ,hourlyM,classLabels,classColors, ...
     ['Hourly Presence Overlap - ',siteNameDisp],'count');
 vennfn = [saveDirectory,'\',siteName,'_VennHourly.png'];
-exportgraphics(fVennHourly,vennfn,'ContentType','vector','Resolution',300);
+exportgraphics(fVennHourly,vennfn,'ContentType','image','Resolution',300);
 vennfn = [saveDirectory,'\',siteName,'_VennHourly.pdf'];
 exportgraphics(fVennHourly,vennfn,'ContentType','vector','Resolution',300);
 
 fVennHourlyPct = plotClassVennProportional(hourlyF,hourlyJ,hourlyM,classLabels,classColors, ...
     ['Hourly Presence Overlap (%) - ',siteNameDisp],'percent');
 vennfn = [saveDirectory,'\',siteName,'_VennHourly_Percent.png'];
-exportgraphics(fVennHourlyPct,vennfn,'ContentType','vector','Resolution',300);
+exportgraphics(fVennHourlyPct,vennfn,'ContentType','image','Resolution',300);
 vennfn = [saveDirectory,'\',siteName,'_VennHourly_Percent.pdf'];
 exportgraphics(fVennHourlyPct,vennfn,'ContentType','vector','Resolution',300);
 %% ===================================================================
@@ -826,7 +826,7 @@ xlim([300 2000])
 hold off
 
 icifn = [saveDirectory,'\',siteName,'_ICIHistogram_BySizeClass.png'];
-exportgraphics(fHist,icifn,'ContentType','vector','Resolution',300);
+exportgraphics(fHist,icifn,'ContentType','image','Resolution',300);
 icifn = [saveDirectory,'\',siteName,'_ICIHistogram_BySizeClass.pdf'];
 exportgraphics(fHist,icifn,'ContentType','vector','Resolution',300);
 
@@ -846,7 +846,7 @@ set(gca,'YScale','log')
 hold off
 
 icifn = [saveDirectory,'\',siteName,'_ICIHistogram_BySizeClass_Log.png'];
-exportgraphics(fHistLog,icifn,'ContentType','vector','Resolution',300);
+exportgraphics(fHistLog,icifn,'ContentType','image','Resolution',300);
 icifn = [saveDirectory,'\',siteName,'_ICIHistogram_BySizeClass_Log.pdf'];
 exportgraphics(fHistLog,icifn,'ContentType','vector','Resolution',300);
 %% save text file with max and mins for publication if needed
@@ -916,11 +916,20 @@ r1 = sqrt( (aOnly+abAll+caAll+abc)/pi );
 r2 = sqrt( (abAll+bOnly+bcAll+abc)/pi );
 r3 = sqrt( (bcAll+cOnly+caAll+abc)/pi );
 
-y = ( distAC^2 - distBC^2 + distAB^2 ) / 2 / distAB;
+% Fitted pairwise distances don't always form a perfectly consistent triangle
+% (e.g. when a class has zero/near-zero counts, or from the iterative search's
+% own resolution error), which can otherwise send this law-of-cosines-style
+% calculation slightly negative under the sqrt and produce complex coordinates.
+if distAB == 0
+    y = 0;
+else
+    y = ( distAC^2 - distBC^2 + distAB^2 ) / 2 / distAB;
+end
+heightSq = max(distAC^2 - y^2, 0);
 baseY = max(r1,r2);
 centers = [ r1,            baseY; ...
             r1+distAB,     baseY; ...
-            r1+y,          baseY+sqrt(distAC^2 - y^2) ];
+            r1+y,          baseY+sqrt(heightSq) ];
 radii = [r1, r2, r3];
 
 fig = figure('DefaultAxesFontSize',12,'DefaultTextFontName','Times');
